@@ -1,0 +1,268 @@
+/**
+ * Admin Dashboard for CannaPickForMe
+ * Password-gated ad management interface.
+ */
+
+import './admin.css';
+import { getAllAds, createAd, updateAd, deleteAd, uploadAdImage } from './services/adService.js';
+
+// SHA-256 hash of the admin password
+const ADMIN_HASH = 'b6cba8b101e45c8b2eddd705efc782ef96d4e32b090a5db14ccdb77d1247426a';
+const SESSION_KEY = 'cpfm_admin_auth';
+
+// === UTILITY: SHA-256 Hash ===
+async function sha256(text) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+// === AUTH ===
+async function checkPassword(password) {
+  const hash = await sha256(password);
+  return hash === ADMIN_HASH;
+}
+
+function isAuthenticated() {
+  return sessionStorage.getItem(SESSION_KEY) === 'true';
+}
+
+function setAuthenticated() {
+  sessionStorage.setItem(SESSION_KEY, 'true');
+}
+
+function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
+
+// === STATE ===
+let editingAdId = null;
+let existingImageUrl = null;
+
+// === UI ===
+function showDashboard() {
+  document.getElementById('login-gate').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  loadAdsList();
+}
+
+async function loadAdsList() {
+  const loading = document.getElementById('ads-loading');
+  const empty = document.getElementById('ads-empty');
+  const tableWrap = document.getElementById('ads-table-wrap');
+  const tbody = document.getElementById('ads-tbody');
+
+  loading.classList.remove('hidden');
+  empty.classList.add('hidden');
+  tableWrap.classList.add('hidden');
+
+  const ads = await getAllAds();
+
+  loading.classList.add('hidden');
+
+  if (ads.length === 0) {
+    empty.classList.remove('hidden');
+    return;
+  }
+
+  tableWrap.classList.remove('hidden');
+  tbody.innerHTML = ads.map(ad => `
+    <tr data-id="${ad.id}">
+      <td>
+        <img src="${ad.imageUrl}" alt="${ad.title}" class="admin-table__preview" />
+      </td>
+      <td>
+        <strong>${ad.title || '(untitled)'}</strong>
+        ${ad.description ? `<br><small>${ad.description}</small>` : ''}
+      </td>
+      <td><span class="admin-tag">${ad.placement}</span></td>
+      <td><span class="admin-tag admin-tag--${ad.displayType || 'card'}">${ad.displayType || 'card'}</span></td>
+      <td class="center">${ad.priority || 5}</td>
+      <td class="center">
+        <button class="admin-toggle ${ad.active ? 'admin-toggle--on' : ''}" data-action="toggle" data-id="${ad.id}" data-active="${ad.active}">
+          ${ad.active ? '✅ ON' : '❌ OFF'}
+        </button>
+      </td>
+      <td>
+        <div class="admin-table__actions">
+          <button class="admin-btn admin-btn--small" data-action="edit" data-id="${ad.id}">✏️</button>
+          <button class="admin-btn admin-btn--small admin-btn--danger" data-action="delete" data-id="${ad.id}" data-image="${ad.imageUrl || ''}">🗑️</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+
+  // Event delegation
+  tbody.querySelectorAll('[data-action="toggle"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const currentlyActive = btn.dataset.active === 'true';
+      await updateAd(id, { active: !currentlyActive });
+      loadAdsList();
+    });
+  });
+
+  tbody.querySelectorAll('[data-action="delete"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Delete this ad? This cannot be undone.')) return;
+      await deleteAd(btn.dataset.id, btn.dataset.image);
+      loadAdsList();
+    });
+  });
+
+  tbody.querySelectorAll('[data-action="edit"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ad = ads.find(a => a.id === btn.dataset.id);
+      if (ad) startEditing(ad);
+    });
+  });
+}
+
+function startEditing(ad) {
+  editingAdId = ad.id;
+  existingImageUrl = ad.imageUrl;
+
+  document.getElementById('form-title').textContent = '✏️ Edit Ad';
+  document.getElementById('edit-ad-id').value = ad.id;
+  document.getElementById('ad-title').value = ad.title || '';
+  document.getElementById('ad-click-url').value = ad.clickUrl || '';
+  document.getElementById('ad-placement').value = ad.placement || 'home';
+  document.getElementById('ad-display-type').value = ad.displayType || 'card';
+  document.getElementById('ad-priority').value = ad.priority || 5;
+  document.getElementById('priority-display').textContent = ad.priority || 5;
+  document.getElementById('ad-description').value = ad.description || '';
+
+  // Show existing image preview
+  const preview = document.getElementById('image-preview');
+  const previewImg = document.getElementById('preview-img');
+  previewImg.src = ad.imageUrl;
+  preview.classList.remove('hidden');
+
+  // Image is optional when editing
+  document.getElementById('ad-image').removeAttribute('required');
+
+  document.getElementById('btn-cancel-edit').classList.remove('hidden');
+  document.getElementById('btn-submit-ad').textContent = 'Update Ad';
+
+  // Scroll to form
+  document.getElementById('form-title').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelEditing() {
+  editingAdId = null;
+  existingImageUrl = null;
+
+  document.getElementById('form-title').textContent = '➕ Add New Ad';
+  document.getElementById('ad-form').reset();
+  document.getElementById('edit-ad-id').value = '';
+  document.getElementById('image-preview').classList.add('hidden');
+  document.getElementById('ad-image').setAttribute('required', '');
+  document.getElementById('btn-cancel-edit').classList.add('hidden');
+  document.getElementById('btn-submit-ad').textContent = 'Create Ad';
+  document.getElementById('priority-display').textContent = '5';
+}
+
+// === INIT ===
+function init() {
+  // Check existing session
+  if (isAuthenticated()) {
+    showDashboard();
+  }
+
+  // Login form
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pw = document.getElementById('admin-password').value;
+    const valid = await checkPassword(pw);
+
+    if (valid) {
+      setAuthenticated();
+      showDashboard();
+    } else {
+      document.getElementById('login-error').classList.remove('hidden');
+      document.getElementById('admin-password').value = '';
+    }
+  });
+
+  // Logout
+  document.getElementById('btn-logout').addEventListener('click', logout);
+
+  // Priority slider display
+  document.getElementById('ad-priority').addEventListener('input', (e) => {
+    document.getElementById('priority-display').textContent = e.target.value;
+  });
+
+  // Image preview
+  document.getElementById('ad-image').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    const preview = document.getElementById('image-preview');
+    const previewImg = document.getElementById('preview-img');
+    if (file) {
+      previewImg.src = URL.createObjectURL(file);
+      preview.classList.remove('hidden');
+    } else {
+      preview.classList.add('hidden');
+    }
+  });
+
+  // Cancel editing
+  document.getElementById('btn-cancel-edit').addEventListener('click', cancelEditing);
+
+  // Submit ad form
+  document.getElementById('ad-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById('btn-submit-ad');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Saving...';
+    submitBtn.disabled = true;
+
+    try {
+      const fileInput = document.getElementById('ad-image');
+      let imageUrl = existingImageUrl;
+
+      // Upload new image if provided
+      if (fileInput.files.length > 0) {
+        imageUrl = await uploadAdImage(fileInput.files[0]);
+      }
+
+      if (!imageUrl) {
+        alert('Please select an image.');
+        return;
+      }
+
+      const adData = {
+        title: document.getElementById('ad-title').value.trim(),
+        clickUrl: document.getElementById('ad-click-url').value.trim(),
+        placement: document.getElementById('ad-placement').value,
+        displayType: document.getElementById('ad-display-type').value,
+        priority: parseInt(document.getElementById('ad-priority').value, 10),
+        description: document.getElementById('ad-description').value.trim(),
+        imageUrl,
+        active: true,
+      };
+
+      if (editingAdId) {
+        await updateAd(editingAdId, adData);
+      } else {
+        await createAd(adData);
+      }
+
+      cancelEditing();
+      loadAdsList();
+    } catch (err) {
+      console.error('Error saving ad:', err);
+      alert('Failed to save ad. Check console for details.');
+    } finally {
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', init);
+if (document.readyState !== 'loading') init();

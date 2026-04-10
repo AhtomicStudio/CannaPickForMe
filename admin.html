@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>CannaPickForMe — Admin</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Login Gate -->
+    <div id="login-gate" class="admin-login">
+      <div class="admin-login__content">
+        <span class="admin-login__icon">🔒</span>
+        <h1>Admin Dashboard</h1>
+        <p class="admin-login__sub">CannaPickForMe Ad Manager</p>
+        <form id="login-form" class="admin-login__form">
+          <input type="password" id="admin-password" placeholder="Enter admin password" autocomplete="off" />
+          <button type="submit" class="admin-btn admin-btn--primary">Unlock 🔓</button>
+        </form>
+        <p id="login-error" class="admin-login__error hidden">Incorrect password.</p>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="admin-dashboard hidden">
+      <header class="admin-header">
+        <div class="admin-header__left">
+          <span>🌿</span>
+          <h1>CannaPickForMe <span class="admin-header__badge">Admin</span></h1>
+        </div>
+        <button id="btn-logout" class="admin-btn admin-btn--ghost">🚪 Log Out</button>
+      </header>
+
+      <!-- Add/Edit Ad Form -->
+      <section class="admin-section">
+        <h2 id="form-title">➕ Add New Ad</h2>
+        <form id="ad-form" class="admin-form">
+          <input type="hidden" id="edit-ad-id" />
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label for="ad-title">Title *</label>
+              <input type="text" id="ad-title" required placeholder="e.g., Green Leaf Dispensary" />
+            </div>
+            <div class="admin-form__group">
+              <label for="ad-click-url">Click URL *</label>
+              <input type="url" id="ad-click-url" required placeholder="https://example.com" />
+            </div>
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label for="ad-placement">Placement *</label>
+              <select id="ad-placement" required>
+                <option value="home">Home Screen</option>
+                <option value="result">Result Screen</option>
+              </select>
+            </div>
+            <div class="admin-form__group">
+              <label for="ad-display-type">Display Type</label>
+              <select id="ad-display-type">
+                <option value="card">Card (recommended)</option>
+                <option value="banner">Full-Width Banner</option>
+              </select>
+            </div>
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label for="ad-priority">Priority (1-10)</label>
+              <input type="range" id="ad-priority" min="1" max="10" value="5" />
+              <span id="priority-display" class="admin-form__range-val">5</span>
+            </div>
+            <div class="admin-form__group">
+              <label for="ad-description">Description (card only)</label>
+              <input type="text" id="ad-description" placeholder="Short tagline..." />
+            </div>
+          </div>
+          <div class="admin-form__group">
+            <label for="ad-image">Ad Image *</label>
+            <div class="admin-upload">
+              <input type="file" id="ad-image" accept="image/*" />
+              <div id="image-preview" class="admin-upload__preview hidden">
+                <img id="preview-img" alt="Preview" />
+              </div>
+            </div>
+          </div>
+          <div class="admin-form__actions">
+            <button type="button" id="btn-cancel-edit" class="admin-btn admin-btn--ghost hidden">Cancel Edit</button>
+            <button type="submit" id="btn-submit-ad" class="admin-btn admin-btn--primary">Create Ad</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Ad List -->
+      <section class="admin-section">
+        <h2>📋 Manage Ads</h2>
+        <div id="ads-loading" class="admin-loading">Loading ads...</div>
+        <div id="ads-empty" class="admin-empty hidden">
+          <span>🫙</span>
+          <p>No ads yet. Create one above!</p>
+        </div>
+        <div id="ads-table-wrap" class="hidden">
+          <table id="ads-table" class="admin-table">
+            <thead>
+              <tr>
+                <th>Preview</th>
+                <th>Title</th>
+                <th>Placement</th>
+                <th>Type</th>
+                <th>Priority</th>
+                <th>Active</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ads-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="/src/admin.js"></script>
+  </body>
+</html>

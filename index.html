@@ -85,8 +85,14 @@
           <span class="btn__text">My Stash</span>
           <span id="stash-count" class="badge">0</span>
         </button>
+        <button id="btn-clear-stash" class="btn btn--ghost btn--clear-stash hidden">
+          <span class="btn__emoji">🗑️</span>
+          <span class="btn__text">Clear Stash</span>
+        </button>
       </div>
       <p id="stash-hint" class="home__hint">Add at least 2 strains to your stash to get started!</p>
+      <!-- Ad Slot: Home -->
+      <div id="ad-slot-home" class="ad-slot ad-slot--home"></div>
       <footer class="home__footer">
         <a href="#" id="legal-link" class="footer-link">Legal Info</a>
         <span class="footer-divider">•</span>
@@ -124,6 +130,13 @@
           <p>Your stash is empty!</p>
           <p class="empty-state__sub">Browse strains and add them here.</p>
         </div>
+      </div>
+      <!-- Sticky Done Bar -->
+      <div id="stash-done-bar" class="stash__done-bar">
+        <button id="btn-stash-done" class="btn btn--primary btn--glow stash__done-btn">
+          <span>✓ Done</span>
+          <span id="done-count" class="stash__done-count">0 selected</span>
+        </button>
       </div>
     </div>
 
@@ -229,6 +242,8 @@
           <button id="btn-share" class="btn btn--secondary">📤 Share</button>
           <button id="btn-home" class="btn btn--primary btn--glow">🏠 Return Home</button>
         </div>
+        <!-- Ad Slot: Result -->
+        <div id="ad-slot-result" class="ad-slot ad-slot--result"></div>
       </div>
     </div>
 

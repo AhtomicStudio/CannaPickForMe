@@ -2,9 +2,9 @@ import './style.css';
 import strainsData from './data/strains.json';
 import questionsData from './data/questions.json';
 import { matchStrains } from './engine/matcher.js';
-import { weedQuotes } from './data/quotes.js';
+import { getNextQuote } from './data/quotes.js';
 import {
-  getStash, addToStash, removeFromStash, isInStash,
+  getStash, addToStash, removeFromStash, isInStash, clearStash,
   getCustomStrains, addCustomStrain, removeCustomStrain,
   getEffectOverrides, setEffectOverride, getStrainEffectOverride, clearEffectOverride,
   isAgeVerified, setAgeVerified, applyOverrides
@@ -75,6 +75,8 @@ function updateStashUI() {
   const tabCountEl = document.getElementById('tab-stash-count');
   const pickBtn = document.getElementById('btn-pick');
   const hint = document.getElementById('stash-hint');
+  const clearBtn = document.getElementById('btn-clear-stash');
+  const doneCount = document.getElementById('done-count');
 
   if (countEl) countEl.textContent = count;
   if (tabCountEl) tabCountEl.textContent = count;
@@ -83,6 +85,14 @@ function updateStashUI() {
     hint.textContent = count < 2
       ? `Add at least ${2 - count} more strain${2 - count > 1 ? 's' : ''} to your stash to get started!`
       : `You have ${count} strain${count > 1 ? 's' : ''} ready. Let's roll! 🔥`;
+  }
+  // Show/hide clear stash button
+  if (clearBtn) {
+    clearBtn.classList.toggle('hidden', count === 0);
+  }
+  // Update done bar count
+  if (doneCount) {
+    doneCount.textContent = `${count} selected`;
   }
 }
 
@@ -128,12 +138,24 @@ function initHome() {
   document.getElementById('btn-stash').addEventListener('click', () => {
     renderBrowseList();
     renderMyStashList();
+    updateStashUI();
     showScreen('stash');
   });
 
   document.getElementById('legal-link').addEventListener('click', (e) => {
     e.preventDefault();
     showScreen('disclaimer');
+  });
+
+  // Clear Stash
+  document.getElementById('btn-clear-stash').addEventListener('click', () => {
+    const count = getStash().length;
+    if (count === 0) return;
+    const confirmed = confirm(`Clear all ${count} strain${count > 1 ? 's' : ''} from your stash?`);
+    if (confirmed) {
+      clearStash();
+      updateStashUI();
+    }
   });
 
   updateStashUI();
@@ -179,6 +201,12 @@ function initStash() {
 
   // Add custom
   document.getElementById('btn-add-custom').addEventListener('click', openCustomModal);
+
+  // Done button
+  document.getElementById('btn-stash-done').addEventListener('click', () => {
+    showScreen('home');
+    updateStashUI();
+  });
 }
 
 function renderBrowseList() {
@@ -487,11 +515,13 @@ function startResult() {
   document.getElementById('weighing-phase').classList.remove('hidden');
   document.getElementById('reveal-phase').classList.add('hidden');
 
-  // Show random weed quote instead of static Anubis text
+  // Show no-repeat quote with optional author attribution
   const quoteEl = document.querySelector('.result__weighing-sub');
   if (quoteEl) {
-    const randomQuote = weedQuotes[Math.floor(Math.random() * weedQuotes.length)];
-    quoteEl.textContent = `"${randomQuote}"`;
+    const quote = getNextQuote();
+    quoteEl.textContent = quote.author
+      ? `"${quote.text}" — ${quote.author}`
+      : `"${quote.text}"`;
   }
 
   // Populate scale names
@@ -617,6 +647,54 @@ function initResult() {
   });
 }
 
+// === ADS ===
+function renderAdSlot(containerId, ads) {
+  const container = document.getElementById(containerId);
+  if (!container || !ads || ads.length === 0) return;
+
+  // Show the first (highest priority) ad
+  const ad = ads[0];
+  const displayType = ad.displayType || 'card';
+
+  if (displayType === 'banner') {
+    container.innerHTML = `
+      <a href="${ad.clickUrl}" target="_blank" rel="noopener noreferrer" class="ad-banner" title="${ad.title || 'Sponsored'}">
+        <img src="${ad.imageUrl}" alt="${ad.title || 'Ad'}" class="ad-banner__image" loading="lazy" />
+        <span class="ad-banner__sponsored">Sponsored</span>
+      </a>
+    `;
+  } else {
+    // Card style (default)
+    container.innerHTML = `
+      <a href="${ad.clickUrl}" target="_blank" rel="noopener noreferrer" class="ad-card" title="${ad.title || 'Sponsored'}">
+        <span class="ad-card__sponsored">Sponsored</span>
+        <img src="${ad.imageUrl}" alt="${ad.title || 'Ad'}" class="ad-card__image" loading="lazy" />
+        <div class="ad-card__info">
+          <div class="ad-card__title">${ad.title || ''}</div>
+          ${ad.description ? `<div class="ad-card__description">${ad.description}</div>` : ''}
+        </div>
+      </a>
+    `;
+  }
+}
+
+async function loadAds() {
+  try {
+    const { getActiveAds } = await import('./services/adService.js');
+
+    const [homeAds, resultAds] = await Promise.all([
+      getActiveAds('home'),
+      getActiveAds('result'),
+    ]);
+
+    renderAdSlot('ad-slot-home', homeAds);
+    renderAdSlot('ad-slot-result', resultAds);
+  } catch {
+    // Firebase not configured or network error — ads just won't show.
+    // The app works perfectly fine without them.
+  }
+}
+
 // === BOOT ===
 function init() {
   initAgeGate();
@@ -626,8 +704,10 @@ function init() {
   initCustomForm();
   initSession();
   initResult();
+  loadAds();
 }
 
 document.addEventListener('DOMContentLoaded', init);
 // If DOM is already ready
 if (document.readyState !== 'loading') init();
+

@@ -704,6 +704,54 @@ body {
   margin-top: var(--space-xs);
 }
 
+/* Clear Stash Button */
+.btn--clear-stash {
+  max-width: 200px;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--text-muted);
+  transition: all 0.25s var(--ease-out);
+}
+.btn--clear-stash:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* Sticky Done Bar */
+.stash__done-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-md) var(--space-lg);
+  padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, rgba(10, 14, 23, 0.98) 60%, rgba(10, 14, 23, 0) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+}
+
+.stash__done-btn {
+  width: 100%;
+  max-width: 360px;
+  padding: 0.9rem 1.5rem;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
+.stash__done-count {
+  font-size: 0.8rem;
+  font-weight: 400;
+  opacity: 0.75;
+}
+
 /* ============================================
    MODALS
    ============================================ */
@@ -1365,3 +1413,139 @@ body {
     padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom));
   }
 }
+
+/* ============================================
+   AD SLOTS
+   ============================================ */
+.ad-slot {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.ad-slot:empty {
+  display: none;
+}
+
+.ad-slot--home {
+  margin-top: var(--space-md);
+}
+
+.ad-slot--result {
+  margin-top: var(--space-xl);
+  padding-bottom: var(--space-lg);
+}
+
+/* Ad Card (default, smaller) */
+.ad-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.25s var(--ease-out);
+  width: 100%;
+  text-decoration: none;
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.ad-card:hover {
+  border-color: rgba(74, 222, 128, 0.3);
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.ad-card__image {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--bg-surface);
+}
+
+.ad-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ad-card__title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.ad-card__description {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ad-card__sponsored {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+/* Ad Banner (full-width) */
+.ad-banner {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-out);
+  text-decoration: none;
+  position: relative;
+  border: 1px solid var(--border);
+}
+
+.ad-banner:hover {
+  border-color: rgba(74, 222, 128, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.ad-banner__image {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 120px;
+  object-fit: cover;
+}
+
+.ad-banner__sponsored {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  font-size: 0.55rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
