@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="CannaPickForMe — Let the universe decide what you smoke. Add your strains, answer 4 questions, and get the perfect pick." />
+    <meta name="theme-color" content="#0a0e17" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CannaPickForMe — Let the Universe Decide" />
+    <meta property="og:description" content="Add your strains, answer 4 questions, and let the universe pick what you smoke tonight. 🌿🔥" />
+    <meta property="og:image" content="/icon-512.png" />
+    <meta property="og:url" content="https://cannapickforme.vercel.app" />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="CannaPickForMe — Let the Universe Decide" />
+    <meta name="twitter:description" content="Add your strains, answer 4 questions, and let the universe pick what you smoke tonight. 🌿🔥" />
+    <meta name="twitter:image" content="/icon-512.png" />
+    <title>CannaPickForMe</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icon-512.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Age Gate -->
+    <div id="age-gate" class="screen age-gate">
+      <div class="age-gate__content">
+        <div class="age-gate__smoke-bg"></div>
+        <div class="age-gate__logo">
+          <span class="age-gate__icon">🌿</span>
+          <h1 class="age-gate__title">Canna<span class="text-glow">Pick</span>ForMe</h1>
+          <p class="age-gate__subtitle">Let the universe decide.</p>
+        </div>
+        <div class="age-gate__question">
+          <p>Are you 21 years of age or older?</p>
+          <div class="age-gate__buttons">
+            <button id="age-yes" class="btn btn--primary btn--glow">Yeah, Let's Go 🔥</button>
+            <button id="age-no" class="btn btn--ghost">Nah, I'm Out</button>
+          </div>
+        </div>
+        <p class="age-gate__legal">You must be 21+ to use this app. By continuing, you agree to our terms and confirm you are of legal age in your jurisdiction.</p>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div id="disclaimer-screen" class="screen disclaimer hidden">
+      <div class="disclaimer__content">
+        <div class="disclaimer__icon">⚖️</div>
+        <p class="disclaimer__text">Cannabis must be consumed in a legal space.</p>
+        <p class="disclaimer__sub">Tap anywhere to continue</p>
+        <div class="disclaimer__legal">
+          <details>
+            <summary>Legal Disclaimers</summary>
+            <ul>
+              <li>Cannabis remains a Schedule I Controlled Substance under federal law.</li>
+<li>These products have not been evaluated by the FDA and are not intended to diagnose, treat, cure, or prevent any disease.</li>
+              <li>Do not drive or operate heavy machinery while impaired.</li>
+              <li>Consult a physician before use, especially if pregnant, breastfeeding, or have pre-existing conditions.</li>
+            </ul>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- Home -->
+    <div id="home-screen" class="screen home hidden">
+      <div class="home__header">
+        <span class="home__icon">🌿</span>
+        <h1 class="home__title">Canna<span class="text-glow">Pick</span>ForMe</h1>
+        <p class="home__tagline">What are we smokin' tonight?</p>
+      </div>
+      <div class="home__actions">
+        <button id="btn-pick" class="btn btn--primary btn--large btn--glow" disabled>
+          <span class="btn__emoji">🎲</span>
+          <span class="btn__text">Pick For Me</span>
+        </button>
+        <button id="btn-stash" class="btn btn--secondary btn--large">
+          <span class="btn__emoji">🗂️</span>
+          <span class="btn__text">My Stash</span>
+          <span id="stash-count" class="badge">0</span>
+        </button>
+      </div>
+      <p id="stash-hint" class="home__hint">Add at least 2 strains to your stash to get started!</p>
+      <footer class="home__footer">
+        <a href="#" id="legal-link" class="footer-link">Legal Info</a>
+        <span class="footer-divider">•</span>
+        <span class="footer-text">Made with 💨 in California</span>
+      </footer>
+    </div>
+
+    <!-- Stash -->
+    <div id="stash-screen" class="screen stash hidden">
+      <div class="screen__header">
+        <button id="stash-back" class="btn btn--icon">←</button>
+        <h2>My Stash</h2>
+        <button id="btn-add-custom" class="btn btn--icon" title="Add custom strain">+</button>
+      </div>
+      <div class="stash__tabs">
+        <button class="tab tab--active" data-tab="browse">Browse</button>
+        <button class="tab" data-tab="my-stash">My Stash <span id="tab-stash-count" class="badge badge--small">0</span></button>
+      </div>
+      <div id="browse-panel" class="stash__panel">
+        <div class="search-bar">
+          <input type="text" id="strain-search" placeholder="Search strains..." autocomplete="off" />
+          <div class="search-filters">
+            <button class="filter-chip filter-chip--active" data-filter="all">All</button>
+            <button class="filter-chip" data-filter="sativa">Sativa</button>
+            <button class="filter-chip" data-filter="indica">Indica</button>
+            <button class="filter-chip" data-filter="hybrid">Hybrid</button>
+          </div>
+        </div>
+        <div id="strain-list" class="strain-list"></div>
+      </div>
+      <div id="my-stash-panel" class="stash__panel hidden">
+        <div id="my-stash-list" class="strain-list"></div>
+        <div id="empty-stash" class="empty-state">
+          <span class="empty-state__icon">🫙</span>
+          <p>Your stash is empty!</p>
+          <p class="empty-state__sub">Browse strains and add them here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Strain Modal -->
+    <div id="custom-modal" class="modal hidden">
+      <div class="modal__backdrop"></div>
+      <div class="modal__content">
+        <h3>Add Custom Strain</h3>
+        <form id="custom-strain-form">
+          <div class="form-group">
+            <label for="custom-name">Strain Name *</label>
+            <input type="text" id="custom-name" required placeholder="e.g., Grandma's Secret" />
+          </div>
+          <div class="form-group">
+            <label>Type *</label>
+            <div class="radio-group">
+              <label class="radio-pill"><input type="radio" name="custom-type" value="indica" required /><span>Indica</span></label>
+              <label class="radio-pill"><input type="radio" name="custom-type" value="sativa" /><span>Sativa</span></label>
+              <label class="radio-pill"><input type="radio" name="custom-type" value="hybrid" checked /><span>Hybrid</span></label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Effects (pick at least 1) *</label>
+            <div id="custom-effects" class="chip-select"></div>
+          </div>
+          <div class="form-group">
+            <label>Flavors</label>
+            <div id="custom-flavors" class="chip-select"></div>
+          </div>
+          <div class="modal__actions">
+            <button type="button" id="custom-cancel" class="btn btn--ghost">Cancel</button>
+            <button type="submit" class="btn btn--primary">Add to Stash 🌿</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Effect Override Modal -->
+    <div id="override-modal" class="modal hidden">
+      <div class="modal__backdrop"></div>
+      <div class="modal__content">
+        <h3 id="override-title">Edit Effects</h3>
+        <p class="modal__sub">Your edits are saved locally only.</p>
+        <div id="override-effects" class="chip-select"></div>
+        <div class="modal__actions">
+          <button id="override-reset" class="btn btn--ghost">Reset to Default</button>
+          <button id="override-save" class="btn btn--primary">Save ✓</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session (4 Questions) -->
+    <div id="session-screen" class="screen session hidden">
+      <div class="session__progress">
+        <div class="session__progress-bar">
+          <div id="progress-fill" class="session__progress-fill" style="width: 25%"></div>
+        </div>
+        <span id="progress-label" class="session__progress-label">1 / 4</span>
+      </div>
+      <button id="session-back" class="btn btn--icon session__back">←</button>
+      <div id="session-content" class="session__content">
+        <!-- Dynamically filled -->
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="result-screen" class="screen result hidden">
+      <div id="weighing-phase" class="result__weighing">
+        <h2 class="result__weighing-title">Weighing Your Options...</h2>
+        <div class="scales">
+          <div class="scales__beam">
+            <div class="scales__pillar"></div>
+            <div class="scales__arm">
+              <div class="scales__plate scales__plate--left">
+                <div id="scale-left-names" class="scales__names"></div>
+              </div>
+              <div class="scales__plate scales__plate--right">
+                <div id="scale-right-names" class="scales__names"></div>
+              </div>
+            </div>
+          </div>
+          <div class="scales__base"></div>
+        </div>
+        <p class="result__weighing-sub">The spirits of Anubis judge your stash...</p>
+      </div>
+      <div id="reveal-phase" class="result__reveal hidden">
+        <div class="smoke-container">
+          <div class="smoke smoke--1"></div>
+          <div class="smoke smoke--2"></div>
+          <div class="smoke smoke--3"></div>
+          <div class="smoke smoke--4"></div>
+          <div class="smoke smoke--5"></div>
+        </div>
+        <div class="result__card">
+          <h2 class="result__smoke-text text-glow-strong">SMOKE</h2>
+          <h1 id="result-strain-name" class="result__strain-name"></h1>
+          <div id="result-strain-type" class="result__strain-type"></div>
+          <div id="result-match-score" class="result__score"></div>
+          <p id="result-reasoning" class="result__reasoning"></p>
+          <div id="result-effects" class="result__effects"></div>
+        </div>
+        <div class="result__actions">
+          <button id="btn-share" class="btn btn--secondary">📤 Share</button>
+          <button id="btn-home" class="btn btn--primary btn--glow">🏠 Return Home</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

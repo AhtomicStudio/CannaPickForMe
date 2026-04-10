@@ -1,0 +1,45 @@
+[
+  {
+    "id": "mood",
+    "label": "What mood are you in right now?",
+    "emoji": "🌙",
+    "options": [
+      { "value": "chill", "label": "Chill", "emoji": "😌" },
+      { "value": "social", "label": "Social", "emoji": "🗣️" },
+      { "value": "creative", "label": "Creative", "emoji": "🎨" },
+      { "value": "energetic", "label": "Energetic", "emoji": "⚡" }
+    ]
+  },
+  {
+    "id": "goal",
+    "label": "What's your goal for this sesh?",
+    "emoji": "🎯",
+    "options": [
+      { "value": "relax", "label": "Relax & Unwind", "emoji": "🛋️" },
+      { "value": "productive", "label": "Get Things Done", "emoji": "💪" },
+      { "value": "fun", "label": "Have Fun", "emoji": "🎉" },
+      { "value": "sleep", "label": "Sleep", "emoji": "💤" }
+    ]
+  },
+  {
+    "id": "intensity",
+    "label": "How high do you wanna fly?",
+    "emoji": "🚀",
+    "options": [
+      { "value": "low", "label": "Low & Mellow", "emoji": "🍃" },
+      { "value": "moderate", "label": "Moderate Cruise", "emoji": "✈️" },
+      { "value": "high", "label": "Sky High", "emoji": "🛸" }
+    ]
+  },
+  {
+    "id": "vibe",
+    "label": "Pick a vibe:",
+    "emoji": "✨",
+    "options": [
+      { "value": "solo", "label": "Solo Session", "emoji": "🧘" },
+      { "value": "friends", "label": "Kickback with Friends", "emoji": "👥" },
+      { "value": "movie", "label": "Movie Night", "emoji": "🎬" },
+      { "value": "adventure", "label": "Adventure", "emoji": "🏔️" }
+    ]
+  }
+]
