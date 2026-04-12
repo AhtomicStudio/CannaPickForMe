@@ -1549,3 +1549,707 @@ body {
   border-radius: 4px;
 }
 
+
+/* ============================================================
+   ANIMATION HOST — shared container for all weighing animations
+   ============================================================ */
+.animation-host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 260px;
+  position: relative;
+  overflow: hidden;
+}
+/* ============================================================
+   MAGIC 8-BALL ANIMATION
+   ============================================================ */
+.anim-ball-scene {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.anim-ball {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 30%, #4a4a4a 0%, #111 45%, #000 100%);
+  box-shadow:
+    0 0 0 3px #222,
+    0 6px 24px rgba(0, 0, 0, 0.9),
+    inset 0 -8px 24px rgba(255, 255, 255, 0.04),
+    inset 0 4px 8px rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+  animation: anim-ball-shake 0.85s ease-in-out infinite;
+}
+.anim-ball::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 22px;
+  width: 30px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  filter: blur(4px);
+  transform: rotate(-30deg);
+}
+.anim-ball-window {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #001a08 0%, #002a10 60%, #000f05 100%);
+  border: 2px solid #0a3a18;
+  box-shadow: inset 0 0 16px rgba(74, 222, 128, 0.4), 0 0 8px rgba(74, 222, 128, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.anim-ball-mist {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(74, 222, 128, 0.5) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 30% 70%, rgba(74, 222, 128, 0.3) 0%, transparent 60%);
+  animation: anim-ball-mist 0.85s ease-in-out infinite;
+}
+.anim-ball-reveal {
+  position: relative;
+  z-index: 2;
+  font-size: 0.48rem;
+  font-weight: 700;
+  color: #4ade80;
+  text-align: center;
+  text-shadow: 0 0 6px #4ade80;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.anim-ball-reveal.visible {
+  opacity: 1;
+}
+.anim-ball-cloud {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 35px;
+  background: radial-gradient(ellipse, rgba(74, 222, 128, 0.25) 0%, transparent 70%);
+  filter: blur(8px);
+  pointer-events: none;
+  animation: anim-ball-cloud 1.5s ease-in-out infinite;
+}
+@keyframes anim-ball-shake {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  8%        { transform: translateX(-7px) translateY(-4px) rotate(-6deg); }
+  16%       { transform: translateX(8px) translateY(3px) rotate(7deg); }
+  24%       { transform: translateX(-9px) translateY(-5px) rotate(-8deg); }
+  32%       { transform: translateX(7px) translateY(6px) rotate(5deg); }
+  40%       { transform: translateX(-5px) translateY(-3px) rotate(-4deg); }
+  48%       { transform: translateX(6px) translateY(2px) rotate(3deg); }
+  56%       { transform: translateX(-3px) translateY(-4px) rotate(-2deg); }
+  64%       { transform: translateX(4px) translateY(1px) rotate(2deg); }
+  72%       { transform: translateX(-2px) translateY(-1px) rotate(-1deg); }
+  80%       { transform: translateX(0) translateY(0) rotate(0deg); }
+}
+@keyframes anim-ball-mist {
+  0%, 100% { opacity: 0.8; transform: rotate(0deg) scale(1); }
+  40%      { opacity: 0.3; transform: rotate(120deg) scale(1.2); }
+  70%      { opacity: 1;   transform: rotate(240deg) scale(0.9); }
+}
+@keyframes anim-ball-cloud {
+  0%, 100% { opacity: 0.3; transform: translateX(-50%) scaleY(0.6); bottom: 0; }
+  50%      { opacity: 1;   transform: translateX(-50%) scaleY(1.4); bottom: 10px; }
+}
+/* ============================================================
+   PLINKO DROP ANIMATION
+   ============================================================ */
+.anim-plinko-board {
+  width: 140px;
+  height: 205px;
+  background: #07070f;
+  border: 1.5px solid #1e1e2e;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.anim-plinko-peg {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 35% 30%, #d8b4fe, #7c3aed);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(192, 132, 252, 0.7);
+}
+.anim-plinko-leaf {
+  position: absolute;
+  font-size: 0.72rem;
+  line-height: 1;
+  top: 6px;
+  left: 62px;
+  filter: drop-shadow(0 0 4px rgba(74, 222, 128, 0.8));
+  animation: anim-plinko-drop 4.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  z-index: 5;
+}
+.anim-plinko-slots {
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  border-top: 1px solid #2a2a3a;
+}
+.anim-plinko-slot {
+  flex: 1;
+  border-left: 1px solid #2a2a3a;
+  font-size: 0.38rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: color 0.3s, background 0.3s;
+}
+.anim-plinko-slot--winner {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+  font-weight: 700;
+}
+@keyframes anim-plinko-drop {
+  0%   { top: 6px;   left: 62px;  transform: rotate(0deg); }
+  12%  { top: 30px;  left: 44px;  transform: rotate(-20deg); }
+  24%  { top: 55px;  left: 70px;  transform: rotate(15deg); }
+  36%  { top: 78px;  left: 48px;  transform: rotate(-22deg); }
+  48%  { top: 100px; left: 66px;  transform: rotate(12deg); }
+  60%  { top: 122px; left: 55px;  transform: rotate(-14deg); }
+  72%  { top: 144px; left: 62px;  transform: rotate(8deg); }
+  84%  { top: 158px; left: 63px;  transform: rotate(-4deg); }
+  100% { top: 163px; left: 63px;  transform: rotate(0deg); }
+}
+/* ============================================================
+   NOTES IN A BOX ANIMATION
+   ============================================================ */
+.anim-box-scene {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 200px;
+  width: 180px;
+}
+.anim-box-body {
+  width: 130px;
+  height: 80px;
+  background: linear-gradient(160deg, #4a3520, #2e1f0f);
+  border: 2px solid #8b6534;
+  border-radius: 4px 4px 8px 8px;
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.anim-box-lid {
+  position: absolute;
+  top: -16px;
+  left: -2px;
+  right: -2px;
+  height: 18px;
+  background: linear-gradient(160deg, #5c4228, #3d2812);
+  border: 2px solid #8b6534;
+  border-radius: 4px 4px 0 0;
+  animation: anim-box-lid 5.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+.anim-box-note {
+  position: absolute;
+  width: 28px;
+  height: 22px;
+  background: #f5f0dc;
+  border-radius: 2px;
+  font-size: 0.32rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+.anim-box-note::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+}
+.anim-box-note:nth-child(2) { top: 12px; left: 10px;  animation: anim-box-n1 5s ease-in-out infinite; }
+.anim-box-note:nth-child(3) { top: 16px; left: 48px;  animation: anim-box-n2 5s ease-in-out infinite; }
+.anim-box-note:nth-child(4) { top: 10px; left: 86px;  animation: anim-box-n3 5s ease-in-out infinite; }
+.anim-box-chosen {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 42px;
+  height: 32px;
+  background: linear-gradient(160deg, #fffde0, #fff9c0);
+  border: 1.5px solid #d4c040;
+  border-radius: 3px;
+  font-size: 0.4rem;
+  font-weight: 700;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
+  padding: 2px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), 0 0 12px rgba(212, 192, 64, 0.4);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 10;
+}
+.anim-box-chosen.visible {
+  animation: anim-box-rise 0.6s ease-out forwards;
+  opacity: 1;
+}
+@keyframes anim-box-lid {
+  0%, 55%, 100% { transform: rotate(0deg) translateY(0); }
+  60%            { transform: rotate(-20deg) translateY(-8px); }
+  67%            { transform: rotate(6deg) translateY(-3px); }
+  73%            { transform: rotate(-12deg) translateY(-5px); }
+  80%            { transform: rotate(3deg) translateY(-1px); }
+  86%            { transform: rotate(0deg) translateY(0); }
+}
+@keyframes anim-box-n1 {
+  0%, 25%  { top: 12px; left: 10px;  transform: rotate(-14deg); }
+  35%, 55% { top: 6px;  left: 38px;  transform: rotate(10deg); }
+  65%, 100%{ top: 12px; left: 10px;  transform: rotate(-14deg); }
+}
+@keyframes anim-box-n2 {
+  0%, 25%  { top: 16px; left: 48px;  transform: rotate(6deg); }
+  35%, 55% { top: 8px;  left: 70px;  transform: rotate(-9deg); }
+  65%, 100%{ top: 16px; left: 48px;  transform: rotate(6deg); }
+}
+@keyframes anim-box-n3 {
+  0%, 25%  { top: 10px; left: 86px;  transform: rotate(-4deg); }
+  35%, 55% { top: 14px; left: 18px;  transform: rotate(12deg); }
+  65%, 100%{ top: 10px; left: 86px;  transform: rotate(-4deg); }
+}
+@keyframes anim-box-rise {
+  from { transform: translateX(-50%) translateY(10px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(-60px); opacity: 1; }
+}
+/* ============================================================
+   TAROT CARD DRAW ANIMATION
+   ============================================================ */
+.anim-tarot-scene {
+  position: relative;
+  width: 200px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.anim-tarot-card {
+  width: 52px;
+  height: 90px;
+  border-radius: 6px;
+  position: absolute;
+  border: 1.5px solid #4a3a6a;
+  background: repeating-linear-gradient(
+    45deg,
+    #1a1030 0, #1a1030 4px,
+    #261848 4px, #261848 8px
+  );
+  transform-origin: bottom center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.anim-tarot-card--c1 { animation: anim-tarot-fan1 4s ease-in-out infinite; }
+.anim-tarot-card--c2 { animation: anim-tarot-fan2 4s ease-in-out infinite; }
+.anim-tarot-card--c3 { animation: anim-tarot-fan3 5s ease-in-out forwards; z-index: 3; }
+.anim-tarot-card--c4 { animation: anim-tarot-fan4 4s ease-in-out infinite; }
+.anim-tarot-card--c5 { animation: anim-tarot-fan5 4s ease-in-out infinite; }
+.anim-tarot-card--winner {
+  background: linear-gradient(160deg, #0d2e16, #1a5c30);
+  border-color: #4ade80;
+  box-shadow: 0 0 24px rgba(74, 222, 128, 0.5), 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.anim-tarot-label {
+  position: absolute;
+  z-index: 4;
+  font-size: 0.44rem;
+  font-weight: 700;
+  color: #4ade80;
+  text-shadow: 0 0 8px #4ade80;
+  text-align: center;
+  line-height: 1.3;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.anim-tarot-label.visible {
+  opacity: 1;
+}
+.anim-tarot-spark {
+  position: absolute;
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+  transition: opacity 0.3s ease, transform 0.6s ease;
+}
+.anim-tarot-spark.pop {
+  opacity: 1;
+  transform: scale(1.3) translateY(-8px);
+}
+@keyframes anim-tarot-fan1 {
+  0%, 30%  { transform: rotate(-32deg) translateX(-38px); }
+  40%, 60% { transform: rotate(-38deg) translateX(-44px) translateY(-4px); }
+  70%, 100%{ transform: rotate(-32deg) translateX(-38px); }
+}
+@keyframes anim-tarot-fan2 {
+  0%, 30%  { transform: rotate(-16deg) translateX(-19px); }
+  40%, 60% { transform: rotate(-20deg) translateX(-23px) translateY(-2px); }
+  70%, 100%{ transform: rotate(-16deg) translateX(-19px); }
+}
+@keyframes anim-tarot-fan3 {
+  0%, 70%  { transform: rotateY(0deg) rotate(0deg); }
+  80%      { transform: rotateY(90deg) rotate(0deg); }
+  90%, 100%{ transform: rotateY(0deg) rotate(0deg); }
+}
+@keyframes anim-tarot-fan4 {
+  0%, 30%  { transform: rotate(16deg) translateX(19px); }
+  40%, 60% { transform: rotate(20deg) translateX(23px) translateY(-2px); }
+  70%, 100%{ transform: rotate(16deg) translateX(19px); }
+}
+@keyframes anim-tarot-fan5 {
+  0%, 30%  { transform: rotate(32deg) translateX(38px); }
+  40%, 60% { transform: rotate(38deg) translateX(44px) translateY(-4px); }
+  70%, 100%{ transform: rotate(32deg) translateX(38px); }
+}
+/* ============================================================
+   SLOT MACHINE PULL ANIMATION
+   ============================================================ */
+.anim-slots-scene {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.anim-slots-machine {
+  width: 120px;
+  height: 150px;
+  background: linear-gradient(160deg, #1a1a2e, #12122a);
+  border: 2px solid #44447a;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  box-shadow: 0 0 24px rgba(192, 132, 252, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+.anim-slots-top {
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+  color: #c084fc;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.anim-slots-reels {
+  display: flex;
+  gap: 4px;
+}
+.anim-slots-reel {
+  width: 28px;
+  height: 54px;
+  background: #0a0a18;
+  border-radius: 4px;
+  border: 1px solid #333;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.anim-slots-reel::before,
+.anim-slots-reel::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 12px;
+  z-index: 2;
+  pointer-events: none;
+}
+.anim-slots-reel::before { top: 0;    background: linear-gradient(to bottom, #0a0a18, transparent); }
+.anim-slots-reel::after  { bottom: 0; background: linear-gradient(to top,    #0a0a18, transparent); }
+.anim-slots-reel-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  animation: anim-slots-spin 0.3s linear infinite;
+}
+.anim-slots-reel-inner span { font-size: 1rem; line-height: 1.4; }
+.anim-slots-reel.locked .anim-slots-reel-inner {
+  animation-play-state: paused;
+}
+.anim-slots-winline {
+  position: absolute;
+  top: 50%;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgba(74, 222, 128, 0.6), transparent);
+  transform: translateY(-50%);
+}
+.anim-slots-readout {
+  font-size: 0.45rem;
+  font-weight: 700;
+  color: #4ade80;
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  min-height: 10px;
+}
+.anim-slots-readout.visible {
+  opacity: 1;
+}
+.anim-slots-glitter {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.6s ease;
+}
+.anim-slots-glitter.burst {
+  opacity: 1;
+  transform: translate(var(--gx), var(--gy)) scale(0.3);
+}
+.anim-slots-star {
+  position: absolute;
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.5s ease;
+}
+.anim-slots-star.pop {
+  opacity: 1;
+  transform: scale(1.3) translateY(-6px);
+}
+.anim-slots-lever {
+  width: 7px;
+  height: 34px;
+  background: linear-gradient(to bottom, #c084fc, #7c3aed);
+  border-radius: 4px;
+  position: relative;
+  animation: anim-slots-lever 3s ease-in-out infinite;
+  transform-origin: top center;
+  flex-shrink: 0;
+}
+.anim-slots-lever::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 35% 35%, #f87171, #dc2626);
+  border-radius: 50%;
+  position: absolute;
+  bottom: -5px;
+  left: -3.5px;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.7);
+}
+@keyframes anim-slots-spin {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+@keyframes anim-slots-lever {
+  0%, 25%, 100% { transform: rotate(0deg); }
+  12%            { transform: rotate(32deg); }
+}
+/* ============================================================
+   CRYSTAL BALL ORACLE ANIMATION
+   ============================================================ */
+.anim-crystal-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(120, 40, 180, 0.4) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,  rgba(80, 20, 140, 0.22) 0%, transparent 80%);
+  overflow: hidden;
+}
+.anim-crystal-haze {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(18px);
+  pointer-events: none;
+}
+.anim-crystal-haze--1 {
+  width: 90px; height: 44px;
+  background: rgba(160, 80, 255, 0.22);
+  bottom: 10%; left: 5%;
+  animation: anim-crystal-haze 4s ease-in-out infinite;
+}
+.anim-crystal-haze--2 {
+  width: 70px; height: 34px;
+  background: rgba(120, 40, 220, 0.28);
+  bottom: 20%; right: 6%;
+  animation: anim-crystal-haze 4s ease-in-out infinite 1.2s;
+}
+.anim-crystal-haze--3 {
+  width: 110px; height: 55px;
+  background: rgba(74, 222, 128, 0.1);
+  bottom: 5%; left: 18%;
+  animation: anim-crystal-haze 4s ease-in-out infinite 0.6s;
+}
+.anim-crystal-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+.anim-crystal-ball {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 28%,
+    rgba(200, 220, 255, 0.35) 0%,
+    rgba(100, 140, 255, 0.15) 25%,
+    rgba(60, 80, 200, 0.1) 55%,
+    rgba(10, 5, 40, 0.9) 100%
+  );
+  border: 2px solid rgba(160, 180, 255, 0.35);
+  box-shadow:
+    0 0 40px rgba(120, 80, 255, 0.5),
+    0 0 80px rgba(80, 40, 200, 0.25),
+    inset 0 0 40px rgba(120, 80, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  animation: anim-crystal-breath 3.5s ease-in-out infinite;
+}
+.anim-crystal-smoke {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.anim-crystal-smoke--1 {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 90%, rgba(74, 222, 128, 0.4) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 60% at 20% 60%, rgba(192, 132, 252, 0.35) 0%, transparent 65%);
+  animation: anim-crystal-rot1 2.8s linear infinite;
+}
+.anim-crystal-smoke--2 {
+  background:
+    radial-gradient(ellipse 55% 40% at 80% 40%, rgba(160, 60, 255, 0.4) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 55% at 30% 80%, rgba(74, 222, 128, 0.25) 0%, transparent 65%);
+  animation: anim-crystal-rot2 3.5s linear infinite reverse;
+}
+.anim-crystal-smoke--3 {
+  background: radial-gradient(ellipse 80% 30% at 50% 60%, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+  animation: anim-crystal-rot3 4.2s ease-in-out infinite;
+}
+.anim-crystal-shine {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  width: 26px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  filter: blur(4px);
+  transform: rotate(-30deg);
+}
+.anim-crystal-tendril {
+  position: absolute;
+  bottom: 100%;
+  border-radius: 50%;
+  filter: blur(6px);
+  pointer-events: none;
+  animation: anim-crystal-tendril 3s ease-in-out infinite;
+}
+.anim-crystal-tendril--1 { width: 12px; height: 28px; background: rgba(160, 80, 255, 0.4);  left: 38%; animation-delay: 0s; }
+.anim-crystal-tendril--2 { width: 8px;  height: 20px; background: rgba(74, 222, 128, 0.3);  left: 54%; animation-delay: 0.7s; }
+.anim-crystal-tendril--3 { width: 10px; height: 24px; background: rgba(160, 80, 255, 0.35); left: 46%; animation-delay: 1.4s; }
+.anim-crystal-name {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.46rem;
+  font-weight: 700;
+  color: #e0d8ff;
+  text-shadow: 0 0 10px rgba(180, 140, 255, 0.9);
+  text-align: center;
+  z-index: 3;
+  line-height: 1.3;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+.anim-crystal-name.visible {
+  opacity: 1;
+}
+.anim-crystal-base {
+  width: 75px;
+  height: 16px;
+  background: linear-gradient(to right, #120820, #3d1a7a, #120820);
+  border-radius: 6px;
+  margin-top: 6px;
+  box-shadow: 0 4px 16px rgba(100, 0, 200, 0.3);
+}
+@keyframes anim-crystal-haze {
+  0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.5; }
+  50%      { transform: translateY(-12px) scaleX(1.2); opacity: 1; }
+}
+@keyframes anim-crystal-breath {
+  0%, 100% { box-shadow: 0 0 40px rgba(120,80,255,0.5),  0 0 80px rgba(80,40,200,0.25),  inset 0 0 40px rgba(120,80,255,0.15); }
+  50%      { box-shadow: 0 0 60px rgba(120,80,255,0.85), 0 0 120px rgba(80,40,200,0.4), inset 0 0 60px rgba(120,80,255,0.25); }
+}
+@keyframes anim-crystal-rot1 {
+  from { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(1.15); }
+  to   { transform: rotate(360deg) scale(1); }
+}
+@keyframes anim-crystal-rot2 {
+  from { transform: rotate(0deg) scale(1.1); }
+  50%  { transform: rotate(180deg) scale(0.9); }
+  to   { transform: rotate(360deg) scale(1.1); }
+}
+@keyframes anim-crystal-rot3 {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.2); }
+}
+@keyframes anim-crystal-tendril {
+  0%   { opacity: 0; transform: translateY(0) scaleX(1); }
+  20%  { opacity: 0.8; }
+  80%  { opacity: 0.2; transform: translateY(-28px) scaleX(1.8); }
+  100% { opacity: 0;   transform: translateY(-40px) scaleX(2.4); }
+}

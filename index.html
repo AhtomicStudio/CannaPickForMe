@@ -188,6 +188,19 @@
       </div>
     </div>
 
+    <!-- Better Match Modal -->
+    <div id="better-match-modal" class="modal hidden">
+      <div class="modal__backdrop"></div>
+      <div class="modal__content" style="max-height: 80vh; display: flex; flex-direction: column;">
+        <h3>Better Matches 🌿</h3>
+        <p class="modal__sub">These strains match your vibe better than your current stash.</p>
+        <div id="better-match-list" class="strain-list" style="overflow-y: auto; flex-grow: 1; margin-bottom: 1rem;"></div>
+        <div class="modal__actions" style="margin-top: 0;">
+          <button id="better-match-close" class="btn btn--primary" style="width: 100%;">Close</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Session (4 Questions) -->
     <div id="session-screen" class="screen session hidden">
       <div class="session__progress">
@@ -206,21 +219,8 @@
     <div id="result-screen" class="screen result hidden">
       <div id="weighing-phase" class="result__weighing">
         <h2 class="result__weighing-title">Weighing Your Options...</h2>
-        <div class="scales">
-          <div class="scales__beam">
-            <div class="scales__pillar"></div>
-            <div class="scales__arm">
-              <div class="scales__plate scales__plate--left">
-                <div id="scale-left-names" class="scales__names"></div>
-              </div>
-              <div class="scales__plate scales__plate--right">
-                <div id="scale-right-names" class="scales__names"></div>
-              </div>
-            </div>
-          </div>
-          <div class="scales__base"></div>
-        </div>
-        <p class="result__weighing-sub">The spirits of Anubis judge your stash...</p>
+        <div id="animation-host" class="animation-host"></div>
+        <p id="weighing-quote" class="result__weighing-sub"></p>
       </div>
       <div id="reveal-phase" class="result__reveal hidden">
         <div class="smoke-container">
@@ -237,6 +237,9 @@
           <div id="result-match-score" class="result__score"></div>
           <p id="result-reasoning" class="result__reasoning"></p>
           <div id="result-effects" class="result__effects"></div>
+        </div>
+        <div id="better-match-container" class="hidden" style="margin-top: 1.5rem; margin-bottom: 1.5rem; text-align: center;">
+          <button id="btn-better-match" class="btn btn--secondary" style="font-size: 0.85rem; padding: 0.6rem; border: 1px solid rgba(255,255,255,0.2);">Looking for a strain that's a better match but not in your stash?</button>
         </div>
         <div class="result__actions">
           <button id="btn-share" class="btn btn--secondary">📤 Share</button>
