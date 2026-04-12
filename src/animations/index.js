@@ -3,6 +3,7 @@ import { eightBallAnimation } from './eightball.js';
 import { plinkoAnimation }    from './plinko.js';
 import { boxAnimation }       from './box.js';
 import { tarotAnimation }     from './tarot.js';
+import { slotsAnimation }     from './slots.js';
 
 export const ANIMATIONS = [
   scalesAnimation,
@@ -10,6 +11,7 @@ export const ANIMATIONS = [
   plinkoAnimation,
   boxAnimation,
   tarotAnimation,
+  slotsAnimation,
 ];
 
 export function pickAnimation() {

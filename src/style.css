@@ -1945,3 +1945,146 @@ body {
   40%, 60% { transform: rotate(38deg) translateX(44px) translateY(-4px); }
   70%, 100%{ transform: rotate(32deg) translateX(38px); }
 }
+/* ============================================================
+   SLOT MACHINE PULL ANIMATION
+   ============================================================ */
+.anim-slots-scene {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.anim-slots-machine {
+  width: 120px;
+  height: 150px;
+  background: linear-gradient(160deg, #1a1a2e, #12122a);
+  border: 2px solid #44447a;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  box-shadow: 0 0 24px rgba(192, 132, 252, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+.anim-slots-top {
+  font-size: 0.48rem;
+  letter-spacing: 0.12em;
+  color: #c084fc;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.anim-slots-reels {
+  display: flex;
+  gap: 4px;
+}
+.anim-slots-reel {
+  width: 28px;
+  height: 54px;
+  background: #0a0a18;
+  border-radius: 4px;
+  border: 1px solid #333;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.anim-slots-reel::before,
+.anim-slots-reel::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 12px;
+  z-index: 2;
+  pointer-events: none;
+}
+.anim-slots-reel::before { top: 0;    background: linear-gradient(to bottom, #0a0a18, transparent); }
+.anim-slots-reel::after  { bottom: 0; background: linear-gradient(to top,    #0a0a18, transparent); }
+.anim-slots-reel-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  animation: anim-slots-spin 0.3s linear infinite;
+}
+.anim-slots-reel-inner span { font-size: 1rem; line-height: 1.4; }
+.anim-slots-reel.locked .anim-slots-reel-inner {
+  animation-play-state: paused;
+}
+.anim-slots-winline {
+  position: absolute;
+  top: 50%;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, rgba(74, 222, 128, 0.6), transparent);
+  transform: translateY(-50%);
+}
+.anim-slots-readout {
+  font-size: 0.45rem;
+  font-weight: 700;
+  color: #4ade80;
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  min-height: 10px;
+}
+.anim-slots-readout.visible {
+  opacity: 1;
+}
+.anim-slots-glitter {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.6s ease;
+}
+.anim-slots-glitter.burst {
+  opacity: 1;
+  transform: translate(var(--gx), var(--gy)) scale(0.3);
+}
+.anim-slots-star {
+  position: absolute;
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.5s ease;
+}
+.anim-slots-star.pop {
+  opacity: 1;
+  transform: scale(1.3) translateY(-6px);
+}
+.anim-slots-lever {
+  width: 7px;
+  height: 34px;
+  background: linear-gradient(to bottom, #c084fc, #7c3aed);
+  border-radius: 4px;
+  position: relative;
+  animation: anim-slots-lever 3s ease-in-out infinite;
+  transform-origin: top center;
+  flex-shrink: 0;
+}
+.anim-slots-lever::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: radial-gradient(circle at 35% 35%, #f87171, #dc2626);
+  border-radius: 50%;
+  position: absolute;
+  bottom: -5px;
+  left: -3.5px;
+  box-shadow: 0 0 10px rgba(248, 113, 113, 0.7);
+}
+@keyframes anim-slots-spin {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+@keyframes anim-slots-lever {
+  0%, 25%, 100% { transform: rotate(0deg); }
+  12%            { transform: rotate(32deg); }
+}
