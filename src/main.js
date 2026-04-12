@@ -3,6 +3,7 @@ import strainsData from './data/strains.json';
 import questionsData from './data/questions.json';
 import { matchStrains } from './engine/matcher.js';
 import { getNextQuote } from './data/quotes.js';
+import { pickAnimation } from './animations/index.js';
 import {
   getStash, addToStash, removeFromStash, isInStash, clearStash,
   getCustomStrains, addCustomStrain, removeCustomStrain,
@@ -511,12 +512,14 @@ function startResult() {
     return;
   }
 
+  const WEIGH_DURATION = 5000;
+
   // Show weighing phase
   document.getElementById('weighing-phase').classList.remove('hidden');
   document.getElementById('reveal-phase').classList.add('hidden');
 
-  // Show no-repeat quote with optional author attribution
-  const quoteEl = document.querySelector('.result__weighing-sub');
+  // Populate quote (visible the full 5s, below the animation)
+  const quoteEl = document.getElementById('weighing-quote');
   if (quoteEl) {
     const quote = getNextQuote();
     quoteEl.textContent = quote.author
@@ -524,28 +527,18 @@ function startResult() {
       : `"${quote.text}"`;
   }
 
-  // Populate scale names
-  const leftNames = document.getElementById('scale-left-names');
-  const rightNames = document.getElementById('scale-right-names');
-  leftNames.innerHTML = '';
-  rightNames.innerHTML = '';
+  // Pick a random animation and render it into the host
+  const anim = pickAnimation();
+  const host = document.getElementById('animation-host');
+  host.innerHTML = '';
+  if (anim) {
+    anim.render(host, {
+      strainName: result.pickedStrain.name,
+      allScores: result.allScores,
+    });
+  }
 
-  // Animate strain names onto scales — spread evenly across 3 seconds
-  const sortedStrains = result.allScores;
-  const WEIGH_DURATION = 3000;
-  const nameDelay = Math.min(200, (WEIGH_DURATION - 600) / Math.max(sortedStrains.length, 1));
-
-  sortedStrains.forEach((s, i) => {
-    const side = i % 2 === 0 ? leftNames : rightNames;
-    setTimeout(() => {
-      const span = document.createElement('span');
-      span.className = 'scales__name';
-      span.textContent = s.strainName;
-      side.appendChild(span);
-    }, 300 + i * nameDelay);
-  });
-
-  // After exactly 3 seconds, reveal the result
+  // After 5 seconds, reveal the result
   setTimeout(() => {
     document.getElementById('weighing-phase').classList.add('hidden');
     document.getElementById('reveal-phase').classList.remove('hidden');
