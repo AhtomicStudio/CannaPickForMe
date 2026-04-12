@@ -587,6 +587,76 @@ function renderResult(result) {
   if (Math.random() < 0.25) {
     addSparkles(smokeTextEl);
   }
+
+  // --- BETTER MATCH LOGIC ---
+  const betterMatchContainer = document.getElementById('better-match-container');
+  if (betterMatchContainer) {
+    const btnBetterMatch = document.getElementById('btn-better-match');
+    betterMatchContainer.classList.add('hidden'); // Reset state
+
+    let topGlobalStrains = [];
+
+    if (matchScore < 100) {
+      // Find strains not in stash
+      const globalAvailable = getAllStrains().filter(s => !isInStash(s.id));
+      const globalResult = matchStrains(globalAvailable, sessionAnswers);
+      
+      if (globalResult && globalResult.allScores) {
+        // Find strains that have a strictly higher score than the current best stash match
+        topGlobalStrains = globalResult.allScores.filter(s => s.score > matchScore).slice(0, 3);
+        
+        if (topGlobalStrains.length > 0) {
+          betterMatchContainer.classList.remove('hidden');
+        }
+      }
+    }
+
+    if (btnBetterMatch) {
+      btnBetterMatch.onclick = () => {
+        showBetterMatchesModal(topGlobalStrains);
+      };
+    }
+  }
+}
+
+function showBetterMatchesModal(matchesData) {
+  const modal = document.getElementById('better-match-modal');
+  const list = document.getElementById('better-match-list');
+  const allStrains = getAllStrains();
+
+  list.innerHTML = matchesData.map(match => {
+    const strain = allStrains.find(s => s.id === match.strainId);
+    if (!strain) return '';
+    const effects = (strain.effectOverrides || strain.effects || []).slice(0, 3).join(', ');
+    const type = strain.type.charAt(0).toUpperCase() + strain.type.slice(1);
+    
+    return `
+      <div class="strain-card">
+        <div class="strain-card__type-dot" data-type="${strain.type}"></div>
+        <div class="strain-card__info">
+          <div class="strain-card__name" style="display: flex; justify-content: space-between; align-items: center;">
+            ${strain.name}
+            <span style="font-size: 0.8rem; color: #4ade80; padding: 2px 6px; background: rgba(74, 222, 128, 0.1); border-radius: 4px;">
+              ${match.score}% match
+            </span>
+          </div>
+          <div class="strain-card__meta">${type} · ${effects}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  modal.classList.remove('hidden');
+
+  const closeBtn = document.getElementById('better-match-close');
+  if (closeBtn) {
+    closeBtn.onclick = () => modal.classList.add('hidden');
+  }
+  
+  const backdrop = modal.querySelector('.modal__backdrop');
+  if (backdrop) {
+    backdrop.onclick = () => modal.classList.add('hidden');
+  }
 }
 
 function addSparkles(targetEl) {
