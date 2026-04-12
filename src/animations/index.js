@@ -1,9 +1,11 @@
 import { scalesAnimation }   from './scales.js';
 import { eightBallAnimation } from './eightball.js';
+import { plinkoAnimation }    from './plinko.js';
 
 export const ANIMATIONS = [
   scalesAnimation,
   eightBallAnimation,
+  plinkoAnimation,
 ];
 
 export function pickAnimation() {

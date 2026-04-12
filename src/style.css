@@ -1674,3 +1674,71 @@ body {
   0%, 100% { opacity: 0.3; transform: translateX(-50%) scaleY(0.6); bottom: 0; }
   50%      { opacity: 1;   transform: translateX(-50%) scaleY(1.4); bottom: 10px; }
 }
+/* ============================================================
+   PLINKO DROP ANIMATION
+   ============================================================ */
+.anim-plinko-board {
+  width: 140px;
+  height: 205px;
+  background: #07070f;
+  border: 1.5px solid #1e1e2e;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.anim-plinko-peg {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle at 35% 30%, #d8b4fe, #7c3aed);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(192, 132, 252, 0.7);
+}
+.anim-plinko-leaf {
+  position: absolute;
+  font-size: 0.72rem;
+  line-height: 1;
+  top: 6px;
+  left: 62px;
+  filter: drop-shadow(0 0 4px rgba(74, 222, 128, 0.8));
+  animation: anim-plinko-drop 4.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  z-index: 5;
+}
+.anim-plinko-slots {
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  border-top: 1px solid #2a2a3a;
+}
+.anim-plinko-slot {
+  flex: 1;
+  border-left: 1px solid #2a2a3a;
+  font-size: 0.38rem;
+  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: color 0.3s, background 0.3s;
+}
+.anim-plinko-slot--winner {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.12);
+  font-weight: 700;
+}
+@keyframes anim-plinko-drop {
+  0%   { top: 6px;   left: 62px;  transform: rotate(0deg); }
+  12%  { top: 30px;  left: 44px;  transform: rotate(-20deg); }
+  24%  { top: 55px;  left: 70px;  transform: rotate(15deg); }
+  36%  { top: 78px;  left: 48px;  transform: rotate(-22deg); }
+  48%  { top: 100px; left: 66px;  transform: rotate(12deg); }
+  60%  { top: 122px; left: 55px;  transform: rotate(-14deg); }
+  72%  { top: 144px; left: 62px;  transform: rotate(8deg); }
+  84%  { top: 158px; left: 63px;  transform: rotate(-4deg); }
+  100% { top: 163px; left: 63px;  transform: rotate(0deg); }
+}
