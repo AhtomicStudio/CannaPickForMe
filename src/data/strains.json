@@ -16,7 +16,8 @@
       "Blueberry"
     ],
     "description": "A legendary sativa-dominant hybrid known for full-body relaxation with gentle cerebral invigoration.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Blueberry × Haze"
   },
   {
     "id": "og-kush",
@@ -35,7 +36,8 @@
       "Woody"
     ],
     "description": "The backbone of West Coast cannabis varieties. Delivers heavy euphoria mixed with strong body relaxation.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Chemdawg × Lemon Thai × Hindu Kush"
   },
   {
     "id": "girl-scout-cookies",
@@ -54,7 +56,8 @@
       "Pungent"
     ],
     "description": "A potent hybrid with OG Kush and Durban Poison lineage. Known for full-body relaxation and cerebral euphoria.",
-    "rating": 4.6
+    "rating": 4.6,
+    "genetics": "OG Kush × Durban Poison"
   },
   {
     "id": "sour-diesel",
@@ -73,7 +76,8 @@
       "Earthy"
     ],
     "description": "A fast-acting sativa named for its pungent fuel-like aroma. Delivers dreamy cerebral effects.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Chemdawg × Super Skunk"
   },
   {
     "id": "granddaddy-purple",
@@ -92,7 +96,8 @@
       "Sweet"
     ],
     "description": "A famous indica cross of Purple Urkle and Big Bud. Known for complex grape and berry aroma and deep body relaxation.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Purple Urkle × Big Bud"
   },
   {
     "id": "jack-herer",
@@ -111,7 +116,8 @@
       "Woody"
     ],
     "description": "Named after the cannabis activist. A sativa-dominant strain known for its clear-headed, creative buzz.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Haze × (Northern Lights #5 × Shiva Skunk)"
   },
   {
     "id": "gelato",
@@ -133,7 +139,8 @@
     "rating": 4.6,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Sunset Sherbet × Thin Mint GSC"
   },
   {
     "id": "northern-lights",
@@ -152,7 +159,8 @@
       "Pine"
     ],
     "description": "One of the most famous indicas of all time. Produces dreamy euphoria and deep body relaxation.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Afghani × Thai"
   },
   {
     "id": "white-widow",
@@ -171,7 +179,8 @@
       "Pungent"
     ],
     "description": "A balanced hybrid first bred in the Netherlands. Known for its white crystal resin buds and burst of energy.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Brazilian Sativa × South Indian Indica"
   },
   {
     "id": "wedding-cake",
@@ -190,7 +199,8 @@
       "Earthy"
     ],
     "description": "Also known as Pink Cookies. A rich, tangy hybrid with relaxing and euphoric effects.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Triangle Kush × Animal Mints"
   },
   {
     "id": "gorilla-glue",
@@ -209,7 +219,8 @@
       "Pungent"
     ],
     "description": "A potent hybrid known for its heavy-handed euphoria and relaxation. Glues you to the couch.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Chem's Sister × Sour Dubb × Chocolate Diesel"
   },
   {
     "id": "pineapple-express",
@@ -228,7 +239,8 @@
       "Citrus"
     ],
     "description": "A sativa-dominant hybrid combining Trainwreck and Hawaiian. Delivers long-lasting energetic buzz.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Trainwreck × Hawaiian"
   },
   {
     "id": "purple-haze",
@@ -247,7 +259,8 @@
       "Sweet"
     ],
     "description": "A classic sativa that delivers dreamy, blissful euphoria and creative stimulation. Inspired by Jimi Hendrix.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Purple Thai × Haze"
   },
   {
     "id": "bubba-kush",
@@ -266,7 +279,8 @@
       "Sweet"
     ],
     "description": "A heavy indica known for its tranquilizing effects. Perfect for a slow, comfortable evening.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "OG Kush × Afghani"
   },
   {
     "id": "green-crack",
@@ -285,7 +299,8 @@
       "Mango"
     ],
     "description": "A sharp energy and focus provider. Great for daytime use with a tangy, fruity flavor.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Skunk #1 × Unknown Indica"
   },
   {
     "id": "ak-47",
@@ -304,7 +319,8 @@
       "Woody"
     ],
     "description": "Despite its aggressive name, this sativa-dominant hybrid delivers a steady, long-lasting mellow buzz.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Colombian × Mexican × Thai × Afghani"
   },
   {
     "id": "strawberry-cough",
@@ -323,7 +339,8 @@
       "Berry"
     ],
     "description": "Known for its sweet strawberry smell and potent sativa effects. Great for managing social anxiety.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Strawberry Field × Haze"
   },
   {
     "id": "zkittlez",
@@ -342,7 +359,8 @@
       "Grape"
     ],
     "description": "An award-winning indica with a fruity candy-like flavor profile. Delivers calming and happy effects.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Grape Ape × Grapefruit"
   },
   {
     "id": "runtz",
@@ -364,7 +382,8 @@
     "rating": 4.6,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Zkittlez × Gelato"
   },
   {
     "id": "mimosa",
@@ -383,7 +402,8 @@
       "Tropical"
     ],
     "description": "A sativa-leaning hybrid known for its rising cerebral effects and energizing buzz. Great morning strain.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Clementine × Purple Punch"
   },
   {
     "id": "do-si-dos",
@@ -402,7 +422,8 @@
       "Pungent"
     ],
     "description": "A potent indica cross of Girl Scout Cookies and Face Off OG. Heavy-hitting relaxation.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Girl Scout Cookies × Face Off OG"
   },
   {
     "id": "mac",
@@ -421,7 +442,8 @@
       "Earthy"
     ],
     "description": "A balanced, creamy hybrid cross of Alien Cookies x Starfighter x Columbian. Complex flavor and uplifting effects.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Alien Cookies × (Colombian × Starfighter)"
   },
   {
     "id": "trainwreck",
@@ -440,7 +462,8 @@
       "Lemon"
     ],
     "description": "A potent sativa-dominant hybrid with sharp mind-bending effects. Hits hard and fast like a freight train.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Mexican × Thai × Afghani"
   },
   {
     "id": "skywalker-og",
@@ -462,7 +485,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Skywalker × OG Kush"
   },
   {
     "id": "durban-poison",
@@ -481,7 +505,8 @@
       "Pine"
     ],
     "description": "A pure South African sativa. Known for its sweet smell and energetic, uplifting effects.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": null
   },
   {
     "id": "lemon-haze",
@@ -500,7 +525,8 @@
       "Sweet"
     ],
     "description": "A sativa-dominant cross of Lemon Skunk and Silver Haze with a zesty lemon smell and taste.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Lemon Skunk × Silver Haze"
   },
   {
     "id": "cherry-pie",
@@ -519,7 +545,8 @@
       "Cherry"
     ],
     "description": "A hybrid of Granddaddy Purple and Durban Poison. Known for its sweet and sour cherry pie aroma.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Granddaddy Purple × Durban Poison"
   },
   {
     "id": "purple-punch",
@@ -538,7 +565,8 @@
       "Berry"
     ],
     "description": "A sedating cross of Larry OG and Granddaddy Purple. Hits you with grape candy and blueberry muffins one-two punch.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Larry OG × Granddaddy Purple"
   },
   {
     "id": "cereal-milk",
@@ -560,7 +588,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Snowman × Y Life"
   },
   {
     "id": "ice-cream-cake",
@@ -579,7 +608,8 @@
       "Creamy"
     ],
     "description": "A heavy indica cross of Wedding Cake and Gelato #33. Sedating effects with delicious dessert flavors.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Wedding Cake × Gelato 33"
   },
   {
     "id": "super-lemon-haze",
@@ -601,7 +631,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Lemon Skunk × Super Silver Haze"
   },
   {
     "id": "gsc-thin-mint",
@@ -620,7 +651,8 @@
       "Earthy"
     ],
     "description": "A Girl Scout Cookies phenotype with a mint chocolate finish. Balanced euphoria and body relaxation.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "OG Kush × Durban Poison"
   },
   {
     "id": "banana-kush",
@@ -639,7 +671,8 @@
       "Tropical"
     ],
     "description": "A heavy indica with a smooth banana flavor. Creates mellow happiness and lazy tranquility.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Ghost OG × Skunk Haze"
   },
   {
     "id": "biscotti",
@@ -661,7 +694,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Gelato 25 × Girl Scout Cookies × South Florida OG"
   },
   {
     "id": "sunset-sherbet",
@@ -680,7 +714,8 @@
       "Citrus"
     ],
     "description": "An indica-leaning hybrid descended from Girl Scout Cookies. Full-body relaxation with a clear-headed high.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Girl Scout Cookies × Pink Panties"
   },
   {
     "id": "blue-cheese",
@@ -699,7 +734,8 @@
       "Earthy"
     ],
     "description": "A cross of Blueberry and UK Cheese. Known for its unique savory-sweet flavor and slow, relaxing effects.",
-    "rating": 4.1
+    "rating": 4.1,
+    "genetics": "Blueberry × U.K. Cheese"
   },
   {
     "id": "tangie",
@@ -718,7 +754,8 @@
       "Sweet"
     ],
     "description": "A sativa remake of the 1995 Tangerine Dream. Delivers citrusy creative euphoria.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "California Orange × Skunk-1"
   },
   {
     "id": "amnesia-haze",
@@ -737,7 +774,8 @@
       "Citrus"
     ],
     "description": "A powerful sativa with Jamaican and South Asian landrace genetics. Intense cerebral buzz.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Afghani Hawaiian × Laos × Jamaica"
   },
   {
     "id": "wedding-crasher",
@@ -756,7 +794,8 @@
       "Berry"
     ],
     "description": "A sociable hybrid of Wedding Cake and Purple Punch. Great for conversations and gatherings.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Wedding Cake × Purple Punch"
   },
   {
     "id": "maui-wowie",
@@ -775,7 +814,8 @@
       "Pineapple"
     ],
     "description": "A classic Hawaiian sativa. Light stress-relieving effects and tropical flavors transport you to the islands.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": null
   },
   {
     "id": "king-louis",
@@ -794,7 +834,8 @@
       "Woody"
     ],
     "description": "A heavy OG Kush phenotype named after the French king. Royally potent sedation.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "OG Kush × LA Confidential"
   },
   {
     "id": "forbidden-fruit",
@@ -813,7 +854,8 @@
       "Citrus"
     ],
     "description": "A cross of Cherry Pie and Tangie. Exotic fruit flavors with deeply relaxing physical effects.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Cherry Pie × Tangie"
   },
   {
     "id": "platinum-og",
@@ -832,7 +874,8 @@
       "Pungent"
     ],
     "description": "A heavy-hitting indica descended from OG Kush and Purps. Known for its intense physical effects.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Master Kush × OG Kush × Afghani"
   },
   {
     "id": "headband",
@@ -851,7 +894,8 @@
       "Diesel"
     ],
     "description": "Named for the slight pressure around the crown of your head. A cross of OG Kush and Sour Diesel.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "OG Kush × Sour Diesel"
   },
   {
     "id": "larry-og",
@@ -870,7 +914,8 @@
       "Woody"
     ],
     "description": "An OG Kush phenotype with balanced effects. Clear-headed and good for daytime use.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "OG Kush × SFV OG"
   },
   {
     "id": "candy-kush",
@@ -889,7 +934,8 @@
       "Earthy"
     ],
     "description": "A sweet-tasting hybrid with gentle, comfortable effects. Like candy for your mind and body.",
-    "rating": 4.1
+    "rating": 4.1,
+    "genetics": "OG Kush × Trainwreck"
   },
   {
     "id": "critical-mass",
@@ -908,7 +954,8 @@
       "Citrus"
     ],
     "description": "A heavy indica known for massive buds and deeply relaxing effects. Great for pain and insomnia.",
-    "rating": 4.1
+    "rating": 4.1,
+    "genetics": "Afghani × Skunk #1"
   },
   {
     "id": "la-confidential",
@@ -927,7 +974,8 @@
       "Woody"
     ],
     "description": "An award-winning pure indica from Los Angeles. Smooth, fast-acting sedation and psychedelic effects.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "OG LA Affie × Afghani"
   },
   {
     "id": "super-silver-haze",
@@ -946,7 +994,8 @@
       "Pungent"
     ],
     "description": "A three-time Cannabis Cup winner. Energetic and long-lasting body buzz with creative stimulation.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Skunk × Northern Lights × Haze"
   },
   {
     "id": "bruce-banner",
@@ -965,7 +1014,8 @@
       "Sweet"
     ],
     "description": "Named after the Hulk's alter ego. One of the strongest strains available with a creative, euphoric rush.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "OG Kush × Strawberry Diesel"
   },
   {
     "id": "apple-fritter",
@@ -984,7 +1034,8 @@
       "Earthy"
     ],
     "description": "A potent hybrid from Sour Apple and Animal Cookies. Delivers heavy relaxation with a cheesy apple pastry flavor.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Sour Apple × Animal Cookies"
   },
   {
     "id": "london-pound-cake",
@@ -1006,7 +1057,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "gary-payton",
@@ -1028,7 +1080,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "The Y × Snowman"
   },
   {
     "id": "jealousy",
@@ -1050,7 +1103,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Gelato 41 × Sherbet"
   },
   {
     "id": "slurricane",
@@ -1069,7 +1123,8 @@
       "Grape"
     ],
     "description": "A potent indica cross of Do-Si-Dos and Purple Punch. Heavy syrupy sweetness with knockout relaxation.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Do-Si-Dos × Purple Punch"
   },
   {
     "id": "lava-cake",
@@ -1088,7 +1143,8 @@
       "Minty"
     ],
     "description": "A potent indica cross of Thin Mint GSC and Grape Pie. Rich, dessert-like flavors with deep sedation.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Thin Mint GSC × Grape Pie"
   },
   {
     "id": "white-runtz",
@@ -1107,7 +1163,8 @@
       "Citrus"
     ],
     "description": "A rare phenotype of Runtz. Covered in trichomes with sweet candy flavors and potent balanced effects.",
-    "rating": 4.6
+    "rating": 4.6,
+    "genetics": "Gelato × Zkittlez"
   },
   {
     "id": "dosidos",
@@ -1126,7 +1183,8 @@
       "Pungent"
     ],
     "description": "A cross of GSC and Face Off OG. Sedating effects with a sweet, earthy flavor.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Girl Scout Cookies × Face Off OG"
   },
   {
     "id": "kush-mints",
@@ -1145,7 +1203,8 @@
       "Sweet"
     ],
     "description": "A cross of Animal Mints and Bubba Kush. Minty flavor with balanced, relaxing effects.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Animal Mints × Bubba Kush"
   },
   {
     "id": "gmo-cookies",
@@ -1164,7 +1223,8 @@
       "Pungent"
     ],
     "description": "Also known as Garlic Cookies. A potent indica with unique garlic, mushroom, and onion flavors.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Chemdawg × Girl Scout Cookies"
   },
   {
     "id": "gorilla-cookies",
@@ -1183,7 +1243,8 @@
       "Diesel"
     ],
     "description": "A cross of GG4 and Thin Mint GSC. Potent hybrid with dessert flavors and balanced effects.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Gorilla Glue #4 × Thin Mint GSC"
   },
   {
     "id": "mac-1",
@@ -1202,7 +1263,8 @@
       "Floral"
     ],
     "description": "A cap cut of the original MAC strain. Known for rare, exotic effects and creative stimulation.",
-    "rating": 4.6
+    "rating": 4.6,
+    "genetics": "Alien Cookies × (Colombian × Starfighter)"
   },
   {
     "id": "tropicana-cookies",
@@ -1221,7 +1283,8 @@
       "Sweet"
     ],
     "description": "A sativa-dominant cross of Girl Scout Cookies and Tangie. Bright citrus flavor with uplifting energy.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Girl Scout Cookies × Tangie"
   },
   {
     "id": "orange-cookies",
@@ -1240,7 +1303,8 @@
       "Sweet"
     ],
     "description": "A cross of Orange Juice and GSC. Sweet orange flavor with balanced, happy effects.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Orange Juice × Girl Scout Cookies"
   },
   {
     "id": "mango-kush",
@@ -1259,7 +1323,8 @@
       "Tropical"
     ],
     "description": "A delicious indica with genuine mango taste and banana undertones. Gentle, fuzzy euphoria.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Mango × Hindu Kush"
   },
   {
     "id": "peanut-butter-breath",
@@ -1278,7 +1343,8 @@
       "Sweet"
     ],
     "description": "A cross of Do-Si-Dos and Mendo Breath. Unique nutty, herbal flavor with sedating effects.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Do-Si-Dos × Mendo Breath"
   },
   {
     "id": "strawberry-banana",
@@ -1297,7 +1363,8 @@
       "Berry"
     ],
     "description": "A 70/30 indica-dominant hybrid with incredible fruity flavor. Peaceful and happy effects.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Banana Kush × Bubble Gum"
   },
   {
     "id": "tahoe-og",
@@ -1316,7 +1383,8 @@
       "Pine"
     ],
     "description": "A heavy OG Kush phenotype bred near Lake Tahoe. One of the most sedating OGs available.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": null
   },
   {
     "id": "grape-ape",
@@ -1335,7 +1403,8 @@
       "Sweet"
     ],
     "description": "A predominantly indica strain with a distinct grape-like smell. Provides carefree relaxation.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Mendocino Purps × Skunk × Afghani"
   },
   {
     "id": "alien-og",
@@ -1354,7 +1423,8 @@
       "Lemon"
     ],
     "description": "A cross of Tahoe OG and Alien Kush. Initially cerebral before transitioning to heavy-body relaxation.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Tahoe OG × Alien Kush"
   },
   {
     "id": "lemon-cherry-gelato",
@@ -1373,7 +1443,8 @@
       "Sweet"
     ],
     "description": "A rare hybrid of Sunset Sherbert and GSC. Dessert-like flavor with mood-lifting, creative effects.",
-    "rating": 4.6
+    "rating": 4.6,
+    "genetics": null
   },
   {
     "id": "zaza",
@@ -1392,7 +1463,8 @@
       "Pungent"
     ],
     "description": "A potent exotic indica. Known for premium quality and deeply relaxing, sedative effects.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": null
   },
   {
     "id": "cherry-gelato",
@@ -1411,7 +1483,8 @@
       "Berry"
     ],
     "description": "A delicious cross of GSC and Sunset Sherbet. Fruity cherry flavor with balanced happy effects.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Cherry Pie × Gelato"
   },
   {
     "id": "papaya",
@@ -1430,7 +1503,8 @@
       "Mango"
     ],
     "description": "A heavy indica with tropical papaya flavors. Strong sedation and munchies.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Citral #13 × Ice #2"
   },
   {
     "id": "motorbreath",
@@ -1449,7 +1523,8 @@
       "Pungent"
     ],
     "description": "A pungent, gassy indica cross of Chemdog and SFV OG Kush. Heavy diesel flavor with potent sedation.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Chemdawg × SFV OG"
   },
   {
     "id": "hawaiian",
@@ -1468,7 +1543,8 @@
       "Citrus"
     ],
     "description": "A classic tropical sativa. Light and breezy effects perfect for daytime adventures.",
-    "rating": 4.1
+    "rating": 4.1,
+    "genetics": null
   },
   {
     "id": "laughing-buddha",
@@ -1487,7 +1563,8 @@
       "Spicy"
     ],
     "description": "A Cannabis Cup winning sativa. Named for its tendency to induce uncontrollable laughter and joy.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Thai × Jamaican"
   },
   {
     "id": "khalifa-kush",
@@ -1506,7 +1583,8 @@
       "Lemon"
     ],
     "description": "Developed in collaboration with Wiz Khalifa. An OG Kush derivative with focused, creative effects.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": null
   },
   {
     "id": "animal-cookies",
@@ -1525,7 +1603,8 @@
       "Pungent"
     ],
     "description": "A heavy indica cross of GSC and Fire OG. Strong sedation with a sweet, sour flavor.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Girl Scout Cookies × Fire OG"
   },
   {
     "id": "glue-gelato",
@@ -1544,7 +1623,8 @@
       "Diesel"
     ],
     "description": "A potent cross of GG4 and Gelato. Couch-locking relaxation with sweet flavors.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Gorilla Glue × Gelato"
   },
   {
     "id": "obama-runtz",
@@ -1563,7 +1643,8 @@
       "Berry"
     ],
     "description": "A rare hybrid cross of Afghani and Runtz. Sweet fruity flavor with giggly, social effects.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Runtz × Afghani × OG Kush"
   },
   {
     "id": "pink-runtz",
@@ -1582,7 +1663,8 @@
       "Berry"
     ],
     "description": "A phenotype of Runtz with pink-hued buds. Candy-sweet flavor with euphoric, social effects.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Zkittlez × Gelato"
   },
   {
     "id": "gushers",
@@ -1601,7 +1683,8 @@
       "Fruity"
     ],
     "description": "A cross of Gelato #41 and Triangle Kush. Named after the candy for its fruity, gushing flavor.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Gelato 41 × Triangle Kush"
   },
   {
     "id": "fire-og",
@@ -1620,7 +1703,8 @@
       "Woody"
     ],
     "description": "Considered one of the strongest OG Kush strains. Powerful full-body relaxation and sedation.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": null
   },
   {
     "id": "super-boof",
@@ -1639,7 +1723,8 @@
       "Cherry"
     ],
     "description": "A sativa-leaning hybrid of Black Cherry Punch and Tropicana Cookies. Creative energy with fruity flavor.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Black Cherry Punch × Tropicana Cookies"
   },
   {
     "id": "gas-face",
@@ -1658,7 +1743,8 @@
       "Pungent"
     ],
     "description": "A potent hybrid known for its gassy terpene profile and balanced cerebral effects.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Face Mints × (Biscotti × Sherb Bx)"
   },
   {
     "id": "limoncello",
@@ -1677,7 +1763,8 @@
       "Sweet"
     ],
     "description": "A bright sativa named after the Italian liqueur. Zesty lemon flavor with focused, clear-headed energy.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Original Lemonade × Cherry Pie"
   },
   {
     "id": "la-kush-cake",
@@ -1696,7 +1783,8 @@
       "Earthy"
     ],
     "description": "A potent cross of Kush Mints and Wedding Cake. Dessert flavors with heavy body sedation.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Wedding Cake × Kush Mints"
   },
   {
     "id": "guava",
@@ -1715,7 +1803,8 @@
       "Citrus"
     ],
     "description": "An exotic sativa with tropical guava flavors. Social and energizing effects.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": null
   },
   {
     "id": "white-cherry-gelato",
@@ -1734,7 +1823,8 @@
       "Creamy"
     ],
     "description": "A cross of White Cherry and Gelato 33. Creamy cherry flavor with balanced hybrid effects.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": null
   },
   {
     "id": "grease-monkey",
@@ -1753,7 +1843,8 @@
       "Diesel"
     ],
     "description": "A cross of GG4 and Cookies and Cream. Heavy relaxation with a sweet, vanilla-diesel flavor.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Gorilla Glue #4 × Cookies & Cream"
   },
   {
     "id": "member-berry",
@@ -1772,7 +1863,8 @@
       "Citrus"
     ],
     "description": "A balanced hybrid with sweet berry flavor. Provides clear-headed focus with gentle relaxation.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Skunkberry × Mandarin Sunset"
   },
   {
     "id": "black-cherry-punch",
@@ -1791,7 +1883,8 @@
       "Sweet"
     ],
     "description": "A cross of Black Cherry Pie and Purple Punch. Deep cherry flavor with heavy body sedation.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Purple Punch × Black Cherry Pie"
   },
   {
     "id": "dolato",
@@ -1810,7 +1903,8 @@
       "Earthy"
     ],
     "description": "A cross of Do-Si-Dos and Gelato #41. Deeply relaxing indica with complex berry and lavender notes.",
-    "rating": 4.4
+    "rating": 4.4,
+    "genetics": "Do-Si-Dos × Gelato 41"
   },
   {
     "id": "zookies",
@@ -1829,7 +1923,8 @@
       "Diesel"
     ],
     "description": "A hybrid cross of Animal Cookies and Gorilla Glue #4. Cookie-gas flavor with creative relaxation.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Animal Cookies × Gorilla Glue #4"
   },
   {
     "id": "champagne-cake",
@@ -1848,7 +1943,8 @@
       "Fruity"
     ],
     "description": "A celebratory hybrid with champagne-like effervescence. Bubbly, social effects.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "Wedding Cake × Champagne Kush"
   },
   {
     "id": "space-cake",
@@ -1867,7 +1963,8 @@
       "Earthy"
     ],
     "description": "A potent indica cross of GSC and Snow Lotus. Out-of-this-world relaxation with dessert flavors.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Girl Scout Cookies × Snow Lotus"
   },
   {
     "id": "fatso",
@@ -1886,7 +1983,8 @@
       "Pungent"
     ],
     "description": "A heavy indica cross of Legends OG and GMO. Potent sedation and intense munchies.",
-    "rating": 4.3
+    "rating": 4.3,
+    "genetics": "GMO Cookies × Legend OG"
   },
   {
     "id": "pancakes",
@@ -1908,7 +2006,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "London Pound Cake × Kush Mints"
   },
   {
     "id": "gelonade",
@@ -1927,7 +2026,8 @@
       "Sweet"
     ],
     "description": "A sativa-dominant cross of Lemon Tree and Gelato 41. Bright citrus flavor with clear-headed energy.",
-    "rating": 4.5
+    "rating": 4.5,
+    "genetics": "Lemon Tree × Gelato 41"
   },
   {
     "id": "grandpa-larry",
@@ -1946,7 +2046,8 @@
       "Woody"
     ],
     "description": "A potent OG Kush descendant. Old-school indica relaxation that puts you right to sleep.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": "Larry OG × Granddaddy Purple"
   },
   {
     "id": "georgia-pie",
@@ -1968,7 +2069,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Gellati × Kush Mints"
   },
   {
     "id": "snow-cap",
@@ -1987,7 +2089,8 @@
       "Minty"
     ],
     "description": "A potent sativa with frosty, trichome-covered buds. Delivers clean, focused energy and menthol freshness.",
-    "rating": 4.2
+    "rating": 4.2,
+    "genetics": null
   },
   {
     "id": "blackberry-caviar",
@@ -2009,7 +2112,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "blueberry-caviar",
@@ -2031,7 +2135,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "cereal-a-la-mode",
@@ -2053,7 +2158,8 @@
     "rating": 4.6,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Cereal Milk × Georgia Pie"
   },
   {
     "id": "cheetah-piss",
@@ -2075,7 +2181,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Lemonnade × Gelato 42 × London Poundcake 97"
   },
   {
     "id": "cinnamon-milk",
@@ -2097,7 +2204,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "hollywood",
@@ -2119,7 +2227,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Lemon Cherry Gelato × Runtz"
   },
   {
     "id": "london-pound-cake-75",
@@ -2141,7 +2250,8 @@
     "rating": 4.6,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "triple-scoop",
@@ -2163,7 +2273,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Super Silver Haze × Grape Ape × Gelato"
   },
   {
     "id": "apples-and-bananas",
@@ -2185,7 +2296,8 @@
     "rating": 4.6,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "(Platinum Cookies × Granddaddy Purple) × Blue Power × Gelatti"
   },
   {
     "id": "collins-ave",
@@ -2207,7 +2319,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Kush Mints × GTI"
   },
   {
     "id": "the-soap",
@@ -2229,7 +2342,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Animal Mints × Kush Mints"
   },
   {
     "id": "sticky-buns",
@@ -2251,7 +2365,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Kush Mints × Gelatti"
   },
   {
     "id": "sweet-tea",
@@ -2273,7 +2388,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Cali-O × Alcatraz OG × Space Queen"
   },
   {
     "id": "pruno",
@@ -2295,7 +2411,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "sweet-and-sour",
@@ -2317,7 +2434,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "long-island",
@@ -2339,7 +2457,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "pomegranate-shake",
@@ -2361,7 +2480,8 @@
     "rating": 4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "ridgeline-lantz",
@@ -2383,7 +2503,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Green Lantern × Ridgeline Runtz"
   },
   {
     "id": "tequila-sunrise",
@@ -2405,7 +2526,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "atomic-apple",
@@ -2427,7 +2549,8 @@
     "rating": 4.6,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Triangle Mints × Apple Fritter"
   },
   {
     "id": "baklava",
@@ -2449,7 +2572,8 @@
     "rating": 4.6,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Kosher Kush × Gelato 41"
   },
   {
     "id": "kryptidz",
@@ -2471,7 +2595,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "xj-13",
@@ -2493,7 +2618,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Jack Herer × G13 Haze"
   },
   {
     "id": "chrome",
@@ -2515,7 +2641,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "gelato-41",
@@ -2537,7 +2664,8 @@
     "rating": 4.7,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Sunset Sherbet × Thin Mint GSC"
   },
   {
     "id": "super-mango-haze",
@@ -2559,7 +2687,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "honey-dew",
@@ -2581,7 +2710,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "orange-zkittlez",
@@ -2603,7 +2733,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Zkittlez × Agent Orange"
   },
   {
     "id": "kaleidoscope",
@@ -2625,7 +2756,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "lemon-fruz",
@@ -2647,7 +2779,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "permanent-fumes",
@@ -2669,7 +2802,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "flaming-cherries",
@@ -2691,7 +2825,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "mega-z-red",
@@ -2713,7 +2848,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "coconut-milk",
@@ -2735,7 +2871,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "scotties-cake",
@@ -2757,7 +2894,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "baby-joker",
@@ -2779,7 +2917,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "rainbow-beltz",
@@ -2801,7 +2940,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Zkittlez × Moonbow"
   },
   {
     "id": "zkittlez-pie",
@@ -2823,7 +2963,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Zkittlez × Georgia Pie"
   },
   {
     "id": "nimbus-plum",
@@ -2845,7 +2986,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "sherbnado",
@@ -2867,7 +3009,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "tropic-thunder",
@@ -2889,7 +3032,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "zuava",
@@ -2911,7 +3055,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "astroid-belts",
@@ -2933,7 +3078,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "nerdz",
@@ -2955,7 +3101,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Grape Ape × Strawberry Cough"
   },
   {
     "id": "space-mintz",
@@ -2977,7 +3124,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Space Cake × Kush Mints"
   },
   {
     "id": "delirium",
@@ -2999,7 +3147,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "gushmints",
@@ -3021,7 +3170,8 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Kush Mints × (F1 Durb × Gushers)"
   },
   {
     "id": "melted-strawberries",
@@ -3043,7 +3193,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "GMO × Strawberry Guava"
   },
   {
     "id": "stadanko",
@@ -3065,7 +3216,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "zlurpees",
@@ -3087,7 +3239,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "palo-cedro",
@@ -3109,7 +3262,8 @@
     "rating": 4.2,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "swaggy-kush",
@@ -3131,7 +3285,8 @@
     "rating": 4.2,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "banga",
@@ -3153,7 +3308,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "melon-mimosa",
@@ -3175,7 +3331,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Watermelon Zkittlez × Mimosa"
   },
   {
     "id": "hawaiian-snow",
@@ -3197,7 +3354,8 @@
     "rating": 4.2,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Hawaiian Haze × Purple Haze × Neville's Haze"
   },
   {
     "id": "motorberry",
@@ -3219,7 +3377,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "sour-mochi",
@@ -3241,7 +3400,8 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Sour Diesel × Mochi"
   },
   {
     "id": "pink-lemon-tropaya",
@@ -3263,7 +3423,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Pink Lemonade × Tropaya"
   },
   {
     "id": "all-gas-no-brakes",
@@ -3285,7 +3446,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "oakstradam-og",
@@ -3307,7 +3469,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "blue-andes",
@@ -3329,7 +3492,8 @@
     "rating": 4.2,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "z41",
@@ -3351,7 +3515,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": "Zkittlez × Gelato 41"
   },
   {
     "id": "mars-og",
@@ -3373,7 +3538,8 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   },
   {
     "id": "blueberry-poptarts",
@@ -3395,6 +3561,7 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "genetics": null
   }
 ]
