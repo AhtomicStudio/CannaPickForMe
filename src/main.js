@@ -306,7 +306,7 @@ function renderBrowseList() {
             ${inStash ? '✓' : '+'}
           </button>
         </div>
-        ${buildExpandBody(strain)}
+        ${buildExpandBody(applyOverrides(strain))}
       </div>
     `;
   }).join('');
