@@ -601,6 +601,7 @@ body {
 .strain-card {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-md);
   padding: var(--space-md);
   background: var(--bg-card);
@@ -2252,4 +2253,106 @@ body {
   20%  { opacity: 0.8; }
   80%  { opacity: 0.2; transform: translateY(-28px) scaleX(1.8); }
   100% { opacity: 0;   transform: translateY(-40px) scaleX(2.4); }
+}
+
+/* === Strain Card Inline Expansion === */
+.strain-card__info {
+  cursor: pointer;
+}
+
+.strain-card--expanded {
+  border-color: rgba(192, 132, 252, 0.35);
+}
+
+.strain-card__expand {
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  /* gap from parent flex applies above — kill it for the expand row */
+  margin-top: calc(-1 * var(--space-md));
+}
+
+.strain-card--expanded .strain-card__expand {
+  max-height: 600px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin-top: 0;
+}
+
+.strain-card__expand-body {
+  padding: 14px 0 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.strain-card__expand-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 5px;
+}
+
+.strain-card__expand-text {
+  font-size: 0.83rem;
+  color: #cbd5e1;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.strain-card__genetics-known {
+  font-size: 0.83rem;
+  color: #e2e8f0;
+  margin: 0;
+  font-style: italic;
+}
+
+.strain-card__genetics-unknown {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.strain-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.strain-pill--effect {
+  background: rgba(192, 132, 252, 0.15);
+  border: 1px solid rgba(192, 132, 252, 0.3);
+  color: var(--purple-glow);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+}
+
+.strain-pill--flavor {
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  color: var(--gold-glow);
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+}
+
+.strain-pill--dispensary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(74, 222, 128, 0.1);
+  border: 1px solid rgba(74, 222, 128, 0.25);
+  color: var(--green-glow);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+}
+
+.strain-card__expand-dispensaries {
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
