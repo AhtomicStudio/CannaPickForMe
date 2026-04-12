@@ -1,4 +1,5 @@
 import './style.css';
+import { inject, track } from '@vercel/analytics';
 import strainsData from './data/strains.json';
 import questionsData from './data/questions.json';
 import { matchStrains } from './engine/matcher.js';
@@ -318,8 +319,10 @@ function renderBrowseList() {
       const id = btn.dataset.id;
       if (isInStash(id)) {
         removeFromStash(id);
+        track('stash_remove', { strain: id });
       } else {
         addToStash(id);
+        track('stash_add', { strain: id });
       }
       renderBrowseList();
       updateStashUI();
@@ -617,6 +620,11 @@ function startResult() {
     }
   }
 
+  track('questionnaire_completed', {
+    stash_size: stashStrains.length,
+    animation: anim?.id ?? 'none',
+  });
+
   // After 5 seconds, reveal the result
   setTimeout(() => {
     document.getElementById('weighing-phase').classList.add('hidden');
@@ -627,6 +635,13 @@ function startResult() {
 
 function renderResult(result) {
   const { pickedStrain, matchScore, isPerfectMatch, reasoning } = result;
+
+  track('strain_picked', {
+    strain: pickedStrain.name,
+    type: pickedStrain.type,
+    match_score: matchScore,
+    is_perfect_match: isPerfectMatch ?? false,
+  });
 
   document.getElementById('result-strain-name').textContent = pickedStrain.name;
 
@@ -839,6 +854,7 @@ async function loadAds() {
 
 // === BOOT ===
 function init() {
+  inject();
   initAgeGate();
   initDisclaimer();
   initHome();

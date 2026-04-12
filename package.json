@@ -17,6 +17,7 @@
     "@capacitor/core": "^8.2.0",
     "@capacitor/ios": "^8.2.0",
     "@capacitor/share": "^8.0.1",
+    "@vercel/analytics": "^2.0.1",
     "firebase": "^12.12.0"
   }
 }
