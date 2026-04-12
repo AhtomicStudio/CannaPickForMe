@@ -1,5 +1,8 @@
-// Animation registry — add new animations to this array to include them in rotation
-export const ANIMATIONS = [];
+import { scalesAnimation } from './scales.js';
+
+export const ANIMATIONS = [
+  scalesAnimation,
+];
 
 export function pickAnimation() {
   if (ANIMATIONS.length === 0) return null;
