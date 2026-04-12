@@ -1857,3 +1857,91 @@ body {
   from { transform: translateX(-50%) translateY(10px); opacity: 0; }
   to   { transform: translateX(-50%) translateY(-60px); opacity: 1; }
 }
+/* ============================================================
+   TAROT CARD DRAW ANIMATION
+   ============================================================ */
+.anim-tarot-scene {
+  position: relative;
+  width: 200px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.anim-tarot-card {
+  width: 52px;
+  height: 90px;
+  border-radius: 6px;
+  position: absolute;
+  border: 1.5px solid #4a3a6a;
+  background: repeating-linear-gradient(
+    45deg,
+    #1a1030 0, #1a1030 4px,
+    #261848 4px, #261848 8px
+  );
+  transform-origin: bottom center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.anim-tarot-card--c1 { animation: anim-tarot-fan1 4s ease-in-out infinite; }
+.anim-tarot-card--c2 { animation: anim-tarot-fan2 4s ease-in-out infinite; }
+.anim-tarot-card--c3 { animation: anim-tarot-fan3 5s ease-in-out forwards; z-index: 3; }
+.anim-tarot-card--c4 { animation: anim-tarot-fan4 4s ease-in-out infinite; }
+.anim-tarot-card--c5 { animation: anim-tarot-fan5 4s ease-in-out infinite; }
+.anim-tarot-card--winner {
+  background: linear-gradient(160deg, #0d2e16, #1a5c30);
+  border-color: #4ade80;
+  box-shadow: 0 0 24px rgba(74, 222, 128, 0.5), 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.anim-tarot-label {
+  position: absolute;
+  z-index: 4;
+  font-size: 0.44rem;
+  font-weight: 700;
+  color: #4ade80;
+  text-shadow: 0 0 8px #4ade80;
+  text-align: center;
+  line-height: 1.3;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.anim-tarot-label.visible {
+  opacity: 1;
+}
+.anim-tarot-spark {
+  position: absolute;
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+  transition: opacity 0.3s ease, transform 0.6s ease;
+}
+.anim-tarot-spark.pop {
+  opacity: 1;
+  transform: scale(1.3) translateY(-8px);
+}
+@keyframes anim-tarot-fan1 {
+  0%, 30%  { transform: rotate(-32deg) translateX(-38px); }
+  40%, 60% { transform: rotate(-38deg) translateX(-44px) translateY(-4px); }
+  70%, 100%{ transform: rotate(-32deg) translateX(-38px); }
+}
+@keyframes anim-tarot-fan2 {
+  0%, 30%  { transform: rotate(-16deg) translateX(-19px); }
+  40%, 60% { transform: rotate(-20deg) translateX(-23px) translateY(-2px); }
+  70%, 100%{ transform: rotate(-16deg) translateX(-19px); }
+}
+@keyframes anim-tarot-fan3 {
+  0%, 70%  { transform: rotateY(0deg) rotate(0deg); }
+  80%      { transform: rotateY(90deg) rotate(0deg); }
+  90%, 100%{ transform: rotateY(0deg) rotate(0deg); }
+}
+@keyframes anim-tarot-fan4 {
+  0%, 30%  { transform: rotate(16deg) translateX(19px); }
+  40%, 60% { transform: rotate(20deg) translateX(23px) translateY(-2px); }
+  70%, 100%{ transform: rotate(16deg) translateX(19px); }
+}
+@keyframes anim-tarot-fan5 {
+  0%, 30%  { transform: rotate(32deg) translateX(38px); }
+  40%, 60% { transform: rotate(38deg) translateX(44px) translateY(-4px); }
+  70%, 100%{ transform: rotate(32deg) translateX(38px); }
+}
