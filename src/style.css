@@ -1742,3 +1742,118 @@ body {
   84%  { top: 158px; left: 63px;  transform: rotate(-4deg); }
   100% { top: 163px; left: 63px;  transform: rotate(0deg); }
 }
+/* ============================================================
+   NOTES IN A BOX ANIMATION
+   ============================================================ */
+.anim-box-scene {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 200px;
+  width: 180px;
+}
+.anim-box-body {
+  width: 130px;
+  height: 80px;
+  background: linear-gradient(160deg, #4a3520, #2e1f0f);
+  border: 2px solid #8b6534;
+  border-radius: 4px 4px 8px 8px;
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.anim-box-lid {
+  position: absolute;
+  top: -16px;
+  left: -2px;
+  right: -2px;
+  height: 18px;
+  background: linear-gradient(160deg, #5c4228, #3d2812);
+  border: 2px solid #8b6534;
+  border-radius: 4px 4px 0 0;
+  animation: anim-box-lid 5.5s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+.anim-box-note {
+  position: absolute;
+  width: 28px;
+  height: 22px;
+  background: #f5f0dc;
+  border-radius: 2px;
+  font-size: 0.32rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+.anim-box-note::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.1);
+}
+.anim-box-note:nth-child(2) { top: 12px; left: 10px;  animation: anim-box-n1 5s ease-in-out infinite; }
+.anim-box-note:nth-child(3) { top: 16px; left: 48px;  animation: anim-box-n2 5s ease-in-out infinite; }
+.anim-box-note:nth-child(4) { top: 10px; left: 86px;  animation: anim-box-n3 5s ease-in-out infinite; }
+.anim-box-chosen {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 42px;
+  height: 32px;
+  background: linear-gradient(160deg, #fffde0, #fff9c0);
+  border: 1.5px solid #d4c040;
+  border-radius: 3px;
+  font-size: 0.4rem;
+  font-weight: 700;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.2;
+  padding: 2px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), 0 0 12px rgba(212, 192, 64, 0.4);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 10;
+}
+.anim-box-chosen.visible {
+  animation: anim-box-rise 0.6s ease-out forwards;
+  opacity: 1;
+}
+@keyframes anim-box-lid {
+  0%, 55%, 100% { transform: rotate(0deg) translateY(0); }
+  60%            { transform: rotate(-20deg) translateY(-8px); }
+  67%            { transform: rotate(6deg) translateY(-3px); }
+  73%            { transform: rotate(-12deg) translateY(-5px); }
+  80%            { transform: rotate(3deg) translateY(-1px); }
+  86%            { transform: rotate(0deg) translateY(0); }
+}
+@keyframes anim-box-n1 {
+  0%, 25%  { top: 12px; left: 10px;  transform: rotate(-14deg); }
+  35%, 55% { top: 6px;  left: 38px;  transform: rotate(10deg); }
+  65%, 100%{ top: 12px; left: 10px;  transform: rotate(-14deg); }
+}
+@keyframes anim-box-n2 {
+  0%, 25%  { top: 16px; left: 48px;  transform: rotate(6deg); }
+  35%, 55% { top: 8px;  left: 70px;  transform: rotate(-9deg); }
+  65%, 100%{ top: 16px; left: 48px;  transform: rotate(6deg); }
+}
+@keyframes anim-box-n3 {
+  0%, 25%  { top: 10px; left: 86px;  transform: rotate(-4deg); }
+  35%, 55% { top: 14px; left: 18px;  transform: rotate(12deg); }
+  65%, 100%{ top: 10px; left: 86px;  transform: rotate(-4deg); }
+}
+@keyframes anim-box-rise {
+  from { transform: translateX(-50%) translateY(10px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(-60px); opacity: 1; }
+}
