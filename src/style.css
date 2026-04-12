@@ -2088,3 +2088,168 @@ body {
   0%, 25%, 100% { transform: rotate(0deg); }
   12%            { transform: rotate(32deg); }
 }
+/* ============================================================
+   CRYSTAL BALL ORACLE ANIMATION
+   ============================================================ */
+.anim-crystal-scene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(120, 40, 180, 0.4) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 40% at 50% 50%,  rgba(80, 20, 140, 0.22) 0%, transparent 80%);
+  overflow: hidden;
+}
+.anim-crystal-haze {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(18px);
+  pointer-events: none;
+}
+.anim-crystal-haze--1 {
+  width: 90px; height: 44px;
+  background: rgba(160, 80, 255, 0.22);
+  bottom: 10%; left: 5%;
+  animation: anim-crystal-haze 4s ease-in-out infinite;
+}
+.anim-crystal-haze--2 {
+  width: 70px; height: 34px;
+  background: rgba(120, 40, 220, 0.28);
+  bottom: 20%; right: 6%;
+  animation: anim-crystal-haze 4s ease-in-out infinite 1.2s;
+}
+.anim-crystal-haze--3 {
+  width: 110px; height: 55px;
+  background: rgba(74, 222, 128, 0.1);
+  bottom: 5%; left: 18%;
+  animation: anim-crystal-haze 4s ease-in-out infinite 0.6s;
+}
+.anim-crystal-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+.anim-crystal-ball {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 28%,
+    rgba(200, 220, 255, 0.35) 0%,
+    rgba(100, 140, 255, 0.15) 25%,
+    rgba(60, 80, 200, 0.1) 55%,
+    rgba(10, 5, 40, 0.9) 100%
+  );
+  border: 2px solid rgba(160, 180, 255, 0.35);
+  box-shadow:
+    0 0 40px rgba(120, 80, 255, 0.5),
+    0 0 80px rgba(80, 40, 200, 0.25),
+    inset 0 0 40px rgba(120, 80, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+  animation: anim-crystal-breath 3.5s ease-in-out infinite;
+}
+.anim-crystal-smoke {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.anim-crystal-smoke--1 {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 90%, rgba(74, 222, 128, 0.4) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 60% at 20% 60%, rgba(192, 132, 252, 0.35) 0%, transparent 65%);
+  animation: anim-crystal-rot1 2.8s linear infinite;
+}
+.anim-crystal-smoke--2 {
+  background:
+    radial-gradient(ellipse 55% 40% at 80% 40%, rgba(160, 60, 255, 0.4) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 55% at 30% 80%, rgba(74, 222, 128, 0.25) 0%, transparent 65%);
+  animation: anim-crystal-rot2 3.5s linear infinite reverse;
+}
+.anim-crystal-smoke--3 {
+  background: radial-gradient(ellipse 80% 30% at 50% 60%, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+  animation: anim-crystal-rot3 4.2s ease-in-out infinite;
+}
+.anim-crystal-shine {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  width: 26px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  filter: blur(4px);
+  transform: rotate(-30deg);
+}
+.anim-crystal-tendril {
+  position: absolute;
+  bottom: 100%;
+  border-radius: 50%;
+  filter: blur(6px);
+  pointer-events: none;
+  animation: anim-crystal-tendril 3s ease-in-out infinite;
+}
+.anim-crystal-tendril--1 { width: 12px; height: 28px; background: rgba(160, 80, 255, 0.4);  left: 38%; animation-delay: 0s; }
+.anim-crystal-tendril--2 { width: 8px;  height: 20px; background: rgba(74, 222, 128, 0.3);  left: 54%; animation-delay: 0.7s; }
+.anim-crystal-tendril--3 { width: 10px; height: 24px; background: rgba(160, 80, 255, 0.35); left: 46%; animation-delay: 1.4s; }
+.anim-crystal-name {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.46rem;
+  font-weight: 700;
+  color: #e0d8ff;
+  text-shadow: 0 0 10px rgba(180, 140, 255, 0.9);
+  text-align: center;
+  z-index: 3;
+  line-height: 1.3;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+.anim-crystal-name.visible {
+  opacity: 1;
+}
+.anim-crystal-base {
+  width: 75px;
+  height: 16px;
+  background: linear-gradient(to right, #120820, #3d1a7a, #120820);
+  border-radius: 6px;
+  margin-top: 6px;
+  box-shadow: 0 4px 16px rgba(100, 0, 200, 0.3);
+}
+@keyframes anim-crystal-haze {
+  0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.5; }
+  50%      { transform: translateY(-12px) scaleX(1.2); opacity: 1; }
+}
+@keyframes anim-crystal-breath {
+  0%, 100% { box-shadow: 0 0 40px rgba(120,80,255,0.5),  0 0 80px rgba(80,40,200,0.25),  inset 0 0 40px rgba(120,80,255,0.15); }
+  50%      { box-shadow: 0 0 60px rgba(120,80,255,0.85), 0 0 120px rgba(80,40,200,0.4), inset 0 0 60px rgba(120,80,255,0.25); }
+}
+@keyframes anim-crystal-rot1 {
+  from { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(1.15); }
+  to   { transform: rotate(360deg) scale(1); }
+}
+@keyframes anim-crystal-rot2 {
+  from { transform: rotate(0deg) scale(1.1); }
+  50%  { transform: rotate(180deg) scale(0.9); }
+  to   { transform: rotate(360deg) scale(1.1); }
+}
+@keyframes anim-crystal-rot3 {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.2); }
+}
+@keyframes anim-crystal-tendril {
+  0%   { opacity: 0; transform: translateY(0) scaleX(1); }
+  20%  { opacity: 0.8; }
+  80%  { opacity: 0.2; transform: translateY(-28px) scaleX(1.8); }
+  100% { opacity: 0;   transform: translateY(-40px) scaleX(2.4); }
+}
