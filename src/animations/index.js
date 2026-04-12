@@ -4,6 +4,7 @@ import { plinkoAnimation }    from './plinko.js';
 import { boxAnimation }       from './box.js';
 import { tarotAnimation }     from './tarot.js';
 import { slotsAnimation }     from './slots.js';
+import { crystalAnimation }   from './crystal.js';
 
 export const ANIMATIONS = [
   scalesAnimation,
@@ -12,9 +13,9 @@ export const ANIMATIONS = [
   boxAnimation,
   tarotAnimation,
   slotsAnimation,
+  crystalAnimation,
 ];
 
 export function pickAnimation() {
-  if (ANIMATIONS.length === 0) return null;
   return ANIMATIONS[Math.floor(Math.random() * ANIMATIONS.length)];
 }
