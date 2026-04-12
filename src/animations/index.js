@@ -1,7 +1,9 @@
-import { scalesAnimation } from './scales.js';
+import { scalesAnimation }   from './scales.js';
+import { eightBallAnimation } from './eightball.js';
 
 export const ANIMATIONS = [
   scalesAnimation,
+  eightBallAnimation,
 ];
 
 export function pickAnimation() {

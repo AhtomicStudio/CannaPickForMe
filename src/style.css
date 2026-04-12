@@ -1562,3 +1562,115 @@ body {
   position: relative;
   overflow: hidden;
 }
+/* ============================================================
+   MAGIC 8-BALL ANIMATION
+   ============================================================ */
+.anim-ball-scene {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.anim-ball {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 30%, #4a4a4a 0%, #111 45%, #000 100%);
+  box-shadow:
+    0 0 0 3px #222,
+    0 6px 24px rgba(0, 0, 0, 0.9),
+    inset 0 -8px 24px rgba(255, 255, 255, 0.04),
+    inset 0 4px 8px rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+  animation: anim-ball-shake 0.85s ease-in-out infinite;
+}
+.anim-ball::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 22px;
+  width: 30px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  filter: blur(4px);
+  transform: rotate(-30deg);
+}
+.anim-ball-window {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #001a08 0%, #002a10 60%, #000f05 100%);
+  border: 2px solid #0a3a18;
+  box-shadow: inset 0 0 16px rgba(74, 222, 128, 0.4), 0 0 8px rgba(74, 222, 128, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.anim-ball-mist {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(74, 222, 128, 0.5) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 30% 70%, rgba(74, 222, 128, 0.3) 0%, transparent 60%);
+  animation: anim-ball-mist 0.85s ease-in-out infinite;
+}
+.anim-ball-reveal {
+  position: relative;
+  z-index: 2;
+  font-size: 0.48rem;
+  font-weight: 700;
+  color: #4ade80;
+  text-align: center;
+  text-shadow: 0 0 6px #4ade80;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.anim-ball-reveal.visible {
+  opacity: 1;
+}
+.anim-ball-cloud {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 35px;
+  background: radial-gradient(ellipse, rgba(74, 222, 128, 0.25) 0%, transparent 70%);
+  filter: blur(8px);
+  pointer-events: none;
+  animation: anim-ball-cloud 1.5s ease-in-out infinite;
+}
+@keyframes anim-ball-shake {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  8%        { transform: translateX(-7px) translateY(-4px) rotate(-6deg); }
+  16%       { transform: translateX(8px) translateY(3px) rotate(7deg); }
+  24%       { transform: translateX(-9px) translateY(-5px) rotate(-8deg); }
+  32%       { transform: translateX(7px) translateY(6px) rotate(5deg); }
+  40%       { transform: translateX(-5px) translateY(-3px) rotate(-4deg); }
+  48%       { transform: translateX(6px) translateY(2px) rotate(3deg); }
+  56%       { transform: translateX(-3px) translateY(-4px) rotate(-2deg); }
+  64%       { transform: translateX(4px) translateY(1px) rotate(2deg); }
+  72%       { transform: translateX(-2px) translateY(-1px) rotate(-1deg); }
+  80%       { transform: translateX(0) translateY(0) rotate(0deg); }
+}
+@keyframes anim-ball-mist {
+  0%, 100% { opacity: 0.8; transform: rotate(0deg) scale(1); }
+  40%      { opacity: 0.3; transform: rotate(120deg) scale(1.2); }
+  70%      { opacity: 1;   transform: rotate(240deg) scale(0.9); }
+}
+@keyframes anim-ball-cloud {
+  0%, 100% { opacity: 0.3; transform: translateX(-50%) scaleY(0.6); bottom: 0; }
+  50%      { opacity: 1;   transform: translateX(-50%) scaleY(1.4); bottom: 10px; }
+}
