@@ -530,12 +530,14 @@ function startResult() {
   // Pick a random animation and render it into the host
   const anim = pickAnimation();
   const host = document.getElementById('animation-host');
-  host.innerHTML = '';
-  if (anim) {
-    anim.render(host, {
-      strainName: result.pickedStrain.name,
-      allScores: result.allScores,
-    });
+  if (host) {
+    host.innerHTML = '';
+    if (anim) {
+      anim.render(host, {
+        strainName: result.pickedStrain.name,
+        allScores: result.allScores,
+      });
+    }
   }
 
   // After 5 seconds, reveal the result

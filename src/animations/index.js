@@ -2,5 +2,6 @@
 export const ANIMATIONS = [];
 
 export function pickAnimation() {
+  if (ANIMATIONS.length === 0) return null;
   return ANIMATIONS[Math.floor(Math.random() * ANIMATIONS.length)];
 }
