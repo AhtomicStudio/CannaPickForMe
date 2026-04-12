@@ -29,6 +29,63 @@ const SMOKE_NEON_COLORS = [
   { glow: '#22d3ee', rgb: '34, 211, 238' },   // Cyan
 ];
 
+const DISPENSARY_NAMES = {
+  'cookies-hayward': 'Cookies Hayward',
+};
+
+// === STRAIN EXPAND BODY ===
+function buildExpandBody(strain) {
+  const effects = strain.effectOverrides || strain.effects || [];
+  const flavors = strain.flavors || [];
+  const dispensaries = strain.dispensaries || [];
+
+  const geneticsHTML = strain.genetics
+    ? `<p class="strain-card__genetics-known">${strain.genetics}</p>`
+    : `<span class="strain-card__genetics-unknown">🤫</span>`;
+
+  const effectsHTML = effects
+    .map(e => `<span class="strain-pill--effect">${e}</span>`)
+    .join('');
+
+  const flavorsHTML = flavors
+    .map(f => `<span class="strain-pill--flavor">${f}</span>`)
+    .join('');
+
+  const dispensaryHTML = dispensaries.length > 0
+    ? `<div class="strain-card__expand-dispensaries">
+        ${dispensaries.map(d => `<span class="strain-pill--dispensary">📍 Available at ${DISPENSARY_NAMES[d] || d}</span>`).join('')}
+      </div>`
+    : '';
+
+  const flavorsSection = flavorsHTML
+    ? `<div>
+        <p class="strain-card__expand-label">Flavors</p>
+        <div class="strain-pill-row">${flavorsHTML}</div>
+      </div>`
+    : '';
+
+  return `
+    <div class="strain-card__expand">
+      <div class="strain-card__expand-body">
+        <div>
+          <p class="strain-card__expand-label">About</p>
+          <p class="strain-card__expand-text">${strain.description || ''}</p>
+        </div>
+        <div>
+          <p class="strain-card__expand-label">Genetics</p>
+          ${geneticsHTML}
+        </div>
+        <div>
+          <p class="strain-card__expand-label">Effects</p>
+          <div class="strain-pill-row">${effectsHTML}</div>
+        </div>
+        ${flavorsSection}
+        ${dispensaryHTML}
+      </div>
+    </div>
+  `;
+}
+
 // === STATE ===
 let currentScreen = 'age-gate';
 let sessionAnswers = {};
@@ -249,6 +306,7 @@ function renderBrowseList() {
             ${inStash ? '✓' : '+'}
           </button>
         </div>
+        ${buildExpandBody(strain)}
       </div>
     `;
   }).join('');
@@ -272,6 +330,15 @@ function renderBrowseList() {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       openOverrideModal(btn.dataset.id);
+    });
+  });
+
+  list.querySelectorAll('.strain-card__info').forEach(info => {
+    info.addEventListener('click', () => {
+      const card = info.closest('.strain-card');
+      const isExpanded = card.classList.contains('strain-card--expanded');
+      list.querySelectorAll('.strain-card--expanded').forEach(c => c.classList.remove('strain-card--expanded'));
+      if (!isExpanded) card.classList.add('strain-card--expanded');
     });
   });
 }
@@ -304,6 +371,7 @@ function renderMyStashList() {
         <div class="strain-card__actions">
           <button class="strain-card__btn" data-action="remove" data-id="${strain.id}" title="Remove from stash">✕</button>
         </div>
+        ${buildExpandBody(strain)}
       </div>
     `;
   }).join('');
@@ -314,6 +382,15 @@ function renderMyStashList() {
       removeFromStash(btn.dataset.id);
       renderMyStashList();
       updateStashUI();
+    });
+  });
+
+  list.querySelectorAll('.strain-card__info').forEach(info => {
+    info.addEventListener('click', () => {
+      const card = info.closest('.strain-card');
+      const isExpanded = card.classList.contains('strain-card--expanded');
+      list.querySelectorAll('.strain-card--expanded').forEach(c => c.classList.remove('strain-card--expanded'));
+      if (!isExpanded) card.classList.add('strain-card--expanded');
     });
   });
 
