@@ -34,6 +34,17 @@ const DISPENSARY_NAMES = {
   'cookies-hayward': 'Cookies Hayward',
 };
 
+// === STRAIN DELTA CACHE ===
+let strainDelta = { hidden: [], overrides: {}, additions: [] };
+
+function applyDelta(strains, delta) {
+  const { hidden, overrides, additions } = delta;
+  return strains
+    .filter(s => !hidden.includes(s.id))
+    .map(s => overrides[s.id] ? { ...s, ...overrides[s.id] } : s)
+    .concat(additions);
+}
+
 // === STRAIN EXPAND BODY ===
 function buildExpandBody(strain) {
   const effects = strain.effectOverrides || strain.effects || [];
@@ -116,7 +127,19 @@ function showScreen(id) {
 // === HELPERS ===
 function getAllStrains() {
   const customs = getCustomStrains();
-  return [...strainsData, ...customs];
+  return applyDelta([...strainsData, ...customs], strainDelta);
+}
+
+async function initStrainDelta() {
+  try {
+    const { getStrainDelta } = await import('./services/strainService.js');
+    strainDelta = await getStrainDelta();
+    // Re-render browse list if it is currently visible
+    const list = document.getElementById('strain-list');
+    if (list) renderBrowseList();
+  } catch {
+    // Silent — fall back to raw JSON
+  }
 }
 
 function getStashStrains() {
@@ -860,6 +883,7 @@ function init() {
   initSession();
   initResult();
   loadAds();
+  initStrainDelta();
 }
 
 document.addEventListener('DOMContentLoaded', init);
