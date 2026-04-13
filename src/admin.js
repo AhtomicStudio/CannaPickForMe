@@ -4,11 +4,20 @@
  */
 
 import './admin.css';
+import strainsData from './data/strains.json';
+import { getStrainDelta, saveStrainDelta } from './services/strainService.js';
 import { getAllAds, createAd, updateAd, deleteAd, uploadAdImage } from './services/adService.js';
 
 // SHA-256 hash of the admin password
 const ADMIN_HASH = 'b6cba8b101e45c8b2eddd705efc782ef96d4e32b090a5db14ccdb77d1247426a';
 const SESSION_KEY = 'cpfm_admin_auth';
+
+const DISPENSARY_NAMES = {
+  'cookies-hayward': 'Cookies Hayward',
+};
+
+const ALL_EFFECTS = ['Creative','Energetic','Euphoric','Focused','Giggly','Happy','Hungry','Relaxed','Sleepy','Talkative','Tingly','Uplifted'];
+const ALL_FLAVORS  = ['Apple','Banana','Berry','Blueberry','Candy','Cheese','Cherry','Chocolate','Citrus','Coffee','Creamy','Diesel','Earthy','Floral','Flowery','Fruity','Grape','Guava','Lemon','Mango','Melon','Mint','Minty','Nutty','Orange','Peach','Pine','Pineapple','Plum','Pungent','Sour','Spicy','Strawberry','Sweet','Tropical','Vanilla','Woody'];
 
 // === UTILITY: SHA-256 Hash ===
 async function sha256(text) {
@@ -44,11 +53,217 @@ let editingAdId = null;
 let existingImageUrl = null;
 let previewImageSrc = null;
 
+// === STRAIN STATE ===
+let strainDelta           = { hidden: [], overrides: {}, additions: [] };
+let editingStrainId       = null;
+let editingStrainIsAddition = false;
+let selectedEffects       = [];
+let selectedFlavors       = [];
+let strainSearchQuery     = '';
+let strainTypeFilter      = 'all';
+
+// === TAG INPUT ===
+function renderTagInput(pillsEl, optionsEl, selected, allOptions, pillClass, onChange) {
+  pillsEl.innerHTML = selected.map(v =>
+    `<span class="admin-tag-pill admin-tag-pill--${pillClass}" data-value="${v}">
+      ${v} <span class="admin-tag-pill__remove">✕</span>
+    </span>`
+  ).join('');
+
+  optionsEl.innerHTML = allOptions
+    .filter(v => !selected.includes(v))
+    .map(v => `<span class="admin-tag-option" data-value="${v}">${v}</span>`)
+    .join('');
+
+  pillsEl.querySelectorAll('.admin-tag-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      onChange(selected.filter(v => v !== pill.dataset.value));
+    });
+  });
+
+  optionsEl.querySelectorAll('.admin-tag-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      onChange([...selected, opt.dataset.value]);
+    });
+  });
+}
+
+function refreshEffects() {
+  renderTagInput(
+    document.getElementById('effects-pills'),
+    document.getElementById('effects-options'),
+    selectedEffects,
+    ALL_EFFECTS,
+    'effect',
+    (next) => { selectedEffects = next; refreshEffects(); }
+  );
+}
+
+function refreshFlavors() {
+  renderTagInput(
+    document.getElementById('flavors-pills'),
+    document.getElementById('flavors-options'),
+    selectedFlavors,
+    ALL_FLAVORS,
+    'flavor',
+    (next) => { selectedFlavors = next; refreshFlavors(); }
+  );
+}
+
+function renderDispensaryCheckboxes(selected = []) {
+  const group = document.getElementById('strain-dispensaries-group');
+  group.innerHTML = Object.entries(DISPENSARY_NAMES).map(([key, label]) =>
+    `<label class="admin-checkbox-label">
+      <input type="checkbox" value="${key}" ${selected.includes(key) ? 'checked' : ''} />
+      ${label}
+    </label>`
+  ).join('');
+}
+
+function getSelectedDispensaries() {
+  return [...document.querySelectorAll('#strain-dispensaries-group input:checked')]
+    .map(el => el.value);
+}
+
+// === STRAIN FORM ===
+function resetStrainForm() {
+  editingStrainId = null;
+  editingStrainIsAddition = false;
+  selectedEffects = [];
+  selectedFlavors = [];
+
+  document.getElementById('strain-form-title').textContent = '🌿 Add New Strain';
+  document.getElementById('strain-form').reset();
+  document.querySelector('input[name="strain-type"][value="hybrid"]').checked = true;
+  document.getElementById('edit-strain-id').value = '';
+  document.getElementById('edit-strain-is-addition').value = '';
+  document.getElementById('btn-cancel-strain').classList.add('hidden');
+  document.getElementById('btn-submit-strain').textContent = 'Add Strain';
+
+  refreshEffects();
+  refreshFlavors();
+  renderDispensaryCheckboxes([]);
+}
+
+function startEditingStrain(strainId, isAddition) {
+  let strain;
+  if (isAddition) {
+    strain = strainDelta.additions.find(s => s.id === strainId);
+  } else {
+    const base = strainsData.find(s => s.id === strainId) || {};
+    const override = strainDelta.overrides[strainId] || {};
+    strain = { ...base, ...override };
+  }
+  if (!strain) return;
+
+  editingStrainId = strainId;
+  editingStrainIsAddition = isAddition;
+  selectedEffects = [...(strain.effects || [])];
+  selectedFlavors = [...(strain.flavors || [])];
+
+  document.getElementById('strain-form-title').textContent = '✏️ Edit Strain';
+  document.getElementById('edit-strain-id').value = strainId;
+  document.getElementById('edit-strain-is-addition').value = isAddition ? 'true' : '';
+  document.getElementById('strain-name').value = strain.name || '';
+  const typeRadio = document.querySelector(`input[name="strain-type"][value="${strain.type || 'hybrid'}"]`);
+  if (typeRadio) typeRadio.checked = true;
+  document.getElementById('strain-description').value = strain.description || '';
+  document.getElementById('strain-genetics').value = strain.genetics || '';
+  document.getElementById('strain-rating').value = strain.rating != null ? strain.rating : '';
+  document.getElementById('btn-cancel-strain').classList.remove('hidden');
+  document.getElementById('btn-submit-strain').textContent = 'Save Changes';
+
+  refreshEffects();
+  refreshFlavors();
+  renderDispensaryCheckboxes(strain.dispensaries || []);
+
+  document.getElementById('strain-form-title').scrollIntoView({ behavior: 'smooth' });
+}
+
+// === STRAIN LIST ===
+function renderStrainList() {
+  const container = document.getElementById('strains-admin-list');
+  let rows = [
+    ...strainsData.map(s => ({ ...s, _isAddition: false })),
+    ...strainDelta.additions.map(s => ({ ...s, _isAddition: true })),
+  ];
+
+  if (strainSearchQuery) {
+    rows = rows.filter(s => s.name.toLowerCase().includes(strainSearchQuery));
+  }
+  if (strainTypeFilter !== 'all') {
+    rows = rows.filter(s => s.type === strainTypeFilter);
+  }
+
+  if (rows.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-muted);padding:1rem 0.5rem;font-size:0.85rem;">No strains match.</p>';
+    return;
+  }
+
+  container.innerHTML = rows.map(s => {
+    const isHidden    = strainDelta.hidden.includes(s.id);
+    const isAddition  = s._isAddition;
+    const hasOverride = !isAddition && !!strainDelta.overrides[s.id];
+
+    return `
+      <div class="admin-strain-row ${isHidden ? 'admin-strain-row--hidden' : ''}" data-id="${s.id}">
+        <span class="admin-strain-row__dot" data-type="${s.type}"></span>
+        <span class="admin-strain-row__name">${s.name}</span>
+        <div class="admin-strain-row__badges">
+          ${isAddition  ? '<span class="admin-tag" style="border-color:var(--green-primary);color:var(--green-glow)">🌱 Added</span>' : ''}
+          ${hasOverride ? '<span class="admin-tag" style="border-color:#fbbf24;color:#fbbf24">edited</span>' : ''}
+        </div>
+        <div class="admin-strain-row__actions">
+          ${isHidden
+            ? `<button class="admin-btn admin-btn--small" data-action="restore" data-id="${s.id}">↩ Restore</button>`
+            : `<button class="admin-btn admin-btn--small" data-action="edit" data-id="${s.id}" data-addition="${isAddition}">✏️</button>
+               <button class="admin-btn admin-btn--small admin-btn--danger" data-action="${isAddition ? 'delete' : 'hide'}" data-id="${s.id}">
+                 ${isAddition ? '🗑️' : '🙈 Hide'}
+               </button>`
+          }
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.querySelectorAll('[data-action="edit"]').forEach(btn => {
+    btn.addEventListener('click', () =>
+      startEditingStrain(btn.dataset.id, btn.dataset.addition === 'true')
+    );
+  });
+
+  container.querySelectorAll('[data-action="hide"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      strainDelta.hidden.push(btn.dataset.id);
+      await saveStrainDelta(strainDelta);
+      renderStrainList();
+    });
+  });
+
+  container.querySelectorAll('[data-action="restore"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      strainDelta.hidden = strainDelta.hidden.filter(id => id !== btn.dataset.id);
+      await saveStrainDelta(strainDelta);
+      renderStrainList();
+    });
+  });
+
+  container.querySelectorAll('[data-action="delete"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Delete this strain permanently?')) return;
+      strainDelta.additions = strainDelta.additions.filter(s => s.id !== btn.dataset.id);
+      await saveStrainDelta(strainDelta);
+      renderStrainList();
+    });
+  });
+}
+
 // === UI ===
 function showDashboard() {
   document.getElementById('login-gate').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
   loadAdsList();
+  initStrainManager();
 }
 
 async function loadAdsList() {
@@ -167,6 +382,84 @@ function cancelEditing() {
   document.getElementById('btn-cancel-edit').classList.add('hidden');
   document.getElementById('btn-submit-ad').textContent = 'Create Ad';
   document.getElementById('priority-display').textContent = '5';
+}
+
+// === STRAIN MANAGER INIT ===
+function initStrainManager() {
+  getStrainDelta().then(delta => {
+    strainDelta = delta;
+    resetStrainForm();
+    renderStrainList();
+  });
+
+  document.getElementById('strain-admin-search').addEventListener('input', e => {
+    strainSearchQuery = e.target.value.toLowerCase();
+    renderStrainList();
+  });
+
+  document.getElementById('strain-filter-tabs').querySelectorAll('.admin-filter-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('#strain-filter-tabs .admin-filter-tab').forEach(t => t.classList.remove('admin-filter-tab--active'));
+      tab.classList.add('admin-filter-tab--active');
+      strainTypeFilter = tab.dataset.filter;
+      renderStrainList();
+    });
+  });
+
+  document.getElementById('btn-cancel-strain').addEventListener('click', resetStrainForm);
+
+  document.getElementById('strain-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('btn-submit-strain');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Saving...';
+    submitBtn.disabled = true;
+
+    try {
+      const name         = document.getElementById('strain-name').value.trim();
+      const type         = document.querySelector('input[name="strain-type"]:checked').value;
+      const description  = document.getElementById('strain-description').value.trim();
+      const genetics     = document.getElementById('strain-genetics').value.trim() || null;
+      const ratingRaw    = document.getElementById('strain-rating').value;
+      const rating       = ratingRaw ? parseFloat(ratingRaw) : null;
+      const dispensaries = getSelectedDispensaries();
+
+      if (editingStrainIsAddition) {
+        const idx = strainDelta.additions.findIndex(s => s.id === editingStrainId);
+        if (idx >= 0) {
+          strainDelta.additions[idx] = {
+            ...strainDelta.additions[idx],
+            name, type, effects: selectedEffects, flavors: selectedFlavors,
+            description, genetics, rating, dispensaries, isAddition: true,
+          };
+        }
+      } else if (editingStrainId) {
+        strainDelta.overrides[editingStrainId] = {
+          name, type, effects: selectedEffects, flavors: selectedFlavors,
+          description, genetics, rating, dispensaries,
+        };
+      } else {
+        const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        strainDelta.additions.push({
+          id, name, type,
+          effects: selectedEffects,
+          flavors: selectedFlavors,
+          description, genetics, rating, dispensaries,
+          isAddition: true,
+        });
+      }
+
+      await saveStrainDelta(strainDelta);
+      resetStrainForm();
+      renderStrainList();
+    } catch (err) {
+      console.error('Error saving strain:', err);
+      alert('Failed to save strain. Check console for details.');
+    } finally {
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    }
+  });
 }
 
 // === INIT ===
