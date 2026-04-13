@@ -8,6 +8,12 @@ service cloud.firestore {
       allow write: if true;
     }
 
+    // Strain delta — public reads, open writes (admin protected client-side)
+    match /strains/{doc} {
+      allow read: if true;
+      allow write: if true;
+    }
+
     // Deny everything else
     match /{document=**} {
       allow read, write: if false;
