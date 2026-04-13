@@ -835,12 +835,15 @@ function renderAdSlot(containerId, ads) {
   }
 }
 
-function loadAds() {
+async function loadAds() {
   try {
-    import('./services/adService.js').then(({ getActiveAds }) => {
-      renderAdSlot('ad-slot-home', getActiveAds('home'));
-      renderAdSlot('ad-slot-result', getActiveAds('result'));
-    });
+    const { getActiveAds } = await import('./services/adService.js');
+    const [homeAds, resultAds] = await Promise.all([
+      getActiveAds('home'),
+      getActiveAds('result'),
+    ]);
+    renderAdSlot('ad-slot-home', homeAds);
+    renderAdSlot('ad-slot-result', resultAds);
   } catch {
     // No ads configured — that's fine.
   }
