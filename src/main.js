@@ -39,10 +39,18 @@ let strainDelta = { hidden: [], overrides: {}, additions: [] };
 
 function applyDelta(strains, delta) {
   const { hidden, overrides, additions } = delta;
+  const hiddenSet = new Set(hidden);
   return strains
-    .filter(s => !hidden.includes(s.id))
+    .filter(s => !hiddenSet.has(s.id))
     .map(s => overrides[s.id] ? { ...s, ...overrides[s.id] } : s)
-    .concat(additions);
+    .concat(additions.map(a => ({
+      effects: [], flavors: [], dispensaries: [], description: '',
+      genetics: null, rating: null,
+      ...a,
+      type: a.type || 'hybrid',
+      name: a.name || 'Unknown',
+      id: a.id || `addition-${Date.now()}`,
+    })));
 }
 
 // === STRAIN EXPAND BODY ===
