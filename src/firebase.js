@@ -1,27 +1,21 @@
 /**
  * Firebase Configuration for CannaPickForMe
- * Used ONLY for ad management — no user data collected.
- *
- * ⚠️  SETUP INSTRUCTIONS:
- * 1. Go to https://console.firebase.google.com/
- * 2. Create a project named "CannaPickForMe" (or similar)
- * 3. Add a Web App and copy the config object below
- * 4. Enable Firestore Database (start in test mode, we'll lock down later)
- * 5. Enable Firebase Storage
+ * Used for ad management (Firestore + Storage).
+ * Vercel Analytics handles usage tracking separately.
  */
 
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-// TODO: Replace with your actual Firebase config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.firebasestorage.app",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyD7UinFOkdKefYbaiDxzkU7cLCx7PmxEso",
+  authDomain: "cannapickforme.firebaseapp.com",
+  projectId: "cannapickforme",
+  storageBucket: "cannapickforme.firebasestorage.app",
+  messagingSenderId: "563331444056",
+  appId: "1:563331444056:web:e3885b11144d41eff3092d",
+  measurementId: "G-CDZTV0HG2F"
 };
 
 const app = initializeApp(firebaseConfig);

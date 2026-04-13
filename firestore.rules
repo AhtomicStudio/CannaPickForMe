@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Ads collection — public reads, locked writes until admin auth is added
+    match /ads/{adId} {
+      allow read: if true;
+      allow write: if false; // TODO: restrict to authenticated admin once Firebase Auth is added
+    }
+
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
