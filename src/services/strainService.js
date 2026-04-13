@@ -21,7 +21,7 @@ export async function getStrainDelta() {
     const data = snap.data();
     return {
       hidden:    Array.isArray(data.hidden)    ? data.hidden    : [],
-      overrides: data.overrides && typeof data.overrides === 'object' ? data.overrides : {},
+      overrides: data.overrides !== null && typeof data.overrides === 'object' && !Array.isArray(data.overrides) ? data.overrides : {},
       additions: Array.isArray(data.additions) ? data.additions : [],
     };
   } catch (err) {
@@ -34,9 +34,14 @@ export async function getStrainDelta() {
  * Write the full delta object back to Firestore.
  */
 export async function saveStrainDelta(delta) {
-  await setDoc(DELTA_REF(), {
-    hidden:    delta.hidden    ?? [],
-    overrides: delta.overrides ?? {},
-    additions: delta.additions ?? [],
-  });
+  try {
+    await setDoc(DELTA_REF(), {
+      hidden:    delta.hidden    ?? [],
+      overrides: delta.overrides ?? {},
+      additions: delta.additions ?? [],
+    });
+  } catch (err) {
+    console.error('Failed to save strain delta:', err);
+    throw err;
+  }
 }
