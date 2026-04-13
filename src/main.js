@@ -835,20 +835,14 @@ function renderAdSlot(containerId, ads) {
   }
 }
 
-async function loadAds() {
+function loadAds() {
   try {
-    const { getActiveAds } = await import('./services/adService.js');
-
-    const [homeAds, resultAds] = await Promise.all([
-      getActiveAds('home'),
-      getActiveAds('result'),
-    ]);
-
-    renderAdSlot('ad-slot-home', homeAds);
-    renderAdSlot('ad-slot-result', resultAds);
+    import('./services/adService.js').then(({ getActiveAds }) => {
+      renderAdSlot('ad-slot-home', getActiveAds('home'));
+      renderAdSlot('ad-slot-result', getActiveAds('result'));
+    });
   } catch {
-    // Firebase not configured or network error — ads just won't show.
-    // The app works perfectly fine without them.
+    // No ads configured — that's fine.
   }
 }
 

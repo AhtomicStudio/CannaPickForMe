@@ -1,0 +1,13 @@
+[
+  {
+    "id": "example-ad",
+    "active": false,
+    "placement": "result",
+    "displayType": "card",
+    "priority": 10,
+    "title": "Your Ad Title",
+    "description": "Your tagline here",
+    "imageUrl": "/ads/your-image.jpg",
+    "clickUrl": "https://your-link.com"
+  }
+]
