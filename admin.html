@@ -77,12 +77,33 @@
               <input type="text" id="ad-description" placeholder="Short tagline..." />
             </div>
           </div>
-          <div class="admin-form__group">
-            <label for="ad-image">Ad Image *</label>
-            <div class="admin-upload">
-              <input type="file" id="ad-image" accept="image/*" />
-              <div id="image-preview" class="admin-upload__preview hidden">
-                <img id="preview-img" alt="Preview" />
+          <div class="admin-form__row admin-form__row--preview">
+            <div class="admin-form__group">
+              <label for="ad-image">Ad Image *</label>
+              <div class="admin-upload">
+                <input type="file" id="ad-image" accept="image/*" />
+                <span id="image-hint" class="admin-upload__hint">300 × 300 px recommended — square (1:1)</span>
+                <div id="image-preview" class="admin-upload__preview hidden">
+                  <img id="preview-img" alt="Preview" />
+                </div>
+              </div>
+            </div>
+            <div class="admin-form__group">
+              <label>Live Preview</label>
+              <div id="ad-preview-wrap" class="admin-preview-wrap">
+                <p id="ad-preview-empty" class="admin-preview-empty">Fill in the form to see a preview</p>
+                <div id="ad-preview-card" class="ad-mock-card hidden">
+                  <span class="ad-mock__sponsored">Sponsored</span>
+                  <img id="ad-preview-card-img" class="ad-mock-card__image" alt="" />
+                  <div class="ad-mock-card__info">
+                    <div id="ad-preview-card-title" class="ad-mock-card__title"></div>
+                    <div id="ad-preview-card-desc" class="ad-mock-card__description"></div>
+                  </div>
+                </div>
+                <div id="ad-preview-banner" class="ad-mock-banner hidden">
+                  <img id="ad-preview-banner-img" class="ad-mock-banner__image" alt="" />
+                  <span class="ad-mock__sponsored ad-mock__sponsored--banner">Sponsored</span>
+                </div>
               </div>
             </div>
           </div>

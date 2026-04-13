@@ -42,6 +42,7 @@ function logout() {
 // === STATE ===
 let editingAdId = null;
 let existingImageUrl = null;
+let previewImageSrc = null;
 
 // === UI ===
 function showDashboard() {
@@ -141,6 +142,7 @@ function startEditing(ad) {
   const previewImg = document.getElementById('preview-img');
   previewImg.src = ad.imageUrl;
   preview.classList.remove('hidden');
+  previewImageSrc = ad.imageUrl;
 
   // Image is optional when editing
   document.getElementById('ad-image').removeAttribute('required');
@@ -161,6 +163,7 @@ function cancelEditing() {
   document.getElementById('edit-ad-id').value = '';
   document.getElementById('image-preview').classList.add('hidden');
   document.getElementById('ad-image').setAttribute('required', '');
+  previewImageSrc = null;
   document.getElementById('btn-cancel-edit').classList.add('hidden');
   document.getElementById('btn-submit-ad').textContent = 'Create Ad';
   document.getElementById('priority-display').textContent = '5';
@@ -202,12 +205,63 @@ function init() {
     const preview = document.getElementById('image-preview');
     const previewImg = document.getElementById('preview-img');
     if (file) {
-      previewImg.src = URL.createObjectURL(file);
+      const url = URL.createObjectURL(file);
+      previewImg.src = url;
       preview.classList.remove('hidden');
+      previewImageSrc = url;
     } else {
       preview.classList.add('hidden');
+      previewImageSrc = null;
     }
+    updateAdPreview();
   });
+
+  // Dimension hint + live preview
+  const HINTS = {
+    card: '300 × 300 px recommended — square (1:1)',
+    banner: '1200 × 400 px recommended — landscape (3:1)',
+  };
+
+  function updateAdPreview() {
+    const displayType = document.getElementById('ad-display-type').value;
+    const title = document.getElementById('ad-title').value.trim();
+    const description = document.getElementById('ad-description').value.trim();
+
+    document.getElementById('image-hint').textContent = HINTS[displayType] || HINTS.card;
+
+    const empty = document.getElementById('ad-preview-empty');
+    const cardEl = document.getElementById('ad-preview-card');
+    const bannerEl = document.getElementById('ad-preview-banner');
+
+    if (!previewImageSrc && !title) {
+      empty.classList.remove('hidden');
+      cardEl.classList.add('hidden');
+      bannerEl.classList.add('hidden');
+      return;
+    }
+
+    empty.classList.add('hidden');
+
+    if (displayType === 'banner') {
+      cardEl.classList.add('hidden');
+      bannerEl.classList.remove('hidden');
+      const img = document.getElementById('ad-preview-banner-img');
+      img.src = previewImageSrc || '';
+      img.style.display = previewImageSrc ? 'block' : 'none';
+    } else {
+      bannerEl.classList.add('hidden');
+      cardEl.classList.remove('hidden');
+      const img = document.getElementById('ad-preview-card-img');
+      img.src = previewImageSrc || '';
+      img.style.display = previewImageSrc ? 'block' : 'none';
+      document.getElementById('ad-preview-card-title').textContent = title || 'Ad Title';
+      document.getElementById('ad-preview-card-desc').textContent = description;
+    }
+  }
+
+  document.getElementById('ad-display-type').addEventListener('change', updateAdPreview);
+  document.getElementById('ad-title').addEventListener('input', updateAdPreview);
+  document.getElementById('ad-description').addEventListener('input', updateAdPreview);
 
   // Cancel editing
   document.getElementById('btn-cancel-edit').addEventListener('click', cancelEditing);
