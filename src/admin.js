@@ -125,6 +125,12 @@ function getSelectedDispensaries() {
     .map(el => el.value);
 }
 
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 // === STRAIN FORM ===
 function resetStrainForm() {
   editingStrainId = null;
@@ -139,6 +145,14 @@ function resetStrainForm() {
   document.getElementById('edit-strain-is-addition').value = '';
   document.getElementById('btn-cancel-strain').classList.add('hidden');
   document.getElementById('btn-submit-strain').textContent = 'Add Strain';
+
+  strainSearchQuery = '';
+  strainTypeFilter = 'all';
+  const searchInput = document.getElementById('strain-admin-search');
+  if (searchInput) searchInput.value = '';
+  document.querySelectorAll('#strain-filter-tabs .admin-filter-tab').forEach(t =>
+    t.classList.toggle('admin-filter-tab--active', t.dataset.filter === 'all')
+  );
 
   refreshEffects();
   refreshFlavors();
@@ -206,18 +220,18 @@ function renderStrainList() {
     const hasOverride = !isAddition && !!strainDelta.overrides[s.id];
 
     return `
-      <div class="admin-strain-row ${isHidden ? 'admin-strain-row--hidden' : ''}" data-id="${s.id}">
-        <span class="admin-strain-row__dot" data-type="${s.type}"></span>
-        <span class="admin-strain-row__name">${s.name}</span>
+      <div class="admin-strain-row ${isHidden ? 'admin-strain-row--hidden' : ''}" data-id="${esc(s.id)}">
+        <span class="admin-strain-row__dot" data-type="${esc(s.type)}"></span>
+        <span class="admin-strain-row__name">${esc(s.name)}</span>
         <div class="admin-strain-row__badges">
           ${isAddition  ? '<span class="admin-tag" style="border-color:var(--green-primary);color:var(--green-glow)">🌱 Added</span>' : ''}
           ${hasOverride ? '<span class="admin-tag" style="border-color:#fbbf24;color:#fbbf24">edited</span>' : ''}
         </div>
         <div class="admin-strain-row__actions">
           ${isHidden
-            ? `<button class="admin-btn admin-btn--small" data-action="restore" data-id="${s.id}">↩ Restore</button>`
-            : `<button class="admin-btn admin-btn--small" data-action="edit" data-id="${s.id}" data-addition="${isAddition}">✏️</button>
-               <button class="admin-btn admin-btn--small admin-btn--danger" data-action="${isAddition ? 'delete' : 'hide'}" data-id="${s.id}">
+            ? `<button class="admin-btn admin-btn--small" data-action="restore" data-id="${esc(s.id)}">↩ Restore</button>`
+            : `<button class="admin-btn admin-btn--small" data-action="edit" data-id="${esc(s.id)}" data-addition="${isAddition}">✏️</button>
+               <button class="admin-btn admin-btn--small admin-btn--danger" data-action="${isAddition ? 'delete' : 'hide'}" data-id="${esc(s.id)}">
                  ${isAddition ? '🗑️' : '🙈 Hide'}
                </button>`
           }
@@ -390,6 +404,8 @@ function initStrainManager() {
     strainDelta = delta;
     resetStrainForm();
     renderStrainList();
+  }).catch(err => {
+    console.error('Failed to initialize strain manager:', err);
   });
 
   document.getElementById('strain-admin-search').addEventListener('input', e => {
@@ -411,7 +427,6 @@ function initStrainManager() {
   document.getElementById('strain-form').addEventListener('submit', async e => {
     e.preventDefault();
     const submitBtn = document.getElementById('btn-submit-strain');
-    const originalText = submitBtn.textContent;
     submitBtn.textContent = 'Saving...';
     submitBtn.disabled = true;
 
@@ -439,7 +454,7 @@ function initStrainManager() {
           description, genetics, rating, dispensaries,
         };
       } else {
-        const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        const id = 'add-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         strainDelta.additions.push({
           id, name, type,
           effects: selectedEffects,
@@ -456,7 +471,6 @@ function initStrainManager() {
       console.error('Error saving strain:', err);
       alert('Failed to save strain. Check console for details.');
     } finally {
-      submitBtn.textContent = originalText;
       submitBtn.disabled = false;
     }
   });
