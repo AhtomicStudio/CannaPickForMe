@@ -72,7 +72,7 @@
     <!-- Home -->
     <div id="home-screen" class="screen home hidden">
       <div class="home__header">
-        <button id="btn-account" class="btn btn--icon btn--cloud" title="Cloud Sync">☁</button>
+        <button id="btn-account" type="button" class="btn btn--icon btn--cloud" aria-label="Cloud Sync">☁</button>
         <span class="home__icon">🌿</span>
         <h1 class="home__title">Canna<span class="text-glow">Pick</span>ForMe</h1>
         <p class="home__tagline">What are we smokin' tonight?</p>
@@ -253,7 +253,7 @@
     </div>
 
     <!-- Account / Cloud Sync Modal -->
-    <div id="account-modal" class="modal hidden">
+    <div id="account-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Cloud Sync Account">
       <div class="modal__backdrop"></div>
       <div class="modal__content">
         <!-- State: signed out -->
@@ -262,7 +262,7 @@
           <p class="modal__sub">Sign in with a magic link — no password needed.</p>
           <div class="form-group">
             <label for="account-email">Email</label>
-            <input type="email" id="account-email" placeholder="your@email.com" autocomplete="email" />
+            <input type="email" id="account-email" placeholder="your@email.com" autocomplete="email" required />
           </div>
           <p class="account-disclosure">Your email is used only to sign you in and sync your data. It will never be used for marketing without your separate permission.</p>
           <div class="modal__actions">
@@ -295,7 +295,7 @@
     </div>
 
     <!-- Conflict Modal -->
-    <div id="conflict-modal" class="modal hidden">
+    <div id="conflict-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Data Conflict">
       <div class="modal__backdrop"></div>
       <div class="modal__content">
         <h3>Data Conflict ⚠️</h3>

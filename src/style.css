@@ -2361,8 +2361,8 @@ body {
    User Accounts / Cloud Sync
    ============================================ */
 
-/* Home screen needs relative positioning for the absolute cloud button */
-.home {
+/* Home header needs relative positioning for the absolute cloud button */
+.home__header {
   position: relative;
 }
 
