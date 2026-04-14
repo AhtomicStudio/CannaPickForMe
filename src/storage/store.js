@@ -1,6 +1,6 @@
 /**
  * Local Storage Manager for CannaPickForMe
- * Handles: user stash, custom strains, effect overrides, age verification
+ * Handles: user stash, custom strains, effect overrides, age verification, session history, cloud sync timestamp
  */
 
 const KEYS = {
@@ -171,10 +171,13 @@ export function haptic(style = 'light') {
 // Used to detect conflicts when signing in on a new device.
 
 export function getUpdatedAt() {
-  return parseInt(localStorage.getItem(KEYS.SYNC_AT) || '0', 10);
+  const raw = localStorage.getItem(KEYS.SYNC_AT);
+  const parsed = parseInt(raw, 10);
+  return Number.isFinite(parsed) ? parsed : 0;
 }
 
 export function setUpdatedAt(ts) {
+  if (typeof ts !== 'number' || !Number.isFinite(ts)) return;
   localStorage.setItem(KEYS.SYNC_AT, String(ts));
 }
 
