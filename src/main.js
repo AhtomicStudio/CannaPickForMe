@@ -9,8 +9,13 @@ import {
   getStash, addToStash, removeFromStash, isInStash, clearStash,
   getCustomStrains, addCustomStrain, removeCustomStrain,
   getEffectOverrides, setEffectOverride, getStrainEffectOverride, clearEffectOverride,
-  isAgeVerified, setAgeVerified, applyOverrides
+  isAgeVerified, setAgeVerified, applyOverrides,
+  addSessionEntry,
 } from './storage/store.js';
+import {
+  getCurrentUser, sendSignInLink, handleSignInLink,
+  scheduleSync, loadAndResolveProfile, signOutUser, deleteAccount, initAuth,
+} from './services/userService.js';
 
 // === CONSTANTS ===
 const ALL_EFFECTS = ['Relaxed','Happy','Euphoric','Creative','Uplifted','Energetic','Focused','Talkative','Giggly','Sleepy','Hungry','Tingly'];
@@ -244,6 +249,7 @@ function initHome() {
     const confirmed = confirm(`Clear all ${count} strain${count > 1 ? 's' : ''} from your stash?`);
     if (confirmed) {
       clearStash();
+      scheduleSync();
       updateStashUI();
     }
   });
@@ -355,6 +361,7 @@ function renderBrowseList() {
         addToStash(id);
         track('stash_add', { strain: id });
       }
+      scheduleSync();
       renderBrowseList();
       updateStashUI();
     });
@@ -414,6 +421,7 @@ function renderMyStashList() {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       removeFromStash(btn.dataset.id);
+      scheduleSync();
       renderMyStashList();
       updateStashUI();
     });
@@ -492,6 +500,7 @@ function initCustomForm() {
     });
 
     addToStash(strain.id);
+    scheduleSync();
     document.getElementById('custom-modal').classList.add('hidden');
     document.getElementById('custom-strain-form').reset();
     renderBrowseList();
@@ -530,6 +539,7 @@ function openOverrideModal(strainId) {
       return;
     }
     setEffectOverride(strainId, selected);
+    scheduleSync();
     modal.classList.add('hidden');
     renderBrowseList();
   };
@@ -537,6 +547,7 @@ function openOverrideModal(strainId) {
   // Reset
   document.getElementById('override-reset').onclick = () => {
     clearEffectOverride(strainId);
+    scheduleSync();
     modal.classList.add('hidden');
     renderBrowseList();
   };
@@ -673,6 +684,9 @@ function renderResult(result) {
     match_score: matchScore,
     is_perfect_match: isPerfectMatch ?? false,
   });
+
+  addSessionEntry({ strainId: pickedStrain.id, name: pickedStrain.name });
+  scheduleSync();
 
   document.getElementById('result-strain-name').textContent = pickedStrain.name;
 
@@ -880,6 +894,119 @@ async function loadAds() {
   }
 }
 
+// === ACCOUNT MODAL ===
+
+function setAccountState(state) {
+  document.getElementById('account-state-signedout').classList.toggle('hidden', state !== 'signedout');
+  document.getElementById('account-state-linksent').classList.toggle('hidden', state !== 'linksent');
+  document.getElementById('account-state-signedin').classList.toggle('hidden', state !== 'signedin');
+}
+
+function showConflictModal(localTs, cloudTs) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('conflict-modal');
+    document.getElementById('conflict-local-time').textContent =
+      localTs > 0 ? new Date(localTs).toLocaleString() : 'No sync history on this device';
+    document.getElementById('conflict-cloud-time').textContent =
+      cloudTs > 0 ? new Date(cloudTs).toLocaleString() : 'No cloud data';
+    modal.classList.remove('hidden');
+
+    document.getElementById('conflict-keep-local').onclick = () => {
+      modal.classList.add('hidden');
+      resolve('local');
+    };
+    document.getElementById('conflict-use-cloud').onclick = () => {
+      modal.classList.add('hidden');
+      resolve('cloud');
+    };
+  });
+}
+
+function initAccountModal() {
+  const modal = document.getElementById('account-modal');
+  const cloudBtn = document.getElementById('btn-account');
+
+  // Open modal on cloud button click
+  cloudBtn.addEventListener('click', () => {
+    modal.classList.remove('hidden');
+    const user = getCurrentUser();
+    setAccountState(user ? 'signedin' : 'signedout');
+    if (user) {
+      document.getElementById('account-user-email').textContent = user.email;
+    }
+  });
+
+  // Close on backdrop click
+  modal.querySelector('.modal__backdrop').addEventListener('click', () => modal.classList.add('hidden'));
+
+  // Cancel / back buttons
+  document.getElementById('account-cancel-btn').addEventListener('click', () => modal.classList.add('hidden'));
+  document.getElementById('account-back-btn').addEventListener('click', () => setAccountState('signedout'));
+
+  // Send sign-in link
+  document.getElementById('account-send-link-btn').addEventListener('click', async () => {
+    const email = document.getElementById('account-email').value.trim();
+    if (!email) return;
+    const btn = document.getElementById('account-send-link-btn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    try {
+      await sendSignInLink(email);
+      setAccountState('linksent');
+    } catch (err) {
+      alert('Failed to send link. Please check your email and try again.');
+      console.error('sendSignInLink error:', err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Send Sign-In Link ✉️';
+    }
+  });
+
+  // Sign out
+  document.getElementById('account-signout-btn').addEventListener('click', async () => {
+    await signOutUser();
+    modal.classList.add('hidden');
+  });
+
+  // Delete account
+  document.getElementById('account-delete-btn').addEventListener('click', async () => {
+    const confirmed = confirm('Delete your account and all cloud data? Your local data will remain on this device.');
+    if (!confirmed) return;
+    try {
+      await deleteAccount();
+      modal.classList.add('hidden');
+      alert('Account deleted. Your local data is still on this device.');
+    } catch (err) {
+      if (err.code === 'auth/requires-recent-login') {
+        alert('For security, please sign out and sign back in before deleting your account.');
+      } else {
+        alert('Something went wrong. Please try again.');
+        console.error('deleteAccount error:', err);
+      }
+    }
+  });
+
+  // Auth state listener — updates cloud icon and resolves conflicts on sign-in
+  initAuth(
+    async (user) => {
+      cloudBtn.classList.add('active');
+      modal.classList.add('hidden');
+      try {
+        await loadAndResolveProfile(showConflictModal);
+      } catch (err) {
+        console.error('loadAndResolveProfile error:', err);
+      }
+      // Refresh UI — cloud data may have replaced local
+      renderBrowseList();
+      renderMyStashList();
+      updateStashUI();
+    },
+    () => {
+      cloudBtn.classList.remove('active');
+    }
+  );
+}
+
 // === BOOT ===
 function init() {
   inject();
@@ -892,6 +1019,8 @@ function init() {
   initResult();
   loadAds();
   initStrainDelta();
+  initAccountModal();
+  handleSignInLink().catch(err => console.error('Sign-in link error:', err));
 }
 
 document.addEventListener('DOMContentLoaded', init);
