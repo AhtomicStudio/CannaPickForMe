@@ -9,6 +9,7 @@ const KEYS = {
   EFFECT_OVERRIDES: 'cpfm_effect_overrides',
   AGE_VERIFIED: 'cpfm_age_verified',
   SESSION_HISTORY: 'cpfm_session_history',
+  SYNC_AT: 'cpfm_sync_at',
 };
 
 function getJSON(key, fallback = null) {
@@ -163,5 +164,35 @@ export function haptic(style = 'light') {
   } catch {
     // Silent — haptics not supported
   }
+}
+
+// === SYNC TIMESTAMP ===
+// Stores the Unix ms timestamp of the last successful Firestore sync.
+// Used to detect conflicts when signing in on a new device.
+
+export function getUpdatedAt() {
+  return parseInt(localStorage.getItem(KEYS.SYNC_AT) || '0', 10);
+}
+
+export function setUpdatedAt(ts) {
+  localStorage.setItem(KEYS.SYNC_AT, String(ts));
+}
+
+// === BULK SETTERS (conflict restore — overwrites entire collection) ===
+
+export function setStashBulk(arr) {
+  setJSON(KEYS.STASH, arr);
+}
+
+export function setCustomStrainsBulk(arr) {
+  setJSON(KEYS.CUSTOM_STRAINS, arr);
+}
+
+export function setEffectOverridesBulk(obj) {
+  setJSON(KEYS.EFFECT_OVERRIDES, obj);
+}
+
+export function setSessionHistoryBulk(arr) {
+  setJSON(KEYS.SESSION_HISTORY, arr);
 }
 
