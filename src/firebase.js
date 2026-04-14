@@ -1,5 +1,7 @@
 /**
  * Firebase Configuration for CannaPickForMe
+ * Provides Firestore (with offline persistence), Storage, and Auth.
+ * Vercel Analytics handles usage tracking separately.
  */
 
 import { initializeApp } from 'firebase/app';
