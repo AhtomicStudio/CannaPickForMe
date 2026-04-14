@@ -72,13 +72,14 @@
     <!-- Home -->
     <div id="home-screen" class="screen home hidden">
       <div class="home__header">
+        <button id="btn-account" class="btn btn--icon btn--cloud" title="Cloud Sync">☁</button>
         <span class="home__icon">🌿</span>
         <h1 class="home__title">Canna<span class="text-glow">Pick</span>ForMe</h1>
         <p class="home__tagline">What are we smokin' tonight?</p>
       </div>
       <div class="home__actions">
         <button id="btn-pick" class="btn btn--primary btn--large btn--glow" disabled>
-          <span class="btn__emoji">🎲</span>
+          <span class="btn__emoji">🔥</span>
           <span class="btn__text">Pick For Me</span>
         </button>
         <button id="btn-stash" class="btn btn--secondary btn--large">
@@ -248,6 +249,71 @@
         </div>
         <!-- Ad Slot: Result -->
         <div id="ad-slot-result" class="ad-slot ad-slot--result"></div>
+      </div>
+    </div>
+
+    <!-- Account / Cloud Sync Modal -->
+    <div id="account-modal" class="modal hidden">
+      <div class="modal__backdrop"></div>
+      <div class="modal__content">
+        <!-- State: signed out -->
+        <div id="account-state-signedout">
+          <h3>Save to Cloud ☁️</h3>
+          <p class="modal__sub">Sign in with a magic link — no password needed.</p>
+          <div class="form-group">
+            <label for="account-email">Email</label>
+            <input type="email" id="account-email" placeholder="your@email.com" autocomplete="email" />
+          </div>
+          <p class="account-disclosure">Your email is used only to sign you in and sync your data. It will never be used for marketing without your separate permission.</p>
+          <div class="modal__actions">
+            <button id="account-cancel-btn" class="btn btn--ghost">Maybe Later</button>
+            <button id="account-send-link-btn" class="btn btn--primary btn--glow">Send Sign-In Link ✉️</button>
+          </div>
+        </div>
+        <!-- State: link sent -->
+        <div id="account-state-linksent" class="hidden">
+          <div class="account-state-center">
+            <div class="account-state-icon">✉️</div>
+            <h3>Check Your Email</h3>
+            <p class="modal__sub">Tap the link we sent to complete sign-in. This window will close automatically.</p>
+          </div>
+          <div class="modal__actions">
+            <button id="account-back-btn" class="btn btn--ghost">← Back</button>
+          </div>
+        </div>
+        <!-- State: signed in -->
+        <div id="account-state-signedin" class="hidden">
+          <h3>Your Account ☁️</h3>
+          <p id="account-user-email" class="modal__sub"></p>
+          <p class="account-sync-status">✓ Syncing to cloud</p>
+          <div class="modal__actions">
+            <button id="account-delete-btn" class="btn btn--ghost btn--danger">Delete Account</button>
+            <button id="account-signout-btn" class="btn btn--primary">Sign Out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Conflict Modal -->
+    <div id="conflict-modal" class="modal hidden">
+      <div class="modal__backdrop"></div>
+      <div class="modal__content">
+        <h3>Data Conflict ⚠️</h3>
+        <p class="modal__sub">You have data on this device and in the cloud. Which would you like to keep?</p>
+        <div class="conflict-options">
+          <div class="conflict-option">
+            <div class="conflict-option__label">This Device</div>
+            <div id="conflict-local-time" class="conflict-option__time"></div>
+          </div>
+          <div class="conflict-option">
+            <div class="conflict-option__label">Cloud</div>
+            <div id="conflict-cloud-time" class="conflict-option__time"></div>
+          </div>
+        </div>
+        <div class="modal__actions">
+          <button id="conflict-keep-local" class="btn btn--ghost">Keep Local</button>
+          <button id="conflict-use-cloud" class="btn btn--primary btn--glow">Use Cloud</button>
+        </div>
       </div>
     </div>
 
