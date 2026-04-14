@@ -68,10 +68,13 @@ export async function handleSignInLink() {
     email = window.prompt('Please confirm your email to complete sign-in:');
     if (!email) return false;
   }
-  await signInWithEmailLink(auth, email, window.location.href);
-  localStorage.removeItem(PENDING_EMAIL_KEY);
-  window.history.replaceState({}, document.title, window.location.pathname);
-  return true;
+  try {
+    await signInWithEmailLink(auth, email, window.location.href);
+    window.history.replaceState({}, document.title, window.location.pathname);
+    return true;
+  } finally {
+    localStorage.removeItem(PENDING_EMAIL_KEY);
+  }
 }
 
 /**
@@ -90,6 +93,7 @@ export function scheduleSync() {
  */
 export async function syncProfile() {
   if (!currentUser) return;
+  const uid = currentUser.uid;
   const ts = Date.now();
   const profile = {
     stash: getStash(),
@@ -98,8 +102,12 @@ export async function syncProfile() {
     sessionHistory: getSessionHistory(),
     updatedAt: ts,
   };
-  await setDoc(doc(db, 'users', currentUser.uid), profile);
-  setUpdatedAt(ts);
+  try {
+    await setDoc(doc(db, 'users', uid), profile);
+    setUpdatedAt(ts);
+  } catch (err) {
+    console.error('[userService] syncProfile failed:', err);
+  }
 }
 
 /**
@@ -109,30 +117,35 @@ export async function syncProfile() {
  */
 export async function loadAndResolveProfile(showConflictFn) {
   if (!currentUser) return;
-  const snap = await getDoc(doc(db, 'users', currentUser.uid));
+  const uid = currentUser.uid;
+  try {
+    const snap = await getDoc(doc(db, 'users', uid));
 
-  if (!snap.exists()) {
-    // First sign-in ever — push local data up to cloud silently
-    await syncProfile();
-    return;
-  }
+    if (!snap.exists()) {
+      // First sign-in ever — push local data up to cloud silently
+      await syncProfile();
+      return;
+    }
 
-  const cloud = snap.data();
-  const localTs = getUpdatedAt();
+    const cloud = snap.data();
+    const localTs = getUpdatedAt();
 
-  if (cloud.updatedAt === localTs) return; // Already in sync — nothing to do
+    if (cloud.updatedAt === localTs) return; // Already in sync — nothing to do
 
-  // Timestamps differ: ask the user which copy to keep
-  const winner = await showConflictFn(localTs, cloud.updatedAt || 0);
-  if (winner === 'local') {
-    await syncProfile();
-  } else {
-    // Restore cloud data into localStorage
-    setStashBulk(cloud.stash || []);
-    setCustomStrainsBulk(cloud.customStrains || []);
-    setEffectOverridesBulk(cloud.overrides || {});
-    setSessionHistoryBulk(cloud.sessionHistory || []);
-    setUpdatedAt(cloud.updatedAt || 0);
+    // Timestamps differ: ask the user which copy to keep
+    const winner = await showConflictFn(localTs, cloud.updatedAt || 0);
+    if (winner === 'local') {
+      await syncProfile();
+    } else {
+      // Restore cloud data into localStorage
+      setStashBulk(cloud.stash || []);
+      setCustomStrainsBulk(cloud.customStrains || []);
+      setEffectOverridesBulk(cloud.overrides || {});
+      setSessionHistoryBulk(cloud.sessionHistory || []);
+      setUpdatedAt(cloud.updatedAt || 0);
+    }
+  } catch (err) {
+    console.error('[userService] loadAndResolveProfile failed:', err);
   }
 }
 
@@ -149,10 +162,9 @@ export async function signOutUser() {
  */
 export async function deleteAccount() {
   if (!currentUser) return;
-  await deleteDoc(doc(db, 'users', currentUser.uid));
   const userToDelete = currentUser;
-  await fbSignOut(auth); // clears currentUser via onAuthStateChanged
-  await deleteUser(userToDelete);
+  await deleteDoc(doc(db, 'users', userToDelete.uid));
+  await deleteUser(userToDelete); // Signs out automatically; triggers onAuthStateChanged
 }
 
 /**
@@ -161,7 +173,7 @@ export async function deleteAccount() {
  * @param {function(): void}     onSignOut Called when the user signs out.
  */
 export function initAuth(onSignIn, onSignOut) {
-  onAuthStateChanged(auth, (user) => {
+  return onAuthStateChanged(auth, (user) => {
     currentUser = user;
     if (user) {
       onSignIn(user);
