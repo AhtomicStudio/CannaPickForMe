@@ -2,7 +2,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Ads collection — public reads, open writes (admin protected client-side)
+    // Ads — public reads, open writes (admin protected client-side)
     match /ads/{adId} {
       allow read: if true;
       allow write: if true;
@@ -12,6 +12,11 @@ service cloud.firestore {
     match /strains/{doc} {
       allow read: if true;
       allow write: if true;
+    }
+
+    // User profiles — owner only, requires Firebase Auth
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
     // Deny everything else
