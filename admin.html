@@ -142,84 +142,98 @@
       </section>
 
       <!-- Add/Edit Strain Form -->
-      <section class="admin-section">
-        <h2 id="strain-form-title">🌿 Add New Strain</h2>
-        <form id="strain-form" class="admin-form">
-          <input type="hidden" id="edit-strain-id" />
-          <input type="hidden" id="edit-strain-is-addition" />
+      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="strain-form-section">
+        <button type="button" class="admin-section__toggle" aria-expanded="false">
+          <h2 id="strain-form-title">🌿 Add New Strain</h2>
+          <span class="admin-section__chevron">▾</span>
+        </button>
+        <div class="admin-section__body">
+          <div>
+            <form id="strain-form" class="admin-form">
+              <input type="hidden" id="edit-strain-id" />
+              <input type="hidden" id="edit-strain-is-addition" />
 
-          <div class="admin-form__row">
-            <div class="admin-form__group">
-              <label for="strain-name">Name *</label>
-              <input type="text" id="strain-name" required placeholder="e.g., Purple Haze" />
-            </div>
-            <div class="admin-form__group">
-              <label>Type *</label>
-              <div class="admin-radio-group">
-                <label class="admin-radio"><input type="radio" name="strain-type" value="sativa" /> Sativa</label>
-                <label class="admin-radio"><input type="radio" name="strain-type" value="indica" /> Indica</label>
-                <label class="admin-radio"><input type="radio" name="strain-type" value="hybrid" checked /> Hybrid</label>
+              <div class="admin-form__row">
+                <div class="admin-form__group">
+                  <label for="strain-name">Name *</label>
+                  <input type="text" id="strain-name" required placeholder="e.g., Purple Haze" />
+                </div>
+                <div class="admin-form__group">
+                  <label>Type *</label>
+                  <div class="admin-radio-group">
+                    <label class="admin-radio"><input type="radio" name="strain-type" value="sativa" /> Sativa</label>
+                    <label class="admin-radio"><input type="radio" name="strain-type" value="indica" /> Indica</label>
+                    <label class="admin-radio"><input type="radio" name="strain-type" value="hybrid" checked /> Hybrid</label>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <div class="admin-form__group">
-            <label>Effects</label>
-            <div class="admin-tag-input" id="effects-tag-input">
-              <div class="admin-tag-input__pills" id="effects-pills"></div>
-              <div class="admin-tag-input__options" id="effects-options"></div>
-            </div>
-          </div>
+              <div class="admin-form__group">
+                <label>Effects</label>
+                <div class="admin-tag-input" id="effects-tag-input">
+                  <div class="admin-tag-input__pills" id="effects-pills"></div>
+                  <div class="admin-tag-input__options" id="effects-options"></div>
+                </div>
+              </div>
 
-          <div class="admin-form__group">
-            <label>Flavors</label>
-            <div class="admin-tag-input" id="flavors-tag-input">
-              <div class="admin-tag-input__pills" id="flavors-pills"></div>
-              <div class="admin-tag-input__options" id="flavors-options"></div>
-            </div>
-          </div>
+              <div class="admin-form__group">
+                <label>Flavors</label>
+                <div class="admin-tag-input" id="flavors-tag-input">
+                  <div class="admin-tag-input__pills" id="flavors-pills"></div>
+                  <div class="admin-tag-input__options" id="flavors-options"></div>
+                </div>
+              </div>
 
-          <div class="admin-form__group">
-            <label for="strain-description">Description</label>
-            <textarea id="strain-description" rows="3" placeholder="What does this strain feel like?"></textarea>
-          </div>
+              <div class="admin-form__group">
+                <label for="strain-description">Description</label>
+                <textarea id="strain-description" rows="3" placeholder="What does this strain feel like?"></textarea>
+              </div>
 
-          <div class="admin-form__row">
-            <div class="admin-form__group">
-              <label for="strain-genetics">Genetics</label>
-              <input type="text" id="strain-genetics" placeholder="e.g., OG Kush × Durban Poison" />
-            </div>
-            <div class="admin-form__group">
-              <label for="strain-rating">Rating (1.0–5.0)</label>
-              <input type="number" id="strain-rating" min="1" max="5" step="0.1" placeholder="4.5" />
-            </div>
-          </div>
+              <div class="admin-form__row">
+                <div class="admin-form__group">
+                  <label for="strain-genetics">Genetics</label>
+                  <input type="text" id="strain-genetics" placeholder="e.g., OG Kush × Durban Poison" />
+                </div>
+                <div class="admin-form__group">
+                  <label for="strain-rating">Rating (1.0–5.0)</label>
+                  <input type="number" id="strain-rating" min="1" max="5" step="0.1" placeholder="4.5" />
+                </div>
+              </div>
 
-          <div class="admin-form__group">
-            <label>Dispensaries</label>
-            <div class="admin-checkbox-group" id="strain-dispensaries-group"></div>
-          </div>
+              <div class="admin-form__group">
+                <label>Dispensaries</label>
+                <div class="admin-checkbox-group" id="strain-dispensaries-group"></div>
+              </div>
 
-          <div class="admin-form__actions">
-            <button type="button" id="btn-cancel-strain" class="admin-btn admin-btn--ghost hidden">Cancel Edit</button>
-            <button type="submit" id="btn-submit-strain" class="admin-btn admin-btn--primary">Add Strain</button>
+              <div class="admin-form__actions">
+                <button type="button" id="btn-cancel-strain" class="admin-btn admin-btn--ghost hidden">Cancel Edit</button>
+                <button type="submit" id="btn-submit-strain" class="admin-btn admin-btn--primary">Add Strain</button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </section>
 
       <!-- Strain List -->
-      <section class="admin-section">
-        <h2>📋 Manage Strains</h2>
-        <div class="admin-strain-controls">
-          <input type="text" id="strain-admin-search" placeholder="Search by name..." />
-          <div class="admin-filter-tabs" id="strain-filter-tabs">
-            <button class="admin-filter-tab admin-filter-tab--active" data-filter="all">All</button>
-            <button class="admin-filter-tab" data-filter="sativa">Sativa</button>
-            <button class="admin-filter-tab" data-filter="indica">Indica</button>
-            <button class="admin-filter-tab" data-filter="hybrid">Hybrid</button>
+      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="strain-list-section">
+        <button type="button" class="admin-section__toggle" aria-expanded="false">
+          <h2>📋 Manage Strains</h2>
+          <span class="admin-section__chevron">▾</span>
+        </button>
+        <div class="admin-section__body">
+          <div>
+            <div class="admin-strain-controls">
+              <input type="text" id="strain-admin-search" placeholder="Search by name..." />
+              <div class="admin-filter-tabs" id="strain-filter-tabs">
+                <button class="admin-filter-tab admin-filter-tab--active" data-filter="all">All</button>
+                <button class="admin-filter-tab" data-filter="sativa">Sativa</button>
+                <button class="admin-filter-tab" data-filter="indica">Indica</button>
+                <button class="admin-filter-tab" data-filter="hybrid">Hybrid</button>
+              </div>
+            </div>
+            <div id="strains-admin-list" class="admin-strains-list"></div>
           </div>
         </div>
-        <div id="strains-admin-list" class="admin-strains-list"></div>
       </section>
     </div>
 

@@ -213,6 +213,7 @@ function startEditingStrain(strainId, isAddition) {
   refreshFlavors();
   renderDispensaryCheckboxes(strain.dispensaries || []);
 
+  expandSection('strain-form-section');
   document.getElementById('strain-form-title').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -548,8 +549,27 @@ function initDragPreview() {
   document.addEventListener('touchend', endDrag);
 }
 
+// === COLLAPSIBLE SECTIONS ===
+function initCollapsibleSections() {
+  document.querySelectorAll('.admin-section__toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const section = toggle.closest('.admin-section--collapsible');
+      const nowCollapsed = section.classList.toggle('admin-section--collapsed');
+      toggle.setAttribute('aria-expanded', String(!nowCollapsed));
+    });
+  });
+}
+
+function expandSection(sectionId) {
+  const section = document.getElementById(sectionId);
+  if (!section) return;
+  section.classList.remove('admin-section--collapsed');
+  section.querySelector('.admin-section__toggle').setAttribute('aria-expanded', 'true');
+}
+
 // === INIT ===
 function init() {
+  initCollapsibleSections();
   initDragPreview();
 
   // Check existing session
