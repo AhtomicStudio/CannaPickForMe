@@ -72,7 +72,6 @@
     <!-- Home -->
     <div id="home-screen" class="screen home hidden">
       <div class="home__header">
-        <button id="btn-account" type="button" class="btn btn--icon btn--cloud" aria-label="Cloud Sync">☁</button>
         <span class="home__icon">🌿</span>
         <h1 class="home__title">Canna<span class="text-glow">Pick</span>ForMe</h1>
         <p class="home__tagline">What are we smokin' tonight?</p>
@@ -87,6 +86,11 @@
           <span class="btn__text">My Stash</span>
           <span id="stash-count" class="badge">0</span>
         </button>
+        <div id="auth-links" class="home__auth-links">
+          <a href="#" id="btn-login" class="auth-link">Log In</a>
+          <span class="auth-link-divider">or</span>
+          <a href="#" id="btn-signup" class="auth-link">Sign Up</a>
+        </div>
         <button id="btn-clear-stash" class="btn btn--ghost btn--clear-stash hidden">
           <span class="btn__emoji">🗑️</span>
           <span class="btn__text">Clear Stash</span>
@@ -123,9 +127,22 @@
             <button class="filter-chip" data-filter="hybrid">Hybrid</button>
           </div>
         </div>
+        <div class="strain-list-header">
+          <span class="strain-list-header__strains">Strains</span>
+          <div class="strain-list-header__actions">
+            <span>Edit</span>
+            <span>Add to Stash</span>
+          </div>
+        </div>
         <div id="strain-list" class="strain-list"></div>
       </div>
       <div id="my-stash-panel" class="stash__panel hidden">
+        <div class="strain-list-header">
+          <span class="strain-list-header__strains">Strains</span>
+          <div class="strain-list-header__actions">
+            <span>Remove</span>
+          </div>
+        </div>
         <div id="my-stash-list" class="strain-list"></div>
         <div id="empty-stash" class="empty-state">
           <span class="empty-state__icon">🫙</span>
@@ -313,6 +330,20 @@
         <div class="modal__actions">
           <button id="conflict-keep-local" class="btn btn--ghost">Keep Local</button>
           <button id="conflict-use-cloud" class="btn btn--primary btn--glow">Use Cloud</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dispensary Modal -->
+    <div id="dispensary-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Manage Dispensaries">
+      <div class="modal__backdrop"></div>
+      <div class="modal__content">
+        <h3 id="dispensary-modal-title">Dispensaries</h3>
+        <p class="modal__sub">Select which dispensaries carry this strain.</p>
+        <div id="dispensary-chips" class="chip-select"></div>
+        <div class="modal__actions">
+          <button id="dispensary-clear-btn" class="btn btn--ghost">Clear All</button>
+          <button id="dispensary-save-btn" class="btn btn--primary">Save ✓</button>
         </div>
       </div>
     </div>

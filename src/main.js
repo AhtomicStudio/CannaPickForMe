@@ -9,6 +9,7 @@ import {
   getStash, addToStash, removeFromStash, isInStash, clearStash,
   getCustomStrains, addCustomStrain, removeCustomStrain,
   getEffectOverrides, setEffectOverride, getStrainEffectOverride, clearEffectOverride,
+  setDispensaryOverride, getStrainDispensaries,
   isAgeVerified, setAgeVerified, applyOverrides,
   addSessionEntry,
 } from './storage/store.js';
@@ -37,7 +38,27 @@ const SMOKE_NEON_COLORS = [
 
 const DISPENSARY_NAMES = {
   'cookies-hayward': 'Cookies Hayward',
+  'garden-of-eden': 'Garden of Eden',
+  'we-are-hemp': 'We Are Hemp',
+  'hayward-dispensary-delivery': 'Hayward Dispensary Delivery',
+  'nug-wellness': 'NUG Wellness',
+  'flor-union-city': 'FLOR - Union City Dispensary',
+  'lemonnade-union-city': 'Lemonnade Union City Dispensary',
+  'harborside-san-leandro': 'Harborside San Leandro Dispensary',
+  '4twenty-market-oakland': '4Twenty Market Weed Dispensary Oakland',
+  'three-trees-oakland': 'Three Trees Weed Dispensary Kiosk',
+  'kanna-oakland': 'KANNA Weed Dispensary Oakland',
+  'harborside-oakland': 'Harborside Oakland Dispensary',
+  'ivy-hill-oakland': 'Ivy Hill Weed Dispensary Oakland',
+  'urbana-oakland': 'Urbana Weed Dispensary Oakland',
 };
+
+// Apply both effect and dispensary overrides to a strain before rendering
+function applyAllOverrides(strain) {
+  const withEffects = applyOverrides(strain);
+  const dispOverride = getStrainDispensaries(strain.id);
+  return dispOverride !== null ? { ...withEffects, dispensaries: dispOverride } : withEffects;
+}
 
 // === STRAIN DELTA CACHE ===
 let strainDelta = { hidden: [], overrides: {}, additions: [] };
@@ -78,9 +99,11 @@ function buildExpandBody(strain) {
 
   const dispensaryHTML = dispensaries.length > 0
     ? `<div class="strain-card__expand-dispensaries">
-        ${dispensaries.map(d => `<span class="strain-pill--dispensary">📍 Available at ${DISPENSARY_NAMES[d] || d}</span>`).join('')}
+        ${dispensaries.map(d => `<span class="strain-pill--dispensary">📍 ${DISPENSARY_NAMES[d] || d}</span>`).join('')}
       </div>`
     : '';
+
+  const manageDispensariesBtn = `<button type="button" class="strain-card__manage-dispensaries" data-action="manage-dispensaries" data-id="${strain.id}">📍 ${dispensaries.length > 0 ? 'Edit' : 'Add'} Dispensaries</button>`;
 
   const flavorsSection = flavorsHTML
     ? `<div>
@@ -106,6 +129,7 @@ function buildExpandBody(strain) {
         </div>
         ${flavorsSection}
         ${dispensaryHTML}
+        ${manageDispensariesBtn}
       </div>
     </div>
   `;
@@ -344,7 +368,7 @@ function renderBrowseList() {
             ${inStash ? '✓' : '+'}
           </button>
         </div>
-        ${buildExpandBody(applyOverrides(strain))}
+        ${buildExpandBody(applyAllOverrides(strain))}
       </div>
     `;
   }).join('');
@@ -371,6 +395,13 @@ function renderBrowseList() {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       openOverrideModal(btn.dataset.id);
+    });
+  });
+
+  list.querySelectorAll('[data-action="manage-dispensaries"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openDispensaryModal(btn.dataset.id);
     });
   });
 
@@ -412,10 +443,17 @@ function renderMyStashList() {
         <div class="strain-card__actions">
           <button class="strain-card__btn" data-action="remove" data-id="${strain.id}" title="Remove from stash">✕</button>
         </div>
-        ${buildExpandBody(strain)}
+        ${buildExpandBody(applyAllOverrides(strain))}
       </div>
     `;
   }).join('');
+
+  list.querySelectorAll('[data-action="manage-dispensaries"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openDispensaryModal(btn.dataset.id);
+    });
+  });
 
   list.querySelectorAll('[data-action="remove"]').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -553,6 +591,44 @@ function openOverrideModal(strainId) {
   };
 
   // Backdrop
+  modal.querySelector('.modal__backdrop').onclick = () => modal.classList.add('hidden');
+}
+
+// === DISPENSARY MODAL ===
+function openDispensaryModal(strainId) {
+  const modal = document.getElementById('dispensary-modal');
+  const strain = getAllStrains().find(s => s.id === strainId);
+  if (!strain) return;
+
+  modal.classList.remove('hidden');
+  document.getElementById('dispensary-modal-title').textContent = `Dispensaries — ${strain.name}`;
+
+  const current = getStrainDispensaries(strainId) ?? strain.dispensaries ?? [];
+  const container = document.getElementById('dispensary-chips');
+  container.innerHTML = Object.entries(DISPENSARY_NAMES)
+    .map(([id, name]) =>
+      `<button type="button" class="chip ${current.includes(id) ? 'chip--selected' : ''}" data-value="${id}">${name}</button>`
+    ).join('');
+
+  container.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => chip.classList.toggle('chip--selected'));
+  });
+
+  document.getElementById('dispensary-save-btn').onclick = () => {
+    const selected = Array.from(container.querySelectorAll('.chip--selected')).map(c => c.dataset.value);
+    setDispensaryOverride(strainId, selected);
+    modal.classList.add('hidden');
+    renderBrowseList();
+    renderMyStashList();
+  };
+
+  document.getElementById('dispensary-clear-btn').onclick = () => {
+    setDispensaryOverride(strainId, []);
+    modal.classList.add('hidden');
+    renderBrowseList();
+    renderMyStashList();
+  };
+
   modal.querySelector('.modal__backdrop').onclick = () => modal.classList.add('hidden');
 }
 
@@ -924,17 +1000,19 @@ function showConflictModal(localTs, cloudTs) {
 
 function initAccountModal() {
   const modal = document.getElementById('account-modal');
-  const cloudBtn = document.getElementById('btn-account');
+  const authLinks = document.getElementById('auth-links');
 
-  // Open modal on cloud button click
-  cloudBtn.addEventListener('click', () => {
+  // Open modal on log in / sign up link click
+  function openAccountModal() {
     modal.classList.remove('hidden');
     const user = getCurrentUser();
     setAccountState(user ? 'signedin' : 'signedout');
     if (user) {
       document.getElementById('account-user-email').textContent = user.email;
     }
-  });
+  }
+  document.getElementById('btn-login').addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
+  document.getElementById('btn-signup').addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
 
   // Close on backdrop click
   modal.querySelector('.modal__backdrop').addEventListener('click', () => modal.classList.add('hidden'));
@@ -989,7 +1067,7 @@ function initAccountModal() {
   // Auth state listener — updates cloud icon and resolves conflicts on sign-in
   initAuth(
     async (user) => {
-      cloudBtn.classList.add('active');
+      authLinks.classList.add('hidden');
       modal.classList.add('hidden');
       try {
         await loadAndResolveProfile(showConflictModal);
@@ -1002,7 +1080,7 @@ function initAccountModal() {
       updateStashUI();
     },
     () => {
-      cloudBtn.classList.remove('active');
+      authLinks.classList.remove('hidden');
     }
   );
 }

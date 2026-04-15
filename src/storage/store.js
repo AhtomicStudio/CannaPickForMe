@@ -7,6 +7,7 @@ const KEYS = {
   STASH: 'cpfm_stash',
   CUSTOM_STRAINS: 'cpfm_custom_strains',
   EFFECT_OVERRIDES: 'cpfm_effect_overrides',
+  DISPENSARY_OVERRIDES: 'cpfm_dispensary_overrides',
   AGE_VERIFIED: 'cpfm_age_verified',
   SESSION_HISTORY: 'cpfm_session_history',
   SYNC_AT: 'cpfm_sync_at',
@@ -103,6 +104,23 @@ export function clearEffectOverride(strainId) {
   const overrides = getEffectOverrides();
   delete overrides[strainId];
   setJSON(KEYS.EFFECT_OVERRIDES, overrides);
+}
+
+// === DISPENSARY OVERRIDES ===
+
+export function getDispensaryOverrides() {
+  return getJSON(KEYS.DISPENSARY_OVERRIDES, {});
+}
+
+export function setDispensaryOverride(strainId, dispensaries) {
+  const overrides = getDispensaryOverrides();
+  overrides[strainId] = dispensaries;
+  setJSON(KEYS.DISPENSARY_OVERRIDES, overrides);
+}
+
+export function getStrainDispensaries(strainId) {
+  const overrides = getDispensaryOverrides();
+  return Object.prototype.hasOwnProperty.call(overrides, strainId) ? overrides[strainId] : null;
 }
 
 // === AGE VERIFICATION (session only) ===
