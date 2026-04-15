@@ -7,8 +7,12 @@
 import { db, storage } from '../firebase.js';
 import {
   collection, doc, getDocs, addDoc, updateDoc, deleteDoc,
-  query, where, orderBy, serverTimestamp
+  query, where, serverTimestamp
 } from 'firebase/firestore';
+
+// Note on indexing: compound queries (multiple where + orderBy) require
+// explicit Firestore composite indexes. To avoid that dependency, getActiveAds
+// queries on a single field and filters/sorts the rest client-side.
 import {
   ref, uploadBytes, getDownloadURL, deleteObject
 } from 'firebase/storage';
@@ -21,14 +25,17 @@ const ADS_COLLECTION = 'ads';
  */
 export async function getActiveAds(placement) {
   try {
+    // Single-field query avoids requiring a composite index.
+    // Active filtering and priority sort are done client-side.
     const q = query(
       collection(db, ADS_COLLECTION),
-      where('active', '==', true),
-      where('placement', '==', placement),
-      orderBy('priority', 'desc')
+      where('placement', '==', placement)
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    return snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(ad => ad.active)
+      .sort((a, b) => (b.priority || 5) - (a.priority || 5));
   } catch (err) {
     console.warn('Failed to fetch ads:', err);
     return [];
