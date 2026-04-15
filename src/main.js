@@ -1020,7 +1020,10 @@ function init() {
   loadAds();
   initStrainDelta();
   initAccountModal();
-  handleSignInLink().catch(err => console.error('Sign-in link error:', err));
+  handleSignInLink().catch(err => {
+    console.error('Sign-in link error:', err);
+    alert('That sign-in link is invalid or has expired. Please request a new one.');
+  });
 }
 
 document.addEventListener('DOMContentLoaded', init);
