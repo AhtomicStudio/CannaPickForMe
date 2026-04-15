@@ -68,13 +68,10 @@ export async function handleSignInLink() {
     email = window.prompt('Please confirm your email to complete sign-in:');
     if (!email) return false;
   }
-  try {
-    await signInWithEmailLink(auth, email, window.location.href);
-    window.history.replaceState({}, document.title, window.location.pathname);
-    return true;
-  } finally {
-    localStorage.removeItem(PENDING_EMAIL_KEY);
-  }
+  await signInWithEmailLink(auth, email, window.location.href);
+  localStorage.removeItem(PENDING_EMAIL_KEY);
+  window.history.replaceState({}, document.title, window.location.pathname);
+  return true;
 }
 
 /**

@@ -1027,6 +1027,4 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-// If DOM is already ready
-if (document.readyState !== 'loading') init();
 
