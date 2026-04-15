@@ -14,6 +14,19 @@ const SESSION_KEY = 'cpfm_admin_auth';
 
 const DISPENSARY_NAMES = {
   'cookies-hayward': 'Cookies Hayward',
+  'garden-of-eden': 'Garden of Eden',
+  'we-are-hemp': 'We Are Hemp',
+  'hayward-dispensary-delivery': 'Hayward Dispensary Delivery',
+  'nug-wellness': 'NUG Wellness',
+  'flor-union-city': 'FLOR - Union City Dispensary',
+  'lemonnade-union-city': 'Lemonnade Union City Dispensary',
+  'harborside-san-leandro': 'Harborside San Leandro Dispensary',
+  '4twenty-market-oakland': '4Twenty Market Weed Dispensary Oakland',
+  'three-trees-oakland': 'Three Trees Weed Dispensary Kiosk',
+  'kanna-oakland': 'KANNA Weed Dispensary Oakland',
+  'harborside-oakland': 'Harborside Oakland Dispensary',
+  'ivy-hill-oakland': 'Ivy Hill Weed Dispensary Oakland',
+  'urbana-oakland': 'Urbana Weed Dispensary Oakland',
 };
 
 const ALL_EFFECTS = ['Creative','Energetic','Euphoric','Focused','Giggly','Happy','Hungry','Relaxed','Sleepy','Talkative','Tingly','Uplifted'];
@@ -52,6 +65,15 @@ function logout() {
 let editingAdId = null;
 let existingImageUrl = null;
 let previewImageSrc = null;
+let previewPosition = { x: 50, y: 50 }; // object-position for the framed image
+
+function applyPreviewPosition() {
+  const pos = `${previewPosition.x}% ${previewPosition.y}%`;
+  const cardImg = document.getElementById('ad-preview-card-img');
+  const bannerImg = document.getElementById('ad-preview-banner-img');
+  if (cardImg) cardImg.style.objectPosition = pos;
+  if (bannerImg) bannerImg.style.objectPosition = pos;
+}
 
 // === STRAIN STATE ===
 let strainDelta           = { hidden: [], overrides: {}, additions: [] };
@@ -372,6 +394,7 @@ function startEditing(ad) {
   previewImg.src = ad.imageUrl;
   preview.classList.remove('hidden');
   previewImageSrc = ad.imageUrl;
+  previewPosition = { ...(ad.imagePosition || { x: 50, y: 50 }) };
 
   // Image is optional when editing
   document.getElementById('ad-image').removeAttribute('required');
@@ -393,6 +416,7 @@ function cancelEditing() {
   document.getElementById('image-preview').classList.add('hidden');
   document.getElementById('ad-image').setAttribute('required', '');
   previewImageSrc = null;
+  previewPosition = { x: 50, y: 50 };
   document.getElementById('btn-cancel-edit').classList.add('hidden');
   document.getElementById('btn-submit-ad').textContent = 'Create Ad';
   document.getElementById('priority-display').textContent = '5';
@@ -476,8 +500,58 @@ function initStrainManager() {
   });
 }
 
+// === DRAG-TO-REFRAME ===
+function initDragPreview() {
+  const previewWrap = document.getElementById('ad-preview-wrap');
+  let dragging = false;
+  let dragStartX = 0, dragStartY = 0;
+  let dragStartPos = { x: 50, y: 50 };
+
+  function startDrag(clientX, clientY) {
+    if (!previewImageSrc) return;
+    dragging = true;
+    dragStartX = clientX;
+    dragStartY = clientY;
+    dragStartPos = { ...previewPosition };
+    previewWrap.classList.add('admin-preview-wrap--dragging');
+  }
+
+  function moveDrag(clientX, clientY) {
+    if (!dragging) return;
+    const dx = clientX - dragStartX;
+    const dy = clientY - dragStartY;
+    // 0.3% per pixel — drag ~333px to go from 0% to 100%
+    previewPosition.x = Math.max(0, Math.min(100, dragStartPos.x - dx * 0.3));
+    previewPosition.y = Math.max(0, Math.min(100, dragStartPos.y - dy * 0.3));
+    applyPreviewPosition();
+  }
+
+  function endDrag() {
+    if (!dragging) return;
+    dragging = false;
+    previewWrap.classList.remove('admin-preview-wrap--dragging');
+  }
+
+  previewWrap.addEventListener('mousedown', (e) => { startDrag(e.clientX, e.clientY); e.preventDefault(); });
+  document.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+  document.addEventListener('mouseup', endDrag);
+
+  previewWrap.addEventListener('touchstart', (e) => {
+    startDrag(e.touches[0].clientX, e.touches[0].clientY);
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchmove', (e) => {
+    if (!dragging) return;
+    moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+    e.preventDefault();
+  }, { passive: false });
+  document.addEventListener('touchend', endDrag);
+}
+
 // === INIT ===
 function init() {
+  initDragPreview();
+
   // Check existing session
   if (isAuthenticated()) {
     showDashboard();
@@ -533,6 +607,8 @@ function init() {
     const displayType = document.getElementById('ad-display-type').value;
     const title = document.getElementById('ad-title').value.trim();
     const description = document.getElementById('ad-description').value.trim();
+    const previewWrap = document.getElementById('ad-preview-wrap');
+    const dragHint = document.getElementById('preview-drag-hint');
 
     document.getElementById('image-hint').textContent = HINTS[displayType] || HINTS.card;
 
@@ -544,10 +620,14 @@ function init() {
       empty.classList.remove('hidden');
       cardEl.classList.add('hidden');
       bannerEl.classList.add('hidden');
+      previewWrap.classList.remove('admin-preview-wrap--draggable');
+      dragHint.classList.add('hidden');
       return;
     }
 
     empty.classList.add('hidden');
+    previewWrap.classList.toggle('admin-preview-wrap--draggable', !!previewImageSrc);
+    dragHint.classList.toggle('hidden', !previewImageSrc);
 
     if (displayType === 'banner') {
       cardEl.classList.add('hidden');
@@ -564,6 +644,8 @@ function init() {
       document.getElementById('ad-preview-card-title').textContent = title || 'Ad Title';
       document.getElementById('ad-preview-card-desc').textContent = description;
     }
+
+    applyPreviewPosition();
   }
 
   document.getElementById('ad-display-type').addEventListener('change', updateAdPreview);
@@ -604,6 +686,7 @@ function init() {
         priority: parseInt(document.getElementById('ad-priority').value, 10),
         description: document.getElementById('ad-description').value.trim(),
         imageUrl,
+        imagePosition: { x: previewPosition.x, y: previewPosition.y },
         active: true,
       };
 
@@ -625,5 +708,5 @@ function init() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', init);
-if (document.readyState !== 'loading') init();
+// Module scripts are deferred — DOM is always ready when this runs
+init();

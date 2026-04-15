@@ -373,6 +373,23 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
+}
+
+.admin-preview-wrap--draggable {
+  cursor: grab;
+}
+
+.admin-preview-wrap--dragging {
+  cursor: grabbing !important;
+}
+
+.admin-preview-drag-hint {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 0.35rem;
+  letter-spacing: 0.02em;
 }
 
 .admin-preview-empty {
