@@ -855,7 +855,14 @@ async function initMenuSync() {
 
     try {
       const res = await fetch(`/api/sync-menu?dispensary=${SYNC_DISPENSARY_ID}`);
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        alert(`Sync failed: server returned a non-JSON response (status ${res.status}).\n\n${text.slice(0, 400)}`);
+        return;
+      }
 
       if (!res.ok) {
         alert(`Sync failed: ${data.error || 'Unknown error'}\n\n${data.hint || ''}`);

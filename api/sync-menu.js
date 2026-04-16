@@ -16,7 +16,14 @@
  *   }
  */
 
-import strainsData from '../src/data/strains.json' assert { type: 'json' };
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const strainsData = JSON.parse(
+  readFileSync(join(__dirname, '../src/data/strains.json'), 'utf8')
+);
 
 // ─── Flower category detection ───────────────────────────────────────────────
 
