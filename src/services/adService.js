@@ -7,7 +7,7 @@
 import { db, storage } from '../firebase.js';
 import {
   collection, doc, getDocs, addDoc, updateDoc, deleteDoc,
-  query, where, serverTimestamp
+  serverTimestamp
 } from 'firebase/firestore';
 
 // Note on indexing: compound queries (multiple where + orderBy) require
@@ -25,16 +25,11 @@ const ADS_COLLECTION = 'ads';
  */
 export async function getActiveAds(placement) {
   try {
-    // Single-field query avoids requiring a composite index.
-    // Active filtering and priority sort are done client-side.
-    const q = query(
-      collection(db, ADS_COLLECTION),
-      where('placement', '==', placement)
-    );
-    const snapshot = await getDocs(q);
+    // Fetch all ads and filter client-side to avoid any Firestore index dependency.
+    const snapshot = await getDocs(collection(db, ADS_COLLECTION));
     return snapshot.docs
       .map(doc => ({ id: doc.id, ...doc.data() }))
-      .filter(ad => ad.active)
+      .filter(ad => ad.placement === placement && ad.active)
       .sort((a, b) => (b.priority || 5) - (a.priority || 5));
   } catch (err) {
     console.warn('Failed to fetch ads:', err);
@@ -47,12 +42,10 @@ export async function getActiveAds(placement) {
  */
 export async function getAllAds() {
   try {
-    const q = query(
-      collection(db, ADS_COLLECTION),
-      orderBy('priority', 'desc')
-    );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const snapshot = await getDocs(collection(db, ADS_COLLECTION));
+    return snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .sort((a, b) => (b.priority || 5) - (a.priority || 5));
   } catch (err) {
     console.error('Failed to fetch all ads:', err);
     return [];

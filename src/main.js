@@ -940,7 +940,7 @@ function renderAdSlot(containerId, ads) {
   if (displayType === 'banner') {
     container.innerHTML = `
       <a href="${ad.clickUrl}" target="_blank" rel="noopener noreferrer" class="ad-banner" title="${ad.title || 'Sponsored'}">
-        <img src="${ad.imageUrl}" alt="${ad.title || 'Ad'}" class="ad-banner__image" loading="lazy" style="${imgPos}" />
+        <img src="${ad.imageUrl}" alt="${ad.title || 'Ad'}" class="ad-banner__image" style="${imgPos}" />
         <span class="ad-banner__sponsored">Sponsored</span>
       </a>
     `;
@@ -949,7 +949,7 @@ function renderAdSlot(containerId, ads) {
     container.innerHTML = `
       <a href="${ad.clickUrl}" target="_blank" rel="noopener noreferrer" class="ad-card" title="${ad.title || 'Sponsored'}">
         <span class="ad-card__sponsored">Sponsored</span>
-        <img src="${ad.imageUrl}" alt="${ad.title || 'Ad'}" class="ad-card__image" loading="lazy" style="${imgPos}" />
+        <img src="${ad.imageUrl}" alt="${ad.title || 'Ad'}" class="ad-card__image" style="${imgPos}" />
         <div class="ad-card__info">
           <div class="ad-card__title">${ad.title || ''}</div>
           ${ad.description ? `<div class="ad-card__description">${ad.description}</div>` : ''}
