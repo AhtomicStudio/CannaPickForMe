@@ -7,6 +7,8 @@ import './admin.css';
 import strainsData from './data/strains.json';
 import { getStrainDelta, saveStrainDelta, getMenuData, saveMenuData } from './services/strainService.js';
 import { getAllAds, createAd, updateAd, deleteAd, uploadAdImage } from './services/adService.js';
+import { auth } from './firebase.js';
+import { signInAnonymously } from 'firebase/auth';
 
 // SHA-256 hash of the admin password
 const ADMIN_HASH = 'b6cba8b101e45c8b2eddd705efc782ef96d4e32b090a5db14ccdb77d1247426a';
@@ -589,6 +591,7 @@ function init() {
 
     if (valid) {
       setAuthenticated();
+      await signInAnonymously(auth);
       showDashboard();
     } else {
       document.getElementById('login-error').classList.remove('hidden');
