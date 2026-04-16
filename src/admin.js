@@ -5,7 +5,7 @@
 
 import './admin.css';
 import strainsData from './data/strains.json';
-import { getStrainDelta, saveStrainDelta } from './services/strainService.js';
+import { getStrainDelta, saveStrainDelta, getMenuData, saveMenuData } from './services/strainService.js';
 import { getAllAds, createAd, updateAd, deleteAd, uploadAdImage } from './services/adService.js';
 
 // SHA-256 hash of the admin password
@@ -249,6 +249,7 @@ function renderStrainList() {
         <div class="admin-strain-row__badges">
           ${isAddition  ? '<span class="admin-tag" style="border-color:var(--green-primary);color:var(--green-glow)">🌱 Added</span>' : ''}
           ${hasOverride ? '<span class="admin-tag" style="border-color:#fbbf24;color:#fbbf24">edited</span>' : ''}
+          ${s.needsReview ? '<span class="admin-tag" style="border-color:#f87171;color:#f87171">⚠️ Review</span>' : ''}
         </div>
         <div class="admin-strain-row__actions">
           ${isHidden
@@ -301,6 +302,7 @@ function showDashboard() {
   document.getElementById('dashboard').classList.remove('hidden');
   loadAdsList();
   initStrainManager();
+  initMenuSync();
 }
 
 async function loadAdsList() {
@@ -471,6 +473,7 @@ function initStrainManager() {
             ...strainDelta.additions[idx],
             name, type, effects: selectedEffects, flavors: selectedFlavors,
             description, genetics, rating, dispensaries, isAddition: true,
+            needsReview: false,
           };
         }
       } else if (editingStrainId) {
@@ -492,6 +495,7 @@ function initStrainManager() {
       await saveStrainDelta(strainDelta);
       resetStrainForm();
       renderStrainList();
+      renderReviewQueue();
     } catch (err) {
       console.error('Error saving strain:', err);
       alert('Failed to save strain. Check console for details.');
@@ -724,6 +728,223 @@ function init() {
     } finally {
       submitBtn.textContent = originalText;
       submitBtn.disabled = false;
+    }
+  });
+}
+
+// ─── Menu Sync ────────────────────────────────────────────────────────────────
+
+const SYNC_DISPENSARY_ID = 'cookies-hayward';
+
+// Holds the pending sync result until admin confirms or discards
+let pendingSyncResult = null;
+
+function formatSyncTimestamp(lastSynced) {
+  if (!lastSynced) return 'Last synced: never';
+  const date = lastSynced.toDate ? lastSynced.toDate() : new Date(lastSynced);
+  return `Last synced: ${date.toLocaleDateString()} at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+}
+
+function renderSyncItem(item) {
+  const typeDot = `<span class="admin-strain-row__dot" data-type="${esc(item.type || 'hybrid')}"></span>`;
+  const thcLabel = item.thc ? `<span style="color:var(--text-muted);font-size:0.75rem">${item.thc}% THC</span>` : '';
+  return `
+    <div class="admin-strain-row">
+      ${typeDot}
+      <span class="admin-strain-row__name">${esc(item.name)}</span>
+      ${thcLabel}
+    </div>`;
+}
+
+function showSyncResult(result, prevStrainIds) {
+  pendingSyncResult = { ...result, prevStrainIds };
+
+  const removedStrains = prevStrainIds
+    .filter(id => !result.matched.some(m => m.id === id))
+    .map(id => {
+      const base = strainsData.find(s => s.id === id);
+      const added = strainDelta.additions.find(s => s.id === id);
+      return base || added || { id, name: id, type: 'hybrid' };
+    });
+
+  const summary = document.getElementById('menu-sync-summary');
+  summary.textContent =
+    `${result.matched.length} matched · ${result.unmatched.length} new · ${removedStrains.length} removed`;
+
+  const matchedGroup = document.getElementById('menu-sync-matched');
+  const matchedList  = document.getElementById('menu-sync-matched-list');
+  if (result.matched.length > 0) {
+    matchedList.innerHTML = result.matched.map(i => renderSyncItem(i, 'matched')).join('');
+    matchedGroup.classList.remove('hidden');
+  } else {
+    matchedGroup.classList.add('hidden');
+  }
+
+  const unmatchedGroup = document.getElementById('menu-sync-unmatched');
+  const unmatchedList  = document.getElementById('menu-sync-unmatched-list');
+  if (result.unmatched.length > 0) {
+    unmatchedList.innerHTML = result.unmatched.map(i => renderSyncItem(i, 'unmatched')).join('');
+    unmatchedGroup.classList.remove('hidden');
+  } else {
+    unmatchedGroup.classList.add('hidden');
+  }
+
+  const removedGroup = document.getElementById('menu-sync-removed');
+  const removedList  = document.getElementById('menu-sync-removed-list');
+  if (removedStrains.length > 0) {
+    removedList.innerHTML = removedStrains.map(i => renderSyncItem(i, 'removed')).join('');
+    removedGroup.classList.remove('hidden');
+  } else {
+    removedGroup.classList.add('hidden');
+  }
+
+  document.getElementById('menu-sync-result').classList.remove('hidden');
+}
+
+function renderReviewQueue() {
+  const queue = strainDelta.additions.filter(s => s.needsReview);
+  const section = document.getElementById('menu-review-queue');
+  const list    = document.getElementById('menu-review-list');
+
+  if (queue.length === 0) {
+    section.classList.add('hidden');
+    return;
+  }
+
+  section.classList.remove('hidden');
+  list.innerHTML = queue.map(s => `
+    <div class="admin-strain-row" data-id="${esc(s.id)}">
+      <span class="admin-strain-row__dot" data-type="${esc(s.type)}"></span>
+      <span class="admin-strain-row__name">${esc(s.name)}</span>
+      <div class="admin-strain-row__badges">
+        <span class="admin-tag" style="border-color:#f87171;color:#f87171">⚠️ Review</span>
+        ${s.thc ? `<span class="admin-tag">${s.thc}% THC</span>` : ''}
+      </div>
+      <div class="admin-strain-row__actions">
+        <button class="admin-btn admin-btn--small" data-action="review-edit" data-id="${esc(s.id)}">✏️ Edit</button>
+      </div>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('[data-action="review-edit"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      startEditingStrain(btn.dataset.id, true);
+      // Scroll to the strain form
+      document.getElementById('strain-form-section').scrollIntoView({ behavior: 'smooth' });
+      // Expand the form section if collapsed
+      const body = document.getElementById('strain-form-section').querySelector('.admin-section__body');
+      if (body) body.style.display = 'block';
+    });
+  });
+}
+
+async function initMenuSync() {
+  // Load existing menu state
+  const existing = await getMenuData(SYNC_DISPENSARY_ID);
+  document.getElementById('menu-sync-last-synced').textContent =
+    formatSyncTimestamp(existing.lastSynced);
+
+  renderReviewQueue();
+
+  // Sync Now button
+  document.getElementById('btn-sync-menu').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-sync-menu');
+    btn.textContent = '⏳ Syncing...';
+    btn.disabled = true;
+    document.getElementById('menu-sync-result').classList.add('hidden');
+
+    try {
+      const res = await fetch(`/api/sync-menu?dispensary=${SYNC_DISPENSARY_ID}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(`Sync failed: ${data.error || 'Unknown error'}\n\n${data.hint || ''}`);
+        return;
+      }
+
+      if (data.warning) {
+        console.warn('Sync warning:', data.warning, data.rawCategories);
+        alert(`Sync warning: ${data.warning}\nRaw categories found: ${(data.rawCategories || []).join(', ')}`);
+      }
+
+      showSyncResult(data, existing.strainIds || []);
+    } catch (err) {
+      alert(`Sync error: ${err.message}`);
+    } finally {
+      btn.textContent = '🔄 Sync Now';
+      btn.disabled = false;
+    }
+  });
+
+  // Discard button
+  document.getElementById('btn-sync-cancel').addEventListener('click', () => {
+    pendingSyncResult = null;
+    document.getElementById('menu-sync-result').classList.add('hidden');
+  });
+
+  // Confirm button — write results to Firestore
+  document.getElementById('btn-sync-confirm').addEventListener('click', async () => {
+    if (!pendingSyncResult) return;
+
+    const confirmBtn = document.getElementById('btn-sync-confirm');
+    confirmBtn.textContent = 'Saving...';
+    confirmBtn.disabled = true;
+
+    try {
+      const { matched, unmatched } = pendingSyncResult;
+
+      // 1. Persist the menu snapshot (matched strain IDs + raw unknowns)
+      await saveMenuData(SYNC_DISPENSARY_ID, {
+        strainIds: matched.map(m => m.id),
+        unknowns:  unmatched,
+      });
+
+      // 2. Add unknown strains to delta.additions (skip duplicates)
+      const existingIds = new Set([
+        ...strainsData.map(s => s.id),
+        ...strainDelta.additions.map(s => s.id),
+      ]);
+
+      let addedCount = 0;
+      for (const u of unmatched) {
+        const id = 'add-' + u.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        if (existingIds.has(id)) continue;
+
+        strainDelta.additions.push({
+          id,
+          name:        u.name,
+          type:        u.type || 'hybrid',
+          effects:     [],
+          flavors:     [],
+          description: '',
+          genetics:    null,
+          rating:      null,
+          thc:         u.thc ?? null,
+          dispensaries: [SYNC_DISPENSARY_ID],
+          needsReview:  true,
+          isAddition:   true,
+        });
+        addedCount++;
+      }
+
+      await saveStrainDelta(strainDelta);
+
+      // 3. Update UI
+      document.getElementById('menu-sync-last-synced').textContent =
+        formatSyncTimestamp(new Date());
+      document.getElementById('menu-sync-result').classList.add('hidden');
+      pendingSyncResult = null;
+
+      renderStrainList();
+      renderReviewQueue();
+
+      alert(`Sync saved.\n✅ ${matched.length} matched\n🌱 ${addedCount} new strains added for review`);
+    } catch (err) {
+      console.error('Sync confirm failed:', err);
+      alert(`Failed to save sync: ${err.message}`);
+    } finally {
+      confirmBtn.textContent = 'Confirm & Save';
+      confirmBtn.disabled = false;
     }
   });
 }

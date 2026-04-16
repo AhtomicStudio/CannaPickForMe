@@ -214,6 +214,57 @@
         </div>
       </section>
 
+      <!-- Menu Sync -->
+      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="menu-sync-section">
+        <button type="button" class="admin-section__toggle" aria-expanded="false">
+          <h2>🔄 Menu Sync — Cookies Hayward</h2>
+          <span class="admin-section__chevron">▾</span>
+        </button>
+        <div class="admin-section__body">
+          <div class="menu-sync">
+            <div class="menu-sync__meta">
+              <span class="menu-sync__last-synced" id="menu-sync-last-synced">Last synced: never</span>
+              <button class="admin-btn admin-btn--primary" id="btn-sync-menu">🔄 Sync Now</button>
+            </div>
+
+            <!-- Sync result diff (hidden until sync runs) -->
+            <div id="menu-sync-result" class="menu-sync__result hidden">
+              <div class="menu-sync__result-header">
+                <h3>Sync Preview</h3>
+                <p class="menu-sync__result-sub" id="menu-sync-summary"></p>
+              </div>
+
+              <div id="menu-sync-matched" class="menu-sync__group hidden">
+                <p class="menu-sync__group-label menu-sync__group-label--matched">✅ Matched in knowledge base</p>
+                <div class="menu-sync__list" id="menu-sync-matched-list"></div>
+              </div>
+
+              <div id="menu-sync-unmatched" class="menu-sync__group hidden">
+                <p class="menu-sync__group-label menu-sync__group-label--unmatched">⚠️ New — not in knowledge base (will be added for review)</p>
+                <div class="menu-sync__list" id="menu-sync-unmatched-list"></div>
+              </div>
+
+              <div id="menu-sync-removed" class="menu-sync__group hidden">
+                <p class="menu-sync__group-label menu-sync__group-label--removed">🚫 No longer on menu</p>
+                <div class="menu-sync__list" id="menu-sync-removed-list"></div>
+              </div>
+
+              <div class="menu-sync__actions">
+                <button class="admin-btn admin-btn--ghost" id="btn-sync-cancel">Discard</button>
+                <button class="admin-btn admin-btn--primary" id="btn-sync-confirm">Confirm &amp; Save</button>
+              </div>
+            </div>
+
+            <!-- Review queue (hidden when empty) -->
+            <div id="menu-review-queue" class="menu-sync__review hidden">
+              <h3 class="menu-sync__review-title">⚠️ Needs Review</h3>
+              <p class="menu-sync__review-sub">These strains were pulled from the menu but have no effects or flavors yet. Click Edit to enrich them — saving clears the review flag.</p>
+              <div id="menu-review-list" class="admin-strains-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Strain List -->
       <section class="admin-section admin-section--collapsible admin-section--collapsed" id="strain-list-section">
         <button type="button" class="admin-section__toggle" aria-expanded="false">

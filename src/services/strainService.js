@@ -4,7 +4,7 @@
  */
 
 import { db } from '../firebase.js';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const DELTA_REF = () => doc(db, 'strains', 'delta');
 
@@ -42,6 +42,47 @@ export async function saveStrainDelta(delta) {
     });
   } catch (err) {
     console.error('Failed to save strain delta:', err);
+    throw err;
+  }
+}
+
+// ─── Menu Sync ──────────────────────────────────────────────────────────────
+
+const MENU_REF = (dispensaryId) => doc(db, 'menus', dispensaryId);
+
+/**
+ * Fetch the live menu snapshot for a dispensary.
+ * Returns empty defaults if the document doesn't exist yet.
+ */
+export async function getMenuData(dispensaryId) {
+  try {
+    const snap = await getDoc(MENU_REF(dispensaryId));
+    if (!snap.exists()) return { strainIds: [], unknowns: [], lastSynced: null };
+    const data = snap.data();
+    return {
+      strainIds:  Array.isArray(data.strainIds)  ? data.strainIds  : [],
+      unknowns:   Array.isArray(data.unknowns)   ? data.unknowns   : [],
+      lastSynced: data.lastSynced ?? null,
+    };
+  } catch (err) {
+    console.warn('Failed to fetch menu data:', err);
+    return { strainIds: [], unknowns: [], lastSynced: null };
+  }
+}
+
+/**
+ * Persist the menu snapshot for a dispensary.
+ * Automatically stamps lastSynced.
+ */
+export async function saveMenuData(dispensaryId, { strainIds, unknowns }) {
+  try {
+    await setDoc(MENU_REF(dispensaryId), {
+      strainIds:  strainIds  ?? [],
+      unknowns:   unknowns   ?? [],
+      lastSynced: serverTimestamp(),
+    });
+  } catch (err) {
+    console.error('Failed to save menu data:', err);
     throw err;
   }
 }
