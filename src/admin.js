@@ -732,6 +732,20 @@ function init() {
   });
 }
 
+// ─── Strain name matching (shared with manual import) ────────────────────────
+
+function normaliseName(name = '') {
+  return name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function findKnowledgeMatch(name) {
+  const norm = normaliseName(name);
+  const all  = [...strainsData, ...strainDelta.additions];
+  return all.find(s => normaliseName(s.name) === norm)
+    || all.find(s => norm.includes(normaliseName(s.name)))
+    || null;
+}
+
 // ─── Menu Sync ────────────────────────────────────────────────────────────────
 
 const SYNC_DISPENSARY_ID = 'cookies-hayward';
@@ -845,6 +859,51 @@ async function initMenuSync() {
     formatSyncTimestamp(existing.lastSynced);
 
   renderReviewQueue();
+
+  // Manual import button
+  document.getElementById('btn-manual-import').addEventListener('click', async () => {
+    const raw = document.getElementById('menu-manual-input').value;
+    const lines = raw
+      .split('\n')
+      .map(l => l.trim())
+      .filter(Boolean);
+
+    if (lines.length === 0) {
+      alert('Paste at least one strain name before processing.');
+      return;
+    }
+
+    // Normalise: strip weights (1oz, 3.5g, 7g, 14g, 28g) and brand prefixes (word(s) before " - ")
+    const WEIGHT_RE = /\b(\d+(\.\d+)?\s*(oz|g|gram|grams|lb))\b/gi;
+    const BRAND_PREFIX_RE = /^.+?\s+[-–]\s+/;
+
+    const names = lines.map(l => {
+      let n = l.replace(WEIGHT_RE, '').replace(BRAND_PREFIX_RE, '').trim();
+      // Also strip trailing size in parens e.g. "(3.5g)"
+      n = n.replace(/\s*\(.*?\)\s*/g, '').trim();
+      return n;
+    }).filter(Boolean);
+
+    const existing = await getMenuData(SYNC_DISPENSARY_ID);
+    const matched   = [];
+    const unmatched = [];
+    const seen      = new Set();
+
+    for (const name of names) {
+      const key = normaliseName(name);
+      if (seen.has(key)) continue;
+      seen.add(key);
+
+      const knownStrain = findKnowledgeMatch(name);
+      if (knownStrain) {
+        matched.push({ id: knownStrain.id, name: knownStrain.name, type: knownStrain.type, thc: null });
+      } else {
+        unmatched.push({ name, type: 'hybrid', thc: null, cbd: null });
+      }
+    }
+
+    showSyncResult({ matched, unmatched }, existing.strainIds || []);
+  });
 
   // Sync Now button
   document.getElementById('btn-sync-menu').addEventListener('click', async () => {

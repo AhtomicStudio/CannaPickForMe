@@ -227,6 +227,13 @@
               <button class="admin-btn admin-btn--primary" id="btn-sync-menu">🔄 Sync Now</button>
             </div>
 
+            <!-- Manual import -->
+            <div class="menu-sync__manual">
+              <p class="menu-sync__manual-label">Manual Import — paste strain names, one per line:</p>
+              <textarea id="menu-manual-input" class="menu-sync__manual-textarea" rows="6" placeholder="Georgia Peach&#10;Runtz&#10;Blue Dream&#10;..."></textarea>
+              <button class="admin-btn admin-btn--secondary" id="btn-manual-import">Process List</button>
+            </div>
+
             <!-- Sync result diff (hidden until sync runs) -->
             <div id="menu-sync-result" class="menu-sync__result hidden">
               <div class="menu-sync__result-header">
