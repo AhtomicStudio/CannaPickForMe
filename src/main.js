@@ -9,7 +9,7 @@ import {
   getStash, addToStash, removeFromStash, isInStash, clearStash,
   getCustomStrains, addCustomStrain, removeCustomStrain,
   getEffectOverrides, setEffectOverride, getStrainEffectOverride, clearEffectOverride,
-  setDispensaryOverride, getStrainDispensaries,
+  getStrainDispensaries,
   isAgeVerified, setAgeVerified, applyOverrides,
   addSessionEntry,
 } from './storage/store.js';
@@ -103,8 +103,6 @@ function buildExpandBody(strain) {
       </div>`
     : '';
 
-  const manageDispensariesBtn = `<button type="button" class="strain-card__manage-dispensaries" data-action="manage-dispensaries" data-id="${strain.id}">📍 ${dispensaries.length > 0 ? 'Edit' : 'Add'} Dispensaries</button>`;
-
   const flavorsSection = flavorsHTML
     ? `<div>
         <p class="strain-card__expand-label">Flavors</p>
@@ -129,7 +127,6 @@ function buildExpandBody(strain) {
         </div>
         ${flavorsSection}
         ${dispensaryHTML}
-        ${manageDispensariesBtn}
       </div>
     </div>
   `;
@@ -398,13 +395,6 @@ function renderBrowseList() {
     });
   });
 
-  list.querySelectorAll('[data-action="manage-dispensaries"]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openDispensaryModal(btn.dataset.id);
-    });
-  });
-
   list.querySelectorAll('.strain-card__info').forEach(info => {
     info.addEventListener('click', () => {
       const card = info.closest('.strain-card');
@@ -447,13 +437,6 @@ function renderMyStashList() {
       </div>
     `;
   }).join('');
-
-  list.querySelectorAll('[data-action="manage-dispensaries"]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openDispensaryModal(btn.dataset.id);
-    });
-  });
 
   list.querySelectorAll('[data-action="remove"]').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -594,43 +577,6 @@ function openOverrideModal(strainId) {
   modal.querySelector('.modal__backdrop').onclick = () => modal.classList.add('hidden');
 }
 
-// === DISPENSARY MODAL ===
-function openDispensaryModal(strainId) {
-  const modal = document.getElementById('dispensary-modal');
-  const strain = getAllStrains().find(s => s.id === strainId);
-  if (!strain) return;
-
-  modal.classList.remove('hidden');
-  document.getElementById('dispensary-modal-title').textContent = `Dispensaries — ${strain.name}`;
-
-  const current = getStrainDispensaries(strainId) ?? strain.dispensaries ?? [];
-  const container = document.getElementById('dispensary-chips');
-  container.innerHTML = Object.entries(DISPENSARY_NAMES)
-    .map(([id, name]) =>
-      `<button type="button" class="chip ${current.includes(id) ? 'chip--selected' : ''}" data-value="${id}">${name}</button>`
-    ).join('');
-
-  container.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => chip.classList.toggle('chip--selected'));
-  });
-
-  document.getElementById('dispensary-save-btn').onclick = () => {
-    const selected = Array.from(container.querySelectorAll('.chip--selected')).map(c => c.dataset.value);
-    setDispensaryOverride(strainId, selected);
-    modal.classList.add('hidden');
-    renderBrowseList();
-    renderMyStashList();
-  };
-
-  document.getElementById('dispensary-clear-btn').onclick = () => {
-    setDispensaryOverride(strainId, []);
-    modal.classList.add('hidden');
-    renderBrowseList();
-    renderMyStashList();
-  };
-
-  modal.querySelector('.modal__backdrop').onclick = () => modal.classList.add('hidden');
-}
 
 // === SESSION (4 QUESTIONS) ===
 function renderQuestion() {
