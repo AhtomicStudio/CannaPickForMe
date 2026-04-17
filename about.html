@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Me — CannaPickForMe</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #22c55e;
+      --green-glow: #4ade80;
+      --bg: #0a0e17;
+      --card: #141b2d;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --dim: #64748b;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HAZE ── */
+    .haze-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .haze-blob--1 {
+      width: 620px; height: 620px;
+      background: radial-gradient(circle, rgba(34,197,94,0.15) 0%, transparent 70%);
+      top: -220px; left: -160px;
+      animation: haze-breathe 7s ease-in-out infinite alternate;
+    }
+    .haze-blob--2 {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, rgba(74,222,128,0.10) 0%, transparent 70%);
+      bottom: -160px; right: -120px;
+      animation: haze-breathe 9s ease-in-out infinite alternate;
+      animation-delay: -3s;
+    }
+    .haze-blob--3 {
+      width: 360px; height: 360px;
+      background: radial-gradient(circle, rgba(34,197,94,0.07) 0%, transparent 70%);
+      top: 45%; right: 8%;
+      animation: haze-breathe 12s ease-in-out infinite alternate;
+      animation-delay: -6s;
+    }
+
+    @keyframes haze-breathe {
+      from { opacity: 0.5; transform: scale(1); }
+      to   { opacity: 1;   transform: scale(1.2); }
+    }
+
+    /* ── FLOATING LEAVES ── */
+    .leaf {
+      position: fixed;
+      font-size: var(--size, 1.5rem);
+      animation: float-leaf var(--dur, 14s) linear infinite;
+      animation-delay: var(--delay, 0s);
+      opacity: 0;
+      z-index: 1;
+      pointer-events: none;
+      left: var(--x, 50%);
+      bottom: -5vh;
+      user-select: none;
+    }
+
+    @keyframes float-leaf {
+      0%   { transform: translateY(0)      translateX(0)                              rotate(var(--r0, 0deg));    opacity: 0; }
+      5%   { opacity: var(--op, 0.35); }
+      50%  { transform: translateY(-55vh)  translateX(var(--dx, 12px))                rotate(calc(var(--r0, 0deg) + 90deg)); }
+      95%  { opacity: var(--op, 0.35); }
+      100% { transform: translateY(-112vh) translateX(calc(var(--dx, 12px) * 2))      rotate(var(--r1, 180deg));  opacity: 0; }
+    }
+
+    /* ── PAGE ── */
+    .page {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .back-btn {
+      align-self: flex-start;
+      color: var(--dim);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 2.5rem;
+      transition: color 0.2s;
+      font-family: 'Space Grotesk', sans-serif;
+      letter-spacing: 0.02em;
+    }
+    .back-btn:hover { color: var(--green); }
+
+    /* ── THE SIGN ── */
+    .sign {
+      width: 100%;
+      border-radius: 20px;
+      padding: 2.5rem 2rem 0;
+      text-align: center;
+      background:
+        linear-gradient(var(--card), var(--card)) padding-box,
+        linear-gradient(135deg, rgba(34,197,94,0.55) 0%, rgba(74,222,128,0.12) 50%, rgba(34,197,94,0.45) 100%) border-box;
+      border: 1.5px solid transparent;
+      animation: sign-glow 4s ease-in-out infinite alternate;
+      overflow: hidden;
+    }
+
+    @keyframes sign-glow {
+      from { box-shadow: 0 0 40px rgba(34,197,94,0.06), 0 8px 40px rgba(0,0,0,0.5); }
+      to   { box-shadow: 0 0 80px rgba(34,197,94,0.16), 0 8px 40px rgba(0,0,0,0.5); }
+    }
+
+    .sign__leaf-row {
+      font-size: 1.5rem;
+      letter-spacing: 0.6rem;
+      margin-bottom: 1.75rem;
+      opacity: 0.55;
+    }
+
+    .sign__cone {
+      font-size: 3.2rem;
+      display: block;
+      margin-bottom: 0.6rem;
+      animation: wobble 2.8s ease-in-out infinite;
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-9deg); }
+      50%       { transform: rotate(9deg);  }
+    }
+
+    .sign__overline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.62rem;
+      color: var(--green);
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      font-weight: 600;
+      margin-bottom: 0.7rem;
+      opacity: 0.8;
+    }
+
+    .sign__title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.1;
+    }
+
+    .sign__divider {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      margin: 0 auto 1.25rem;
+      border-radius: 99px;
+    }
+
+    .sign__body {
+      font-size: 0.95rem;
+      color: var(--dim);
+      line-height: 1.65;
+    }
+
+    .sign__tagline {
+      font-size: 0.82rem;
+      color: var(--green);
+      opacity: 0.65;
+      margin-top: 1rem;
+      font-style: italic;
+      padding-bottom: 1.75rem;
+    }
+
+    /* Construction tape strip at the bottom */
+    .sign__tape {
+      margin: 0 -2rem;
+      padding: 0.55rem 2rem;
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(34,197,94,0.13),
+        rgba(34,197,94,0.13) 10px,
+        rgba(34,197,94,0.04) 10px,
+        rgba(34,197,94,0.04) 20px
+      );
+      border-top: 1px solid rgba(34,197,94,0.18);
+      font-size: 0.58rem;
+      font-family: 'Space Grotesk', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      color: rgba(34,197,94,0.5);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="haze-blob haze-blob--1"></div>
+  <div class="haze-blob haze-blob--2"></div>
+  <div class="haze-blob haze-blob--3"></div>
+
+  <span class="leaf" style="--x:3%;  --size:1.8rem;--dur:13s;--delay:-2s; --dx:18px; --r0:-15deg;--r1:200deg;--op:0.30">🍃</span>
+  <span class="leaf" style="--x:10%; --size:1.2rem;--dur:16s;--delay:-8s; --dx:-12px;--r0:30deg; --r1:-150deg;--op:0.25">🌿</span>
+  <span class="leaf" style="--x:18%; --size:2.1rem;--dur:11s;--delay:-4s; --dx:22px; --r0:-40deg;--r1:180deg;--op:0.32">🍃</span>
+  <span class="leaf" style="--x:27%; --size:1.5rem;--dur:15s;--delay:0s;  --dx:-8px; --r0:10deg; --r1:-200deg;--op:0.22">🌿</span>
+  <span class="leaf" style="--x:37%; --size:1.0rem;--dur:18s;--delay:-11s;--dx:15px; --r0:-25deg;--r1:160deg;--op:0.28">🍃</span>
+  <span class="leaf" style="--x:48%; --size:1.6rem;--dur:14s;--delay:-5s; --dx:10px; --r0:5deg;  --r1:-180deg;--op:0.20">🌿</span>
+  <span class="leaf" style="--x:57%; --size:1.7rem;--dur:12s;--delay:-6s; --dx:-20px;--r0:45deg; --r1:-180deg;--op:0.28">🌿</span>
+  <span class="leaf" style="--x:66%; --size:1.3rem;--dur:14s;--delay:-3s; --dx:10px; --r0:-30deg;--r1:220deg;--op:0.33">🍃</span>
+  <span class="leaf" style="--x:74%; --size:2.3rem;--dur:10s;--delay:-9s; --dx:-18px;--r0:20deg; --r1:-170deg;--op:0.22">🌿</span>
+  <span class="leaf" style="--x:82%; --size:1.4rem;--dur:17s;--delay:-1s; --dx:25px; --r0:-50deg;--r1:190deg;--op:0.30">🍃</span>
+  <span class="leaf" style="--x:89%; --size:1.0rem;--dur:13s;--delay:-14s;--dx:-14px;--r0:15deg; --r1:-160deg;--op:0.25">🌿</span>
+  <span class="leaf" style="--x:95%; --size:1.9rem;--dur:15s;--delay:-7s; --dx:-22px;--r0:-10deg;--r1:200deg;--op:0.30">🍃</span>
+
+  <div class="page">
+    <a href="/" class="back-btn">← Back to App</a>
+
+    <div class="sign">
+      <div class="sign__leaf-row">🌿 🍃 🌿</div>
+      <span class="sign__cone">🚧</span>
+      <p class="sign__overline">Under Construction</p>
+      <h1 class="sign__title">About Me</h1>
+      <div class="sign__divider"></div>
+      <p class="sign__body">The story is still being written.<br>Check back after the next session. 💨</p>
+      <p class="sign__tagline">— coming soon to a dispensary near you</p>
+      <div class="sign__tape">🌿 &nbsp; rolling in progress &nbsp; 🌿</div>
+    </div>
+  </div>
+
+</body>
+</html>

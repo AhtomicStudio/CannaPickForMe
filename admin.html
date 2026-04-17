@@ -272,6 +272,64 @@
         </div>
       </section>
 
+      <!-- About Me Editor -->
+      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="about-section">
+        <button type="button" class="admin-section__toggle" aria-expanded="false">
+          <h2>👤 About Me</h2>
+          <span class="admin-section__chevron">▾</span>
+        </button>
+        <div class="admin-section__body">
+          <div class="admin-form">
+            <div class="admin-form__group">
+              <label for="about-content">Page Content</label>
+              <textarea id="about-content" rows="12" placeholder="Write your About Me content here..."></textarea>
+            </div>
+            <div class="admin-form__actions">
+              <a href="/about.html" target="_blank" class="admin-btn admin-btn--ghost">View Page ↗</a>
+              <button type="button" id="btn-save-about" class="admin-btn admin-btn--primary">Save About Me</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Lore Editor -->
+      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="lore-section">
+        <button type="button" class="admin-section__toggle" aria-expanded="false">
+          <h2>📜 The Lore</h2>
+          <span class="admin-section__chevron">▾</span>
+        </button>
+        <div class="admin-section__body">
+          <div class="admin-form">
+            <div class="admin-form__group">
+              <label for="lore-content">Page Content</label>
+              <textarea id="lore-content" rows="12" placeholder="Write the lore here..."></textarea>
+            </div>
+            <div class="admin-form__actions">
+              <a href="/lore.html" target="_blank" class="admin-btn admin-btn--ghost">View Page ↗</a>
+              <button type="button" id="btn-save-lore" class="admin-btn admin-btn--primary">Save Lore</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Info Content -->
+      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="info-section">
+        <button type="button" class="admin-section__toggle" aria-expanded="false">
+          <h2>📚 Info Content</h2>
+          <span class="admin-section__chevron">▾</span>
+        </button>
+        <div class="admin-section__body">
+          <div>
+            <p class="admin-info-hint">Educational topics shown in the app. Click a topic to expand and edit its content.</p>
+            <div id="info-topics-list" class="info-topics-list"></div>
+            <div class="info-add-form">
+              <input type="text" id="new-info-topic-title" placeholder="e.g. 🌿 Terpenes" />
+              <button type="button" id="btn-add-info-topic" class="admin-btn admin-btn--primary">+ Add Topic</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Strain List -->
       <section class="admin-section admin-section--collapsible admin-section--collapsed" id="strain-list-section">
         <button type="button" class="admin-section__toggle" aria-expanded="false">

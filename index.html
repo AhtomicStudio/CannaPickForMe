@@ -100,6 +100,10 @@
       <!-- Ad Slot: Home -->
       <div id="ad-slot-home" class="ad-slot ad-slot--home"></div>
       <footer class="home__footer">
+        <a href="/about.html" class="footer-link">About Me</a>
+        <span class="footer-divider">•</span>
+        <a href="/lore.html" class="footer-link">Lore</a>
+        <span class="footer-divider">•</span>
         <a href="#" id="legal-link" class="footer-link">Legal Info</a>
         <span class="footer-divider">•</span>
         <span class="footer-text">Made with 💨 in California</span>
@@ -110,8 +114,11 @@
     <div id="stash-screen" class="screen stash hidden">
       <div class="screen__header">
         <button id="stash-back" class="btn btn--icon">←</button>
-        <h2>My Stash</h2>
-        <button id="btn-add-custom" class="btn btn--icon" title="Add custom strain">+</button>
+        <h2>Strains</h2>
+        <button id="btn-add-custom" class="btn btn--add-strain" title="Add custom strain">
+          <span class="btn--add-strain__plus">+</span>
+          <span class="btn--add-strain__text">Add a strain</span>
+        </button>
       </div>
       <div class="stash__tabs">
         <button class="tab tab--active" data-tab="browse">Browse</button>

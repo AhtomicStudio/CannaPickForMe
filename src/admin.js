@@ -7,6 +7,8 @@ import './admin.css';
 import strainsData from './data/strains.json';
 import { getStrainDelta, saveStrainDelta, getMenuData, saveMenuData } from './services/strainService.js';
 import { getAllAds, createAd, updateAd, deleteAd, uploadAdImage } from './services/adService.js';
+import { getPageContent, savePageContent } from './services/pagesService.js';
+import { getInfoTopics, saveInfoTopic, deleteInfoTopic } from './services/infoService.js';
 import { auth } from './firebase.js';
 import { signInAnonymously } from 'firebase/auth';
 
@@ -305,6 +307,8 @@ function showDashboard() {
   loadAdsList();
   initStrainManager();
   initMenuSync();
+  initInfoEditor();
+  initPagesEditor();
 }
 
 async function loadAdsList() {
@@ -1014,6 +1018,156 @@ async function initMenuSync() {
     } finally {
       confirmBtn.textContent = 'Confirm & Save';
       confirmBtn.disabled = false;
+    }
+  });
+}
+
+// === INFO CONTENT EDITOR ===
+const DEFAULT_INFO_TOPICS = [
+  { id: 'terpenes',     title: '🌿 Terpenes',     order: 1, content: '' },
+  { id: 'effects',      title: '✨ Effects',       order: 2, content: '' },
+  { id: 'strain-types', title: '💨 Strain Types',  order: 3, content: '' },
+  { id: 'cannabinoids', title: '🧬 Cannabinoids',  order: 4, content: '' },
+];
+
+async function initInfoEditor() {
+  let topics = await getInfoTopics();
+
+  if (topics.length === 0) {
+    await Promise.all(DEFAULT_INFO_TOPICS.map(t => saveInfoTopic(t.id, t)));
+    topics = DEFAULT_INFO_TOPICS.map(t => ({ ...t }));
+  }
+
+  function renderTopics() {
+    const list = document.getElementById('info-topics-list');
+    list.innerHTML = topics.map(topic => `
+      <div class="info-topic info-topic--collapsed" data-id="${esc(topic.id)}">
+        <button type="button" class="info-topic__header">
+          <span class="info-topic__title">${esc(topic.title)}</span>
+          <span class="info-topic__chevron">▾</span>
+        </button>
+        <div class="info-topic__body">
+          <div class="info-topic__content">
+            <textarea placeholder="Write content for ${esc(topic.title)}..." rows="6">${esc(topic.content || '')}</textarea>
+            <div class="info-topic__actions">
+              <button type="button" class="admin-btn admin-btn--ghost admin-btn--small info-topic__delete">🗑 Delete</button>
+              <button type="button" class="admin-btn admin-btn--primary info-topic__save">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.info-topic__header').forEach(header => {
+      header.addEventListener('click', () => {
+        header.closest('.info-topic').classList.toggle('info-topic--collapsed');
+      });
+    });
+
+    list.querySelectorAll('.info-topic__save').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const topicEl = btn.closest('.info-topic');
+        const id = topicEl.dataset.id;
+        const content = topicEl.querySelector('textarea').value.trim();
+        const topic = topics.find(t => t.id === id);
+        if (!topic) return;
+
+        btn.textContent = 'Saving...';
+        btn.disabled = true;
+        try {
+          await saveInfoTopic(id, { ...topic, content });
+          topic.content = content;
+          btn.textContent = 'Saved ✓';
+          setTimeout(() => { btn.textContent = 'Save'; btn.disabled = false; }, 2000);
+        } catch (err) {
+          console.error('Save info topic failed:', err);
+          alert(`Failed to save: ${err.message}`);
+          btn.textContent = 'Save';
+          btn.disabled = false;
+        }
+      });
+    });
+
+    list.querySelectorAll('.info-topic__delete').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const topicEl = btn.closest('.info-topic');
+        const id = topicEl.dataset.id;
+        const topic = topics.find(t => t.id === id);
+        if (!confirm(`Delete "${topic?.title || id}"?`)) return;
+        await deleteInfoTopic(id);
+        topics = topics.filter(t => t.id !== id);
+        renderTopics();
+      });
+    });
+  }
+
+  renderTopics();
+
+  document.getElementById('btn-add-info-topic').addEventListener('click', async () => {
+    const input = document.getElementById('new-info-topic-title');
+    const title = input.value.trim();
+    if (!title) return;
+
+    const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    if (topics.find(t => t.id === id)) {
+      alert(`A topic with slug "${id}" already exists.`);
+      return;
+    }
+
+    const topic = { id, title, order: topics.length + 1, content: '' };
+    await saveInfoTopic(id, topic);
+    topics = [...topics, topic];
+    renderTopics();
+    input.value = '';
+  });
+}
+
+// === PAGES EDITOR ===
+async function initPagesEditor() {
+  // Load existing content for both pages
+  const [aboutData, loreData] = await Promise.all([
+    getPageContent('about'),
+    getPageContent('lore'),
+  ]);
+
+  if (aboutData?.content) {
+    document.getElementById('about-content').value = aboutData.content;
+  }
+  if (loreData?.content) {
+    document.getElementById('lore-content').value = loreData.content;
+  }
+
+  document.getElementById('btn-save-about').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-save-about');
+    const content = document.getElementById('about-content').value.trim();
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+    try {
+      await savePageContent('about', content);
+      btn.textContent = 'Saved ✓';
+      setTimeout(() => { btn.textContent = 'Save About Me'; btn.disabled = false; }, 2000);
+    } catch (err) {
+      console.error('Failed to save About Me:', err);
+      alert(`Failed to save: ${err.message}`);
+      btn.textContent = 'Save About Me';
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('btn-save-lore').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-save-lore');
+    const content = document.getElementById('lore-content').value.trim();
+    btn.textContent = 'Saving...';
+    btn.disabled = true;
+    try {
+      await savePageContent('lore', content);
+      btn.textContent = 'Saved ✓';
+      setTimeout(() => { btn.textContent = 'Save Lore'; btn.disabled = false; }, 2000);
+    } catch (err) {
+      console.error('Failed to save Lore:', err);
+      alert(`Failed to save: ${err.message}`);
+      btn.textContent = 'Save Lore';
+      btn.disabled = false;
     }
   });
 }

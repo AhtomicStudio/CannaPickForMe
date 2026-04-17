@@ -887,7 +887,9 @@ function renderAdSlot(containerId, ads) {
     container.innerHTML = `
       <a href="${ad.clickUrl}" target="_blank" rel="noopener noreferrer" class="ad-banner" title="${ad.title || 'Sponsored'}">
         <img src="${ad.imageUrl}" alt="${ad.title || 'Ad'}" class="ad-banner__image" style="${imgPos}" />
-        <span class="ad-banner__sponsored">Sponsored</span>
+        <div class="ad-banner__footer">
+          <span class="ad-banner__label">✦ Sponsored</span>
+        </div>
       </a>
     `;
   } else {

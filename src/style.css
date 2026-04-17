@@ -179,6 +179,32 @@ body {
   background: var(--smoke-light);
 }
 
+.btn--add-strain {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: transparent;
+  color: var(--green-primary);
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+  transition: all 0.2s var(--ease-out);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+.btn--add-strain:hover {
+  background: rgba(34, 197, 94, 0.08);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: var(--green-glow);
+}
+.btn--add-strain__plus {
+  font-size: 1.1rem;
+  line-height: 1;
+  font-weight: 400;
+}
+
 .btn--large {
   padding: 1.1rem 2rem;
   font-size: 1.15rem;
@@ -1551,16 +1577,22 @@ body {
   border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.25s var(--ease-out);
+  transition: all 0.3s var(--ease-out);
   text-decoration: none;
   position: relative;
-  border: 1px solid var(--border);
+  background:
+    linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+    linear-gradient(135deg, rgba(34, 197, 94, 0.55) 0%, rgba(74, 222, 128, 0.12) 50%, rgba(34, 197, 94, 0.45) 100%) border-box;
+  border: 1.5px solid transparent;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
 }
 
 .ad-banner:hover {
-  border-color: rgba(74, 222, 128, 0.3);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  background:
+    linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+    linear-gradient(135deg, rgba(74, 222, 128, 0.9) 0%, rgba(34, 197, 94, 0.35) 50%, rgba(74, 222, 128, 0.8) 100%) border-box;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(34, 197, 94, 0.18), 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .ad-banner__image {
@@ -1570,18 +1602,22 @@ body {
   object-fit: cover;
 }
 
-.ad-banner__sponsored {
-  position: absolute;
-  bottom: 6px;
-  right: 8px;
-  font-size: 0.55rem;
-  color: rgba(255, 255, 255, 0.5);
+.ad-banner__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 5px 10px;
+  background: rgba(14, 20, 36, 0.92);
+}
+
+.ad-banner__label {
+  font-size: 0.5rem;
+  color: var(--green-glow);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-weight: 500;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 2px 6px;
-  border-radius: 4px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  font-family: var(--font-display);
+  opacity: 0.7;
 }
 
 
