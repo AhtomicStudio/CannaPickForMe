@@ -1,6 +1,8 @@
 {
   "framework": "vite",
   "rewrites": [
-    { "source": "/admin", "destination": "/admin.html" }
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/lore",  "destination": "/lore.html"  }
   ]
 }
