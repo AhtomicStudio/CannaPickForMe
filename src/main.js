@@ -1165,6 +1165,8 @@ function initAccountModal() {
   // Send sign-in link
   document.getElementById('account-send-link-btn').addEventListener('click', async () => {
     const email = document.getElementById('account-email').value.trim();
+    const errorEl = document.getElementById('account-send-error');
+    errorEl.classList.add('hidden');
     if (!email) return;
     const btn = document.getElementById('account-send-link-btn');
     btn.disabled = true;
@@ -1173,9 +1175,20 @@ function initAccountModal() {
       await sendSignInLink(email);
       setAccountState('linksent');
     } catch (err) {
-      alert('Failed to send link. Please check your email and try again.');
-      console.error('sendSignInLink error:', err);
-    } finally {
+      const code = err.code || '';
+      console.error('sendSignInLink error:', code, err);
+      if (code === 'auth/invalid-email') {
+        errorEl.textContent = 'Please enter a valid email address.';
+      } else if (code === 'auth/too-many-requests') {
+        errorEl.textContent = 'Too many attempts — please wait a minute and try again.';
+      } else if (code === 'auth/unauthorized-domain') {
+        errorEl.textContent = 'Sign-in is not yet configured for this domain. Please contact support.';
+      } else if (code === 'auth/operation-not-allowed') {
+        errorEl.textContent = 'Email sign-in is not enabled. Please contact support.';
+      } else {
+        errorEl.textContent = `Something went wrong (${code || 'unknown'}). Please try again.`;
+      }
+      errorEl.classList.remove('hidden');
       btn.disabled = false;
       btn.textContent = 'Send Sign-In Link ✉️';
     }
