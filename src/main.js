@@ -748,7 +748,15 @@ function renderResult(result) {
     is_perfect_match: isPerfectMatch ?? false,
   });
 
-  addSessionEntry({ strainId: pickedStrain.id, name: pickedStrain.name });
+  addSessionEntry({
+    strainId:   pickedStrain.id,
+    name:       pickedStrain.name,
+    mood:       sessionAnswers.mood       ?? null,
+    goal:       sessionAnswers.goal       ?? null,
+    intensity:  sessionAnswers.intensity  ?? null,
+    vibe:       sessionAnswers.vibe       ?? null,
+    matchScore: matchScore,
+  });
   scheduleSync();
 
   document.getElementById('result-strain-name').textContent = pickedStrain.name;
