@@ -19,6 +19,7 @@ import {
   scheduleSync, loadAndResolveProfile, signOutUser, deleteAccount, initAuth,
 } from './services/userService.js';
 import { loadSavedTheme } from './services/themeService.js';
+import { initProfile, setProfileBackHandler, renderProfileScreen } from './profile.js';
 
 // === CONSTANTS ===
 const ALL_EFFECTS = ['Relaxed','Happy','Euphoric','Creative','Uplifted','Energetic','Focused','Talkative','Giggly','Sleepy','Hungry','Tingly'];
@@ -278,7 +279,6 @@ function initHome() {
       setAccountState('signedout');
       return;
     }
-    // renderProfileScreen and showScreen wired in Task 9
     renderProfileScreen();
     showScreen('profile');
   });
@@ -1118,6 +1118,8 @@ function init() {
   initResult();
   loadAds();
   initStrainDelta();
+  initProfile({ getAllStrains, getStash: getStashStrains });
+  setProfileBackHandler(() => showScreen('home'));
   initAccountModal();
   handleSignInLink().catch(err => {
     console.error('Sign-in link error:', err);
