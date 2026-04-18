@@ -247,5 +247,82 @@ function renderThemesTab() {
 
 function renderSettingsTab() {
   const panel = document.getElementById('profile-settings-panel');
-  panel.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem">Loading settings...</p>';
+  const lightOn = getLightMode();
+
+  panel.innerHTML = `
+    <div class="settings-group">
+      <div class="settings-row" id="bright-mode-row">
+        <div>
+          <div class="settings-row__label">Bright Mode</div>
+        </div>
+        <label class="settings-toggle">
+          <input type="checkbox" id="toggle-light-mode" ${lightOn ? 'checked' : ''} />
+          <span class="settings-toggle__track"></span>
+        </label>
+        <div class="settings-tooltip">wtf what stoner uses light mode sus 👀</div>
+      </div>
+      <div class="settings-row">
+        <div>
+          <div class="settings-row__label">Email Alerts</div>
+          <div class="settings-row__sub">Personalised picks and updates</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="settings-badge">Coming Soon</span>
+          <label class="settings-toggle settings-toggle--disabled">
+            <input type="checkbox" disabled />
+            <span class="settings-toggle__track"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-group">
+      <div class="settings-btn-row">
+        <button class="btn--settings-action" id="btn-clear-history">🗑 Clear Session History</button>
+      </div>
+      <div class="settings-btn-row">
+        <button class="btn--settings-action" id="btn-reset-tips">Reset App Tips</button>
+      </div>
+    </div>
+
+    <div class="settings-divider"></div>
+
+    <div class="settings-danger-zone">
+      <button class="btn--settings-action btn--danger" id="btn-delete-account-profile">Delete Account</button>
+    </div>
+  `;
+
+  document.getElementById('toggle-light-mode').addEventListener('change', e => {
+    saveLightModePreference(e.target.checked);
+  });
+
+  document.getElementById('btn-clear-history').addEventListener('click', () => {
+    if (!confirm('Clear all session history on this device? Your stash and account are not affected.')) return;
+    clearSessionHistory();
+    renderActivityTab();
+    const btn = document.getElementById('btn-clear-history');
+    if (btn) { btn.textContent = 'History cleared ✓'; setTimeout(() => { btn.textContent = '🗑 Clear Session History'; }, 2000); }
+  });
+
+  document.getElementById('btn-reset-tips').addEventListener('click', () => {
+    localStorage.removeItem('cpfm_stash_tip_shown');
+    const btn = document.getElementById('btn-reset-tips');
+    btn.textContent = 'Tips reset ✓';
+    setTimeout(() => { btn.textContent = 'Reset App Tips'; }, 2000);
+  });
+
+  document.getElementById('btn-delete-account-profile').addEventListener('click', async () => {
+    const confirmed = confirm('This will delete your account and all cloud data. Your local stash stays on this device.');
+    if (!confirmed) return;
+    try {
+      await deleteAccount();
+      _onBack();
+    } catch (err) {
+      if (err.code === 'auth/requires-recent-login') {
+        alert('For security, please sign out and sign back in before deleting your account.');
+      } else {
+        alert('Something went wrong. Please try again.');
+      }
+    }
+  });
 }
