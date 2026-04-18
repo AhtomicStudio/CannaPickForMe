@@ -524,6 +524,13 @@ body {
   font-weight: 700;
 }
 
+.screen__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
 .stash__tabs {
   display: flex;
   padding: var(--space-sm) var(--space-lg);
@@ -3007,10 +3014,9 @@ html.light-mode .app-bg__haze {
   text-decoration: none;
   border: 1px solid var(--border);
   border-radius: var(--radius-full);
-  padding: 0.3rem 0.75rem;
+  padding: 0.35rem 0.875rem;
   white-space: nowrap;
   transition: color 0.2s, border-color 0.2s;
-  margin-left: auto;
 }
 
 .stash__auth-link-btn:hover {
