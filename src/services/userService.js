@@ -146,6 +146,40 @@ export async function loadAndResolveProfile(showConflictFn) {
   }
 }
 
+export async function syncSettingsFromFirestore(uid) {
+  try {
+    const { doc, getDoc } = await import('firebase/firestore');
+    const { db } = await import('../firebase.js');
+    const snap = await getDoc(doc(db, 'users', uid));
+    if (!snap.exists()) return;
+    const settings = snap.data()?.settings || {};
+    if (settings.theme) {
+      const { setTheme } = await import('../storage/store.js');
+      const { applyTheme } = await import('./themeService.js');
+      setTheme(settings.theme);
+      applyTheme(settings.theme);
+    }
+    if (settings.lightMode !== undefined) {
+      const { setLightMode } = await import('../storage/store.js');
+      const { applyLightMode } = await import('./themeService.js');
+      setLightMode(settings.lightMode);
+      applyLightMode(settings.lightMode);
+    }
+  } catch (err) {
+    console.warn('Failed to sync settings from Firestore:', err);
+  }
+}
+
+export async function saveSettingsToFirestore(uid, settings) {
+  try {
+    const { doc, setDoc } = await import('firebase/firestore');
+    const { db } = await import('../firebase.js');
+    await setDoc(doc(db, 'users', uid), { settings }, { merge: true });
+  } catch (err) {
+    console.warn('Failed to save settings to Firestore:', err);
+  }
+}
+
 /** Sign out the current user. */
 export async function signOutUser() {
   clearTimeout(syncTimer);

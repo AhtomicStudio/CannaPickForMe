@@ -1065,6 +1065,12 @@ function initAccountModal() {
       } catch (err) {
         console.error('loadAndResolveProfile error:', err);
       }
+      try {
+        const { syncSettingsFromFirestore } = await import('./services/userService.js');
+        await syncSettingsFromFirestore(user.uid);
+      } catch (err) {
+        console.warn('Settings sync failed:', err);
+      }
       // Refresh UI — cloud data may have replaced local
       renderBrowseList();
       renderMyStashList();

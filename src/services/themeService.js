@@ -48,11 +48,25 @@ export function loadSavedTheme() {
 export async function saveThemePreference(key) {
   const safeKey = applyTheme(key);
   setTheme(safeKey);
-  // Firestore sync wired in Task 14
+  try {
+    const { getCurrentUser } = await import('./userService.js');
+    const { saveSettingsToFirestore } = await import('./userService.js');
+    const user = getCurrentUser();
+    if (user) await saveSettingsToFirestore(user.uid, { theme: safeKey });
+  } catch (err) {
+    console.warn('Failed to save theme to Firestore:', err);
+  }
 }
 
 export async function saveLightModePreference(on) {
   setLightMode(on);
   applyLightMode(on);
-  // Firestore sync wired in Task 14
+  try {
+    const { getCurrentUser } = await import('./userService.js');
+    const { saveSettingsToFirestore } = await import('./userService.js');
+    const user = getCurrentUser();
+    if (user) await saveSettingsToFirestore(user.uid, { lightMode: on });
+  } catch (err) {
+    console.warn('Failed to save lightMode to Firestore:', err);
+  }
 }
