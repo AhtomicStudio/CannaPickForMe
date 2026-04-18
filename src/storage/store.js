@@ -11,6 +11,8 @@ const KEYS = {
   AGE_VERIFIED: 'cpfm_age_verified',
   SESSION_HISTORY: 'cpfm_session_history',
   SYNC_AT: 'cpfm_sync_at',
+  THEME: 'cpfm_theme',
+  LIGHT_MODE: 'cpfm_light_mode',
 };
 
 function getJSON(key, fallback = null) {
@@ -152,10 +154,15 @@ export function getSessionHistory() {
 export function addSessionEntry(entry) {
   const history = getSessionHistory();
   history.unshift({
-    ...entry,
-    timestamp: Date.now(),
+    strainId:   entry.strainId   ?? null,
+    name:       entry.name       ?? null,
+    mood:       entry.mood       ?? null,
+    goal:       entry.goal       ?? null,
+    intensity:  entry.intensity  ?? null,
+    vibe:       entry.vibe       ?? null,
+    matchScore: entry.matchScore ?? null,
+    timestamp:  Date.now(),
   });
-  // Keep last 50 entries
   if (history.length > 50) history.length = 50;
   setJSON(KEYS.SESSION_HISTORY, history);
   return history;
@@ -163,6 +170,24 @@ export function addSessionEntry(entry) {
 
 export function clearSessionHistory() {
   setJSON(KEYS.SESSION_HISTORY, []);
+}
+
+// === THEME AND LIGHT MODE ===
+
+export function getTheme() {
+  return localStorage.getItem(KEYS.THEME) || 'default';
+}
+
+export function setTheme(key) {
+  localStorage.setItem(KEYS.THEME, key);
+}
+
+export function getLightMode() {
+  return localStorage.getItem(KEYS.LIGHT_MODE) === 'true';
+}
+
+export function setLightMode(on) {
+  localStorage.setItem(KEYS.LIGHT_MODE, String(on));
 }
 
 // === HAPTIC FEEDBACK ===
