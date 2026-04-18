@@ -317,6 +317,22 @@
       </div>
     </div>
 
+    <!-- Profile -->
+    <div id="profile-screen" class="screen profile hidden">
+      <div class="screen__header">
+        <button id="profile-back" class="btn btn--icon">←</button>
+        <h2>Profile</h2>
+      </div>
+      <div class="profile__tabs">
+        <button class="tab tab--active" data-profile-tab="activity">Activity</button>
+        <button class="tab" data-profile-tab="themes">Themes</button>
+        <button class="tab" data-profile-tab="settings">Settings</button>
+      </div>
+      <div id="profile-activity-panel" class="profile__panel"></div>
+      <div id="profile-themes-panel" class="profile__panel hidden"></div>
+      <div id="profile-settings-panel" class="profile__panel hidden"></div>
+    </div>
+
     <!-- Stash One-Time Tip -->
     <div id="stash-tip" class="stash-tip hidden" role="dialog" aria-modal="true">
       <div class="stash-tip__inner">
