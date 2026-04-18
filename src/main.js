@@ -270,6 +270,18 @@ function initHome() {
     }
   });
 
+  document.getElementById('btn-profile').addEventListener('click', () => {
+    const user = getCurrentUser();
+    if (!user) {
+      document.getElementById('account-modal').classList.remove('hidden');
+      setAccountState('signedout');
+      return;
+    }
+    // renderProfileScreen and showScreen wired in Task 9
+    renderProfileScreen();
+    showScreen('profile');
+  });
+
   document.getElementById('legal-link').addEventListener('click', (e) => {
     e.preventDefault();
     showScreen('disclaimer');
@@ -1045,6 +1057,7 @@ function initAccountModal() {
     async (user) => {
       authLinks.classList.add('hidden');
       if (resultCta) resultCta.classList.add('hidden');
+      updateProfileAvatar(user);
       modal.classList.add('hidden');
       try {
         await loadAndResolveProfile(showConflictModal);
@@ -1059,8 +1072,36 @@ function initAccountModal() {
     () => {
       authLinks.classList.remove('hidden');
       if (resultCta) resultCta.classList.remove('hidden');
+      updateProfileAvatar(null);
     }
   );
+}
+
+// === PROFILE AVATAR ===
+function getInitials(email) {
+  if (!email) return '';
+  const local = email.split('@')[0];
+  const parts = local.split('.');
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+  return local.slice(0, 2).toUpperCase();
+}
+
+function updateProfileAvatar(user) {
+  const btn = document.getElementById('btn-profile');
+  const initials = document.getElementById('profile-avatar-initials');
+  if (!btn || !initials) return;
+
+  if (user) {
+    initials.textContent = getInitials(user.email);
+    btn.classList.remove('profile-avatar--signed-out');
+    btn.classList.add('profile-avatar--signed-in');
+  } else {
+    initials.textContent = '';
+    btn.classList.add('profile-avatar--signed-out');
+    btn.classList.remove('profile-avatar--signed-in');
+  }
 }
 
 // === BOOT ===
