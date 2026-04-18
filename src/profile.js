@@ -224,7 +224,25 @@ function buildPerfectMatchRate(sessions) {
 
 function renderThemesTab() {
   const panel = document.getElementById('profile-themes-panel');
-  panel.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem">Loading themes...</p>';
+  const currentTheme = getTheme();
+
+  const cards = THEMES.map(t => `
+    <button class="theme-card ${t.key === currentTheme ? 'theme-card--active' : ''}" data-theme-key="${t.key}">
+      <div class="theme-card__preview">${t.preview.join('')}</div>
+      <div class="theme-card__name">${t.label}</div>
+      <span class="theme-card__check">✓</span>
+    </button>
+  `).join('');
+
+  panel.innerHTML = `<div class="themes-grid">${cards}</div>`;
+
+  panel.querySelectorAll('.theme-card').forEach(card => {
+    card.addEventListener('click', async () => {
+      const key = card.dataset.themeKey;
+      await saveThemePreference(key);
+      panel.querySelectorAll('.theme-card').forEach(c => c.classList.toggle('theme-card--active', c.dataset.themeKey === key));
+    });
+  });
 }
 
 function renderSettingsTab() {
