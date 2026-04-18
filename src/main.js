@@ -1,4 +1,5 @@
 import './style.css';
+import './profile.css';
 import { inject, track } from '@vercel/analytics';
 import strainsData from './data/strains.json';
 import questionsData from './data/questions.json';
