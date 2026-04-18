@@ -141,6 +141,8 @@ let sessionAnswers = {};
 let currentQuestionIndex = 0;
 let currentSearchQuery = '';
 let currentFilter = 'all';
+let currentEffectFilter = '';
+let currentFlavorFilter = '';
 let overrideStrainId = null;
 
 // === SCREEN NAVIGATION ===
@@ -247,6 +249,11 @@ function initDisclaimer() {
 
 // === HOME ===
 function initHome() {
+  const tagline = document.getElementById('home-tagline');
+  if (tagline) {
+    const timeWord = new Date().getHours() < 12 ? 'today' : 'tonight';
+    tagline.textContent = `What are we shmokin' ${timeWord}?`;
+  }
   document.getElementById('btn-pick').addEventListener('click', () => {
     sessionAnswers = {};
     currentQuestionIndex = 0;
@@ -331,7 +338,7 @@ function initStash() {
     renderBrowseList();
   });
 
-  // Filters
+  // Type filter chips
   document.querySelectorAll('.filter-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('filter-chip--active'));
@@ -339,6 +346,17 @@ function initStash() {
       currentFilter = chip.dataset.filter;
       renderBrowseList();
     });
+  });
+
+  // Populate and wire effect/flavor dropdowns
+  populateFilterDropdowns();
+  document.getElementById('filter-effect').addEventListener('change', e => {
+    currentEffectFilter = e.target.value;
+    renderBrowseList();
+  });
+  document.getElementById('filter-flavor').addEventListener('change', e => {
+    currentFlavorFilter = e.target.value;
+    renderBrowseList();
   });
 
   // Add custom
@@ -351,6 +369,29 @@ function initStash() {
   });
 }
 
+function populateFilterDropdowns() {
+  const all = getAllStrains();
+  const effects = [...new Set(all.flatMap(s => s.effects || []))].sort();
+  const flavors = [...new Set(all.flatMap(s => s.flavors || []))].sort();
+
+  const effectSel = document.getElementById('filter-effect');
+  const flavorSel = document.getElementById('filter-flavor');
+  if (!effectSel || !flavorSel) return;
+
+  effects.forEach(e => {
+    const opt = document.createElement('option');
+    opt.value = e;
+    opt.textContent = e;
+    effectSel.appendChild(opt);
+  });
+  flavors.forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f;
+    opt.textContent = f;
+    flavorSel.appendChild(opt);
+  });
+}
+
 function renderBrowseList() {
   const list = document.getElementById('strain-list');
   let strains = getAllStrains();
@@ -358,6 +399,16 @@ function renderBrowseList() {
   // Filter by type
   if (currentFilter !== 'all') {
     strains = strains.filter(s => s.type === currentFilter);
+  }
+
+  // Filter by effect
+  if (currentEffectFilter) {
+    strains = strains.filter(s => (s.effects || []).includes(currentEffectFilter));
+  }
+
+  // Filter by flavor
+  if (currentFlavorFilter) {
+    strains = strains.filter(s => (s.flavors || []).includes(currentFlavorFilter));
   }
 
   // Filter by search
@@ -997,8 +1048,7 @@ function initAccountModal() {
       document.getElementById('account-user-email').textContent = user.email;
     }
   }
-  document.getElementById('btn-login').addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
-  document.getElementById('btn-signup').addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
+  authLinks.addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
   document.getElementById('result-signup-btn').addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
 
   // Close on backdrop click
@@ -1098,16 +1148,22 @@ function getInitials(email) {
 function updateProfileAvatar(user) {
   const btn = document.getElementById('btn-profile');
   const initials = document.getElementById('profile-avatar-initials');
+  const wrap = document.getElementById('profile-avatar-wrap');
+  const loginLabel = document.getElementById('profile-login-label');
   if (!btn || !initials) return;
 
   if (user) {
     initials.textContent = getInitials(user.email);
     btn.classList.remove('profile-avatar--signed-out');
     btn.classList.add('profile-avatar--signed-in');
+    if (wrap) { wrap.classList.remove('profile-avatar-wrap--signed-out'); wrap.classList.add('profile-avatar-wrap--signed-in'); }
+    if (loginLabel) loginLabel.style.display = 'none';
   } else {
     initials.textContent = '';
     btn.classList.add('profile-avatar--signed-out');
     btn.classList.remove('profile-avatar--signed-in');
+    if (wrap) { wrap.classList.add('profile-avatar-wrap--signed-out'); wrap.classList.remove('profile-avatar-wrap--signed-in'); }
+    if (loginLabel) loginLabel.style.display = '';
   }
 }
 
