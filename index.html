@@ -28,6 +28,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <!-- Persistent ambient background — haze + floating leaves across all screens -->
+    <div id="app-bg" aria-hidden="true">
+      <div class="app-bg__haze app-bg__haze--1"></div>
+      <div class="app-bg__haze app-bg__haze--2"></div>
+      <div class="app-bg__haze app-bg__haze--3"></div>
+      <span class="app-bg__leaf" style="--x:3%;  --size:1.8rem;--dur:14s;--delay:-2s; --dx:18px; --r0:-15deg;--r1:200deg;--op:0.22">🍃</span>
+      <span class="app-bg__leaf" style="--x:9%;  --size:1.2rem;--dur:17s;--delay:-8s; --dx:-12px;--r0:30deg; --r1:-150deg;--op:0.18">🌿</span>
+      <span class="app-bg__leaf" style="--x:17%; --size:2.0rem;--dur:12s;--delay:-4s; --dx:22px; --r0:-40deg;--r1:180deg;--op:0.20">🍃</span>
+      <span class="app-bg__leaf" style="--x:26%; --size:1.5rem;--dur:16s;--delay:0s;  --dx:-8px; --r0:10deg; --r1:-200deg;--op:0.15">🌿</span>
+      <span class="app-bg__leaf" style="--x:36%; --size:1.0rem;--dur:19s;--delay:-11s;--dx:15px; --r0:-25deg;--r1:160deg;--op:0.20">🍃</span>
+      <span class="app-bg__leaf" style="--x:47%; --size:1.6rem;--dur:15s;--delay:-5s; --dx:10px; --r0:5deg;  --r1:-180deg;--op:0.15">🌿</span>
+      <span class="app-bg__leaf" style="--x:57%; --size:1.7rem;--dur:13s;--delay:-6s; --dx:-20px;--r0:45deg; --r1:-180deg;--op:0.20">🌿</span>
+      <span class="app-bg__leaf" style="--x:66%; --size:1.3rem;--dur:15s;--delay:-3s; --dx:10px; --r0:-30deg;--r1:220deg;--op:0.22">🍃</span>
+      <span class="app-bg__leaf" style="--x:74%; --size:2.2rem;--dur:11s;--delay:-9s; --dx:-18px;--r0:20deg; --r1:-170deg;--op:0.16">🌿</span>
+      <span class="app-bg__leaf" style="--x:82%; --size:1.4rem;--dur:18s;--delay:-1s; --dx:25px; --r0:-50deg;--r1:190deg;--op:0.22">🍃</span>
+      <span class="app-bg__leaf" style="--x:89%; --size:1.1rem;--dur:14s;--delay:-14s;--dx:-14px;--r0:15deg; --r1:-160deg;--op:0.18">🌿</span>
+      <span class="app-bg__leaf" style="--x:95%; --size:1.9rem;--dur:16s;--delay:-7s; --dx:-22px;--r0:-10deg;--r1:200deg;--op:0.20">🍃</span>
+    </div>
+
     <!-- Age Gate -->
     <div id="age-gate" class="screen age-gate">
       <div class="age-gate__content">

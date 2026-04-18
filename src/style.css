@@ -272,7 +272,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-deep);
   text-align: center;
 }
 
@@ -2580,4 +2579,73 @@ body {
 .conflict-option__time {
   font-size: 0.72rem;
   color: var(--text-secondary);
+}
+
+/* ============================================================
+   AMBIENT BACKGROUND — persistent haze + floating leaves
+   Sits at z-index 0, below all screens (z-index 1+).
+   Screens have no explicit background so this shows through.
+   ============================================================ */
+#app-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Haze blobs */
+.app-bg__haze {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.app-bg__haze--1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(34,197,94,0.09) 0%, transparent 70%);
+  top: -220px; left: -160px;
+  filter: blur(100px);
+  animation: app-haze-breathe 8s ease-in-out infinite alternate;
+}
+.app-bg__haze--2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(74,222,128,0.07) 0%, transparent 70%);
+  bottom: -160px; right: -120px;
+  filter: blur(100px);
+  animation: app-haze-breathe 11s ease-in-out infinite alternate;
+  animation-delay: -4s;
+}
+.app-bg__haze--3 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 70%);
+  top: 40%; right: 5%;
+  filter: blur(90px);
+  animation: app-haze-breathe 14s ease-in-out infinite alternate;
+  animation-delay: -7s;
+}
+
+@keyframes app-haze-breathe {
+  from { opacity: 0.5; transform: scale(1); }
+  to   { opacity: 1;   transform: scale(1.2); }
+}
+
+/* Floating leaves */
+.app-bg__leaf {
+  position: absolute;
+  font-size: var(--size, 1.5rem);
+  left: var(--x, 50%);
+  bottom: -5vh;
+  opacity: 0;
+  animation: app-leaf-float var(--dur, 15s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  user-select: none;
+  pointer-events: none;
+}
+
+@keyframes app-leaf-float {
+  0%   { transform: translateY(0)       translateX(0)                         rotate(var(--r0, 0deg));   opacity: 0; }
+  5%   { opacity: var(--op, 0.20); }
+  50%  { transform: translateY(-55vh)   translateX(var(--dx, 12px))           rotate(calc(var(--r0, 0deg) + 90deg)); }
+  95%  { opacity: var(--op, 0.20); }
+  100% { transform: translateY(-112vh)  translateX(calc(var(--dx, 12px) * 2)) rotate(var(--r1, 180deg)); opacity: 0; }
 }
