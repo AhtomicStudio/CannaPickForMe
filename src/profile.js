@@ -299,9 +299,14 @@ function renderSettingsTab() {
   document.getElementById('btn-clear-history').addEventListener('click', () => {
     if (!confirm('Clear all session history on this device? Your stash and account are not affected.')) return;
     clearSessionHistory();
+    // Switch to Activity tab so the cleared empty state is visible
+    document.querySelectorAll('[data-profile-tab]').forEach(t =>
+      t.classList.toggle('tab--active', t.dataset.profileTab === 'activity')
+    );
+    ['activity', 'themes', 'settings'].forEach(name => {
+      document.getElementById(`profile-${name}-panel`).classList.toggle('hidden', name !== 'activity');
+    });
     renderActivityTab();
-    const btn = document.getElementById('btn-clear-history');
-    if (btn) { btn.textContent = 'History cleared ✓'; setTimeout(() => { btn.textContent = '🗑 Clear Session History'; }, 2000); }
   });
 
   document.getElementById('btn-reset-tips').addEventListener('click', () => {

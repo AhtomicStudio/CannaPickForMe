@@ -49,8 +49,7 @@ export async function saveThemePreference(key) {
   const safeKey = applyTheme(key);
   setTheme(safeKey);
   try {
-    const { getCurrentUser } = await import('./userService.js');
-    const { saveSettingsToFirestore } = await import('./userService.js');
+    const { getCurrentUser, saveSettingsToFirestore } = await import('./userService.js');
     const user = getCurrentUser();
     if (user) await saveSettingsToFirestore(user.uid, { theme: safeKey });
   } catch (err) {
@@ -62,8 +61,7 @@ export async function saveLightModePreference(on) {
   setLightMode(on);
   applyLightMode(on);
   try {
-    const { getCurrentUser } = await import('./userService.js');
-    const { saveSettingsToFirestore } = await import('./userService.js');
+    const { getCurrentUser, saveSettingsToFirestore } = await import('./userService.js');
     const user = getCurrentUser();
     if (user) await saveSettingsToFirestore(user.uid, { lightMode: on });
   } catch (err) {
