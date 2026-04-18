@@ -90,6 +90,10 @@
 
     <!-- Home -->
     <div id="home-screen" class="screen home hidden">
+      <button id="btn-profile" class="profile-avatar profile-avatar--signed-out" aria-label="Open profile">
+        <span class="profile-avatar__bg-leaf" aria-hidden="true">🌿</span>
+        <span id="profile-avatar-initials" class="profile-avatar__initials"></span>
+      </button>
       <div class="home__header">
         <span class="home__icon">🌿</span>
         <h1 class="home__title">Canna<span class="text-glow">Pick</span>ForMe</h1>
@@ -105,11 +109,6 @@
           <span class="btn__text">My Stash</span>
           <span id="stash-count" class="badge">0</span>
         </button>
-        <div id="auth-links" class="home__auth-links">
-          <a href="#" id="btn-login" class="auth-link">Log In</a>
-          <span class="auth-link-divider">or</span>
-          <a href="#" id="btn-signup" class="auth-link">Sign Up</a>
-        </div>
         <button id="btn-clear-stash" class="btn btn--ghost btn--clear-stash hidden">
           <span class="btn__emoji">🗑️</span>
           <span class="btn__text">Clear Stash</span>
@@ -138,6 +137,12 @@
           <span class="btn--add-strain__plus">+</span>
           <span class="btn--add-strain__text">Add a strain</span>
         </button>
+      </div>
+      <div id="auth-links" class="stash__auth-links hidden">
+        <a href="#" id="btn-login" class="auth-link">Log In</a>
+        <span class="auth-link-divider">or</span>
+        <a href="#" id="btn-signup" class="auth-link">Sign Up</a>
+        <span class="auth-link-sub">to save your stash across devices</span>
       </div>
       <div class="stash__tabs">
         <button class="tab tab--active" data-tab="browse">Browse</button>
@@ -290,8 +295,33 @@
           <button id="btn-share" class="btn btn--secondary">📤 Share</button>
           <button id="btn-home" class="btn btn--primary btn--glow">🏠 Return Home</button>
         </div>
+        <!-- Results Signup CTA (signed-out only) -->
+        <div id="result-signup-cta" class="result-signup-cta hidden">
+          <p class="result-signup-cta__text">☁️ <strong>Save your picks.</strong> Create a free account to sync your stash and session history across devices.</p>
+          <a href="#" id="result-signup-btn" class="btn btn--ghost result-signup-cta__btn">Create Account</a>
+        </div>
+        <!-- Sponsored Strain Card -->
+        <div id="sponsored-strain-card" class="sponsored-strain-card hidden">
+          <div class="sponsored-ribbon">⭐ Sponsored Strain</div>
+          <div class="sponsored-strain-card__body">
+            <div class="sponsored-strain-card__type-dot" id="sponsored-type-dot"></div>
+            <div class="sponsored-strain-card__info">
+              <div id="sponsored-strain-name" class="sponsored-strain-card__name"></div>
+              <div id="sponsored-strain-type" class="sponsored-strain-card__type"></div>
+            </div>
+            <div id="sponsored-match-score" class="sponsored-strain-card__score"></div>
+          </div>
+        </div>
         <!-- Ad Slot: Result -->
         <div id="ad-slot-result" class="ad-slot ad-slot--result"></div>
+      </div>
+    </div>
+
+    <!-- Stash One-Time Tip -->
+    <div id="stash-tip" class="stash-tip hidden" role="dialog" aria-modal="true">
+      <div class="stash-tip__inner">
+        <p class="stash-tip__message">You are unique. If you <em>know</em> how a certain strain affects you, feel free to edit by tapping the pencil. Create an account to save your settings across platforms.</p>
+        <p class="stash-tip__dismiss">Tap anywhere to dismiss</p>
       </div>
     </div>
 
