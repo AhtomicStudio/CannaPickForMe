@@ -737,10 +737,6 @@ function renderResult(result) {
     smokeTextEl.style.animation = 'pulse-glow-dynamic 2s ease-in-out infinite';
   }
 
-  // 25% chance for sparkles around the SMOKE text
-  if (Math.random() < 0.25) {
-    addSparkles(smokeTextEl);
-  }
 
   // --- BETTER MATCH LOGIC ---
   const betterMatchContainer = document.getElementById('better-match-container');
@@ -813,31 +809,6 @@ function showBetterMatchesModal(matchesData) {
   }
 }
 
-function addSparkles(targetEl) {
-  if (!targetEl) return;
-  const container = targetEl.parentElement;
-  if (!container) return;
-  container.style.position = 'relative';
-
-  const sparkleCount = 12;
-  for (let i = 0; i < sparkleCount; i++) {
-    const sparkle = document.createElement('span');
-    sparkle.className = 'sparkle';
-    sparkle.textContent = '✦';
-
-    // Random position around the SMOKE text
-    const angle = (i / sparkleCount) * 360;
-    const radius = 40 + Math.random() * 50;
-    const x = Math.cos(angle * Math.PI / 180) * radius;
-    const y = Math.sin(angle * Math.PI / 180) * radius;
-
-    sparkle.style.setProperty('--sparkle-x', `${x}px`);
-    sparkle.style.setProperty('--sparkle-y', `${y}px`);
-    sparkle.style.animationDelay = `${Math.random() * 2}s`;
-
-    container.appendChild(sparkle);
-  }
-}
 
 function initResult() {
   document.getElementById('btn-home').addEventListener('click', () => {
