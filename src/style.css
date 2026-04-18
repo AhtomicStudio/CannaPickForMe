@@ -439,7 +439,9 @@ body {
   justify-content: center;
   text-align: center;
   padding: var(--space-xl);
-  gap: var(--space-xl);
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+  gap: var(--space-lg);
   min-height: 100vh;
 }
 
@@ -473,6 +475,7 @@ body {
   gap: var(--space-md);
   align-items: center;
   width: 100%;
+  max-width: 320px;
   animation: fadeUp 0.9s var(--ease-out) 0.2s both;
 }
 
@@ -1543,9 +1546,12 @@ body {
 }
 
 .ad-slot--home {
-  margin-top: auto;
-  margin-bottom: var(--space-lg);
-  padding-bottom: 2.5rem;
+  position: absolute;
+  bottom: calc(var(--space-lg) * 3.5);
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 3rem);
+  max-width: 340px;
 }
 
 .ad-slot--result {
