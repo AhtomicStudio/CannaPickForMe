@@ -30,6 +30,7 @@ import {
 } from '../storage/store.js';
 
 const PENDING_EMAIL_KEY = 'cpfm_pending_email';
+export const NEEDS_EMAIL_CONFIRMATION = 'needs-email-confirmation';
 
 let currentUser = null;
 let syncTimer = null;
@@ -62,16 +63,21 @@ export async function sendSignInLink(email) {
  */
 export async function handleSignInLink() {
   if (!isSignInWithEmailLink(auth, window.location.href)) return false;
-  let email = localStorage.getItem(PENDING_EMAIL_KEY);
+  const email = localStorage.getItem(PENDING_EMAIL_KEY);
   if (!email) {
-    // Cross-device sign-in: email not stored on this device
-    email = window.prompt('Please confirm your email to complete sign-in:');
-    if (!email) return false;
+    // Cross-device sign-in: caller must collect email and call completeSignInWithEmail
+    return NEEDS_EMAIL_CONFIRMATION;
   }
   await signInWithEmailLink(auth, email, window.location.href);
   localStorage.removeItem(PENDING_EMAIL_KEY);
   window.history.replaceState({}, document.title, window.location.pathname);
   return true;
+}
+
+export async function completeSignInWithEmail(email) {
+  await signInWithEmailLink(auth, email, window.location.href);
+  localStorage.removeItem(PENDING_EMAIL_KEY);
+  window.history.replaceState({}, document.title, window.location.pathname);
 }
 
 /**

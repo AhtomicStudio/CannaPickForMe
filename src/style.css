@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    CannaPickForMe — Design System
    Theme: Dark + Green/Gold/Smoke · Stoner Premium
    ============================================ */
@@ -187,7 +187,7 @@ body {
   color: var(--green-primary);
   padding: 0.4rem 0.65rem;
   border-radius: var(--radius-sm);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 600;
   font-family: var(--font-display);
   letter-spacing: 0.01em;
@@ -261,7 +261,7 @@ body {
   text-align: center;
 }
 .badge--small {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   padding: 1px 6px;
 }
 
@@ -341,7 +341,7 @@ body {
 
 .age-gate__legal {
   margin-top: var(--space-2xl);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-dim);
   line-height: 1.5;
 }
@@ -384,7 +384,7 @@ body {
 
 .disclaimer__sub {
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   animation: blink 2s ease-in-out infinite;
 }
 
@@ -406,7 +406,7 @@ body {
 .disclaimer__legal summary {
   cursor: pointer;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   margin-bottom: var(--space-sm);
 }
 
@@ -481,7 +481,7 @@ body {
 
 .home__hint {
   color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   animation: fadeUp 0.9s var(--ease-out) 0.4s both;
 }
 
@@ -543,7 +543,7 @@ body {
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
@@ -577,7 +577,7 @@ body {
   border-radius: var(--radius-full);
   color: var(--text-primary);
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 1rem;
   outline: none;
   transition: border-color 0.2s;
 }
@@ -592,8 +592,8 @@ body {
   display: flex;
   gap: var(--space-sm);
   margin-top: var(--space-sm);
-  overflow-x: auto;
-  padding-bottom: var(--space-xs);
+  flex-wrap: wrap;
+  position: static;
 }
 
 .filter-chip {
@@ -603,7 +603,7 @@ body {
   background: transparent;
   color: var(--text-secondary);
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
@@ -635,12 +635,26 @@ body {
 
 .strain-list-header__strains {
   flex: 1;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-body);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: color 0.15s;
 }
+.strain-list-header__strains:hover { color: var(--text-secondary); }
+.strain-list-header__strains.sorted { color: var(--green-primary); }
+.sort-icon { opacity: 0.4; font-style: normal; transition: opacity 0.2s; }
+.strain-list-header__strains:hover .sort-icon { opacity: 1; }
+.strain-list-header__strains.sorted .sort-icon { opacity: 1; }
 
 .strain-list-header__actions {
   display: flex;
@@ -649,7 +663,7 @@ body {
 
 .strain-list-header__actions span {
   width: 60px;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -696,7 +710,7 @@ body {
 
 .strain-card__name {
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -763,7 +777,7 @@ body {
   margin-bottom: var(--space-md);
 }
 .empty-state__sub {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--text-dim);
   margin-top: var(--space-xs);
 }
@@ -771,7 +785,7 @@ body {
 /* Clear Stash Button */
 .btn--clear-stash {
   max-width: 200px;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   padding: 0.5rem 1rem;
   border-color: rgba(239, 68, 68, 0.3);
   color: var(--text-muted);
@@ -811,7 +825,7 @@ body {
 }
 
 .stash__done-count {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: 400;
   opacity: 0.75;
 }
@@ -874,7 +888,7 @@ body {
 }
 
 .stash-tip__message {
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.65;
   color: var(--text-primary);
   margin: 0 0 1rem;
@@ -886,7 +900,7 @@ body {
 }
 
 .stash-tip__dismiss {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   letter-spacing: 0.04em;
   margin: 0;
@@ -917,7 +931,7 @@ body {
 }
 
 .modal__sub {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
   margin-bottom: var(--space-md);
 }
@@ -937,7 +951,7 @@ body {
 }
 .form-group label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: var(--space-sm);
@@ -950,7 +964,7 @@ body {
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 1rem;
   outline: none;
   transition: border-color 0.2s;
 }
@@ -976,7 +990,7 @@ body {
   padding: 0.5rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
   transition: all 0.2s;
 }
@@ -1000,7 +1014,7 @@ body {
   background: transparent;
   color: var(--text-secondary);
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -1014,10 +1028,6 @@ body {
 /* ============================================
    SESSION (QUESTIONS)
    ============================================ */
-.session {
-  background: var(--bg-deep);
-}
-
 .session__progress {
   display: flex;
   align-items: center;
@@ -1079,7 +1089,7 @@ body {
 }
 
 .session__progress-label {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
   font-weight: 600;
   white-space: nowrap;
@@ -1164,7 +1174,6 @@ body {
    RESULT SCREEN
    ============================================ */
 .result {
-  background: var(--bg-deep);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1187,7 +1196,7 @@ body {
 
 .result__weighing-sub {
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-style: italic;
   margin-top: var(--space-2xl);
   animation: blink 2s ease-in-out infinite;
@@ -1292,7 +1301,7 @@ body {
 .scales__name {
   position: relative;
   display: inline-block;
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #e8edf3;
   padding: 6px 13px;
@@ -1463,7 +1472,7 @@ body {
 
 .result__reasoning {
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 1rem;
   line-height: 1.6;
   margin-bottom: var(--space-md);
 }
@@ -1480,7 +1489,7 @@ body {
   border-radius: var(--radius-full);
   background: var(--smoke-light);
   color: var(--text-secondary);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 
@@ -1574,7 +1583,7 @@ body {
 }
 
 .result-signup-cta__text {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
   line-height: 1.5;
   margin: 0 0 0.75rem;
@@ -1585,7 +1594,7 @@ body {
 }
 
 .result-signup-cta__btn {
-  font-size: 0.82rem;
+  font-size: 0.875rem;
   padding: 0.45rem 1.2rem;
 }
 
@@ -1602,7 +1611,7 @@ body {
 .sponsored-ribbon {
   background: linear-gradient(90deg, #b45309, #f59e0b, #b45309);
   color: #fff;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1651,7 +1660,7 @@ body {
 }
 
 .sponsored-strain-card__score {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 700;
   color: #f59e0b;
   white-space: nowrap;
@@ -1699,7 +1708,7 @@ body {
 
 .ad-card__title {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1721,7 +1730,7 @@ body {
   position: absolute;
   top: 6px;
   right: 8px;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   color: var(--text-dim);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -2523,14 +2532,14 @@ body {
 }
 
 .strain-card__expand-text {
-  font-size: 0.83rem;
+  font-size: 0.875rem;
   color: #cbd5e1;
   margin: 0;
   line-height: 1.5;
 }
 
 .strain-card__genetics-known {
-  font-size: 0.83rem;
+  font-size: 0.875rem;
   color: #e2e8f0;
   margin: 0;
   font-style: italic;
@@ -2672,14 +2681,14 @@ body {
 .auth-link-sub {
   width: 100%;
   text-align: center;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   opacity: 0.7;
   margin-top: -0.25rem;
 }
 
 .auth-link {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
   text-decoration: none;
   transition: color 0.2s;
@@ -2721,7 +2730,7 @@ body {
 /* Sync status line in signed-in state */
 .account-sync-status {
   color: var(--green-primary);
-  font-size: 0.9rem;
+  font-size: 1rem;
   text-align: center;
   margin: 0.5rem 0 1rem;
 }
@@ -2753,14 +2762,14 @@ body {
 }
 
 .conflict-option__label {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
   margin-bottom: 0.25rem;
   font-weight: 600;
 }
 
 .conflict-option__time {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
 }
 
@@ -2927,7 +2936,7 @@ html.light-mode .app-bg__haze {
 }
 
 .profile-login-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   opacity: 0.7;
   pointer-events: none;
@@ -2984,7 +2993,7 @@ html.light-mode .app-bg__haze {
 .profile-avatar__initials {
   position: relative;
   z-index: 1;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: var(--green-glow);
   letter-spacing: 0.05em;
@@ -2993,7 +3002,7 @@ html.light-mode .app-bg__haze {
 
 /* Compact auth link in stash screen header */
 .stash__auth-link-btn {
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
   text-decoration: none;
   border: 1px solid var(--border);
@@ -3014,29 +3023,94 @@ html.light-mode .app-bg__haze {
 }
 
 /* Effect / flavor filter dropdowns */
-.search-filters--dropdowns {
-  gap: var(--space-sm);
-  padding-top: 0;
-  margin-top: calc(var(--space-xs) * -1);
+/* Multi-select filter dropdowns */
+.ms-wrap {
+  position: relative;
+  flex-shrink: 0;
 }
-
-.filter-select {
-  flex: 1;
-  background: var(--bg-card);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
+.ms-btn {
+  display: flex !important;
+  align-items: center;
+  gap: 0.3rem;
+}
+.ms-badge {
+  background: rgba(34,197,94,0.2);
+  color: var(--green-glow);
   border-radius: var(--radius-full);
-  padding: 0.3rem 0.6rem;
-  font-size: 0.78rem;
+  padding: 0 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  min-width: 1.1rem;
+  text-align: center;
+}
+.ms-badge.hidden { display: none; }
+.ms-panel {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  min-width: 200px;
+  max-height: 260px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.ms-panel.hidden { display: none; }
+.ms-panel-search {
+  padding: 0.4rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.ms-panel-search input {
+  width: 100%;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  padding: 0.3rem 0.5rem;
+  font-family: var(--font-body);
+}
+.ms-panel-search input:focus { outline: none; border-color: var(--green-primary); }
+.ms-panel-options {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0.2rem;
+}
+.ms-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.5rem center;
-  padding-right: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  transition: background 0.12s;
+  white-space: nowrap;
+  user-select: none;
 }
+.ms-option:hover { background: var(--bg-surface); }
+.ms-option input[type="checkbox"] {
+  accent-color: var(--green-primary);
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ms-option.checked { color: var(--text-primary); background: rgba(34,197,94,0.08); }
+.filter-chip--exclude { border-color: rgba(239,68,68,0.3); }
+.filter-chip--exclude.ms-has-selection {
+  background: rgba(239,68,68,0.12);
+  border-color: #ef4444;
+  color: #fca5a5;
+}
+.filter-chip--clear { color: var(--text-muted); }
+.filter-chip--clear:hover { background: rgba(239,68,68,0.1); border-color: #ef4444; color: #fca5a5; }
 
-.filter-select:focus {
-  outline: none;
-  border-color: var(--green-primary);
-}
+/* Account error message */
+.account-error { color: var(--danger); font-size: 0.875rem; margin-top: 0.25rem; }

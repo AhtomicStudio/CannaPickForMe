@@ -15,7 +15,8 @@ import {
   addSessionEntry,
 } from './storage/store.js';
 import {
-  getCurrentUser, sendSignInLink, handleSignInLink,
+  getCurrentUser, sendSignInLink, handleSignInLink, completeSignInWithEmail,
+  NEEDS_EMAIL_CONFIRMATION,
   scheduleSync, loadAndResolveProfile, signOutUser, deleteAccount, initAuth,
 } from './services/userService.js';
 import { loadSavedTheme } from './services/themeService.js';
@@ -141,8 +142,11 @@ let sessionAnswers = {};
 let currentQuestionIndex = 0;
 let currentSearchQuery = '';
 let currentFilter = 'all';
-let currentEffectFilter = '';
-let currentFlavorFilter = '';
+let currentEffectFilters = new Set();
+let currentFlavorFilters = new Set();
+let currentExcludeFilters = new Set();
+let currentSortAlpha = false;
+let currentSortAsc = true;
 let overrideStrainId = null;
 
 // === SCREEN NAVIGATION ===
@@ -348,16 +352,7 @@ function initStash() {
     });
   });
 
-  // Populate and wire effect/flavor dropdowns
-  populateFilterDropdowns();
-  document.getElementById('filter-effect').addEventListener('change', e => {
-    currentEffectFilter = e.target.value;
-    renderBrowseList();
-  });
-  document.getElementById('filter-flavor').addEventListener('change', e => {
-    currentFlavorFilter = e.target.value;
-    renderBrowseList();
-  });
+  initMultiSelects();
 
   // Add custom
   document.getElementById('btn-add-custom').addEventListener('click', openCustomModal);
@@ -369,26 +364,134 @@ function initStash() {
   });
 }
 
-function populateFilterDropdowns() {
+function setupMultiSelect({ btnId, panelId, searchId, optionsId, badgeId, wrapId, items, selectedSet, onchange }) {
+  const btn = document.getElementById(btnId);
+  const panel = document.getElementById(panelId);
+  const searchInput = document.getElementById(searchId);
+  const optionsEl = document.getElementById(optionsId);
+  const badge = document.getElementById(badgeId);
+  if (!btn || !panel || !optionsEl) return;
+
+  function buildOptions(query = '') {
+    const filtered = query ? items.filter(i => i.toLowerCase().includes(query.toLowerCase())) : items;
+    optionsEl.innerHTML = filtered.map(item => `
+      <label class="ms-option${selectedSet.has(item) ? ' checked' : ''}">
+        <input type="checkbox" value="${item}" ${selectedSet.has(item) ? 'checked' : ''} />
+        ${item}
+      </label>
+    `).join('');
+    optionsEl.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) selectedSet.add(cb.value);
+        else selectedSet.delete(cb.value);
+        cb.closest('.ms-option').classList.toggle('checked', cb.checked);
+        if (badge) {
+          badge.textContent = selectedSet.size;
+          badge.classList.toggle('hidden', selectedSet.size === 0);
+        }
+        onchange();
+      });
+    });
+  }
+
+  buildOptions();
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => buildOptions(searchInput.value));
+  }
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = !panel.classList.contains('hidden');
+    document.querySelectorAll('.ms-panel').forEach(p => p.classList.add('hidden'));
+    if (!isOpen) {
+      panel.classList.remove('hidden');
+      if (searchInput) searchInput.focus();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    const wrap = document.getElementById(wrapId);
+    if (wrap && !wrap.contains(e.target)) panel.classList.add('hidden');
+  });
+}
+
+function updateClearBtn() {
+  const active = currentEffectFilters.size > 0 || currentFlavorFilters.size > 0 || currentExcludeFilters.size > 0;
+  document.getElementById('btn-clear-filters')?.classList.toggle('hidden', !active);
+}
+
+function clearAllFilters() {
+  currentEffectFilters.clear();
+  currentFlavorFilters.clear();
+  currentExcludeFilters.clear();
+  document.querySelectorAll('.ms-panel-options input[type="checkbox"]').forEach(cb => {
+    cb.checked = false;
+    cb.closest('.ms-option')?.classList.remove('checked');
+  });
+  ['ms-effect-badge', 'ms-flavor-badge', 'ms-exclude-badge'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.textContent = '0'; el.classList.add('hidden'); }
+  });
+  document.getElementById('ms-exclude-btn')?.classList.remove('ms-has-selection');
+  updateClearBtn();
+  renderBrowseList();
+}
+
+function updateSortIcon() {
+  const icon = document.getElementById('sort-icon');
+  const btn = document.getElementById('sort-strains-btn');
+  if (!icon || !btn) return;
+  if (!currentSortAlpha) {
+    icon.textContent = '↕';
+    btn.classList.remove('sorted');
+  } else {
+    icon.textContent = currentSortAsc ? '↑' : '↓';
+    btn.classList.add('sorted');
+  }
+}
+
+function initMultiSelects() {
   const all = getAllStrains();
   const effects = [...new Set(all.flatMap(s => s.effects || []))].sort();
   const flavors = [...new Set(all.flatMap(s => s.flavors || []))].sort();
 
-  const effectSel = document.getElementById('filter-effect');
-  const flavorSel = document.getElementById('filter-flavor');
-  if (!effectSel || !flavorSel) return;
-
-  effects.forEach(e => {
-    const opt = document.createElement('option');
-    opt.value = e;
-    opt.textContent = e;
-    effectSel.appendChild(opt);
+  setupMultiSelect({
+    wrapId: 'ms-effect', btnId: 'ms-effect-btn', panelId: 'ms-effect-panel',
+    searchId: 'ms-effect-search', optionsId: 'ms-effect-options', badgeId: 'ms-effect-badge',
+    items: effects, selectedSet: currentEffectFilters,
+    onchange: () => { updateClearBtn(); renderBrowseList(); },
   });
-  flavors.forEach(f => {
-    const opt = document.createElement('option');
-    opt.value = f;
-    opt.textContent = f;
-    flavorSel.appendChild(opt);
+
+  setupMultiSelect({
+    wrapId: 'ms-flavor', btnId: 'ms-flavor-btn', panelId: 'ms-flavor-panel',
+    searchId: 'ms-flavor-search', optionsId: 'ms-flavor-options', badgeId: 'ms-flavor-badge',
+    items: flavors, selectedSet: currentFlavorFilters,
+    onchange: () => { updateClearBtn(); renderBrowseList(); },
+  });
+
+  setupMultiSelect({
+    wrapId: 'ms-exclude', btnId: 'ms-exclude-btn', panelId: 'ms-exclude-panel',
+    searchId: 'ms-exclude-search', optionsId: 'ms-exclude-options', badgeId: 'ms-exclude-badge',
+    items: effects, selectedSet: currentExcludeFilters,
+    onchange: () => {
+      document.getElementById('ms-exclude-btn')?.classList.toggle('ms-has-selection', currentExcludeFilters.size > 0);
+      updateClearBtn();
+      renderBrowseList();
+    },
+  });
+
+  document.getElementById('btn-clear-filters')?.addEventListener('click', clearAllFilters);
+
+  document.getElementById('sort-strains-btn')?.addEventListener('click', () => {
+    if (!currentSortAlpha) {
+      currentSortAlpha = true;
+      currentSortAsc = true;
+    } else {
+      currentSortAsc = !currentSortAsc;
+    }
+    updateSortIcon();
+    renderBrowseList();
   });
 }
 
@@ -396,27 +499,28 @@ function renderBrowseList() {
   const list = document.getElementById('strain-list');
   let strains = getAllStrains();
 
-  // Filter by type
   if (currentFilter !== 'all') {
     strains = strains.filter(s => s.type === currentFilter);
   }
-
-  // Filter by effect
-  if (currentEffectFilter) {
-    strains = strains.filter(s => (s.effects || []).includes(currentEffectFilter));
+  if (currentEffectFilters.size > 0) {
+    strains = strains.filter(s => [...currentEffectFilters].some(e => (s.effects || []).includes(e)));
   }
-
-  // Filter by flavor
-  if (currentFlavorFilter) {
-    strains = strains.filter(s => (s.flavors || []).includes(currentFlavorFilter));
+  if (currentFlavorFilters.size > 0) {
+    strains = strains.filter(s => [...currentFlavorFilters].some(f => (s.flavors || []).includes(f)));
   }
-
-  // Filter by search
+  if (currentExcludeFilters.size > 0) {
+    strains = strains.filter(s => ![...currentExcludeFilters].some(e => (s.effects || []).includes(e)));
+  }
   if (currentSearchQuery) {
     strains = strains.filter(s =>
       s.name.toLowerCase().includes(currentSearchQuery) ||
       (s.effects || []).some(e => e.toLowerCase().includes(currentSearchQuery)) ||
       (s.flavors || []).some(f => f.toLowerCase().includes(currentSearchQuery))
+    );
+  }
+  if (currentSortAlpha) {
+    strains = [...strains].sort((a, b) =>
+      currentSortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
     );
   }
 
@@ -1167,6 +1271,42 @@ function updateProfileAvatar(user) {
   }
 }
 
+// === EMAIL CONFIRM MODAL (cross-device sign-in) ===
+function initEmailConfirmModal() {
+  const modal = document.getElementById('email-confirm-modal');
+  const errorEl = document.getElementById('email-confirm-error');
+  const submitBtn = document.getElementById('email-confirm-submit');
+
+  document.getElementById('email-confirm-cancel').addEventListener('click', () => {
+    modal.classList.add('hidden');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  });
+
+  submitBtn.addEventListener('click', async () => {
+    const email = document.getElementById('email-confirm-input').value.trim();
+    if (!email) return;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Signing in…';
+    errorEl.classList.add('hidden');
+    try {
+      await completeSignInWithEmail(email);
+      modal.classList.add('hidden');
+    } catch (err) {
+      const code = err.code || '';
+      if (code === 'auth/invalid-action-code' || code === 'auth/expired-action-code') {
+        errorEl.textContent = 'This link has expired. Please request a new sign-in link.';
+      } else if (code === 'auth/invalid-email') {
+        errorEl.textContent = 'Email doesn\'t match — use the address you signed up with.';
+      } else {
+        errorEl.textContent = 'Something went wrong. Please try requesting a new link.';
+      }
+      errorEl.classList.remove('hidden');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Sign In';
+    }
+  });
+}
+
 // === BOOT ===
 function init() {
   loadSavedTheme();
@@ -1183,9 +1323,19 @@ function init() {
   initProfile({ getAllStrains, getStash: getStashStrains });
   setProfileBackHandler(() => showScreen('home'));
   initAccountModal();
-  handleSignInLink().catch(err => {
+  initEmailConfirmModal();
+  handleSignInLink().then(result => {
+    if (result === NEEDS_EMAIL_CONFIRMATION) {
+      document.getElementById('email-confirm-modal').classList.remove('hidden');
+    }
+  }).catch(err => {
+    const code = err.code || '';
+    if (code === 'auth/invalid-action-code' || code === 'auth/expired-action-code') {
+      alert('That sign-in link has expired. Please request a new one.');
+    } else if (code) {
+      alert('Sign-in failed. Please try requesting a new link.');
+    }
     console.error('Sign-in link error:', err);
-    alert('That sign-in link is invalid or has expired. Please request a new one.');
   });
 }
 

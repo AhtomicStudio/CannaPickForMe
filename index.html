@@ -154,18 +154,32 @@
             <button class="filter-chip" data-filter="sativa">Sativa</button>
             <button class="filter-chip" data-filter="indica">Indica</button>
             <button class="filter-chip" data-filter="hybrid">Hybrid</button>
-          </div>
-          <div class="search-filters search-filters--dropdowns">
-            <select id="filter-effect" class="filter-select">
-              <option value="">Effect</option>
-            </select>
-            <select id="filter-flavor" class="filter-select">
-              <option value="">Flavor</option>
-            </select>
+            <div class="ms-wrap" id="ms-effect">
+              <button class="ms-btn filter-chip" type="button" id="ms-effect-btn">Effect <span class="ms-badge hidden" id="ms-effect-badge">0</span></button>
+              <div class="ms-panel hidden" id="ms-effect-panel">
+                <div class="ms-panel-search"><input type="text" placeholder="Search effects…" id="ms-effect-search" /></div>
+                <div class="ms-panel-options" id="ms-effect-options"></div>
+              </div>
+            </div>
+            <div class="ms-wrap" id="ms-flavor">
+              <button class="ms-btn filter-chip" type="button" id="ms-flavor-btn">Flavor <span class="ms-badge hidden" id="ms-flavor-badge">0</span></button>
+              <div class="ms-panel hidden" id="ms-flavor-panel">
+                <div class="ms-panel-search"><input type="text" placeholder="Search flavors…" id="ms-flavor-search" /></div>
+                <div class="ms-panel-options" id="ms-flavor-options"></div>
+              </div>
+            </div>
+            <div class="ms-wrap" id="ms-exclude">
+              <button class="ms-btn filter-chip filter-chip--exclude" type="button" id="ms-exclude-btn">Ignore <span class="ms-badge hidden" id="ms-exclude-badge">0</span></button>
+              <div class="ms-panel hidden" id="ms-exclude-panel">
+                <div class="ms-panel-search"><input type="text" placeholder="Exclude effect…" id="ms-exclude-search" /></div>
+                <div class="ms-panel-options" id="ms-exclude-options"></div>
+              </div>
+            </div>
+            <button class="filter-chip filter-chip--clear hidden" id="btn-clear-filters">✕ Clear</button>
           </div>
         </div>
         <div class="strain-list-header">
-          <span class="strain-list-header__strains">Strains</span>
+          <button class="strain-list-header__strains" id="sort-strains-btn" type="button">Strains <span class="sort-icon" id="sort-icon">↕</span></button>
           <div class="strain-list-header__actions">
             <span>Edit</span>
             <span>Add to Stash</span>
@@ -175,7 +189,7 @@
       </div>
       <div id="my-stash-panel" class="stash__panel hidden">
         <div class="strain-list-header">
-          <span class="strain-list-header__strains">Strains</span>
+          <span class="strain-list-header__strains">Strains</span><!-- my-stash, no sort needed -->
           <div class="strain-list-header__actions">
             <span>Remove</span>
           </div>
@@ -385,6 +399,24 @@
             <button id="account-delete-btn" class="btn btn--ghost btn--danger">Delete Account</button>
             <button id="account-signout-btn" class="btn btn--primary">Sign Out</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email Confirm Modal (cross-device sign-in) -->
+    <div id="email-confirm-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Confirm Email">
+      <div class="modal__backdrop"></div>
+      <div class="modal__content">
+        <h3>Confirm Your Email ✉️</h3>
+        <p class="modal__sub">Enter the email you used to request this sign-in link.</p>
+        <div class="form-group">
+          <label for="email-confirm-input">Email</label>
+          <input type="email" id="email-confirm-input" placeholder="your@email.com" autocomplete="email" />
+        </div>
+        <p id="email-confirm-error" class="account-error hidden"></p>
+        <div class="modal__actions">
+          <button id="email-confirm-cancel" class="btn btn--ghost">Cancel</button>
+          <button id="email-confirm-submit" class="btn btn--primary btn--glow">Sign In</button>
         </div>
       </div>
     </div>

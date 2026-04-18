@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    PROFILE SCREEN
    ============================================================ */
 .screen.profile {
@@ -16,7 +16,7 @@
 .profile__tabs .tab {
   flex: 1;
   padding: 0.75rem 0.5rem;
-  font-size: 0.82rem;
+  font-size: 0.875rem;
 }
 
 .profile__panel {
@@ -59,12 +59,12 @@
 .history-row__name {
   flex: 1;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--text-primary);
 }
 
 .history-row__meta {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   text-align: right;
   line-height: 1.4;
@@ -72,7 +72,7 @@
 
 /* ── Stat Charts ── */
 .stats-section-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -95,7 +95,7 @@
   cursor: pointer;
   user-select: none;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .stat-section__chevron {
@@ -134,12 +134,12 @@
 .stat-bar-row__label {
   display: flex;
   justify-content: space-between;
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   color: var(--text-primary);
 }
 
 .stat-bar-row__pct {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
 }
 
@@ -165,7 +165,7 @@
 .stat-bar-fill--picked  { background: #f59e0b; }
 
 .stat-empty {
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
   text-align: center;
   padding: var(--space-md) 0;
@@ -198,7 +198,7 @@
 .themes-locked__icon { font-size: 2rem; }
 
 .themes-locked__text {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--text-muted);
   margin-top: var(--space-md);
   line-height: 1.5;
@@ -239,7 +239,7 @@
 }
 
 .theme-card__name {
-  font-size: 0.78rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -248,7 +248,7 @@
   position: absolute;
   top: 6px;
   right: 8px;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: #f59e0b;
   font-weight: 700;
   opacity: 0;
@@ -279,13 +279,13 @@
 }
 
 .settings-row__label {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--text-primary);
   font-weight: 500;
 }
 
 .settings-row__sub {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -339,7 +339,7 @@
 }
 
 .settings-badge {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   background: var(--border);
   color: var(--text-muted);
   padding: 2px 6px;
@@ -369,7 +369,7 @@
   width: 100%;
   padding: var(--space-md);
   border-radius: var(--radius-md);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 600;
   border: 1px solid var(--border);
   background: var(--bg-card);
