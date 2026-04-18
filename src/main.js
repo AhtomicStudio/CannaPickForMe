@@ -17,6 +17,7 @@ import {
   getCurrentUser, sendSignInLink, handleSignInLink,
   scheduleSync, loadAndResolveProfile, signOutUser, deleteAccount, initAuth,
 } from './services/userService.js';
+import { loadSavedTheme } from './services/themeService.js';
 
 // === CONSTANTS ===
 const ALL_EFFECTS = ['Relaxed','Happy','Euphoric','Creative','Uplifted','Energetic','Focused','Talkative','Giggly','Sleepy','Hungry','Tingly'];
@@ -256,6 +257,17 @@ function initHome() {
     renderMyStashList();
     updateStashUI();
     showScreen('stash');
+
+    if (!localStorage.getItem('cpfm_stash_tip_shown')) {
+      const tip = document.getElementById('stash-tip');
+      tip.classList.remove('hidden');
+      const dismiss = () => {
+        tip.classList.add('hidden');
+        localStorage.setItem('cpfm_stash_tip_shown', '1');
+        tip.removeEventListener('click', dismiss);
+      };
+      tip.addEventListener('click', dismiss);
+    }
   });
 
   document.getElementById('legal-link').addEventListener('click', (e) => {
@@ -697,6 +709,35 @@ function startResult() {
   }, WEIGH_DURATION);
 }
 
+function renderSponsoredStrain(allScores) {
+  const card = document.getElementById('sponsored-strain-card');
+  if (!card) return;
+
+  const { sponsored = [], sponsorSettings = {} } = strainDelta;
+  const { threshold = 50, alwaysShow = false } = sponsorSettings;
+
+  if (sponsored.length === 0) { card.classList.add('hidden'); return; }
+
+  const sponsoredScores = allScores.filter(s => sponsored.includes(s.strainId));
+  if (sponsoredScores.length === 0) { card.classList.add('hidden'); return; }
+
+  const best = sponsoredScores[0]; // allScores already sorted desc
+  if (!alwaysShow && best.score < threshold) { card.classList.add('hidden'); return; }
+
+  const strain = getAllStrains().find(s => s.id === best.strainId);
+  if (!strain) { card.classList.add('hidden'); return; }
+
+  document.getElementById('sponsored-strain-name').textContent = strain.name;
+  document.getElementById('sponsored-strain-type').textContent =
+    strain.type.charAt(0).toUpperCase() + strain.type.slice(1);
+  document.getElementById('sponsored-match-score').textContent = `${best.score}% match`;
+
+  const dot = document.getElementById('sponsored-type-dot');
+  dot.setAttribute('data-type', strain.type);
+
+  card.classList.remove('hidden');
+}
+
 function renderResult(result) {
   const { pickedStrain, matchScore, isPerfectMatch, reasoning } = result;
 
@@ -767,6 +808,8 @@ function renderResult(result) {
       };
     }
   }
+
+  renderSponsoredStrain(result.allScores);
 }
 
 function showBetterMatchesModal(matchesData) {
@@ -935,6 +978,7 @@ function initAccountModal() {
   }
   document.getElementById('btn-login').addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
   document.getElementById('btn-signup').addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
+  document.getElementById('result-signup-btn').addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
 
   // Close on backdrop click
   modal.querySelector('.modal__backdrop').addEventListener('click', () => modal.classList.add('hidden'));
@@ -987,9 +1031,12 @@ function initAccountModal() {
   });
 
   // Auth state listener — updates cloud icon and resolves conflicts on sign-in
+  const resultCta = document.getElementById('result-signup-cta');
+
   initAuth(
     async (user) => {
       authLinks.classList.add('hidden');
+      if (resultCta) resultCta.classList.add('hidden');
       modal.classList.add('hidden');
       try {
         await loadAndResolveProfile(showConflictModal);
@@ -1003,12 +1050,14 @@ function initAccountModal() {
     },
     () => {
       authLinks.classList.remove('hidden');
+      if (resultCta) resultCta.classList.remove('hidden');
     }
   );
 }
 
 // === BOOT ===
 function init() {
+  loadSavedTheme();
   inject();
   initAgeGate();
   initDisclaimer();
