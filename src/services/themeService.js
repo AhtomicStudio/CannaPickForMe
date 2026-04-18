@@ -33,6 +33,7 @@ export function applyTheme(key) {
   const safeKey = VALID_THEME_KEYS.includes(key) ? key : 'default';
   document.documentElement.setAttribute('data-theme', safeKey);
   updateLeafEmojis(safeKey);
+  return safeKey;
 }
 
 export function applyLightMode(on) {
@@ -45,9 +46,8 @@ export function loadSavedTheme() {
 }
 
 export async function saveThemePreference(key) {
-  const safeKey = VALID_THEME_KEYS.includes(key) ? key : 'default';
+  const safeKey = applyTheme(key);
   setTheme(safeKey);
-  applyTheme(safeKey);
   // Firestore sync wired in Task 14
 }
 
