@@ -10,6 +10,8 @@ import {
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
   signInWithEmailLink,
+  GoogleAuthProvider,
+  signInWithPopup,
   onAuthStateChanged,
   signOut as fbSignOut,
   deleteUser,
@@ -174,6 +176,13 @@ export async function saveSettingsToFirestore(uid, settings) {
   } catch (err) {
     console.warn('Failed to save settings to Firestore:', err);
   }
+}
+
+/** Sign in with a Google popup. */
+export async function signInWithGoogle() {
+  const provider = new GoogleAuthProvider();
+  const result = await signInWithPopup(auth, provider);
+  return result.user;
 }
 
 /** Sign out the current user. */

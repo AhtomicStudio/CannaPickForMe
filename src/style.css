@@ -2716,11 +2716,49 @@ body {
   font-size: 0.75rem;
   color: var(--text-muted);
   line-height: 1.5;
-  margin: 0.75rem 0;
-  padding: 0.75rem;
-  background: var(--smoke-medium);
-  border-radius: 0.5rem;
-  border-left: 2px solid var(--border);
+  margin: 0.5rem 0;
+}
+
+/* Google sign-in button */
+.btn--google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #fff;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  margin-bottom: 0.25rem;
+}
+.btn--google:hover {
+  background: #f8f9fa;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.2);
+}
+.btn--google:active { background: #f1f3f4; }
+
+/* "or" divider between Google and email */
+.account-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+.account-divider::before,
+.account-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
 }
 
 /* Centered state layout (link-sent) */
