@@ -7,7 +7,9 @@
       { "value": "chill", "label": "Chill", "emoji": "😌" },
       { "value": "social", "label": "Social", "emoji": "🗣️" },
       { "value": "creative", "label": "Creative", "emoji": "🎨" },
-      { "value": "energetic", "label": "Energetic", "emoji": "⚡" }
+      { "value": "energetic", "label": "Energetic", "emoji": "⚡" },
+      { "value": "introspective", "label": "Introspective", "emoji": "🧘" },
+      { "value": "romantic", "label": "Romantic", "emoji": "💕" }
     ]
   },
   {
@@ -18,7 +20,9 @@
       { "value": "relax", "label": "Relax & Unwind", "emoji": "🛋️" },
       { "value": "productive", "label": "Get Things Done", "emoji": "💪" },
       { "value": "fun", "label": "Have Fun", "emoji": "🎉" },
-      { "value": "sleep", "label": "Sleep", "emoji": "💤" }
+      { "value": "sleep", "label": "Sleep", "emoji": "💤" },
+      { "value": "ease-discomfort", "label": "Ease Discomfort", "emoji": "💆" },
+      { "value": "appetite", "label": "Feed the Munchies", "emoji": "🍕" }
     ]
   },
   {
@@ -28,7 +32,8 @@
     "options": [
       { "value": "low", "label": "Low & Mellow", "emoji": "🍃" },
       { "value": "moderate", "label": "Moderate Cruise", "emoji": "✈️" },
-      { "value": "high", "label": "Sky High", "emoji": "🛸" }
+      { "value": "high", "label": "Sky High", "emoji": "🛸" },
+      { "value": "max", "label": "Send It", "emoji": "💥" }
     ]
   },
   {
@@ -39,7 +44,9 @@
       { "value": "solo", "label": "Solo Session", "emoji": "🧘" },
       { "value": "friends", "label": "Kickback with Friends", "emoji": "👥" },
       { "value": "movie", "label": "Movie Night", "emoji": "🎬" },
-      { "value": "adventure", "label": "Adventure", "emoji": "🏔️" }
+      { "value": "adventure", "label": "Adventure", "emoji": "🏔️" },
+      { "value": "gaming", "label": "Gaming", "emoji": "🎮" },
+      { "value": "datenight", "label": "Date Night", "emoji": "💑" }
     ]
   }
 ]

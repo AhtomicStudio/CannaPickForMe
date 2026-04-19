@@ -15,11 +15,19 @@
     "energetic": {
       "effects": { "Energetic": 3, "Uplifted": 2, "Happy": 2, "Focused": 1 },
       "typeBonus": { "indica": 0.6, "hybrid": 1.0, "sativa": 1.4 }
+    },
+    "introspective": {
+      "effects": { "Focused": 3, "Relaxed": 2, "Euphoric": 1 },
+      "typeBonus": { "indica": 1.1, "hybrid": 1.1, "sativa": 0.8 }
+    },
+    "romantic": {
+      "effects": { "Happy": 3, "Euphoric": 3, "Uplifted": 2, "Giggly": 1 },
+      "typeBonus": { "hybrid": 1.2, "sativa": 1.1, "indica": 0.8 }
     }
   },
   "goal": {
     "relax": {
-      "effects": { "Relaxed": 3, "Happy": 1, "Euphoric": 1, "Sleepy": 1 },
+      "effects": { "Relaxed": 3, "Happy": 1, "Euphoric": 1, "Sleepy": 2 },
       "typeBonus": { "indica": 1.3, "hybrid": 1.0, "sativa": 0.7 }
     },
     "productive": {
@@ -33,6 +41,14 @@
     "sleep": {
       "effects": { "Sleepy": 4, "Relaxed": 3, "Hungry": 1 },
       "typeBonus": { "indica": 1.5, "hybrid": 0.9, "sativa": 0.4 }
+    },
+    "ease-discomfort": {
+      "effects": { "Relaxed": 3, "Tingly": 3, "Sleepy": 1, "Happy": 1 },
+      "typeBonus": { "indica": 1.4, "hybrid": 0.9, "sativa": 0.5 }
+    },
+    "appetite": {
+      "effects": { "Hungry": 4, "Relaxed": 2, "Happy": 2 },
+      "typeBonus": { "indica": 1.5, "hybrid": 1.0, "sativa": 0.5 }
     }
   },
   "intensity": {
@@ -50,6 +66,11 @@
       "effects": { "Euphoric": 2, "Tingly": 1 },
       "scoreMultiplier": 1.2,
       "note": "Seeks potent strains"
+    },
+    "max": {
+      "effects": { "Euphoric": 3, "Tingly": 2, "Uplifted": 1 },
+      "scoreMultiplier": 1.5,
+      "note": "Seeks maximum potency"
     }
   },
   "vibe": {
@@ -68,6 +89,14 @@
     "adventure": {
       "effects": { "Energetic": 3, "Uplifted": 2, "Happy": 2, "Creative": 1 },
       "typeBonus": { "indica": 0.5, "hybrid": 1.0, "sativa": 1.5 }
+    },
+    "gaming": {
+      "effects": { "Focused": 2, "Creative": 2, "Energetic": 2, "Happy": 1 },
+      "typeBonus": { "indica": 0.7, "hybrid": 1.1, "sativa": 1.3 }
+    },
+    "datenight": {
+      "effects": { "Happy": 3, "Euphoric": 2, "Giggly": 2, "Uplifted": 2, "Talkative": 1 },
+      "typeBonus": { "hybrid": 1.3, "sativa": 1.1, "indica": 0.7 }
     }
   }
 }
