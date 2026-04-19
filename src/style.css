@@ -2933,12 +2933,20 @@ body {
    THEME BACKGROUND COLORS — base color + haze tints per theme
    ============================================================ */
 
-/* Love — deep rose */
+/* Love — Hello Kitty bright pink */
 [data-theme="love"] {
-  --bg-deep: #0e050b;
-  --haze-1: rgba(244,63,94,0.13);
-  --haze-2: rgba(251,113,133,0.09);
-  --haze-3: rgba(244,63,94,0.06);
+  --bg-deep: #d81b6a;
+  --haze-1: rgba(255,105,180,0.40);
+  --haze-2: rgba(255,182,193,0.28);
+  --haze-3: rgba(255,20,147,0.22);
+}
+
+[data-theme="love"] body {
+  background: linear-gradient(180deg,
+    #ff69b4 0%,
+    #e91e8c 50%,
+    #c2185b 100%
+  );
 }
 
 /* Fall — dark warm amber */
