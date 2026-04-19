@@ -370,7 +370,7 @@
         <!-- State: signed out -->
         <div id="account-state-signedout">
           <h3>Save to Cloud ☁️</h3>
-          <p class="modal__sub">Sync your stash across devices. No password needed.</p>
+          <p class="modal__sub">Sync your stash across devices with your Google account.</p>
           <button id="account-google-btn" class="btn btn--google">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
@@ -380,27 +380,9 @@
             </svg>
             Continue with Google
           </button>
-          <div class="account-divider"><span>or sign in with email link</span></div>
-          <div class="form-group">
-            <label for="account-email">Email</label>
-            <input type="email" id="account-email" placeholder="your@email.com" autocomplete="email" />
-          </div>
-          <p class="account-disclosure">Your email is only used to sign you in and sync your data.</p>
-          <p id="account-send-error" class="account-error hidden"></p>
+          <p id="account-google-error" class="account-error hidden"></p>
           <div class="modal__actions">
             <button id="account-cancel-btn" class="btn btn--ghost">Maybe Later</button>
-            <button id="account-send-link-btn" class="btn btn--primary btn--glow">Send Link ✉️</button>
-          </div>
-        </div>
-        <!-- State: link sent -->
-        <div id="account-state-linksent" class="hidden">
-          <div class="account-state-center">
-            <div class="account-state-icon">✉️</div>
-            <h3>Check Your Email</h3>
-            <p class="modal__sub">Tap the link we sent to complete sign-in. This window will close automatically.</p>
-          </div>
-          <div class="modal__actions">
-            <button id="account-back-btn" class="btn btn--ghost">← Back</button>
           </div>
         </div>
         <!-- State: signed in -->
@@ -412,24 +394,6 @@
             <button id="account-delete-btn" class="btn btn--ghost btn--danger">Delete Account</button>
             <button id="account-signout-btn" class="btn btn--primary">Sign Out</button>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Email Confirm Modal (cross-device sign-in) -->
-    <div id="email-confirm-modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Confirm Email">
-      <div class="modal__backdrop"></div>
-      <div class="modal__content">
-        <h3>Confirm Your Email ✉️</h3>
-        <p class="modal__sub">Enter the email you used to request this sign-in link.</p>
-        <div class="form-group">
-          <label for="email-confirm-input">Email</label>
-          <input type="email" id="email-confirm-input" placeholder="your@email.com" autocomplete="email" />
-        </div>
-        <p id="email-confirm-error" class="account-error hidden"></p>
-        <div class="modal__actions">
-          <button id="email-confirm-cancel" class="btn btn--ghost">Cancel</button>
-          <button id="email-confirm-submit" class="btn btn--primary btn--glow">Sign In</button>
         </div>
       </div>
     </div>

@@ -15,8 +15,7 @@ import {
   addSessionEntry,
 } from './storage/store.js';
 import {
-  getCurrentUser, sendSignInLink, handleSignInLink, completeSignInWithEmail,
-  NEEDS_EMAIL_CONFIRMATION, signInWithGoogle,
+  getCurrentUser, signInWithGoogle,
   scheduleSync, loadAndResolveProfile, signOutUser, deleteAccount, initAuth,
 } from './services/userService.js';
 import { loadSavedTheme } from './services/themeService.js';
@@ -1115,7 +1114,6 @@ async function loadAds() {
 
 function setAccountState(state) {
   document.getElementById('account-state-signedout').classList.toggle('hidden', state !== 'signedout');
-  document.getElementById('account-state-linksent').classList.toggle('hidden', state !== 'linksent');
   document.getElementById('account-state-signedin').classList.toggle('hidden', state !== 'signedin');
 }
 
@@ -1158,14 +1156,13 @@ function initAccountModal() {
   // Close on backdrop click
   modal.querySelector('.modal__backdrop').addEventListener('click', () => modal.classList.add('hidden'));
 
-  // Cancel / back buttons
+  // Cancel button
   document.getElementById('account-cancel-btn').addEventListener('click', () => modal.classList.add('hidden'));
-  document.getElementById('account-back-btn').addEventListener('click', () => setAccountState('signedout'));
 
   // Google sign-in
   document.getElementById('account-google-btn').addEventListener('click', async () => {
     const btn = document.getElementById('account-google-btn');
-    const errorEl = document.getElementById('account-send-error');
+    const errorEl = document.getElementById('account-google-error');
     errorEl.classList.add('hidden');
     btn.disabled = true;
     btn.textContent = 'Signing in…';
@@ -1183,38 +1180,6 @@ function initAccountModal() {
       }
       btn.disabled = false;
       btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 6.294C4.672 4.167 6.656 3.58 9 3.58z" fill="#EA4335"/></svg> Continue with Google`;
-    }
-  });
-
-  // Send sign-in link
-  document.getElementById('account-send-link-btn').addEventListener('click', async () => {
-    const email = document.getElementById('account-email').value.trim();
-    const errorEl = document.getElementById('account-send-error');
-    errorEl.classList.add('hidden');
-    if (!email) return;
-    const btn = document.getElementById('account-send-link-btn');
-    btn.disabled = true;
-    btn.textContent = 'Sending...';
-    try {
-      await sendSignInLink(email);
-      setAccountState('linksent');
-    } catch (err) {
-      const code = err.code || '';
-      console.error('sendSignInLink error:', code, err);
-      if (code === 'auth/invalid-email') {
-        errorEl.textContent = 'Please enter a valid email address.';
-      } else if (code === 'auth/too-many-requests') {
-        errorEl.textContent = 'Too many attempts — please wait a minute and try again.';
-      } else if (code === 'auth/unauthorized-domain') {
-        errorEl.textContent = 'Sign-in is not yet configured for this domain. Please contact support.';
-      } else if (code === 'auth/operation-not-allowed') {
-        errorEl.textContent = 'Email sign-in is not enabled. Please contact support.';
-      } else {
-        errorEl.textContent = `Something went wrong (${code || 'unknown'}). Please try again.`;
-      }
-      errorEl.classList.remove('hidden');
-      btn.disabled = false;
-      btn.textContent = 'Send Sign-In Link ✉️';
     }
   });
 
@@ -1308,42 +1273,6 @@ function updateProfileAvatar(user) {
   }
 }
 
-// === EMAIL CONFIRM MODAL (cross-device sign-in) ===
-function initEmailConfirmModal() {
-  const modal = document.getElementById('email-confirm-modal');
-  const errorEl = document.getElementById('email-confirm-error');
-  const submitBtn = document.getElementById('email-confirm-submit');
-
-  document.getElementById('email-confirm-cancel').addEventListener('click', () => {
-    modal.classList.add('hidden');
-    window.history.replaceState({}, document.title, window.location.pathname);
-  });
-
-  submitBtn.addEventListener('click', async () => {
-    const email = document.getElementById('email-confirm-input').value.trim();
-    if (!email) return;
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Signing in…';
-    errorEl.classList.add('hidden');
-    try {
-      await completeSignInWithEmail(email);
-      modal.classList.add('hidden');
-    } catch (err) {
-      const code = err.code || '';
-      if (code === 'auth/invalid-action-code' || code === 'auth/expired-action-code') {
-        errorEl.textContent = 'This link has expired. Please request a new sign-in link.';
-      } else if (code === 'auth/invalid-email') {
-        errorEl.textContent = 'Email doesn\'t match — use the address you signed up with.';
-      } else {
-        errorEl.textContent = 'Something went wrong. Please try requesting a new link.';
-      }
-      errorEl.classList.remove('hidden');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Sign In';
-    }
-  });
-}
-
 // === BOOT ===
 function init() {
   loadSavedTheme();
@@ -1360,20 +1289,6 @@ function init() {
   initProfile({ getAllStrains, getStash: getStashStrains });
   setProfileBackHandler(() => showScreen('home'));
   initAccountModal();
-  initEmailConfirmModal();
-  handleSignInLink().then(result => {
-    if (result === NEEDS_EMAIL_CONFIRMATION) {
-      document.getElementById('email-confirm-modal').classList.remove('hidden');
-    }
-  }).catch(err => {
-    const code = err.code || '';
-    if (code === 'auth/invalid-action-code' || code === 'auth/expired-action-code') {
-      alert('That sign-in link has expired. Please request a new one.');
-    } else if (code) {
-      alert('Sign-in failed. Please try requesting a new link.');
-    }
-    console.error('Sign-in link error:', err);
-  });
 }
 
 document.addEventListener('DOMContentLoaded', init);

@@ -353,7 +353,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-deep);
   cursor: pointer;
   text-align: center;
 }
@@ -2839,14 +2838,14 @@ body {
 }
 .app-bg__haze--1 {
   width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(34,197,94,0.09) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--haze-1, rgba(34,197,94,0.09)) 0%, transparent 70%);
   top: -220px; left: -160px;
   filter: blur(100px);
   animation: app-haze-breathe 8s ease-in-out infinite alternate;
 }
 .app-bg__haze--2 {
   width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(74,222,128,0.07) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--haze-2, rgba(74,222,128,0.07)) 0%, transparent 70%);
   bottom: -160px; right: -120px;
   filter: blur(100px);
   animation: app-haze-breathe 11s ease-in-out infinite alternate;
@@ -2854,7 +2853,7 @@ body {
 }
 .app-bg__haze--3 {
   width: 380px; height: 380px;
-  background: radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--haze-3, rgba(34,197,94,0.05)) 0%, transparent 70%);
   top: 40%; right: 5%;
   filter: blur(90px);
   animation: app-haze-breathe 14s ease-in-out infinite alternate;
@@ -2930,16 +2929,134 @@ body {
   100% { transform: translateY(-112vh) scale(0.1); opacity: 0; }
 }
 
-/* Fire: denser haze via stronger blob opacity */
-[data-theme="fire"] .app-bg__haze {
-  opacity: 1;
-  filter: blur(70px) hue-rotate(40deg);
+/* ============================================================
+   THEME BACKGROUND COLORS — base color + haze tints per theme
+   ============================================================ */
+
+/* Love — deep rose */
+[data-theme="love"] {
+  --bg-deep: #0e050b;
+  --haze-1: rgba(244,63,94,0.13);
+  --haze-2: rgba(251,113,133,0.09);
+  --haze-3: rgba(244,63,94,0.06);
+}
+
+/* Fall — dark warm amber */
+[data-theme="fall"] {
+  --bg-deep: #0a0703;
+  --haze-1: rgba(249,115,22,0.11);
+  --haze-2: rgba(251,191,36,0.08);
+  --haze-3: rgba(249,115,22,0.05);
+}
+
+/* Hallows — dusk purple-to-sunset gradient + stars */
+[data-theme="hallows"] {
+  --haze-1: rgba(168,85,247,0.15);
+  --haze-2: rgba(249,115,22,0.11);
+  --haze-3: rgba(124,58,237,0.08);
+}
+
+[data-theme="hallows"] body {
+  background: linear-gradient(180deg,
+    #0d0720 0%,
+    #1c0d30 30%,
+    #2a1020 65%,
+    #1a0806 100%
+  );
+}
+
+/* Stars in the top half for Hallows */
+[data-theme="hallows"] #app-bg::before {
+  content: '';
+  position: absolute;
+  width: 1px; height: 1px;
+  top: 0; left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow:
+    32px 18px 0 rgba(255,255,255,0.85),
+    87px 45px 0 rgba(255,255,255,0.60),
+    145px 12px 0 rgba(255,255,255,0.90),
+    234px 67px 0 rgba(255,255,255,0.50),
+    312px 28px 0 rgba(255,255,255,0.75),
+    390px 95px 0 rgba(255,255,255,0.65),
+    456px 8px 0 rgba(255,255,255,0.80),
+    523px 52px 0 rgba(255,255,255,0.55),
+    601px 33px 0 rgba(255,255,255,0.70),
+    678px 15px 0 rgba(255,255,255,0.90),
+    745px 78px 0 rgba(255,255,255,0.50),
+    823px 41px 0 rgba(255,255,255,0.70),
+    912px 22px 0 rgba(255,255,255,0.85),
+    1003px 60px 0 rgba(255,255,255,0.60),
+    1089px 35px 0 rgba(255,255,255,0.75),
+    1156px 88px 0 rgba(255,255,255,0.50),
+    1234px 14px 0 rgba(255,255,255,0.80),
+    1312px 55px 0 rgba(255,255,255,0.65),
+    1389px 27px 0 rgba(255,255,255,0.90),
+    180px 130px 0 rgba(255,255,255,0.45),
+    267px 165px 0 rgba(255,255,255,0.70),
+    378px 148px 0 rgba(255,255,255,0.50),
+    489px 185px 0 rgba(255,255,255,0.65),
+    567px 112px 0 rgba(255,255,255,0.80),
+    645px 170px 0 rgba(255,255,255,0.40),
+    734px 135px 0 rgba(255,255,255,0.60),
+    834px 158px 0 rgba(255,255,255,0.75),
+    923px 125px 0 rgba(255,255,255,0.50),
+    1045px 180px 0 rgba(255,255,255,0.70),
+    1134px 142px 0 rgba(255,255,255,0.55),
+    78px 220px 0 rgba(255,255,255,0.40),
+    189px 255px 0 rgba(255,255,255,0.55),
+    312px 280px 0 rgba(255,255,255,0.35),
+    445px 235px 0 rgba(255,255,255,0.60),
+    567px 265px 0 rgba(255,255,255,0.45),
+    689px 248px 0 rgba(255,255,255,0.50),
+    823px 275px 0 rgba(255,255,255,0.40),
+    945px 230px 0 rgba(255,255,255,0.55),
+    1067px 260px 0 rgba(255,255,255,0.35),
+    1190px 245px 0 rgba(255,255,255,0.50),
+    1323px 270px 0 rgba(255,255,255,0.45),
+    134px 330px 0 rgba(255,255,255,0.30),
+    289px 360px 0 rgba(255,255,255,0.38),
+    467px 385px 0 rgba(255,255,255,0.28),
+    623px 345px 0 rgba(255,255,255,0.35),
+    789px 375px 0 rgba(255,255,255,0.25),
+    956px 355px 0 rgba(255,255,255,0.33),
+    1123px 340px 0 rgba(255,255,255,0.28),
+    1278px 370px 0 rgba(255,255,255,0.22);
+  animation: stars-twinkle 4s ease-in-out infinite alternate;
+}
+
+@keyframes stars-twinkle {
+  from { opacity: 0.65; }
+  to   { opacity: 1; }
+}
+
+/* Bubbles — deep ocean */
+[data-theme="bubbles"] {
+  --bg-deep: #020b14;
+  --haze-1: rgba(14,165,233,0.10);
+  --haze-2: rgba(6,182,212,0.07);
+  --haze-3: rgba(14,165,233,0.05);
+}
+
+/* Fire — deep crimson */
+[data-theme="fire"] {
+  --bg-deep: #0f0200;
+  --haze-1: rgba(239,68,68,0.13);
+  --haze-2: rgba(249,115,22,0.09);
+  --haze-3: rgba(239,68,68,0.06);
 }
 [data-theme="fire"] .app-bg__leaf {
   --op: 0.35;
 }
 
-/* Real Fire: fast flicker */
+/* Real Fire — intense red */
+[data-theme="realfire"] {
+  --bg-deep: #160100;
+  --haze-1: rgba(220,38,38,0.18);
+  --haze-2: rgba(239,68,68,0.13);
+  --haze-3: rgba(220,38,38,0.10);
+}
 [data-theme="realfire"] .app-bg__leaf {
   animation-name: app-leaf-fire;
   animation-duration: calc(var(--dur, 15s) * 0.35) !important;
