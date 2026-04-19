@@ -1207,6 +1207,13 @@ function initAccountModal() {
     }
   });
 
+  // Profile screen sign-out button
+  const profileSignoutBtn = document.getElementById('profile-signout-btn');
+  profileSignoutBtn.addEventListener('click', async () => {
+    await signOutUser();
+    showScreen('home');
+  });
+
   // Auth state listener — updates cloud icon and resolves conflicts on sign-in
   const resultCta = document.getElementById('result-signup-cta');
 
@@ -1214,6 +1221,7 @@ function initAccountModal() {
     async (user) => {
       authLinks.classList.add('hidden');
       if (resultCta) resultCta.classList.add('hidden');
+      profileSignoutBtn.classList.remove('hidden');
       updateProfileAvatar(user);
       modal.classList.add('hidden');
       try {
@@ -1235,6 +1243,7 @@ function initAccountModal() {
     () => {
       authLinks.classList.remove('hidden');
       if (resultCta) resultCta.classList.remove('hidden');
+      profileSignoutBtn.classList.add('hidden');
       updateProfileAvatar(null);
     }
   );
