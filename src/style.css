@@ -1920,6 +1920,15 @@ a.partner-strain-card:hover {
   opacity: 0.7;
 }
 
+@media (max-width: 480px) {
+  .ad-banner__image {
+    height: 72px;
+  }
+  .ad-banner__footer {
+    padding: 3px 8px;
+  }
+}
+
 
 /* ============================================================
    ANIMATION HOST — shared container for all weighing animations

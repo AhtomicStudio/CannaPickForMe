@@ -610,16 +610,21 @@ function initDragPreview() {
   document.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
   document.addEventListener('mouseup', endDrag);
 
+  function onTouchMove(e) {
+    moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+    e.preventDefault();
+  }
+
   previewWrap.addEventListener('touchstart', (e) => {
     startDrag(e.touches[0].clientX, e.touches[0].clientY);
     e.preventDefault();
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
   }, { passive: false });
-  document.addEventListener('touchmove', (e) => {
-    if (!dragging) return;
-    moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-    e.preventDefault();
-  }, { passive: false });
-  document.addEventListener('touchend', endDrag);
+
+  document.addEventListener('touchend', () => {
+    endDrag();
+    document.removeEventListener('touchmove', onTouchMove);
+  });
 }
 
 // === COLLAPSIBLE SECTIONS ===
@@ -658,7 +663,7 @@ function init() {
 
     if (valid) {
       setAuthenticated();
-      await signInAnonymously(auth);
+      try { await signInAnonymously(auth); } catch (_) {}
       showDashboard();
     } else {
       document.getElementById('login-error').classList.remove('hidden');
