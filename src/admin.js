@@ -60,6 +60,11 @@ function setAuthenticated() {
   sessionStorage.setItem(SESSION_KEY, 'true');
 }
 
+async function ensureFirebaseAuth() {
+  if (auth.currentUser) return;
+  await signInAnonymously(auth);
+}
+
 function logout() {
   sessionStorage.removeItem(SESSION_KEY);
   location.reload();
@@ -648,12 +653,13 @@ function expandSection(sectionId) {
 }
 
 // === INIT ===
-function init() {
+async function init() {
   initCollapsibleSections();
   initDragPreview();
 
   // Check existing session
   if (isAuthenticated()) {
+    await ensureFirebaseAuth();
     showDashboard();
   }
 
@@ -665,7 +671,7 @@ function init() {
 
     if (valid) {
       setAuthenticated();
-      try { await signInAnonymously(auth); } catch (_) {}
+      await ensureFirebaseAuth();
       showDashboard();
     } else {
       document.getElementById('login-error').classList.remove('hidden');
