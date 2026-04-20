@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animation Concepts v2 — CannaPickForMe</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d0d12;
+    color: #e8e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 24px 16px 60px;
+    min-height: 100vh;
+  }
+  h1 { text-align:center; font-size:1.5rem; font-weight:700; color:#4ade80; margin-bottom:6px; letter-spacing:0.04em; }
+  .subtitle { text-align:center; color:#9999b3; font-size:0.9rem; margin-bottom:32px; }
+  .section-label { font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#4ade80; margin-bottom:12px; padding-left:4px; }
+  .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; margin-bottom:32px; }
+  .card { background:#16161f; border:2px solid #2a2a3a; border-radius:16px; overflow:hidden; cursor:pointer; transition:border-color 0.2s,transform 0.15s; user-select:none; }
+  .card:hover { border-color:#4ade80; transform:translateY(-2px); }
+  .card.selected { border-color:#4ade80; background:#14201a; }
+  .card.selected .card-check { opacity:1; }
+  .card-preview { height:200px; display:flex; align-items:center; justify-content:center; background:#0d0d12; position:relative; overflow:hidden; }
+  .card-body { padding:14px 16px 16px; position:relative; }
+  .card-check { position:absolute; top:10px; right:12px; width:22px; height:22px; background:#4ade80; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; color:#0d0d12; font-weight:900; opacity:0; transition:opacity 0.2s; }
+  .card h3 { font-size:1rem; font-weight:700; color:#f0f0fa; margin-bottom:4px; }
+  .card p { font-size:0.82rem; color:#8888a8; line-height:1.45; }
+  .card .tag { display:inline-block; font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; padding:2px 7px; border-radius:4px; margin-bottom:6px; }
+  .tag-yours { background:rgba(192,132,252,0.15); color:#c084fc; }
+  .tag-mine  { background:rgba(56,189,248,0.15);  color:#38bdf8; }
+  .badge { display:inline-block; font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:4px; margin-left:6px; background:rgba(74,222,128,0.15); color:#4ade80; vertical-align:middle; }
+
+  /* ═══════════════════════════════════════
+     1. MAGIC 8-BALL (v2: embedded window, heavy shake)
+  ═══════════════════════════════════════ */
+  .ball-scene { position:relative; width:130px; height:130px; }
+  .ball {
+    width:120px; height:120px;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 38% 30%, #4a4a4a 0%, #111 45%, #000 100%);
+    box-shadow:
+      0 0 0 3px #222,
+      0 6px 24px rgba(0,0,0,0.9),
+      inset 0 -8px 24px rgba(255,255,255,0.04),
+      inset 0 4px 8px rgba(255,255,255,0.08);
+    position:relative;
+    overflow:hidden;
+    animation: hardShake 2s ease-in-out infinite;
+    margin: 5px;
+  }
+  /* Glossy shine */
+  .ball::before {
+    content:'';
+    position:absolute;
+    top:14px; left:22px;
+    width:30px; height:18px;
+    background:rgba(255,255,255,0.18);
+    border-radius:50%;
+    filter:blur(4px);
+    transform:rotate(-30deg);
+  }
+  /* Embedded window */
+  .ball-window {
+    position:absolute;
+    bottom:22px; left:50%;
+    transform:translateX(-50%);
+    width:52px; height:52px;
+    border-radius:50%;
+    background:radial-gradient(circle, #001a08 0%, #002a10 60%, #000f05 100%);
+    border:2px solid #0a3a18;
+    box-shadow:
+      inset 0 0 16px rgba(74,222,128,0.4),
+      0 0 8px rgba(74,222,128,0.15);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+  }
+  .ball-window-mist {
+    position:absolute; inset:0;
+    border-radius:50%;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(74,222,128,0.5) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 30% 70%,  rgba(74,222,128,0.3) 0%, transparent 60%);
+    animation:mistSwirl 2s ease-in-out infinite;
+  }
+  .ball-text {
+    position:relative; z-index:2;
+    font-size:0.38rem; font-weight:700; color:#4ade80; text-align:center;
+    text-shadow: 0 0 6px #4ade80;
+    animation:textPulse 2s ease-in-out infinite;
+    line-height:1.2;
+    letter-spacing:0.02em;
+  }
+  @keyframes hardShake {
+    0%,100%  { transform:translateX(0) translateY(0) rotate(0deg); }
+    8%       { transform:translateX(-7px) translateY(-4px) rotate(-6deg); }
+    16%      { transform:translateX(8px) translateY(3px) rotate(7deg); }
+    24%      { transform:translateX(-9px) translateY(-5px) rotate(-8deg); }
+    32%      { transform:translateX(7px) translateY(6px) rotate(5deg); }
+    40%      { transform:translateX(-5px) translateY(-3px) rotate(-4deg); }
+    48%      { transform:translateX(6px) translateY(2px) rotate(3deg); }
+    56%      { transform:translateX(-3px) translateY(-4px) rotate(-2deg); }
+    64%      { transform:translateX(4px) translateY(1px) rotate(2deg); }
+    72%      { transform:translateX(-2px) translateY(-1px) rotate(-1deg); }
+    80%      { transform:translateX(0) translateY(0) rotate(0deg); }
+  }
+  @keyframes mistSwirl {
+    0%,100% { opacity:0.8; transform:rotate(0deg) scale(1); }
+    40%     { opacity:0.3; transform:rotate(120deg) scale(1.2); }
+    70%     { opacity:1;   transform:rotate(240deg) scale(0.9); }
+  }
+  @keyframes textPulse {
+    0%,40%  { opacity:0.5; }
+    60%,80% { opacity:1; }
+    100%    { opacity:0.5; }
+  }
+  .mist-cloud {
+    position:absolute;
+    bottom:0; left:50%;
+    transform:translateX(-50%);
+    width:60px; height:30px;
+    background:radial-gradient(ellipse, rgba(74,222,128,0.25) 0%, transparent 70%);
+    filter:blur(8px);
+    animation:cloudRise 2s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes cloudRise {
+    0%,100% { opacity:0.3; transform:translateX(-50%) scaleY(0.6); bottom:0; }
+    50%     { opacity:1;   transform:translateX(-50%) scaleY(1.4); bottom:10px; }
+  }
+
+  /* ═══════════════════════════════════════
+     2. PLINKO (v2: leaf ball, smaller than pegs)
+  ═══════════════════════════════════════ */
+  .plinko-board {
+    width:110px; height:155px;
+    background:#07070f;
+    border:1.5px solid #1e1e2e;
+    border-radius:6px;
+    overflow:hidden;
+    position:relative;
+  }
+  .peg {
+    position:absolute;
+    width:9px; height:9px;
+    background:radial-gradient(circle at 35% 30%, #d8b4fe, #7c3aed);
+    border-radius:50%;
+    box-shadow:0 0 6px rgba(192,132,252,0.7);
+  }
+  .plinko-leaf {
+    position:absolute;
+    font-size:0.7rem;  /* smaller than the 9px pegs visually */
+    line-height:1;
+    animation:leafDrop 2.4s cubic-bezier(0.3,0.6,0.5,1) infinite;
+    filter:drop-shadow(0 0 4px rgba(74,222,128,0.8));
+    left:42px; top:4px;
+    z-index:5;
+  }
+  @keyframes leafDrop {
+    0%   { top:4px;   left:42px; opacity:1;   transform:rotate(0deg); }
+    18%  { top:30px;  left:28px;              transform:rotate(-20deg); }
+    32%  { top:52px;  left:52px;              transform:rotate(15deg); }
+    46%  { top:74px;  left:24px;              transform:rotate(-25deg); }
+    60%  { top:96px;  left:50px;              transform:rotate(10deg); }
+    74%  { top:118px; left:30px;              transform:rotate(-15deg); }
+    84%  { top:138px; left:32px; opacity:1;   transform:rotate(5deg); }
+    92%  { top:150px; left:32px; opacity:0; }
+    100% { top:4px;   left:42px; opacity:1;   transform:rotate(0deg); }
+  }
+  .plinko-slots {
+    display:flex; position:absolute; bottom:0; left:0; right:0; height:18px;
+    border-top:1px solid #2a2a3a;
+  }
+  .plinko-slots div {
+    flex:1; border-left:1px solid #2a2a3a;
+    font-size:0.38rem; color:#555;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; white-space:nowrap;
+  }
+  .plinko-slots div.active { color:#4ade80; background:rgba(74,222,128,0.1); }
+
+  /* ═══════════════════════════════════════
+     3. NOTES IN A BOX (v2: fold + shuffle + fly)
+  ═══════════════════════════════════════ */
+  .box-scene {
+    position:relative; width:140px; height:165px;
+    display:flex; align-items:flex-end; justify-content:center;
+  }
+  .box-body {
+    width:110px; height:72px;
+    background:linear-gradient(160deg, #4a3520, #2e1f0f);
+    border:2px solid #8b6534;
+    border-radius:4px 4px 8px 8px;
+    position:relative; overflow:visible;
+    box-shadow:0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .box-lid {
+    position:absolute; top:-14px; left:-2px; right:-2px; height:16px;
+    background:linear-gradient(160deg,#5c4228,#3d2812);
+    border:2px solid #8b6534; border-radius:4px 4px 0 0;
+    animation:lidBounce 5.5s ease-in-out infinite;
+    transform-origin:bottom center;
+  }
+  @keyframes lidBounce {
+    0%,60%,100% { transform:rotate(0deg) translateY(0); }
+    65%         { transform:rotate(-18deg) translateY(-6px); }
+    72%         { transform:rotate(5deg) translateY(-2px); }
+    78%         { transform:rotate(-10deg) translateY(-4px); }
+    85%         { transform:rotate(2deg) translateY(-1px); }
+    90%         { transform:rotate(0deg) translateY(0); }
+  }
+  /* Individual notes inside box */
+  .bnote {
+    position:absolute;
+    width:26px; height:20px;
+    border-radius:2px;
+    font-size:0.32rem; color:#444;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    box-shadow:0 1px 4px rgba(0,0,0,0.35);
+    animation-timing-function:ease-in-out;
+    animation-iteration-count:infinite;
+    background:#f5f0dc;
+    line-height:1.2;
+    overflow:hidden;
+  }
+  /* Fold crease line */
+  .bnote::before {
+    content:'';
+    position:absolute; top:50%; left:0; right:0;
+    height:1px; background:rgba(0,0,0,0.1);
+  }
+  .bnote-fold {
+    position:absolute; top:0; left:0; right:0;
+    height:50%; background:#ede8d0;
+    transform-origin:bottom center;
+    animation:foldTop 5.5s ease-in-out infinite;
+  }
+  @keyframes foldTop {
+    0%,30%  { transform:rotateX(0deg); }
+    40%,60% { transform:rotateX(-140deg); }
+    70%,100%{ transform:rotateX(0deg); }
+  }
+  .bn1 { top:12px; left:8px;  transform:rotate(-14deg); animation:shuffleN1 5.5s ease-in-out infinite; }
+  .bn2 { top:16px; left:40px; transform:rotate(6deg);   animation:shuffleN2 5.5s ease-in-out infinite; }
+  .bn3 { top:10px; left:72px; transform:rotate(-4deg);  animation:shuffleN3 5.5s ease-in-out infinite; }
+  @keyframes shuffleN1 {
+    0%,20%  { top:12px;left:8px;transform:rotate(-14deg); }
+    30%,50% { top:6px; left:30px;transform:rotate(10deg); }
+    60%,80% { top:14px;left:8px;transform:rotate(-14deg); }
+    100%    { top:12px;left:8px;transform:rotate(-14deg); }
+  }
+  @keyframes shuffleN2 {
+    0%,20%  { top:16px;left:40px;transform:rotate(6deg); }
+    30%,50% { top:8px; left:60px;transform:rotate(-8deg); }
+    60%,80% { top:16px;left:40px;transform:rotate(6deg); }
+    100%    { top:16px;left:40px;transform:rotate(6deg); }
+  }
+  @keyframes shuffleN3 {
+    0%,20%  { top:10px;left:72px;transform:rotate(-4deg); }
+    30%,50% { top:14px;left:16px;transform:rotate(12deg); }
+    60%,80% { top:10px;left:72px;transform:rotate(-4deg); }
+    100%    { top:10px;left:72px;transform:rotate(-4deg); }
+  }
+  .chosen-note {
+    position:absolute; top:-10px; left:50%;
+    transform:translateX(-50%);
+    width:38px; height:30px;
+    background:linear-gradient(160deg,#fffde0,#fff9c0);
+    border:1.5px solid #d4c040;
+    border-radius:3px;
+    font-size:0.38rem; color:#333;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    box-shadow:0 6px 18px rgba(0,0,0,0.5), 0 0 12px rgba(212,192,64,0.4);
+    animation:noteRise 5.5s ease-in-out infinite;
+    padding:2px; line-height:1.2; z-index:10;
+  }
+  @keyframes noteRise {
+    0%,55%  { top:-10px; opacity:0; transform:translateX(-50%) rotate(0deg); }
+    62%     { top:-80px; opacity:1; transform:translateX(-50%) rotate(-8deg); }
+    70%,90% { top:-90px; opacity:1; transform:translateX(-50%) rotate(3deg); }
+    98%,100%{ top:-10px; opacity:0; transform:translateX(-50%) rotate(0deg); }
+  }
+
+  /* ═══════════════════════════════════════
+     4. TAROT CARD (v2: more shuffle, sparkles)
+  ═══════════════════════════════════════ */
+  .tarot-scene {
+    position:relative; width:160px; height:180px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .tarot-card {
+    width:50px; height:88px;
+    border-radius:6px; position:absolute;
+    border:1.5px solid #4a3a6a;
+    background:repeating-linear-gradient(45deg,#1a1030 0,#1a1030 4px,#261848 4px,#261848 8px);
+    transform-origin:bottom center;
+    box-shadow:0 4px 12px rgba(0,0,0,0.6);
+  }
+  .tarot-card.winner {
+    background:linear-gradient(160deg,#0d2e16,#1a5c30);
+    border-color:#4ade80;
+    box-shadow:0 0 20px rgba(74,222,128,0.4), 0 4px 12px rgba(0,0,0,0.6);
+  }
+  /* 5 cards, fan out more */
+  .tc1 { animation:tFan1 4s ease-in-out infinite; }
+  .tc2 { animation:tFan2 4s ease-in-out infinite; }
+  .tc3 { animation:tFan3 4s ease-in-out infinite; z-index:3; }
+  .tc4 { animation:tFan4 4s ease-in-out infinite; }
+  .tc5 { animation:tFan5 4s ease-in-out infinite; }
+  @keyframes tFan1 {
+    0%,25%  { transform:rotate(-32deg) translateX(-36px); }
+    35%,55% { transform:rotate(-36deg) translateX(-42px) translateY(-4px); }
+    65%,100%{ transform:rotate(-32deg) translateX(-36px); }
+  }
+  @keyframes tFan2 {
+    0%,25%  { transform:rotate(-16deg) translateX(-18px); }
+    35%,55% { transform:rotate(-20deg) translateX(-22px) translateY(-2px); }
+    65%,100%{ transform:rotate(-16deg) translateX(-18px); }
+  }
+  @keyframes tFan3 {
+    0%,25%  { transform:rotate(0deg); }
+    50%     { transform:rotate(0deg); }
+    /* flip reveal */
+    62%     { transform:rotateY(90deg) scale(1.05); }
+    72%,88% { transform:rotateY(0deg) scale(1.08); }
+    96%,100%{ transform:rotate(0deg); }
+  }
+  @keyframes tFan4 {
+    0%,25%  { transform:rotate(16deg) translateX(18px); }
+    35%,55% { transform:rotate(20deg) translateX(22px) translateY(-2px); }
+    65%,100%{ transform:rotate(16deg) translateX(18px); }
+  }
+  @keyframes tFan5 {
+    0%,25%  { transform:rotate(32deg) translateX(36px); }
+    35%,55% { transform:rotate(36deg) translateX(42px) translateY(-4px); }
+    65%,100%{ transform:rotate(32deg) translateX(36px); }
+  }
+  .tarot-label {
+    position:absolute; z-index:4;
+    font-size:0.42rem; font-weight:700; color:#4ade80;
+    text-shadow:0 0 8px #4ade80;
+    text-align:center; line-height:1.3;
+    animation:labelReveal 4s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes labelReveal {
+    0%,68%  { opacity:0; }
+    78%,88% { opacity:1; }
+    96%,100%{ opacity:0; }
+  }
+  /* Sparkles */
+  .tspark {
+    position:absolute; font-size:0.7rem;
+    animation:sparkFloat 4s ease-in-out infinite;
+    pointer-events:none; z-index:5;
+    opacity:0;
+  }
+  .tspark:nth-child(1) { top:20%; left:15%; animation-delay:2.8s; }
+  .tspark:nth-child(2) { top:15%; left:75%; animation-delay:3.0s; }
+  .tspark:nth-child(3) { top:55%; left:8%;  animation-delay:3.2s; }
+  .tspark:nth-child(4) { top:60%; left:80%; animation-delay:2.9s; }
+  .tspark:nth-child(5) { top:10%; left:45%; animation-delay:3.1s; }
+  @keyframes sparkFloat {
+    0%,68%  { opacity:0; transform:scale(0) translateY(0); }
+    76%     { opacity:1; transform:scale(1.2) translateY(-6px); }
+    88%     { opacity:0.8; transform:scale(0.8) translateY(-12px); }
+    96%,100%{ opacity:0; transform:scale(0) translateY(-18px); }
+  }
+
+  /* ═══════════════════════════════════════
+     5. SLOT MACHINE (v2: sparkles + glitter burst)
+  ═══════════════════════════════════════ */
+  .slot-scene { position:relative; display:flex; align-items:center; gap:8px; }
+  .slot-machine {
+    width:118px; height:148px;
+    background:linear-gradient(160deg,#1a1a2e,#12122a);
+    border:2px solid #44447a;
+    border-radius:12px;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    gap:6px; padding:8px;
+    box-shadow:0 0 24px rgba(192,132,252,0.2), inset 0 1px 0 rgba(255,255,255,0.05);
+    position:relative; overflow:hidden;
+  }
+  .slot-top-label { font-size:0.48rem; letter-spacing:0.12em; color:#c084fc; text-transform:uppercase; font-weight:700; }
+  .slot-reels { display:flex; gap:4px; }
+  .reel {
+    width:28px; height:52px;
+    background:#0a0a18; border-radius:4px; border:1px solid #333;
+    overflow:hidden; display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  /* mask top/bottom edges */
+  .reel::before, .reel::after {
+    content:''; position:absolute; left:0; right:0; height:12px; z-index:2; pointer-events:none;
+  }
+  .reel::before { top:0;    background:linear-gradient(to bottom, #0a0a18, transparent); }
+  .reel::after  { bottom:0; background:linear-gradient(to top,    #0a0a18, transparent); }
+  .reel-inner { display:flex; flex-direction:column; gap:2px; align-items:center; }
+  .reel:nth-child(1) .reel-inner { animation:spinR1 3s ease-in-out infinite; }
+  .reel:nth-child(2) .reel-inner { animation:spinR2 3s ease-in-out infinite; }
+  .reel:nth-child(3) .reel-inner { animation:spinR3 3s ease-in-out infinite; }
+  @keyframes spinR1 {
+    0%   { transform:translateY(0); }
+    55%  { transform:translateY(-62px); }
+    65%,100% { transform:translateY(-62px); }
+  }
+  @keyframes spinR2 {
+    0%   { transform:translateY(0); }
+    65%  { transform:translateY(-62px); }
+    75%,100% { transform:translateY(-62px); }
+  }
+  @keyframes spinR3 {
+    0%   { transform:translateY(0); }
+    75%  { transform:translateY(-62px); }
+    85%,100% { transform:translateY(-62px); }
+  }
+  .reel-inner span { font-size:1.0rem; line-height:1.4; }
+  .slot-win-line {
+    position:absolute;
+    top:50%; left:0; right:0; height:2px;
+    background:linear-gradient(to right, transparent, rgba(74,222,128,0.6), transparent);
+    transform:translateY(-50%);
+  }
+  /* glitter particles */
+  .glitter {
+    position:absolute;
+    width:5px; height:5px;
+    border-radius:50%;
+    pointer-events:none;
+    animation:glitterBurst 3s ease-out infinite;
+    opacity:0;
+  }
+  .glitter:nth-child(1)  { background:#4ade80; top:50%; left:20%; animation-delay:2.55s; }
+  .glitter:nth-child(2)  { background:#c084fc; top:40%; left:50%; animation-delay:2.60s; }
+  .glitter:nth-child(3)  { background:#fbbf24; top:55%; left:70%; animation-delay:2.65s; }
+  .glitter:nth-child(4)  { background:#38bdf8; top:45%; left:30%; animation-delay:2.58s; }
+  .glitter:nth-child(5)  { background:#f472b6; top:50%; left:60%; animation-delay:2.62s; }
+  .glitter:nth-child(6)  { background:#4ade80; top:35%; left:45%; animation-delay:2.70s; }
+  .glitter:nth-child(7)  { background:#fbbf24; top:60%; left:25%; animation-delay:2.57s; }
+  .glitter:nth-child(8)  { background:#c084fc; top:45%; left:80%; animation-delay:2.68s; }
+  @keyframes glitterBurst {
+    0%,84%   { opacity:0; transform:translate(0,0) scale(1); }
+    87%      { opacity:1; transform:translate(0,0) scale(1.2); }
+    92%      { opacity:0.8; }
+    100%     { opacity:0; transform:translate(var(--gx,8px), var(--gy,-20px)) scale(0.3); }
+  }
+  .glitter:nth-child(1)  { --gx:-18px; --gy:-28px; }
+  .glitter:nth-child(2)  { --gx:12px;  --gy:-24px; }
+  .glitter:nth-child(3)  { --gx:22px;  --gy:-20px; }
+  .glitter:nth-child(4)  { --gx:-24px; --gy:-18px; }
+  .glitter:nth-child(5)  { --gx:16px;  --gy:-30px; }
+  .glitter:nth-child(6)  { --gx:-8px;  --gy:-34px; }
+  .glitter:nth-child(7)  { --gx:-28px; --gy:-22px; }
+  .glitter:nth-child(8)  { --gx:30px;  --gy:-26px; }
+  /* star sparkles around machine */
+  .slot-star {
+    position:absolute; font-size:0.8rem;
+    animation:slotStar 3s ease-in-out infinite; opacity:0;
+    pointer-events:none;
+  }
+  .slot-star:nth-child(9)  { top:8px;  left:8px;  animation-delay:2.55s; }
+  .slot-star:nth-child(10) { top:8px;  right:8px; animation-delay:2.65s; }
+  .slot-star:nth-child(11) { bottom:10px; left:10px; animation-delay:2.60s; }
+  .slot-star:nth-child(12) { bottom:10px; right:10px; animation-delay:2.70s; }
+  @keyframes slotStar {
+    0%,83%  { opacity:0; transform:scale(0); }
+    87%     { opacity:1; transform:scale(1.3); }
+    93%,100%{ opacity:0; transform:scale(0.5) translateY(-8px); }
+  }
+  /* lever */
+  .slot-lever {
+    width:7px; height:32px;
+    background:linear-gradient(to bottom, #c084fc, #7c3aed);
+    border-radius:4px; position:relative;
+    animation:leverPull2 3s ease-in-out infinite;
+    transform-origin:top center;
+    flex-shrink:0;
+  }
+  .slot-lever::after {
+    content:''; width:14px; height:14px;
+    background:radial-gradient(circle at 35% 35%, #f87171, #dc2626);
+    border-radius:50%; position:absolute;
+    bottom:-5px; left:-3.5px;
+    box-shadow:0 0 10px rgba(248,113,113,0.7);
+  }
+  @keyframes leverPull2 {
+    0%,20%,100% { transform:rotate(0deg); }
+    35%         { transform:rotate(30deg); }
+    45%,85%     { transform:rotate(5deg); }
+  }
+
+  /* ═══════════════════════════════════════
+     6. CRYSTAL BALL (v2: dramatic smoke, purple haze bg)
+  ═══════════════════════════════════════ */
+  .crystal-scene {
+    position:relative; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    /* purple haze background */
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(120,40,180,0.35) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 50% 50%,  rgba(80,20,140,0.2)  0%, transparent 80%),
+      #07070f;
+    overflow:hidden;
+  }
+  /* floating haze particles */
+  .haze {
+    position:absolute;
+    border-radius:50%;
+    filter:blur(18px);
+    animation:hazeFloat 4s ease-in-out infinite;
+    pointer-events:none;
+  }
+  .haze1 { width:80px; height:40px; background:rgba(160,80,255,0.2); bottom:10%; left:5%; animation-delay:0s; }
+  .haze2 { width:60px; height:30px; background:rgba(120,40,220,0.25); bottom:20%; right:8%; animation-delay:1.2s; }
+  .haze3 { width:100px; height:50px; background:rgba(74,222,128,0.1); bottom:5%; left:20%; animation-delay:0.6s; }
+  @keyframes hazeFloat {
+    0%,100% { transform:translateY(0) scaleX(1); opacity:0.5; }
+    50%     { transform:translateY(-12px) scaleX(1.2); opacity:1; }
+  }
+  .crystal-wrap2 {
+    position:relative;
+    display:flex; flex-direction:column; align-items:center; z-index:2;
+  }
+  .crystal-ball2 {
+    width:110px; height:110px;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 35% 28%,
+        rgba(200,220,255,0.35) 0%,
+        rgba(100,140,255,0.15) 25%,
+        rgba(60,80,200,0.1)   55%,
+        rgba(10,5,40,0.9)     100%);
+    border:2px solid rgba(160,180,255,0.35);
+    box-shadow:
+      0 0 40px rgba(120,80,255,0.5),
+      0 0 80px rgba(80,40,200,0.25),
+      0 0 120px rgba(60,20,160,0.15),
+      inset 0 0 40px rgba(120,80,255,0.15);
+    position:relative; overflow:hidden;
+    animation:ballBreath 3.5s ease-in-out infinite;
+  }
+  @keyframes ballBreath {
+    0%,100% { box-shadow:0 0 40px rgba(120,80,255,0.5),0 0 80px rgba(80,40,200,0.25),inset 0 0 40px rgba(120,80,255,0.15); }
+    50%     { box-shadow:0 0 60px rgba(120,80,255,0.8),0 0 120px rgba(80,40,200,0.4),0 0 160px rgba(60,20,160,0.2),inset 0 0 60px rgba(120,80,255,0.25); }
+  }
+  .smoke-layer {
+    position:absolute; inset:0; border-radius:50%;
+    animation-timing-function:ease-in-out;
+    animation-iteration-count:infinite;
+  }
+  .smoke1 {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 90%, rgba(74,222,128,0.4) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 60% at 20% 60%,  rgba(192,132,252,0.35) 0%, transparent 65%);
+    animation:smokeRot1 2.8s linear infinite;
+  }
+  .smoke2 {
+    background:
+      radial-gradient(ellipse 55% 40% at 80% 40%, rgba(160,60,255,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 55% at 30% 80%, rgba(74,222,128,0.25) 0%, transparent 65%);
+    animation:smokeRot2 3.5s linear infinite reverse;
+  }
+  .smoke3 {
+    background:radial-gradient(ellipse 80% 30% at 50% 60%, rgba(255,255,255,0.08) 0%, transparent 70%);
+    animation:smokeRot3 4.2s ease-in-out infinite;
+  }
+  @keyframes smokeRot1 { from{transform:rotate(0deg)scale(1)} 50%{transform:rotate(180deg)scale(1.15)} to{transform:rotate(360deg)scale(1)} }
+  @keyframes smokeRot2 { from{transform:rotate(0deg)scale(1.1)} 50%{transform:rotate(180deg)scale(0.9)} to{transform:rotate(360deg)scale(1.1)} }
+  @keyframes smokeRot3 { 0%,100%{opacity:0.4;transform:scale(1)} 50%{opacity:1;transform:scale(1.2)} }
+  .crystal-highlight2 {
+    position:absolute; top:16px; left:20px; width:26px; height:16px;
+    background:rgba(255,255,255,0.4); border-radius:50%;
+    filter:blur(4px); transform:rotate(-30deg);
+  }
+  /* dramatic smoke tendrils rising out of top */
+  .smoke-tendril {
+    position:absolute; bottom:100%; left:50%;
+    transform:translateX(-50%);
+    width:8px; border-radius:50%;
+    background:rgba(160,80,255,0.4);
+    filter:blur(6px);
+    animation:tendrilRise 3s ease-in-out infinite;
+    pointer-events:none;
+  }
+  .smoke-tendril:nth-child(1) { width:12px; height:28px; animation-delay:0s;   left:40%; }
+  .smoke-tendril:nth-child(2) { width:8px;  height:20px; animation-delay:0.7s; left:55%; background:rgba(74,222,128,0.3); }
+  .smoke-tendril:nth-child(3) { width:10px; height:24px; animation-delay:1.4s; left:48%; }
+  @keyframes tendrilRise {
+    0%     { opacity:0; transform:translateY(0) scaleX(1); }
+    20%    { opacity:0.8; }
+    80%    { opacity:0.2; transform:translateY(-28px) scaleX(1.8); }
+    100%   { opacity:0; transform:translateY(-40px) scaleX(2.4); }
+  }
+  .crystal-base2 {
+    width:70px; height:16px;
+    background:linear-gradient(to right, #120820, #3d1a7a, #120820);
+    border-radius:6px; margin-top:5px;
+    box-shadow:0 4px 16px rgba(100,0,200,0.3);
+  }
+  .crystal-name {
+    position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%);
+    font-size:0.42rem; font-weight:700; color:#e0d8ff;
+    text-shadow:0 0 10px rgba(180,140,255,0.9);
+    text-align:center; z-index:3; line-height:1.3;
+    animation:nameAppear 3.5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes nameAppear {
+    0%,35%  { opacity:0; }
+    55%,75% { opacity:1; }
+    95%,100%{ opacity:0; }
+  }
+
+  /* ── Selection bar ── */
+  .sel-bar { position:fixed; bottom:0; left:0; right:0; background:#16161f; border-top:1px solid #2a2a3a; padding:10px 20px; display:flex; align-items:center; justify-content:space-between; font-size:0.82rem; color:#9999b3; z-index:100; }
+  .sel-bar strong { color:#4ade80; }
+  .sel-chips { display:flex; gap:6px; flex-wrap:wrap; }
+  .sel-chip { background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.3); color:#4ade80; padding:2px 8px; border-radius:20px; font-size:0.75rem; }
+</style>
+</head>
+<body>
+
+<h1>Weighing Animations <span class="badge">v2 — Revised</span></h1>
+<p class="subtitle">All six updated with your feedback — click to select, pick as many as you like</p>
+
+<p class="section-label">Your ideas — revised</p>
+<div class="cards-grid">
+
+  <!-- 1. Magic 8-Ball v2 -->
+  <div class="card" data-choice="8ball" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="ball-scene">
+        <div class="ball">
+          <div class="ball-window">
+            <div class="ball-window-mist"></div>
+            <div class="ball-text">Blue<br>Dream</div>
+          </div>
+        </div>
+        <div class="mist-cloud"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-yours">Your idea</div>
+      <h3>Magic 8-Ball <span class="badge">Updated</span></h3>
+      <p>Heavier shake with bounce physics. The message window is now embedded inside the ball — mist swirls in the window before clearing to show the strain.</p>
+    </div>
+  </div>
+
+  <!-- 2. Plinko v2 -->
+  <div class="card" data-choice="plinko" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="plinko-board">
+        <div class="peg" style="top:20px;left:16px"></div>
+        <div class="peg" style="top:20px;left:40px"></div>
+        <div class="peg" style="top:20px;left:64px"></div>
+        <div class="peg" style="top:20px;left:88px"></div>
+        <div class="peg" style="top:42px;left:28px"></div>
+        <div class="peg" style="top:42px;left:52px"></div>
+        <div class="peg" style="top:42px;left:76px"></div>
+        <div class="peg" style="top:64px;left:16px"></div>
+        <div class="peg" style="top:64px;left:40px"></div>
+        <div class="peg" style="top:64px;left:64px"></div>
+        <div class="peg" style="top:64px;left:88px"></div>
+        <div class="peg" style="top:86px;left:28px"></div>
+        <div class="peg" style="top:86px;left:52px"></div>
+        <div class="peg" style="top:86px;left:76px"></div>
+        <div class="peg" style="top:108px;left:16px"></div>
+        <div class="peg" style="top:108px;left:40px"></div>
+        <div class="peg" style="top:108px;left:64px"></div>
+        <div class="peg" style="top:108px;left:88px"></div>
+        <div class="plinko-leaf">🍃</div>
+        <div class="plinko-slots">
+          <div>OG</div><div class="active">GDP</div><div>AK</div><div>Kush</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-yours">Your idea</div>
+      <h3>Plinko Drop <span class="badge">Updated</span></h3>
+      <p>The ball is now a small green leaf 🍃 — sized smaller than the pegs it weaves between. The active landing slot lights up green.</p>
+    </div>
+  </div>
+
+  <!-- 3. Notes in Box v2 -->
+  <div class="card" data-choice="box" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="box-scene">
+        <div class="box-body">
+          <div class="box-lid"></div>
+          <div class="bnote bn1">OG<br>Kush<div class="bnote-fold"></div></div>
+          <div class="bnote bn2">GDP<div class="bnote-fold"></div></div>
+          <div class="bnote bn3">AK-47<div class="bnote-fold"></div></div>
+          <div class="chosen-note">Blue<br>Dream ✨</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-yours">Your idea</div>
+      <h3>Notes in a Box <span class="badge">Updated</span></h3>
+      <p>Papers fold, the lid bounces as they shuffle around inside, then the chosen note rises dramatically out of the box while the lid rattles.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="section-label">My ideas — revised</p>
+<div class="cards-grid">
+
+  <!-- 4. Tarot v2 -->
+  <div class="card" data-choice="tarot" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="tarot-scene">
+        <span class="tspark">✦</span>
+        <span class="tspark">✦</span>
+        <span class="tspark">✧</span>
+        <span class="tspark">✦</span>
+        <span class="tspark">✧</span>
+        <div class="tarot-card tc1"></div>
+        <div class="tarot-card tc2"></div>
+        <div class="tarot-card winner tc3"></div>
+        <div class="tarot-card tc4"></div>
+        <div class="tarot-card tc5"></div>
+        <div class="tarot-label">Blue<br>Dream</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-mine">My idea</div>
+      <h3>Tarot Card Draw <span class="badge">Updated</span></h3>
+      <p>5 cards in a wider fan with more dramatic shuffle animation. The center card flips green, and sparkles burst around it on reveal.</p>
+    </div>
+  </div>
+
+  <!-- 5. Slot Machine v2 -->
+  <div class="card" data-choice="slots" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="slot-scene">
+        <div class="slot-machine">
+          <div class="slot-top-label">🍀 Strain Picker</div>
+          <div class="slot-reels">
+            <div class="reel">
+              <div class="reel-inner">
+                <span>🌿</span><span>💜</span><span>⭐</span>
+                <span>🌿</span><span>💜</span><span>🌿</span>
+              </div>
+            </div>
+            <div class="reel">
+              <div class="reel-inner">
+                <span>💚</span><span>🌿</span><span>🔥</span>
+                <span>💚</span><span>🌿</span><span>💚</span>
+              </div>
+            </div>
+            <div class="reel">
+              <div class="reel-inner">
+                <span>⭐</span><span>🔥</span><span>🌿</span>
+                <span>⭐</span><span>🔥</span><span>🌿</span>
+              </div>
+            </div>
+          </div>
+          <div class="slot-win-line"></div>
+          <div style="font-size:0.42rem;color:#555;letter-spacing:0.08em;">PULL TO REVEAL</div>
+          <!-- glitter -->
+          <div class="glitter"></div><div class="glitter"></div>
+          <div class="glitter"></div><div class="glitter"></div>
+          <div class="glitter"></div><div class="glitter"></div>
+          <div class="glitter"></div><div class="glitter"></div>
+          <!-- corner stars -->
+          <span class="slot-star">✦</span><span class="slot-star">✦</span>
+          <span class="slot-star">✦</span><span class="slot-star">✦</span>
+        </div>
+        <div class="slot-lever"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-mine">My idea</div>
+      <h3>Slot Machine Pull <span class="badge">Updated</span></h3>
+      <p>Reels spin and lock in one-by-one. When the last reel locks, glitter and sparkles burst from the corners in a celebration explosion.</p>
+    </div>
+  </div>
+
+  <!-- 6. Crystal Ball v2 -->
+  <div class="card" data-choice="crystal" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="crystal-scene">
+        <div class="haze haze1"></div>
+        <div class="haze haze2"></div>
+        <div class="haze haze3"></div>
+        <div class="crystal-wrap2">
+          <div style="position:relative">
+            <div class="smoke-tendril"></div>
+            <div class="smoke-tendril"></div>
+            <div class="smoke-tendril"></div>
+            <div class="crystal-ball2">
+              <div class="smoke-layer smoke1"></div>
+              <div class="smoke-layer smoke2"></div>
+              <div class="smoke-layer smoke3"></div>
+              <div class="crystal-highlight2"></div>
+              <div class="crystal-name">Blue<br>Dream</div>
+            </div>
+          </div>
+          <div class="crystal-base2"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-mine">My idea</div>
+      <h3>Crystal Ball Oracle <span class="badge">Updated</span></h3>
+      <p>Multi-layer rotating smoke inside the ball with purple/green wisps. Tendrils rise from the top, and the whole preview has a deep purple ambient glow.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="sel-bar">
+  <div>Selected: <strong id="count">0</strong></div>
+  <div class="sel-chips" id="sel-list"></div>
+</div>
+
+<script>
+  const selected = new Set();
+  const names = { '8ball':'Magic 8-Ball','plinko':'Plinko Drop','box':'Notes in a Box','tarot':'Tarot Card','slots':'Slot Machine','crystal':'Crystal Ball' };
+  function toggleCard(el) {
+    const c = el.dataset.choice;
+    selected.has(c) ? (selected.delete(c), el.classList.remove('selected')) : (selected.add(c), el.classList.add('selected'));
+    document.getElementById('count').textContent = selected.size;
+    document.getElementById('sel-list').innerHTML = [...selected].map(k=>`<span class="sel-chip">${names[k]}</span>`).join('');
+    if (window.__sendEvent) window.__sendEvent({ type:'click', choice:c, text:names[c], selected:selected.has(c) });
+  }
+</script>
+</body>
+</html>

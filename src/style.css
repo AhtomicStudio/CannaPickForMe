@@ -3381,14 +3381,26 @@ html.light-mode .app-bg__haze {
 }
 
 .profile-login-label {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  opacity: 0.7;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--green-glow);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   pointer-events: none;
+  opacity: 1;
 }
 
-.profile-avatar-wrap--signed-in .profile-login-label {
+.profile-avatar-wrap--signed-in .profile-login-label,
+.profile-avatar-wrap--signed-in .profile-theme-hint {
   display: none;
+}
+
+.profile-theme-hint {
+  font-size: 0.65rem;
+  color: rgba(74, 222, 128, 0.6);
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 .profile-avatar {
@@ -3417,10 +3429,17 @@ html.light-mode .app-bg__haze {
 }
 
 .profile-avatar--signed-out {
-  border-color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.05);
-  filter: grayscale(1);
-  opacity: 0.45;
+  border-color: var(--green-glow);
+  background: rgba(74, 222, 128, 0.08);
+  filter: none;
+  opacity: 1;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.18), 0 0 16px rgba(74, 222, 128, 0.12);
+  animation: login-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes login-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(74,222,128,0.18), 0 0 16px rgba(74,222,128,0.12); }
+  50%       { box-shadow: 0 0 0 5px rgba(74,222,128,0.28), 0 0 24px rgba(74,222,128,0.22); }
 }
 
 .profile-avatar__bg-leaf {

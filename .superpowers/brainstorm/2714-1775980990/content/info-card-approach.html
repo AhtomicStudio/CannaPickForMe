@@ -1,0 +1,37 @@
+<h2>Strain Info Card — How should it appear?</h2>
+<p class="subtitle">When a user taps a strain in the browse list, which presentation feels right for the app?</p>
+
+<div class="options">
+  <div class="option" data-choice="bottom-sheet" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Bottom Sheet</h3>
+      <p>A panel slides up from the bottom, covering ~70% of the screen. Feels native on mobile — familiar swipe-down to dismiss. Great for scanning info without fully losing context of the list behind it.</p>
+      <div style="margin-top:10px;padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;font-size:0.8rem;color:#aaa;">
+        📱 Most mobile-native feel · Swipe to dismiss · Partial context preserved
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="modal" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Full Modal Overlay</h3>
+      <p>A centered modal dialog (matching the existing custom/override modals). Same interaction pattern already in the app — tap backdrop to dismiss. Focused, no distraction, consistent with existing UI.</p>
+      <div style="margin-top:10px;padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;font-size:0.8rem;color:#aaa;">
+        🎯 Consistent with existing modals · Centered · Tap backdrop to close
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="inline" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Inline Expansion</h3>
+      <p>The strain card expands in-place to reveal the full info — description, flavors, rating. No overlay needed. Fast and lightweight, but can feel cramped on smaller screens with many strains in the list.</p>
+      <div style="margin-top:10px;padding:8px;background:rgba(255,255,255,0.05);border-radius:8px;font-size:0.8rem;color:#aaa;">
+        ⚡ No overlay needed · Stays in list context · Less visual drama
+      </div>
+    </div>
+  </div>
+</div>

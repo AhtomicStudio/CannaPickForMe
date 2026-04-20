@@ -25,29 +25,71 @@
   padding: var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
 }
 
 /* ── Activity Tab ── */
+.activity-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--space-lg);
+}
+
+.activity-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: var(--space-md) var(--space-sm);
+  background: var(--bg-card);
+  text-align: center;
+}
+
+.activity-stat__val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.activity-stat__val--sm {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.activity-stat__lbl {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
 .history-row {
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  padding: var(--space-sm) var(--space-md);
+  padding: 0.625rem var(--space-md);
   background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
 }
 
 .history-row__dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -59,134 +101,25 @@
 .history-row__name {
   flex: 1;
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 0.9375rem;
   color: var(--text-primary);
 }
 
 .history-row__meta {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   text-align: right;
   line-height: 1.4;
 }
 
-/* ── Stat Charts ── */
+/* ── Section label ── */
 .stats-section-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-top: var(--space-md);
-}
-
-.stat-section {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.stat-section__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-md) var(--space-lg);
-  cursor: pointer;
-  user-select: none;
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.stat-section__chevron {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  transition: transform 0.25s;
-}
-
-.stat-section--open .stat-section__chevron {
-  transform: rotate(180deg);
-}
-
-.stat-section__body {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s ease;
-}
-
-.stat-section--open .stat-section__body {
-  max-height: 500px;
-}
-
-.stat-section__content {
-  padding: 0 var(--space-lg) var(--space-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.stat-bar-row {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-bar-row__label {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.875rem;
-  color: var(--text-primary);
-}
-
-.stat-bar-row__pct {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.stat-bar-track {
-  height: 7px;
-  background: rgba(255,255,255,0.07);
-  border-radius: var(--radius-full);
-  overflow: hidden;
-}
-
-.stat-bar-fill {
-  height: 100%;
-  border-radius: var(--radius-full);
-  width: 0%;
-  transition: width 0.5s ease;
-  background: var(--green-primary);
-}
-
-.stat-bar-fill--indica  { background: #818cf8; }
-.stat-bar-fill--sativa  { background: #4ade80; }
-.stat-bar-fill--hybrid  { background: #fb923c; }
-.stat-bar-fill--mood    { background: #c084fc; }
-.stat-bar-fill--picked  { background: #f59e0b; }
-
-.stat-empty {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  text-align: center;
-  padding: var(--space-md) 0;
-}
-
-.perfect-match-rate {
-  text-align: center;
-  padding: var(--space-md) 0 var(--space-sm);
-}
-
-.perfect-match-rate__number {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--green-glow);
-  line-height: 1;
-}
-
-.perfect-match-rate__label {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 4px;
+  margin-bottom: var(--space-sm);
 }
 
 /* ── Themes Tab ── */

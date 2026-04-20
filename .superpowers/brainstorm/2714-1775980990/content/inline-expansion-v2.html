@@ -1,0 +1,71 @@
+<h2>Inline Expansion — Final Design</h2>
+<p class="subtitle">Genetics row added. Does this look right?</p>
+
+<div style="max-width:420px;margin:0 auto;font-family:'Outfit',sans-serif;">
+
+  <!-- Expanded card with genetics -->
+  <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(192,132,252,0.35);border-radius:12px;overflow:hidden;">
+
+    <!-- Header row -->
+    <div style="padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,0.07);">
+      <div style="width:10px;height:10px;border-radius:50%;background:#c084fc;flex-shrink:0;"></div>
+      <div style="flex:1;">
+        <div style="font-weight:600;font-size:0.95rem;color:#f1f5f9;">Gelato 41</div>
+        <div style="font-size:0.78rem;color:#94a3b8;margin-top:2px;">Hybrid · Relaxed, Happy, Euphoric</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button style="background:rgba(255,255,255,0.07);border:none;border-radius:6px;color:#94a3b8;padding:6px 10px;cursor:pointer;font-size:0.8rem;">✏️</button>
+        <button style="background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.3);border-radius:6px;color:#4ade80;padding:6px 12px;cursor:pointer;font-weight:600;">+</button>
+      </div>
+    </div>
+
+    <!-- Expanded details -->
+    <div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px;">
+
+      <!-- Description -->
+      <div>
+        <p style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 5px;">About</p>
+        <p style="font-size:0.83rem;color:#cbd5e1;margin:0;line-height:1.5;">Connected premium Gelato #41 phenotype — one of the most sought-after Gelato cuts. Incredibly smooth, sweet and creamy with balanced euphoric effects.</p>
+      </div>
+
+      <!-- Genetics -->
+      <div>
+        <p style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 5px;">Genetics</p>
+        <p style="font-size:0.83rem;color:#e2e8f0;margin:0;font-style:italic;">Sunset Sherbet × Thin Mint GSC</p>
+      </div>
+
+      <!-- All Effects -->
+      <div>
+        <p style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 6px;">Effects</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;">
+          <span style="background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);color:#c084fc;border-radius:20px;padding:3px 10px;font-size:0.75rem;">Relaxed</span>
+          <span style="background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);color:#c084fc;border-radius:20px;padding:3px 10px;font-size:0.75rem;">Happy</span>
+          <span style="background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);color:#c084fc;border-radius:20px;padding:3px 10px;font-size:0.75rem;">Euphoric</span>
+          <span style="background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);color:#c084fc;border-radius:20px;padding:3px 10px;font-size:0.75rem;">Uplifted</span>
+          <span style="background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);color:#c084fc;border-radius:20px;padding:3px 10px;font-size:0.75rem;">Creative</span>
+        </div>
+      </div>
+
+      <!-- Flavors -->
+      <div>
+        <p style="font-size:0.75rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 6px;">Flavors</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;">
+          <span style="background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.25);color:#fbbf24;border-radius:20px;padding:3px 10px;font-size:0.75rem;">Sweet</span>
+          <span style="background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.25);color:#fbbf24;border-radius:20px;padding:3px 10px;font-size:0.75rem;">Creamy</span>
+          <span style="background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.25);color:#fbbf24;border-radius:20px;padding:3px 10px;font-size:0.75rem;">Citrus</span>
+        </div>
+      </div>
+
+      <!-- Dispensary badge -->
+      <div style="padding-top:4px;border-top:1px solid rgba(255,255,255,0.06);">
+        <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.25);border-radius:20px;padding:4px 12px;font-size:0.75rem;color:#4ade80;">
+          📍 Available at Cookies Hayward
+        </span>
+      </div>
+
+    </div>
+  </div>
+
+  <p style="margin-top:20px;font-size:0.8rem;color:#64748b;">Notes: Genetics row is hidden when data is null. Dispensary badge is hidden for untagged strains. Tapping the card header/info area toggles expand/collapse.</p>
+
+</div>

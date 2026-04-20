@@ -255,7 +255,7 @@ export async function renderShareCard({ strainName, strainType, matchScore, sess
   ctx.fillStyle = 'rgba(255,255,255,0.45)';
   ctx.font = '400 15px "Outfit", system-ui, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('THE UNIVERSE CHOSE', W/2, 525);
+  ctx.fillText('YOUR PERFECT MATCH', W/2, 525);
 
   // ── Strain name ────────────────────────────────────────────────────────
   ctx.fillStyle = '#ffffff';
@@ -310,7 +310,7 @@ export async function renderShareCard({ strainName, strainType, matchScore, sess
   // ── CTA line ───────────────────────────────────────────────────────────
   ctx.fillStyle = 'rgba(255,255,255,0.30)';
   ctx.font = '400 14px "Outfit", system-ui, sans-serif';
-  ctx.fillText('What will the universe pick for you?', W/2, 800);
+  ctx.fillText('Find your perfect strain at cannapickforme.com', W/2, 800);
 
   // ── QR code + URL ──────────────────────────────────────────────────────
   const deepLink = strainId
@@ -344,7 +344,7 @@ export async function shareResult(cardData) {
           await navigator.share({
             files: [file],
             title: `CannaPickForMe picked ${cardData.strainName} for me!`,
-            text: `${cardData.matchScore}% match — ${cardData.strainName}. What does the universe pick for you?\n${APP_URL}`,
+            text: `${cardData.matchScore}% match — ${cardData.strainName} is my top pick. Find yours at ${APP_URL}`,
           });
           resolve('shared');
         } catch (err) {

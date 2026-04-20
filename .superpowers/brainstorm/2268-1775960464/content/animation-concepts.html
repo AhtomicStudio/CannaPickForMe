@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animation Concepts — CannaPickForMe</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d0d12;
+    color: #e8e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 24px 16px 60px;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #4ade80;
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+  .subtitle {
+    text-align: center;
+    color: #9999b3;
+    font-size: 0.9rem;
+    margin-bottom: 32px;
+  }
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #4ade80;
+    margin-bottom: 12px;
+    padding-left: 4px;
+  }
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .card {
+    background: #16161f;
+    border: 2px solid #2a2a3a;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    user-select: none;
+  }
+  .card:hover { border-color: #4ade80; transform: translateY(-2px); }
+  .card.selected { border-color: #4ade80; background: #14201a; }
+  .card.selected .card-check { opacity: 1; }
+  .card-preview {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d0d12;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-body {
+    padding: 14px 16px 16px;
+    position: relative;
+  }
+  .card-check {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 22px; height: 22px;
+    background: #4ade80;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    color: #0d0d12;
+    font-weight: 900;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .card h3 { font-size: 1rem; font-weight: 700; color: #f0f0fa; margin-bottom: 4px; }
+  .card p { font-size: 0.82rem; color: #8888a8; line-height: 1.45; }
+  .card .tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+  .tag-yours { background: rgba(192,132,252,0.15); color: #c084fc; }
+  .tag-mine  { background: rgba(56,189,248,0.15);  color: #38bdf8; }
+
+  /* ── 1. MAGIC 8-BALL ── */
+  .ball-wrap {
+    position: relative;
+    width: 120px; height: 120px;
+  }
+  .ball {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 32%, #333, #000 70%);
+    box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 -6px 20px rgba(255,255,255,0.05);
+    animation: shake8 2.4s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+  }
+  .ball::after {
+    content: '8';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: #fff;
+    font-family: Georgia, serif;
+  }
+  .mist-ring {
+    position: absolute;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    width: 36px; height: 14px;
+    background: rgba(120,200,120,0.18);
+    border-radius: 50%;
+    filter: blur(6px);
+    animation: mistPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes shake8 {
+    0%,100% { transform: rotate(0deg) translateX(0); }
+    15%      { transform: rotate(-8deg) translateX(-4px); }
+    30%      { transform: rotate(7deg) translateX(4px); }
+    45%      { transform: rotate(-5deg) translateX(-3px); }
+    60%      { transform: rotate(4deg) translateX(3px); }
+    75%      { transform: rotate(-2deg) translateX(-1px); }
+  }
+  @keyframes mistPulse {
+    0%,100% { opacity: 0.3; width: 36px; }
+    50%     { opacity: 1;   width: 54px; filter: blur(8px); }
+  }
+
+  /* ── 2. PLINKO ── */
+  .plinko-board {
+    width: 110px; height: 150px;
+    position: relative;
+    background: #0a0a12;
+    border: 1px solid #1e1e2e;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .peg {
+    position: absolute;
+    width: 7px; height: 7px;
+    background: #c084fc;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #c084fc88;
+  }
+  .plinko-ball {
+    position: absolute;
+    width: 10px; height: 10px;
+    background: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #4ade8088;
+    animation: plinkoDrop 2.2s cubic-bezier(0.25,0.46,0.45,0.94) infinite;
+    left: 45px; top: 6px;
+  }
+  @keyframes plinkoDrop {
+    0%   { top:6px;  left:45px; opacity:1; }
+    20%  { top:35px; left:32px; }
+    35%  { top:60px; left:50px; }
+    50%  { top:82px; left:28px; }
+    65%  { top:106px;left:45px; }
+    80%  { top:130px;left:34px; opacity:1; }
+    90%  { top:144px;left:34px; opacity:0; }
+    100% { top:6px;  left:45px; opacity:1; }
+  }
+  .slot-bottom {
+    display: flex;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 16px;
+  }
+  .slot-bottom div {
+    flex: 1;
+    border-left: 1px solid #2a2a3a;
+    font-size: 0.45rem;
+    color: #666;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── 3. PAPER BOX ── */
+  .box-scene {
+    position: relative;
+    width: 130px; height: 150px;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .box-body {
+    width: 100px; height: 70px;
+    background: #3b2a1a;
+    border: 2px solid #7c5c30;
+    border-radius: 4px 4px 8px 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .box-note {
+    position: absolute;
+    width: 28px; height: 22px;
+    background: #f5f0dc;
+    border-radius: 2px;
+    font-size: 0.35rem;
+    color: #555;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .note1 { top:10px; left:8px; transform: rotate(-12deg); animation: noteWiggle1 3s ease-in-out infinite; }
+  .note2 { top:14px; left:36px; transform: rotate(5deg);  animation: noteWiggle2 3s ease-in-out infinite; }
+  .note3 { top:8px;  left:64px; transform: rotate(-6deg); animation: noteWiggle3 3s ease-in-out infinite; }
+  @keyframes noteWiggle1 { 0%,100%{transform:rotate(-12deg) translateY(0)} 50%{transform:rotate(-8deg) translateY(-3px)} }
+  @keyframes noteWiggle2 { 0%,100%{transform:rotate(5deg) translateY(0)}   50%{transform:rotate(8deg) translateY(-4px)} }
+  @keyframes noteWiggle3 { 0%,100%{transform:rotate(-6deg) translateY(0)}  50%{transform:rotate(-2deg) translateY(-2px)} }
+  .chosen-note {
+    position: absolute;
+    top: -52px; left: 50%;
+    transform: translateX(-50%);
+    width: 36px; height: 28px;
+    background: #fffbe8;
+    border-radius: 2px;
+    font-size: 0.38rem;
+    color: #333;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    animation: noteRise 2.8s ease-in-out infinite;
+    border: 1px solid #d4c87a;
+    padding: 2px;
+    line-height: 1.2;
+  }
+  @keyframes noteRise {
+    0%,100% { top:-52px; opacity:1; }
+    40%     { top:-68px; opacity:1; }
+    80%     { top:-52px; opacity:1; }
+  }
+
+  /* ── 4. TAROT CARD ── */
+  .tarot-scene {
+    position: relative;
+    width: 130px; height: 160px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tarot-card {
+    width: 52px; height: 90px;
+    border-radius: 6px;
+    position: absolute;
+    transform-origin: bottom center;
+    border: 1.5px solid #4a3a6a;
+  }
+  .tarot-card.back {
+    background: repeating-linear-gradient(45deg, #1e1430 0px, #1e1430 4px, #2a1e40 4px, #2a1e40 8px);
+  }
+  .tc1 { animation: fanL 2.5s ease-in-out infinite; }
+  .tc2 { animation: fanM 2.5s ease-in-out infinite; z-index:2; }
+  .tc3 { animation: fanR 2.5s ease-in-out infinite; }
+  @keyframes fanL {
+    0%,100% { transform: rotate(-18deg) translateX(-18px); }
+    50%     { transform: rotate(-22deg) translateX(-20px); }
+  }
+  @keyframes fanM {
+    0%,100% { transform: rotate(0deg)   translateX(0px); background: repeating-linear-gradient(45deg, #1e1430 0px, #1e1430 4px, #2a1e40 4px, #2a1e40 8px); }
+    60%     { transform: rotate(0deg)   translateX(0px); background: repeating-linear-gradient(45deg, #1e1430 0px, #1e1430 4px, #2a1e40 4px, #2a1e40 8px); }
+    80%     { transform: rotateY(90deg) translateX(0px); background: #1a2a1a; }
+    90%,95% { transform: rotateY(0deg) translateX(0px);
+              background: linear-gradient(160deg, #1a3a22, #2d6b3c);
+              border-color: #4ade80; }
+    100%    { transform: rotate(0deg)   translateX(0px); background: repeating-linear-gradient(45deg, #1e1430 0px, #1e1430 4px, #2a1e40 4px, #2a1e40 8px); }
+  }
+  @keyframes fanR {
+    0%,100% { transform: rotate(18deg) translateX(18px); }
+    50%     { transform: rotate(22deg) translateX(20px); }
+  }
+  .tarot-glyph {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.3rem;
+    z-index: 3;
+    animation: glyphPulse 2.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes glyphPulse {
+    0%,55% { opacity:0; }
+    80%    { opacity:1; }
+    100%   { opacity:0; }
+  }
+
+  /* ── 5. SLOT MACHINE ── */
+  .slot-machine {
+    width: 120px; height: 150px;
+    background: #1a1a2a;
+    border: 2px solid #333355;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    box-shadow: 0 0 20px rgba(192,132,252,0.1);
+  }
+  .slot-label {
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    color: #c084fc;
+    text-transform: uppercase;
+  }
+  .slot-reels {
+    display: flex;
+    gap: 4px;
+  }
+  .reel {
+    width: 28px; height: 54px;
+    background: #0a0a18;
+    border-radius: 4px;
+    border: 1px solid #333;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+  .reel-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .reel:nth-child(1) .reel-inner { animation: spinReel 1.2s ease-out infinite; }
+  .reel:nth-child(2) .reel-inner { animation: spinReel 1.6s ease-out infinite; }
+  .reel:nth-child(3) .reel-inner { animation: spinReel 2.0s ease-out infinite; }
+  @keyframes spinReel {
+    0%   { transform: translateY(0); }
+    80%  { transform: translateY(-50%); }
+    100% { transform: translateY(-50%); }
+  }
+  .slot-lever {
+    width: 6px; height: 28px;
+    background: linear-gradient(to bottom, #c084fc, #7c3aed);
+    border-radius: 3px;
+    position: relative;
+    animation: leverPull 2s ease-in-out infinite;
+    transform-origin: top center;
+  }
+  .slot-lever::after {
+    content: '';
+    width: 12px; height: 12px;
+    background: #f87171;
+    border-radius: 50%;
+    position: absolute;
+    bottom: -4px;
+    left: -3px;
+    box-shadow: 0 0 8px rgba(248,113,113,0.6);
+  }
+  @keyframes leverPull {
+    0%,100% { transform: rotate(0deg); }
+    30%     { transform: rotate(25deg); }
+  }
+
+  /* ── 6. CRYSTAL BALL ── */
+  .crystal-wrap {
+    position: relative;
+    width: 120px; height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .crystal-ball {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%,
+      rgba(255,255,255,0.25) 0%,
+      rgba(120,180,255,0.15) 30%,
+      rgba(80,120,200,0.1) 60%,
+      rgba(20,30,80,0.8) 100%);
+    border: 2px solid rgba(150,180,255,0.3);
+    box-shadow:
+      0 0 30px rgba(100,150,255,0.3),
+      0 0 60px rgba(60,100,255,0.15),
+      inset 0 0 30px rgba(100,150,255,0.1);
+    position: relative;
+    overflow: hidden;
+  }
+  .crystal-swirl {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(ellipse 60% 30% at 50% 80%, rgba(74,222,128,0.25) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 30% 60%, rgba(192,132,252,0.2) 0%, transparent 70%);
+    animation: swirlRotate 3s linear infinite;
+  }
+  @keyframes swirlRotate {
+    from { transform: rotate(0deg) scale(1); opacity: 0.7; }
+    50%  { opacity: 1; transform: rotate(180deg) scale(1.1); }
+    to   { transform: rotate(360deg) scale(1); opacity: 0.7; }
+  }
+  .crystal-highlight {
+    position: absolute;
+    top: 18px; left: 22px;
+    width: 22px; height: 14px;
+    background: rgba(255,255,255,0.35);
+    border-radius: 50%;
+    filter: blur(3px);
+    transform: rotate(-30deg);
+  }
+  .crystal-base {
+    width: 60px; height: 14px;
+    background: linear-gradient(to right, #1a1230, #2d1e50, #1a1230);
+    border-radius: 4px;
+    margin-top: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+
+  /* Selection indicator */
+  .selection-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #16161f;
+    border-top: 1px solid #2a2a3a;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: #9999b3;
+    z-index: 100;
+  }
+  .selection-bar strong { color: #4ade80; }
+  .selected-list { display: flex; gap: 6px; flex-wrap: wrap; }
+  .sel-chip {
+    background: rgba(74,222,128,0.1);
+    border: 1px solid rgba(74,222,128,0.3);
+    color: #4ade80;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>Weighing Animation Concepts</h1>
+<p class="subtitle">Click cards to select the ones you like — you can pick multiple</p>
+
+<p class="section-label">Your ideas</p>
+<div class="cards-grid">
+
+  <!-- 1. Magic 8 Ball -->
+  <div class="card" data-choice="8ball" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="ball-wrap">
+        <div class="ball"></div>
+        <div class="mist-ring"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-yours">Your idea</div>
+      <h3>Magic 8-Ball</h3>
+      <p>The ball shakes violently with green mist rising from the hole, then clears to reveal the strain name floating inside.</p>
+    </div>
+  </div>
+
+  <!-- 2. Plinko -->
+  <div class="card" data-choice="plinko" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="plinko-board">
+        <!-- Pegs row 1 -->
+        <div class="peg" style="top:22px;left:18px"></div>
+        <div class="peg" style="top:22px;left:42px"></div>
+        <div class="peg" style="top:22px;left:66px"></div>
+        <div class="peg" style="top:22px;left:88px"></div>
+        <!-- Pegs row 2 -->
+        <div class="peg" style="top:44px;left:30px"></div>
+        <div class="peg" style="top:44px;left:54px"></div>
+        <div class="peg" style="top:44px;left:78px"></div>
+        <!-- Pegs row 3 -->
+        <div class="peg" style="top:66px;left:18px"></div>
+        <div class="peg" style="top:66px;left:42px"></div>
+        <div class="peg" style="top:66px;left:66px"></div>
+        <div class="peg" style="top:66px;left:88px"></div>
+        <!-- Pegs row 4 -->
+        <div class="peg" style="top:88px;left:30px"></div>
+        <div class="peg" style="top:88px;left:54px"></div>
+        <div class="peg" style="top:88px;left:78px"></div>
+        <!-- Pegs row 5 -->
+        <div class="peg" style="top:110px;left:18px"></div>
+        <div class="peg" style="top:110px;left:42px"></div>
+        <div class="peg" style="top:110px;left:66px"></div>
+        <div class="peg" style="top:110px;left:88px"></div>
+
+        <div class="plinko-ball"></div>
+        <div class="slot-bottom">
+          <div>OG</div><div>GDP</div><div>AK</div><div>Kush</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-yours">Your idea</div>
+      <h3>Plinko Drop</h3>
+      <p>A glowing ball drops through a board of pegs, bouncing randomly between your stash names at the bottom until it lands.</p>
+    </div>
+  </div>
+
+  <!-- 3. Paper Box -->
+  <div class="card" data-choice="box" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="box-scene">
+        <div class="box-body">
+          <div class="box-note note1">OG<br>Kush</div>
+          <div class="box-note note2">GDP</div>
+          <div class="box-note note3">AK-47</div>
+          <div class="chosen-note">Blue<br>Dream ✨</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-yours">Your idea</div>
+      <h3>Notes in a Box</h3>
+      <p>Strain names are written on little paper slips, tossed into a wooden box, then one dramatically floats up as the chosen pick.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="section-label">My ideas</p>
+<div class="cards-grid">
+
+  <!-- 4. Tarot Card -->
+  <div class="card" data-choice="tarot" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="tarot-scene">
+        <div class="tarot-card back tc1"></div>
+        <div class="tarot-card back tc2"></div>
+        <div class="tarot-card back tc3"></div>
+        <div class="tarot-glyph">🌿</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-mine">My idea</div>
+      <h3>Tarot Card Draw</h3>
+      <p>Cards fan out face-down. A green glow pulses across one — it flips over to reveal the strain's name on a mystical green card.</p>
+    </div>
+  </div>
+
+  <!-- 5. Slot Machine -->
+  <div class="card" data-choice="slots" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div style="display:flex; align-items:center; gap: 10px;">
+        <div class="slot-machine">
+          <div class="slot-label">🍀 Pick</div>
+          <div class="slot-reels">
+            <div class="reel">
+              <div class="reel-inner">
+                <span>🌿</span><span>💜</span><span>⭐</span><span>🌿</span>
+              </div>
+            </div>
+            <div class="reel">
+              <div class="reel-inner">
+                <span>💚</span><span>🌿</span><span>🔥</span><span>💚</span>
+              </div>
+            </div>
+            <div class="reel">
+              <div class="reel-inner">
+                <span>⭐</span><span>🔥</span><span>🌿</span><span>⭐</span>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:0.5rem;color:#666;">Pull to reveal</div>
+        </div>
+        <div class="slot-lever"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-mine">My idea</div>
+      <h3>Slot Machine Pull</h3>
+      <p>Three reels spin with cannabis leaf emojis and symbols, slowing down one-by-one and locking in with a satisfying click. The strain name appears on the readout.</p>
+    </div>
+  </div>
+
+  <!-- 6. Crystal Ball -->
+  <div class="card" data-choice="crystal" onclick="toggleCard(this)">
+    <div class="card-check">✓</div>
+    <div class="card-preview">
+      <div class="crystal-wrap">
+        <div class="crystal-ball">
+          <div class="crystal-swirl"></div>
+          <div class="crystal-highlight"></div>
+        </div>
+        <div class="crystal-base"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="tag tag-mine">My idea</div>
+      <h3>Crystal Ball Oracle</h3>
+      <p>A glowing crystal ball swirls with purple and green smoke. The clouds part slowly as the strain name materializes inside, glowing from within.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Selection bar -->
+<div class="selection-bar">
+  <div>Selected: <strong id="count">0</strong></div>
+  <div class="selected-list" id="sel-list"></div>
+</div>
+
+<script>
+  const selected = new Set();
+  const names = {
+    '8ball': 'Magic 8-Ball',
+    'plinko': 'Plinko Drop',
+    'box': 'Notes in a Box',
+    'tarot': 'Tarot Card',
+    'slots': 'Slot Machine',
+    'crystal': 'Crystal Ball'
+  };
+
+  function toggleCard(el) {
+    const choice = el.dataset.choice;
+    if (selected.has(choice)) {
+      selected.delete(choice);
+      el.classList.remove('selected');
+    } else {
+      selected.add(choice);
+      el.classList.add('selected');
+    }
+    updateBar();
+
+    // Emit event for server
+    if (window.__sendEvent) {
+      window.__sendEvent({ type: 'click', choice, text: names[choice], selected: selected.has(choice) });
+    }
+  }
+
+  function updateBar() {
+    document.getElementById('count').textContent = selected.size;
+    const list = document.getElementById('sel-list');
+    list.innerHTML = [...selected].map(k => `<span class="sel-chip">${names[k]}</span>`).join('');
+  }
+</script>
+</body>
+</html>
