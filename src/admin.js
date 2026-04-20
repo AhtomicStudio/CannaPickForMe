@@ -65,6 +65,11 @@ async function ensureFirebaseAuth() {
   await signInAnonymously(auth);
 }
 
+async function authedSaveStrainDelta(delta) {
+  await ensureFirebaseAuth();
+  return saveStrainDelta(delta);
+}
+
 function logout() {
   sessionStorage.removeItem(SESSION_KEY);
   location.reload();
@@ -285,7 +290,7 @@ function renderStrainList() {
   container.querySelectorAll('[data-action="hide"]').forEach(btn => {
     btn.addEventListener('click', async () => {
       strainDelta.hidden.push(btn.dataset.id);
-      await saveStrainDelta(strainDelta);
+      await authedSaveStrainDelta(strainDelta);
       renderStrainList();
     });
   });
@@ -293,7 +298,7 @@ function renderStrainList() {
   container.querySelectorAll('[data-action="restore"]').forEach(btn => {
     btn.addEventListener('click', async () => {
       strainDelta.hidden = strainDelta.hidden.filter(id => id !== btn.dataset.id);
-      await saveStrainDelta(strainDelta);
+      await authedSaveStrainDelta(strainDelta);
       renderStrainList();
     });
   });
@@ -302,7 +307,7 @@ function renderStrainList() {
     btn.addEventListener('click', async () => {
       if (!confirm('Delete this strain permanently?')) return;
       strainDelta.additions = strainDelta.additions.filter(s => s.id !== btn.dataset.id);
-      await saveStrainDelta(strainDelta);
+      await authedSaveStrainDelta(strainDelta);
       renderStrainList();
     });
   });
@@ -316,7 +321,7 @@ function renderStrainList() {
       } else {
         strainDelta.sponsored = [...sponsored, id];
       }
-      await saveStrainDelta(strainDelta);
+      await authedSaveStrainDelta(strainDelta);
       renderStrainList();
     });
   });
@@ -367,7 +372,7 @@ function initSponsorSettings() {
     saveBtn.textContent = 'Saving...';
     saveBtn.disabled = true;
     try {
-      await saveStrainDelta(strainDelta);
+      await authedSaveStrainDelta(strainDelta);
       savedLabel.style.display = 'inline';
       setTimeout(() => { savedLabel.style.display = 'none'; }, 2500);
     } catch (err) {
@@ -566,7 +571,7 @@ function initStrainManager() {
         });
       }
 
-      await saveStrainDelta(strainDelta);
+      await authedSaveStrainDelta(strainDelta);
       resetStrainForm();
       renderStrainList();
       renderReviewQueue();
@@ -1080,7 +1085,7 @@ async function initMenuSync() {
         addedCount++;
       }
 
-      await saveStrainDelta(strainDelta);
+      await authedSaveStrainDelta(strainDelta);
 
       // 3. Update UI
       document.getElementById('menu-sync-last-synced').textContent =
@@ -1307,14 +1312,14 @@ async function initPartnerStrains() {
         if (action === 'toggle') {
           partners[idx] = { ...partners[idx], active: !partners[idx].active };
           delta.partnerStrains = partners;
-          await saveStrainDelta(delta);
+          await authedSaveStrainDelta(delta);
           strainDelta = delta;
           renderPartnerList(partners);
         } else if (action === 'delete') {
           if (!confirm('Remove this partner strain?')) return;
           partners.splice(idx, 1);
           delta.partnerStrains = partners;
-          await saveStrainDelta(delta);
+          await authedSaveStrainDelta(delta);
           strainDelta = delta;
           renderPartnerList(partners);
         } else if (action === 'edit') {
@@ -1366,7 +1371,7 @@ async function initPartnerStrains() {
     const btn = document.getElementById('partner-save-btn');
     btn.textContent = 'Saving…'; btn.disabled = true;
     try {
-      await saveStrainDelta(delta);
+      await authedSaveStrainDelta(delta);
       strainDelta = delta;
       renderPartnerList(partners);
       resetForm();
