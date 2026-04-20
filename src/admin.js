@@ -1244,32 +1244,38 @@ async function initPagesEditor() {
 
 // === PARTNER STRAINS ===
 async function initPartnerStrains() {
-  const allStrains = await import('./data/strains.json', { with: { type: 'json' } })
-    .then(m => m.default)
-    .catch(() => []);
-
-  // Populate strain select
-  const strainSel = document.getElementById('partner-strain-select');
-  const sorted = [...allStrains].sort((a, b) => a.name.localeCompare(b.name));
-  strainSel.innerHTML = '<option value="">— select a strain —</option>' +
-    sorted.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-
   // Populate dispensary select
   const dispSel = document.getElementById('partner-dispensary');
   dispSel.innerHTML = '<option value="">— none —</option>' +
     Object.entries(DISPENSARY_NAMES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
 
+  function splitTags(str) {
+    return str.split(',').map(s => s.trim()).filter(Boolean);
+  }
+
+  function resetForm() {
+    document.getElementById('partner-edit-id').value = '';
+    document.getElementById('partner-strain-name').value = '';
+    document.getElementById('partner-strain-type').value = 'hybrid';
+    document.getElementById('partner-brand').value = '';
+    document.getElementById('partner-effects').value = '';
+    document.getElementById('partner-flavors').value = '';
+    document.getElementById('partner-dispensary').value = '';
+    document.getElementById('partner-url').value = '';
+    document.getElementById('partner-active').checked = true;
+    document.getElementById('partner-cancel-btn').style.display = 'none';
+    document.getElementById('partner-save-btn').textContent = 'Save Partner';
+  }
+
   function renderPartnerList(partners) {
     const listEl = document.getElementById('partner-strains-list');
     if (!partners.length) { listEl.innerHTML = '<p class="admin-hint">No partner strains yet.</p>'; return; }
     listEl.innerHTML = partners.map((p, i) => {
-      const strain = allStrains.find(s => s.id === p.strainId);
-      const name = strain ? strain.name : p.strainId;
       const disp = p.dispensaryId ? (DISPENSARY_NAMES[p.dispensaryId] || p.dispensaryId) : '—';
       return `
         <div class="partner-row ${p.active ? '' : 'partner-row--inactive'}">
           <div class="partner-row__info">
-            <span class="partner-row__name">${name}</span>
+            <span class="partner-row__name">${p.strainName || '—'}</span>
             <span class="partner-row__brand">${p.brandName || ''}</span>
             <span class="partner-row__disp">${disp}</span>
           </div>
@@ -1304,8 +1310,11 @@ async function initPartnerStrains() {
         } else if (action === 'edit') {
           const p = partners[idx];
           document.getElementById('partner-edit-id').value = String(idx);
-          document.getElementById('partner-strain-select').value = p.strainId || '';
+          document.getElementById('partner-strain-name').value = p.strainName || '';
+          document.getElementById('partner-strain-type').value = p.strainType || 'hybrid';
           document.getElementById('partner-brand').value = p.brandName || '';
+          document.getElementById('partner-effects').value = (p.effects || []).join(', ');
+          document.getElementById('partner-flavors').value = (p.flavors || []).join(', ');
           document.getElementById('partner-dispensary').value = p.dispensaryId || '';
           document.getElementById('partner-url').value = p.clickUrl || '';
           document.getElementById('partner-active').checked = !!p.active;
@@ -1321,16 +1330,19 @@ async function initPartnerStrains() {
 
   // Save / Update
   document.getElementById('partner-save-btn').addEventListener('click', async () => {
-    const strainId    = document.getElementById('partner-strain-select').value;
-    const brandName   = document.getElementById('partner-brand').value.trim();
+    const strainName   = document.getElementById('partner-strain-name').value.trim();
+    const strainType   = document.getElementById('partner-strain-type').value;
+    const brandName    = document.getElementById('partner-brand').value.trim();
+    const effects      = splitTags(document.getElementById('partner-effects').value);
+    const flavors      = splitTags(document.getElementById('partner-flavors').value);
     const dispensaryId = document.getElementById('partner-dispensary').value || null;
-    const clickUrl    = document.getElementById('partner-url').value.trim() || null;
-    const active      = document.getElementById('partner-active').checked;
-    const editIdx     = document.getElementById('partner-edit-id').value;
+    const clickUrl     = document.getElementById('partner-url').value.trim() || null;
+    const active       = document.getElementById('partner-active').checked;
+    const editIdx      = document.getElementById('partner-edit-id').value;
 
-    if (!strainId) { alert('Please select a strain.'); return; }
+    if (!strainName) { alert('Please enter a strain name.'); return; }
 
-    const entry = { strainId, brandName, dispensaryId, clickUrl, active };
+    const entry = { strainName, strainType, brandName, effects, flavors, dispensaryId, clickUrl, active };
     const delta = strainDelta;
     const partners = [...(delta.partnerStrains || [])];
 
@@ -1347,14 +1359,7 @@ async function initPartnerStrains() {
       await saveStrainDelta(delta);
       strainDelta = delta;
       renderPartnerList(partners);
-      // Reset form
-      document.getElementById('partner-edit-id').value = '';
-      document.getElementById('partner-strain-select').value = '';
-      document.getElementById('partner-brand').value = '';
-      document.getElementById('partner-dispensary').value = '';
-      document.getElementById('partner-url').value = '';
-      document.getElementById('partner-active').checked = true;
-      document.getElementById('partner-cancel-btn').style.display = 'none';
+      resetForm();
       btn.textContent = 'Saved ✓';
       setTimeout(() => { btn.textContent = 'Save Partner'; btn.disabled = false; }, 1500);
     } catch (err) {
@@ -1363,16 +1368,7 @@ async function initPartnerStrains() {
     }
   });
 
-  document.getElementById('partner-cancel-btn').addEventListener('click', () => {
-    document.getElementById('partner-edit-id').value = '';
-    document.getElementById('partner-strain-select').value = '';
-    document.getElementById('partner-brand').value = '';
-    document.getElementById('partner-dispensary').value = '';
-    document.getElementById('partner-url').value = '';
-    document.getElementById('partner-active').checked = true;
-    document.getElementById('partner-cancel-btn').style.display = 'none';
-    document.getElementById('partner-save-btn').textContent = 'Save Partner';
-  });
+  document.getElementById('partner-cancel-btn').addEventListener('click', resetForm);
 }
 
 // Module scripts are deferred — DOM is always ready when this runs

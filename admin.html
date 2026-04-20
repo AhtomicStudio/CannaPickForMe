@@ -227,14 +227,28 @@
           <div class="partner-form" id="partner-form">
             <input type="hidden" id="partner-edit-id" value="" />
             <div class="admin-field-row">
-              <label class="admin-label">Strain</label>
-              <select id="partner-strain-select" class="admin-input">
-                <option value="">— select a strain —</option>
+              <label class="admin-label">Strain Name</label>
+              <input type="text" id="partner-strain-name" class="admin-input" placeholder="e.g. Runtz" />
+            </div>
+            <div class="admin-field-row">
+              <label class="admin-label">Strain Type</label>
+              <select id="partner-strain-type" class="admin-input">
+                <option value="hybrid">Hybrid</option>
+                <option value="sativa">Sativa</option>
+                <option value="indica">Indica</option>
               </select>
             </div>
             <div class="admin-field-row">
               <label class="admin-label">Brand Name</label>
               <input type="text" id="partner-brand" class="admin-input" placeholder="e.g. Cookies SF" />
+            </div>
+            <div class="admin-field-row">
+              <label class="admin-label">Effects <span class="admin-optional">(comma-separated)</span></label>
+              <input type="text" id="partner-effects" class="admin-input" placeholder="e.g. Happy, Relaxed, Creative" />
+            </div>
+            <div class="admin-field-row">
+              <label class="admin-label">Flavors <span class="admin-optional">(comma-separated)</span></label>
+              <input type="text" id="partner-flavors" class="admin-input" placeholder="e.g. Berry, Sweet, Earthy" />
             </div>
             <div class="admin-field-row">
               <label class="admin-label">Dispensary Badge <span class="admin-optional">(optional)</span></label>

@@ -1007,7 +1007,6 @@ function showBetterMatchesModal(matchesData) {
   // Find the active partner strain
   const partnerStrains = (strainDelta.partnerStrains || []).filter(p => p.active);
   const partner = partnerStrains[0] || null;
-  const partnerStrain = partner ? allStrains.find(s => s.id === partner.strainId) : null;
 
   // Build organic cards (slots 1-3 and 5-6 around the partner)
   const organicCards = matchesData.map((match, i) => {
@@ -1029,9 +1028,9 @@ function showBetterMatchesModal(matchesData) {
   });
 
   // Partner card HTML
-  const partnerCardHtml = partnerStrain ? (() => {
-    const type = partnerStrain.type.charAt(0).toUpperCase() + partnerStrain.type.slice(1);
-    const effects = (partnerStrain.effectOverrides || partnerStrain.effects || []).slice(0, 3).join(', ');
+  const partnerCardHtml = partner ? (() => {
+    const type = (partner.strainType || 'hybrid').charAt(0).toUpperCase() + (partner.strainType || 'hybrid').slice(1);
+    const effects = (partner.effects || []).slice(0, 3).join(', ');
     const dispName = partner.dispensaryId ? (DISPENSARY_NAMES[partner.dispensaryId] || partner.dispensaryId) : null;
     const clickAttr = partner.clickUrl ? `href="${partner.clickUrl}" target="_blank" rel="noopener"` : '';
     const tag = partner.clickUrl ? 'a' : 'div';
@@ -1042,10 +1041,10 @@ function showBetterMatchesModal(matchesData) {
           <span class="partner-strain-card__brand">${partner.brandName || ''}</span>
         </div>
         <div class="partner-strain-card__body">
-          <div class="strain-card__type-dot" data-type="${partnerStrain.type}"></div>
+          <div class="strain-card__type-dot" data-type="${partner.strainType || 'hybrid'}"></div>
           <div class="partner-strain-card__info">
-            <div class="partner-strain-card__name">${partnerStrain.name}</div>
-            <div class="partner-strain-card__meta">${type} · ${effects}</div>
+            <div class="partner-strain-card__name">${partner.strainName || ''}</div>
+            <div class="partner-strain-card__meta">${type}${effects ? ' · ' + effects : ''}</div>
             ${dispName ? `<div class="partner-strain-card__disp">📍 ${dispName}</div>` : ''}
           </div>
           ${partner.clickUrl ? '<span class="partner-strain-card__cta">View →</span>' : ''}
