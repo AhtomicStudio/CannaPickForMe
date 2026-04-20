@@ -80,7 +80,7 @@ function applyPreviewPosition() {
 }
 
 // === STRAIN STATE ===
-let strainDelta           = { hidden: [], overrides: {}, additions: [] };
+let strainDelta           = { hidden: [], overrides: {}, additions: [], sponsored: [], sponsorSettings: { threshold: 50, alwaysShow: false } };
 let editingStrainId       = null;
 let editingStrainIsAddition = false;
 let selectedEffects       = [];
@@ -245,6 +245,7 @@ function renderStrainList() {
     const isHidden    = strainDelta.hidden.includes(s.id);
     const isAddition  = s._isAddition;
     const hasOverride = !isAddition && !!strainDelta.overrides[s.id];
+    const isSponsored = (strainDelta.sponsored || []).includes(s.id);
 
     return `
       <div class="admin-strain-row ${isHidden ? 'admin-strain-row--hidden' : ''}" data-id="${esc(s.id)}">
@@ -254,11 +255,13 @@ function renderStrainList() {
           ${isAddition  ? '<span class="admin-tag" style="border-color:var(--green-primary);color:var(--green-glow)">🌱 Added</span>' : ''}
           ${hasOverride ? '<span class="admin-tag" style="border-color:#fbbf24;color:#fbbf24">edited</span>' : ''}
           ${s.needsReview ? '<span class="admin-tag" style="border-color:#f87171;color:#f87171">⚠️ Review</span>' : ''}
+          ${isSponsored ? '<span class="admin-tag" style="border-color:#f59e0b;color:#f59e0b">⭐ Sponsored</span>' : ''}
         </div>
         <div class="admin-strain-row__actions">
           ${isHidden
             ? `<button class="admin-btn admin-btn--small" data-action="restore" data-id="${esc(s.id)}">↩ Restore</button>`
             : `<button class="admin-btn admin-btn--small" data-action="edit" data-id="${esc(s.id)}" data-addition="${isAddition}">✏️</button>
+               <button class="admin-btn admin-btn--small ${isSponsored ? 'admin-btn--active' : ''}" data-action="sponsor" data-id="${esc(s.id)}" title="${isSponsored ? 'Remove sponsor' : 'Mark as sponsored'}">⭐</button>
                <button class="admin-btn admin-btn--small admin-btn--danger" data-action="${isAddition ? 'delete' : 'hide'}" data-id="${esc(s.id)}">
                  ${isAddition ? '🗑️' : '🙈 Hide'}
                </button>`
@@ -298,6 +301,20 @@ function renderStrainList() {
       renderStrainList();
     });
   });
+
+  container.querySelectorAll('[data-action="sponsor"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const sponsored = strainDelta.sponsored || [];
+      if (sponsored.includes(id)) {
+        strainDelta.sponsored = sponsored.filter(s => s !== id);
+      } else {
+        strainDelta.sponsored = [...sponsored, id];
+      }
+      await saveStrainDelta(strainDelta);
+      renderStrainList();
+    });
+  });
 }
 
 // === UI ===
@@ -309,6 +326,52 @@ function showDashboard() {
   initMenuSync();
   initInfoEditor();
   initPagesEditor();
+  initSponsorSettings();
+  initPartnerStrains();
+}
+
+function initSponsorSettings() {
+  const thresholdSlider  = document.getElementById('sponsor-threshold');
+  const thresholdDisplay = document.getElementById('sponsor-threshold-display');
+  const alwaysShowCheck  = document.getElementById('sponsor-always-show');
+  const saveBtn          = document.getElementById('btn-save-sponsor-settings');
+  const savedLabel       = document.getElementById('sponsor-settings-saved');
+
+  if (!thresholdSlider) return;
+
+  // Populate from loaded strainDelta (may not be loaded yet — we re-read after initStrainManager)
+  function applySettings() {
+    const s = strainDelta.sponsorSettings || {};
+    thresholdSlider.value = s.threshold ?? 50;
+    thresholdDisplay.textContent = `${thresholdSlider.value}%`;
+    alwaysShowCheck.checked = s.alwaysShow ?? false;
+  }
+
+  // Wait for initStrainManager's getStrainDelta to resolve
+  setTimeout(applySettings, 500);
+
+  thresholdSlider.addEventListener('input', () => {
+    thresholdDisplay.textContent = `${thresholdSlider.value}%`;
+  });
+
+  saveBtn.addEventListener('click', async () => {
+    strainDelta.sponsorSettings = {
+      threshold: parseInt(thresholdSlider.value, 10),
+      alwaysShow: alwaysShowCheck.checked,
+    };
+    saveBtn.textContent = 'Saving...';
+    saveBtn.disabled = true;
+    try {
+      await saveStrainDelta(strainDelta);
+      savedLabel.style.display = 'inline';
+      setTimeout(() => { savedLabel.style.display = 'none'; }, 2500);
+    } catch (err) {
+      alert(`Failed to save: ${err.message}`);
+    } finally {
+      saveBtn.textContent = 'Save Sponsor Settings';
+      saveBtn.disabled = false;
+    }
+  });
 }
 
 async function loadAdsList() {
@@ -1169,6 +1232,139 @@ async function initPagesEditor() {
       btn.textContent = 'Save Lore';
       btn.disabled = false;
     }
+  });
+}
+
+// === PARTNER STRAINS ===
+async function initPartnerStrains() {
+  const allStrains = await import('./data/strains.json', { with: { type: 'json' } })
+    .then(m => m.default)
+    .catch(() => []);
+
+  // Populate strain select
+  const strainSel = document.getElementById('partner-strain-select');
+  const sorted = [...allStrains].sort((a, b) => a.name.localeCompare(b.name));
+  strainSel.innerHTML = '<option value="">— select a strain —</option>' +
+    sorted.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+
+  // Populate dispensary select
+  const dispSel = document.getElementById('partner-dispensary');
+  dispSel.innerHTML = '<option value="">— none —</option>' +
+    Object.entries(DISPENSARY_NAMES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+
+  function renderPartnerList(partners) {
+    const listEl = document.getElementById('partner-strains-list');
+    if (!partners.length) { listEl.innerHTML = '<p class="admin-hint">No partner strains yet.</p>'; return; }
+    listEl.innerHTML = partners.map((p, i) => {
+      const strain = allStrains.find(s => s.id === p.strainId);
+      const name = strain ? strain.name : p.strainId;
+      const disp = p.dispensaryId ? (DISPENSARY_NAMES[p.dispensaryId] || p.dispensaryId) : '—';
+      return `
+        <div class="partner-row ${p.active ? '' : 'partner-row--inactive'}">
+          <div class="partner-row__info">
+            <span class="partner-row__name">${name}</span>
+            <span class="partner-row__brand">${p.brandName || ''}</span>
+            <span class="partner-row__disp">${disp}</span>
+          </div>
+          <div class="partner-row__actions">
+            <button class="admin-btn admin-btn--small ${p.active ? 'admin-btn--active' : ''}" data-action="toggle" data-idx="${i}">${p.active ? '● On' : '○ Off'}</button>
+            <button class="admin-btn admin-btn--small" data-action="edit" data-idx="${i}">Edit</button>
+            <button class="admin-btn admin-btn--small admin-btn--danger" data-action="delete" data-idx="${i}">✕</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    listEl.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const idx = parseInt(btn.dataset.idx);
+        const action = btn.dataset.action;
+        const delta = strainDelta;
+        const partners = [...(delta.partnerStrains || [])];
+
+        if (action === 'toggle') {
+          partners[idx] = { ...partners[idx], active: !partners[idx].active };
+          delta.partnerStrains = partners;
+          await saveStrainDelta(delta);
+          strainDelta = delta;
+          renderPartnerList(partners);
+        } else if (action === 'delete') {
+          if (!confirm('Remove this partner strain?')) return;
+          partners.splice(idx, 1);
+          delta.partnerStrains = partners;
+          await saveStrainDelta(delta);
+          strainDelta = delta;
+          renderPartnerList(partners);
+        } else if (action === 'edit') {
+          const p = partners[idx];
+          document.getElementById('partner-edit-id').value = String(idx);
+          document.getElementById('partner-strain-select').value = p.strainId || '';
+          document.getElementById('partner-brand').value = p.brandName || '';
+          document.getElementById('partner-dispensary').value = p.dispensaryId || '';
+          document.getElementById('partner-url').value = p.clickUrl || '';
+          document.getElementById('partner-active').checked = !!p.active;
+          document.getElementById('partner-cancel-btn').style.display = '';
+          document.getElementById('partner-save-btn').textContent = 'Update Partner';
+        }
+      });
+    });
+  }
+
+  // Load existing
+  renderPartnerList(strainDelta.partnerStrains || []);
+
+  // Save / Update
+  document.getElementById('partner-save-btn').addEventListener('click', async () => {
+    const strainId    = document.getElementById('partner-strain-select').value;
+    const brandName   = document.getElementById('partner-brand').value.trim();
+    const dispensaryId = document.getElementById('partner-dispensary').value || null;
+    const clickUrl    = document.getElementById('partner-url').value.trim() || null;
+    const active      = document.getElementById('partner-active').checked;
+    const editIdx     = document.getElementById('partner-edit-id').value;
+
+    if (!strainId) { alert('Please select a strain.'); return; }
+
+    const entry = { strainId, brandName, dispensaryId, clickUrl, active };
+    const delta = strainDelta;
+    const partners = [...(delta.partnerStrains || [])];
+
+    if (editIdx !== '') {
+      partners[parseInt(editIdx)] = entry;
+    } else {
+      partners.push(entry);
+    }
+
+    delta.partnerStrains = partners;
+    const btn = document.getElementById('partner-save-btn');
+    btn.textContent = 'Saving…'; btn.disabled = true;
+    try {
+      await saveStrainDelta(delta);
+      strainDelta = delta;
+      renderPartnerList(partners);
+      // Reset form
+      document.getElementById('partner-edit-id').value = '';
+      document.getElementById('partner-strain-select').value = '';
+      document.getElementById('partner-brand').value = '';
+      document.getElementById('partner-dispensary').value = '';
+      document.getElementById('partner-url').value = '';
+      document.getElementById('partner-active').checked = true;
+      document.getElementById('partner-cancel-btn').style.display = 'none';
+      btn.textContent = 'Saved ✓';
+      setTimeout(() => { btn.textContent = 'Save Partner'; btn.disabled = false; }, 1500);
+    } catch (err) {
+      alert(`Failed to save: ${err.message}`);
+      btn.textContent = 'Save Partner'; btn.disabled = false;
+    }
+  });
+
+  document.getElementById('partner-cancel-btn').addEventListener('click', () => {
+    document.getElementById('partner-edit-id').value = '';
+    document.getElementById('partner-strain-select').value = '';
+    document.getElementById('partner-brand').value = '';
+    document.getElementById('partner-dispensary').value = '';
+    document.getElementById('partner-url').value = '';
+    document.getElementById('partner-active').checked = true;
+    document.getElementById('partner-cancel-btn').style.display = 'none';
+    document.getElementById('partner-save-btn').textContent = 'Save Partner';
   });
 }
 

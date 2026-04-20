@@ -6,7 +6,7 @@ import effectMap from '../data/effect-map.json';
  * No randomness, no LLM — pure weighted scoring.
  */
 
-const PERFECT_MATCH_THRESHOLD = 65;
+const PERFECT_MATCH_THRESHOLD = 80;
 
 /**
  * Build the desired effects profile from session answers

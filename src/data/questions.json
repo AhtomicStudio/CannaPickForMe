@@ -32,8 +32,7 @@
     "options": [
       { "value": "low", "label": "Low & Mellow", "emoji": "🍃" },
       { "value": "moderate", "label": "Moderate Cruise", "emoji": "✈️" },
-      { "value": "high", "label": "Sky High", "emoji": "🛸" },
-      { "value": "max", "label": "Send It", "emoji": "💥" }
+      { "value": "high", "label": "Sky High", "emoji": "🛸" }
     ]
   },
   {

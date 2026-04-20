@@ -8,7 +8,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const DELTA_REF = () => doc(db, 'strains', 'delta');
 
-const EMPTY_DELTA = { hidden: [], overrides: {}, additions: [] };
+const EMPTY_DELTA = { hidden: [], overrides: {}, additions: [], sponsored: [], sponsorSettings: { threshold: 50, alwaysShow: false }, partnerStrains: [] };
 
 /**
  * Fetch the strain delta from Firestore.
@@ -23,6 +23,11 @@ export async function getStrainDelta() {
       hidden:    Array.isArray(data.hidden)    ? data.hidden    : [],
       overrides: data.overrides !== null && typeof data.overrides === 'object' && !Array.isArray(data.overrides) ? data.overrides : {},
       additions: Array.isArray(data.additions) ? data.additions : [],
+      sponsored: Array.isArray(data.sponsored) ? data.sponsored : [],
+      sponsorSettings: data.sponsorSettings && typeof data.sponsorSettings === 'object'
+        ? { threshold: data.sponsorSettings.threshold ?? 50, alwaysShow: data.sponsorSettings.alwaysShow ?? false }
+        : { threshold: 50, alwaysShow: false },
+      partnerStrains: Array.isArray(data.partnerStrains) ? data.partnerStrains : [],
     };
   } catch (err) {
     console.warn('Failed to fetch strain delta:', err);
@@ -36,9 +41,12 @@ export async function getStrainDelta() {
 export async function saveStrainDelta(delta) {
   try {
     await setDoc(DELTA_REF(), {
-      hidden:    delta.hidden    ?? [],
-      overrides: delta.overrides ?? {},
-      additions: delta.additions ?? [],
+      hidden:          delta.hidden          ?? [],
+      overrides:       delta.overrides       ?? {},
+      additions:       delta.additions       ?? [],
+      sponsored:       delta.sponsored       ?? [],
+      sponsorSettings: delta.sponsorSettings ?? { threshold: 50, alwaysShow: false },
+      partnerStrains:  delta.partnerStrains  ?? [],
     });
   } catch (err) {
     console.error('Failed to save strain delta:', err);

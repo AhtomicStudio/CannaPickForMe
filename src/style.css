@@ -486,7 +486,7 @@ body {
 
 .home__footer {
   position: absolute;
-  bottom: var(--space-lg);
+  bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
   font-size: 0.75rem;
   color: var(--text-dim);
 }
@@ -1191,6 +1191,13 @@ body {
   transform: scale(0.98);
 }
 
+.session__option:focus,
+.session__option:focus-visible {
+  outline: none;
+  border-color: var(--border);
+  background: var(--bg-card);
+}
+
 .session__option-emoji {
   font-size: 1.4rem;
 }
@@ -1629,6 +1636,102 @@ body {
 }
 
 /* Sponsored Strain Card */
+/* Better Matches — organic card row enhancements */
+.better-match-card {
+  cursor: default;
+}
+.bm-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+.bm-score-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--green-primary);
+  background: rgba(34,197,94,0.10);
+  border-radius: 4px;
+  padding: 2px 7px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Partner Strain Card — slot 4 in Better Matches */
+.partner-strain-card {
+  display: block;
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  border: 2px solid #f59e0b;
+  background: linear-gradient(135deg, rgba(245,158,11,0.10) 0%, rgba(251,191,36,0.05) 100%);
+  box-shadow: 0 0 0 1px rgba(245,158,11,0.15), 0 4px 20px rgba(245,158,11,0.10);
+  overflow: hidden;
+  margin: 0.35rem 0;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+a.partner-strain-card:hover {
+  box-shadow: 0 0 0 1px rgba(245,158,11,0.35), 0 6px 28px rgba(245,158,11,0.22);
+  transform: translateY(-2px);
+}
+.partner-strain-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #92400e, #d97706, #92400e);
+  padding: 0.28rem 0.9rem;
+}
+.partner-strain-card__badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.partner-strain-card__brand {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.80);
+  letter-spacing: 0.04em;
+}
+.partner-strain-card__body {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 0.75rem var(--space-lg);
+}
+.partner-strain-card__info {
+  flex: 1;
+  min-width: 0;
+}
+.partner-strain-card__name {
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.partner-strain-card__meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.partner-strain-card__disp {
+  font-size: 0.72rem;
+  color: #f59e0b;
+  margin-top: 3px;
+  font-weight: 600;
+}
+.partner-strain-card__cta {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #f59e0b;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─── existing sponsored card ─────────────────────── */
 .sponsored-strain-card {
   position: relative;
   margin-top: var(--space-lg);
@@ -2957,20 +3060,168 @@ body {
    THEME BACKGROUND COLORS — base color + haze tints per theme
    ============================================================ */
 
-/* Love — Hello Kitty bright pink */
+/* Love — ombre black-to-pink with heart pinprick sky */
 [data-theme="love"] {
-  --bg-deep: #d81b6a;
-  --haze-1: rgba(255,105,180,0.40);
-  --haze-2: rgba(255,182,193,0.28);
-  --haze-3: rgba(255,20,147,0.22);
+  --bg-deep: #08000e;
+  --haze-1: rgba(236,64,122,0.18);
+  --haze-2: rgba(216,27,96,0.12);
+  --haze-3: rgba(255,128,171,0.10);
 }
 
 [data-theme="love"] body {
   background: linear-gradient(180deg,
-    #ff69b4 0%,
-    #e91e8c 50%,
+    #08000e 0%,
+    #120018 18%,
+    #1e0028 38%,
+    #380030 58%,
+    #6a0042 78%,
     #c2185b 100%
   );
+}
+
+/* Heart pinpricks — static pink stars in the upper sky */
+[data-theme="love"] #app-bg::before {
+  content: '';
+  position: absolute;
+  width: 2px; height: 2px;
+  top: 0; left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow:
+    28px  22px 0 1px rgba(255,128,171,0.90),
+    91px  48px 0 0px rgba(236,64,122,0.75),
+    163px  9px 0 1px rgba(255,182,193,0.85),
+    247px 64px 0 0px rgba(255,128,171,0.65),
+    318px 31px 0 1px rgba(236,64,122,0.80),
+    402px 87px 0 0px rgba(255,182,193,0.70),
+    471px 14px 0 1px rgba(255,128,171,0.90),
+    539px 55px 0 0px rgba(236,64,122,0.60),
+    614px 28px 0 1px rgba(255,182,193,0.80),
+    692px 72px 0 0px rgba(255,128,171,0.70),
+    758px 19px 0 1px rgba(236,64,122,0.85),
+    839px 43px 0 0px rgba(255,182,193,0.65),
+    917px 11px 0 1px rgba(255,128,171,0.90),
+   1012px 67px 0 0px rgba(236,64,122,0.70),
+   1094px 38px 0 1px rgba(255,182,193,0.80),
+   1178px 82px 0 0px rgba(255,128,171,0.55),
+   1251px 16px 0 1px rgba(236,64,122,0.85),
+   1334px 53px 0 0px rgba(255,182,193,0.70),
+    74px 138px 0 0px rgba(255,128,171,0.55),
+   187px 162px 0 1px rgba(236,64,122,0.65),
+   293px 145px 0 0px rgba(255,182,193,0.50),
+   412px 178px 0 1px rgba(255,128,171,0.60),
+   534px 121px 0 0px rgba(236,64,122,0.55),
+   656px 165px 0 1px rgba(255,182,193,0.65),
+   778px 138px 0 0px rgba(255,128,171,0.45),
+   889px 152px 0 1px rgba(236,64,122,0.60),
+   1001px 127px 0 0px rgba(255,182,193,0.50),
+   1123px 169px 0 1px rgba(255,128,171,0.65),
+   1245px 143px 0 0px rgba(236,64,122,0.55),
+    45px 238px 0 1px rgba(255,128,171,0.40),
+   178px 265px 0 0px rgba(236,64,122,0.45),
+   334px 248px 0 1px rgba(255,182,193,0.35),
+   490px 278px 0 0px rgba(255,128,171,0.40),
+   623px 255px 0 1px rgba(236,64,122,0.50),
+   756px 242px 0 0px rgba(255,182,193,0.38),
+   889px 271px 0 1px rgba(255,128,171,0.42),
+  1034px 259px 0 0px rgba(236,64,122,0.40),
+  1167px 246px 0 1px rgba(255,182,193,0.45);
+  animation: love-hearts-glow 5s ease-in-out infinite alternate;
+}
+
+@keyframes love-hearts-glow {
+  from { opacity: 0.60; }
+  to   { opacity: 1; }
+}
+
+/* 4/20 — loud festival green & gold */
+[data-theme="420"] {
+  --bg-deep: #020e00;
+  --haze-1: rgba(0,230,64,0.20);
+  --haze-2: rgba(255,214,0,0.14);
+  --haze-3: rgba(100,255,80,0.10);
+}
+
+[data-theme="420"] body {
+  background: linear-gradient(180deg,
+    #020e00 0%,
+    #051a02 20%,
+    #082800 40%,
+    #0d3800 60%,
+    #164a04 80%,
+    #1f5c06 100%
+  );
+}
+
+/* Gold + green spark burst — confetti-style pinpricks */
+[data-theme="420"] #app-bg::before {
+  content: '';
+  position: absolute;
+  width: 2px; height: 2px;
+  top: 0; left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow:
+    /* gold sparks */
+    35px  18px 0 1px rgba(255,214,0,0.95),
+    112px 62px 0 2px rgba(255,193,7,0.80),
+    198px  7px 0 1px rgba(255,235,59,0.90),
+    289px 88px 0 2px rgba(255,214,0,0.75),
+    374px 34px 0 1px rgba(255,193,7,0.85),
+    467px 71px 0 2px rgba(255,235,59,0.70),
+    556px 12px 0 1px rgba(255,214,0,0.90),
+    648px 55px 0 2px rgba(255,193,7,0.80),
+    741px 28px 0 1px rgba(255,235,59,0.85),
+    834px 78px 0 2px rgba(255,214,0,0.65),
+    928px 19px 0 1px rgba(255,193,7,0.90),
+   1023px 64px 0 2px rgba(255,235,59,0.75),
+   1118px 41px 0 1px rgba(255,214,0,0.85),
+   1213px 82px 0 2px rgba(255,193,7,0.70),
+    /* bright green sparks */
+    68px  44px 0 1px rgba(0,230,64,0.90),
+   156px  91px 0 2px rgba(64,255,80,0.75),
+   245px  25px 0 1px rgba(0,200,83,0.85),
+   338px  67px 0 2px rgba(100,255,100,0.70),
+   429px  48px 0 1px rgba(0,230,64,0.80),
+   524px  93px 0 2px rgba(64,255,80,0.65),
+   612px  37px 0 1px rgba(0,200,83,0.90),
+   706px  76px 0 2px rgba(100,255,100,0.75),
+   798px  14px 0 1px rgba(0,230,64,0.85),
+   893px  58px 0 2px rgba(64,255,80,0.70),
+   987px  33px 0 1px rgba(0,200,83,0.80),
+  1082px  85px 0 2px rgba(100,255,100,0.65),
+  1176px  22px 0 1px rgba(0,230,64,0.90),
+  1271px  69px 0 2px rgba(64,255,80,0.75),
+    /* mid-level gold */
+    82px 155px 0 1px rgba(255,214,0,0.60),
+   213px 178px 0 2px rgba(255,193,7,0.50),
+   356px 142px 0 1px rgba(255,235,59,0.65),
+   498px 185px 0 2px rgba(255,214,0,0.55),
+   634px 161px 0 1px rgba(255,193,7,0.60),
+   767px 148px 0 2px rgba(255,235,59,0.50),
+   901px 172px 0 1px rgba(255,214,0,0.65),
+  1045px 155px 0 2px rgba(255,193,7,0.55),
+  1189px 181px 0 1px rgba(255,235,59,0.60),
+    /* mid-level green */
+   145px 168px 0 1px rgba(0,230,64,0.55),
+   289px 192px 0 2px rgba(64,255,80,0.45),
+   423px 156px 0 1px rgba(0,200,83,0.60),
+   567px 175px 0 2px rgba(100,255,100,0.50),
+   712px 163px 0 1px rgba(0,230,64,0.55),
+   856px 188px 0 2px rgba(64,255,80,0.45),
+  1001px 167px 0 1px rgba(0,200,83,0.60),
+  1145px 178px 0 2px rgba(100,255,100,0.50);
+  animation: sparks-pop 3s ease-in-out infinite alternate;
+}
+
+@keyframes sparks-pop {
+  from { opacity: 0.55; }
+  to   { opacity: 1; }
+}
+
+[data-theme="420"] .app-bg__leaf {
+  animation-duration: calc(var(--dur, 14s) * 0.75) !important;
+  --op: 0.45;
 }
 
 /* Fall — dark warm amber */
@@ -3307,3 +3558,56 @@ html.light-mode .app-bg__haze {
 
 /* Account error message */
 .account-error { color: var(--danger); font-size: 0.875rem; margin-top: 0.25rem; }
+
+/* Magic link email form */
+.account-email-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 0.25rem;
+}
+
+.account-email-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.account-email-input:focus { border-color: var(--green-primary); }
+.account-email-input::placeholder { color: var(--text-dim); }
+
+.account-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+.account-divider::before,
+.account-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Link sent confirmation */
+.account-linksent-icon {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+.account-linksent-hint {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 0.75rem;
+  line-height: 1.5;
+}

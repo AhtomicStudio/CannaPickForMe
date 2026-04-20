@@ -214,6 +214,53 @@
         </div>
       </section>
 
+      <!-- Partner Strains -->
+      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="partner-strains-section">
+        <button type="button" class="admin-section__toggle" aria-expanded="false">
+          <h2>✦ Partner Strains</h2>
+          <span class="admin-section__chevron">▾</span>
+        </button>
+        <div class="admin-section__body">
+          <p class="admin-hint">Partner strains appear as the 4th slot in Better Matches with a gold border. Only one active partner shows at a time.</p>
+
+          <!-- Create / Edit Form -->
+          <div class="partner-form" id="partner-form">
+            <input type="hidden" id="partner-edit-id" value="" />
+            <div class="admin-field-row">
+              <label class="admin-label">Strain</label>
+              <select id="partner-strain-select" class="admin-input">
+                <option value="">— select a strain —</option>
+              </select>
+            </div>
+            <div class="admin-field-row">
+              <label class="admin-label">Brand Name</label>
+              <input type="text" id="partner-brand" class="admin-input" placeholder="e.g. Cookies SF" />
+            </div>
+            <div class="admin-field-row">
+              <label class="admin-label">Dispensary Badge <span class="admin-optional">(optional)</span></label>
+              <select id="partner-dispensary" class="admin-input">
+                <option value="">— none —</option>
+              </select>
+            </div>
+            <div class="admin-field-row">
+              <label class="admin-label">Click-through URL <span class="admin-optional">(optional)</span></label>
+              <input type="url" id="partner-url" class="admin-input" placeholder="https://dispensary.com/menu" />
+            </div>
+            <div class="admin-field-row admin-field-row--inline">
+              <label class="admin-label">Active</label>
+              <input type="checkbox" id="partner-active" checked />
+            </div>
+            <div class="admin-actions-row">
+              <button type="button" id="partner-save-btn" class="admin-btn admin-btn--primary">Save Partner</button>
+              <button type="button" id="partner-cancel-btn" class="admin-btn" style="display:none;">Cancel</button>
+            </div>
+          </div>
+
+          <!-- List -->
+          <div id="partner-strains-list" class="partner-strains-list" style="margin-top: 1.25rem;"></div>
+        </div>
+      </section>
+
       <!-- Menu Sync -->
       <section class="admin-section admin-section--collapsible admin-section--collapsed" id="menu-sync-section">
         <button type="button" class="admin-section__toggle" aria-expanded="false">
@@ -349,6 +396,33 @@
             </div>
             <div id="strains-admin-list" class="admin-strains-list"></div>
           </div>
+        </div>
+      </section>
+
+      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="sponsor-settings-section">
+        <button type="button" class="admin-section__toggle" aria-expanded="false">
+          <h2>⭐ Sponsor Settings</h2>
+          <span class="admin-section__chevron">▾</span>
+        </button>
+        <div class="admin-section__body">
+          <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;">
+            Sponsored strains appear below the main recommendation with a gold ribbon. Mark strains as sponsored in the Manage Strains list above.
+          </p>
+          <div class="admin-form-group" style="margin-bottom:1rem;">
+            <label class="admin-label" for="sponsor-threshold">
+              Minimum match % to show sponsored strain
+              <strong id="sponsor-threshold-display" style="color:var(--green-glow);margin-left:0.5rem;">50%</strong>
+            </label>
+            <input type="range" id="sponsor-threshold" min="0" max="100" step="5" value="50" style="width:100%;margin-top:0.5rem;" />
+          </div>
+          <div style="margin-bottom:1.5rem;">
+            <label class="admin-checkbox-label" style="font-size:0.9rem;">
+              <input type="checkbox" id="sponsor-always-show" />
+              Always show sponsored strain regardless of match score
+            </label>
+          </div>
+          <button class="admin-btn admin-btn--primary" id="btn-save-sponsor-settings">Save Sponsor Settings</button>
+          <span id="sponsor-settings-saved" style="display:none;margin-left:1rem;color:var(--green-glow);font-size:0.85rem;">Saved ✓</span>
         </div>
       </section>
     </div>

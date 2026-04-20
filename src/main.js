@@ -17,8 +17,10 @@ import {
 import {
   getCurrentUser, signInWithGoogle,
   scheduleSync, loadAndResolveProfile, signOutUser, deleteAccount, initAuth,
+  sendSignInLink, handleSignInLink, completeSignInWithEmail, NEEDS_EMAIL_CONFIRMATION,
 } from './services/userService.js';
 import { loadSavedTheme } from './services/themeService.js';
+import { shareResult } from './shareCard.js';
 import { initProfile, setProfileBackHandler, renderProfileScreen } from './profile.js';
 
 // === CONSTANTS ===
@@ -139,6 +141,7 @@ function buildExpandBody(strain) {
 let currentScreen = 'age-gate';
 let sessionAnswers = {};
 let currentQuestionIndex = 0;
+let lastShareData = null; // set after each result render
 let currentSearchQuery = '';
 let currentFilter = 'all';
 let currentEffectFilters = new Set();
@@ -799,6 +802,7 @@ function renderQuestion() {
       opt.classList.add('session__option--selected');
 
       setTimeout(() => {
+        document.activeElement?.blur();
         currentQuestionIndex++;
         if (currentQuestionIndex >= questionsData.length) {
           startResult();
@@ -969,7 +973,7 @@ function renderResult(result) {
       
       if (globalResult && globalResult.allScores) {
         // Find strains that have a strictly higher score than the current best stash match
-        topGlobalStrains = globalResult.allScores.filter(s => s.score > matchScore).slice(0, 3);
+        topGlobalStrains = globalResult.allScores.filter(s => s.score > matchScore).slice(0, 5);
         
         if (topGlobalStrains.length > 0) {
           betterMatchContainer.classList.remove('hidden');
@@ -985,6 +989,14 @@ function renderResult(result) {
   }
 
   renderSponsoredStrain(result.allScores);
+
+  lastShareData = {
+    strainName: pickedStrain.name,
+    strainType: pickedStrain.type,
+    strainId:   pickedStrain.id,
+    matchScore,
+    sessionAnswers: { ...sessionAnswers },
+  };
 }
 
 function showBetterMatchesModal(matchesData) {
@@ -992,39 +1004,67 @@ function showBetterMatchesModal(matchesData) {
   const list = document.getElementById('better-match-list');
   const allStrains = getAllStrains();
 
-  list.innerHTML = matchesData.map(match => {
+  // Find the active partner strain
+  const partnerStrains = (strainDelta.partnerStrains || []).filter(p => p.active);
+  const partner = partnerStrains[0] || null;
+  const partnerStrain = partner ? allStrains.find(s => s.id === partner.strainId) : null;
+
+  // Build organic cards (slots 1-3 and 5-6 around the partner)
+  const organicCards = matchesData.map((match, i) => {
     const strain = allStrains.find(s => s.id === match.strainId);
     if (!strain) return '';
     const effects = (strain.effectOverrides || strain.effects || []).slice(0, 3).join(', ');
     const type = strain.type.charAt(0).toUpperCase() + strain.type.slice(1);
-    
-    return `
-      <div class="strain-card">
+    return { index: i, html: `
+      <div class="strain-card better-match-card">
         <div class="strain-card__type-dot" data-type="${strain.type}"></div>
         <div class="strain-card__info">
-          <div class="strain-card__name" style="display: flex; justify-content: space-between; align-items: center;">
-            ${strain.name}
-            <span style="font-size: 0.8rem; color: #4ade80; padding: 2px 6px; background: rgba(74, 222, 128, 0.1); border-radius: 4px;">
-              ${match.score}% match
-            </span>
+          <div class="strain-card__name bm-name-row">
+            <span>${strain.name}</span>
+            <span class="bm-score-badge">${match.score}% match</span>
           </div>
           <div class="strain-card__meta">${type} · ${effects}</div>
         </div>
-      </div>
-    `;
-  }).join('');
+      </div>` };
+  });
+
+  // Partner card HTML
+  const partnerCardHtml = partnerStrain ? (() => {
+    const type = partnerStrain.type.charAt(0).toUpperCase() + partnerStrain.type.slice(1);
+    const effects = (partnerStrain.effectOverrides || partnerStrain.effects || []).slice(0, 3).join(', ');
+    const dispName = partner.dispensaryId ? (DISPENSARY_NAMES[partner.dispensaryId] || partner.dispensaryId) : null;
+    const clickAttr = partner.clickUrl ? `href="${partner.clickUrl}" target="_blank" rel="noopener"` : '';
+    const tag = partner.clickUrl ? 'a' : 'div';
+    return `
+      <${tag} ${clickAttr} class="partner-strain-card">
+        <div class="partner-strain-card__header">
+          <span class="partner-strain-card__badge">✦ Partnered Strain</span>
+          <span class="partner-strain-card__brand">${partner.brandName || ''}</span>
+        </div>
+        <div class="partner-strain-card__body">
+          <div class="strain-card__type-dot" data-type="${partnerStrain.type}"></div>
+          <div class="partner-strain-card__info">
+            <div class="partner-strain-card__name">${partnerStrain.name}</div>
+            <div class="partner-strain-card__meta">${type} · ${effects}</div>
+            ${dispName ? `<div class="partner-strain-card__disp">📍 ${dispName}</div>` : ''}
+          </div>
+          ${partner.clickUrl ? '<span class="partner-strain-card__cta">View →</span>' : ''}
+        </div>
+      </${tag}>`;
+  })() : '';
+
+  // Interleave: slots 1-3 organic, slot 4 partner, slots 5-6 organic
+  const before = organicCards.slice(0, 3).map(c => c.html).join('');
+  const after  = organicCards.slice(3).map(c => c.html).join('');
+  list.innerHTML = before + partnerCardHtml + after;
 
   modal.classList.remove('hidden');
 
   const closeBtn = document.getElementById('better-match-close');
-  if (closeBtn) {
-    closeBtn.onclick = () => modal.classList.add('hidden');
-  }
-  
+  if (closeBtn) closeBtn.onclick = () => modal.classList.add('hidden');
+
   const backdrop = modal.querySelector('.modal__backdrop');
-  if (backdrop) {
-    backdrop.onclick = () => modal.classList.add('hidden');
-  }
+  if (backdrop) backdrop.onclick = () => modal.classList.add('hidden');
 }
 
 
@@ -1035,28 +1075,25 @@ function initResult() {
   });
 
   document.getElementById('btn-share').addEventListener('click', async () => {
-    const strain = document.getElementById('result-strain-name').textContent;
-    const score = document.getElementById('result-match-score').textContent;
-    const text = `🌿 CannaPickForMe chose "${strain}" for me! ${score} — Let the universe decide what you smoke! 🔥`;
-
-    if (navigator.share) {
+    if (!lastShareData) return;
+    const btn = document.getElementById('btn-share');
+    const original = btn.innerHTML;
+    btn.innerHTML = '⏳ Creating card...';
+    btn.disabled = true;
+    try {
+      await shareResult(lastShareData);
+    } catch {
+      // fallback: plain text share
       try {
-        await navigator.share({ title: 'CannaPickForMe', text });
-      } catch {
-        // User cancelled or error
-      }
-    } else {
-      // Fallback: copy to clipboard
-      try {
+        const text = `🌿 CannaPickForMe picked ${lastShareData.strainName} for me! ${lastShareData.matchScore}% match — cannapickforme.com`;
         await navigator.clipboard.writeText(text);
-        const btn = document.getElementById('btn-share');
-        const original = btn.innerHTML;
         btn.innerHTML = '✓ Copied!';
-        setTimeout(() => btn.innerHTML = original, 2000);
-      } catch {
-        // Silent fail
-      }
+        setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
+        return;
+      } catch { /* silent */ }
     }
+    btn.innerHTML = original;
+    btn.disabled = false;
   });
 }
 
@@ -1113,8 +1150,9 @@ async function loadAds() {
 // === ACCOUNT MODAL ===
 
 function setAccountState(state) {
-  document.getElementById('account-state-signedout').classList.toggle('hidden', state !== 'signedout');
-  document.getElementById('account-state-signedin').classList.toggle('hidden', state !== 'signedin');
+  ['signedout', 'signedin', 'linksent', 'confirmemail'].forEach(s =>
+    document.getElementById(`account-state-${s}`)?.classList.toggle('hidden', s !== state)
+  );
 }
 
 function showConflictModal(localTs, cloudTs) {
@@ -1180,6 +1218,51 @@ function initAccountModal() {
       }
       btn.disabled = false;
       btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 6.294C4.672 4.167 6.656 3.58 9 3.58z" fill="#EA4335"/></svg> Continue with Google`;
+    }
+  });
+
+  // Magic link — send
+  document.getElementById('account-email-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('account-email-input').value.trim();
+    const errEl = document.getElementById('account-email-error');
+    const btn   = document.getElementById('account-email-btn');
+    if (!email) return;
+    errEl.classList.add('hidden');
+    btn.disabled = true; btn.textContent = 'Sending…';
+    try {
+      await sendSignInLink(email);
+      document.getElementById('account-linksent-email').textContent = email;
+      setAccountState('linksent');
+    } catch (err) {
+      errEl.textContent = 'Could not send link. Check the email and try again.';
+      errEl.classList.remove('hidden');
+      console.error('sendSignInLink error:', err);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Send Magic Link';
+    }
+  });
+
+  // Magic link — back to email form
+  document.getElementById('account-linksent-back').addEventListener('click', () => {
+    document.getElementById('account-email-input').value = '';
+    setAccountState('signedout');
+  });
+
+  // Magic link — cross-device email confirm
+  document.getElementById('account-confirm-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('account-confirm-input').value.trim();
+    const errEl = document.getElementById('account-confirm-error');
+    if (!email) return;
+    errEl.classList.add('hidden');
+    try {
+      await completeSignInWithEmail(email);
+      modal.classList.add('hidden');
+    } catch (err) {
+      errEl.textContent = 'Sign-in failed. Make sure this is the same email you used.';
+      errEl.classList.remove('hidden');
+      console.error('completeSignInWithEmail error:', err);
     }
   });
 
@@ -1283,7 +1366,7 @@ function updateProfileAvatar(user) {
 }
 
 // === BOOT ===
-function init() {
+async function init() {
   loadSavedTheme();
   inject();
   initAgeGate();
@@ -1298,6 +1381,20 @@ function init() {
   initProfile({ getAllStrains, getStash: getStashStrains });
   setProfileBackHandler(() => showScreen('home'));
   initAccountModal();
+
+  // Handle magic link return — must run after initAccountModal sets up the modal
+  try {
+    const result = await handleSignInLink();
+    if (result === NEEDS_EMAIL_CONFIRMATION) {
+      // Opened on a different device — ask for email to complete sign-in
+      const modal = document.getElementById('account-modal');
+      modal.classList.remove('hidden');
+      setAccountState('confirmemail');
+    }
+    // true = signed in successfully, false = no link in URL — both silent
+  } catch (err) {
+    console.warn('handleSignInLink error:', err);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);

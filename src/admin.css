@@ -1167,3 +1167,116 @@ body {
 .info-add-form input::placeholder {
   color: var(--text-dim);
 }
+
+/* ── Partner Strains ──────────────────────────────── */
+.admin-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.partner-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.admin-field-row--inline {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.admin-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.admin-optional {
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+.admin-input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.admin-input:focus { border-color: var(--border-focus); }
+
+select.admin-input { cursor: pointer; }
+select.admin-input option { background: var(--bg-card); color: var(--text-primary); }
+
+.admin-actions-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+/* Partner list rows */
+.partner-strains-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.partner-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  background: rgba(245,158,11,0.06);
+  border: 1px solid rgba(245,158,11,0.25);
+  border-radius: var(--radius-sm);
+  transition: opacity 0.2s;
+}
+
+.partner-row--inactive {
+  opacity: 0.5;
+}
+
+.partner-row__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.partner-row__name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.partner-row__brand {
+  font-size: 0.75rem;
+  color: #f59e0b;
+}
+
+.partner-row__disp {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.partner-row__actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
