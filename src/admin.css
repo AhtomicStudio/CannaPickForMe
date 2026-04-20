@@ -42,11 +42,23 @@
   padding: 0;
 }
 
+html {
+  height: auto;
+  overflow-y: auto;
+}
+
 body {
   font-family: var(--font-body);
   background: var(--bg-deep);
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  height: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-dashboard {
   min-height: 100vh;
 }
 

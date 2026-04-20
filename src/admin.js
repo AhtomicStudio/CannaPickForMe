@@ -617,8 +617,10 @@ function initDragPreview() {
 
   previewWrap.addEventListener('touchstart', (e) => {
     startDrag(e.touches[0].clientX, e.touches[0].clientY);
-    e.preventDefault();
-    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    if (dragging) {
+      e.preventDefault();
+      document.addEventListener('touchmove', onTouchMove, { passive: false });
+    }
   }, { passive: false });
 
   document.addEventListener('touchend', () => {
