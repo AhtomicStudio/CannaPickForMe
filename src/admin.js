@@ -657,13 +657,7 @@ async function init() {
   initCollapsibleSections();
   initDragPreview();
 
-  // Check existing session
-  if (isAuthenticated()) {
-    await ensureFirebaseAuth();
-    showDashboard();
-  }
-
-  // Login form
+  // Login form — register before any awaits so it's always wired
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const pw = document.getElementById('admin-password').value;
@@ -671,13 +665,23 @@ async function init() {
 
     if (valid) {
       setAuthenticated();
-      await ensureFirebaseAuth();
+      try { await ensureFirebaseAuth(); } catch (err) {
+        console.error('Firebase auth failed:', err);
+        alert('Authentication error. Please refresh and try again.');
+        return;
+      }
       showDashboard();
     } else {
       document.getElementById('login-error').classList.remove('hidden');
       document.getElementById('admin-password').value = '';
     }
   });
+
+  // Check existing session
+  if (isAuthenticated()) {
+    try { await ensureFirebaseAuth(); } catch (err) { console.warn('Session auth failed:', err); }
+    showDashboard();
+  }
 
   // Logout
   document.getElementById('btn-logout').addEventListener('click', logout);
