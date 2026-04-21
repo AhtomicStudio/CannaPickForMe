@@ -1052,9 +1052,9 @@ function showBetterMatchesModal(matchesData) {
       </${tag}>`;
   })() : '';
 
-  // Partner always first, then organic matches
+  // Organic matches first, partner pinned at bottom
   const organic = organicCards.map(c => c.html).join('');
-  list.innerHTML = partnerCardHtml + organic;
+  list.innerHTML = organic + partnerCardHtml;
 
   modal.classList.remove('hidden');
 
