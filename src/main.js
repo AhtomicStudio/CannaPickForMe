@@ -1052,9 +1052,10 @@ function showBetterMatchesModal(matchesData) {
       </${tag}>`;
   })() : '';
 
-  // Organic matches first, partner pinned at bottom
-  const organic = organicCards.map(c => c.html).join('');
-  list.innerHTML = organic + partnerCardHtml;
+  // Partner replaces slot 4 (index 3); if fewer than 4 organic, appends after
+  const slots = organicCards.map(c => c.html);
+  if (partnerCardHtml) slots.splice(3, 0, partnerCardHtml);
+  list.innerHTML = slots.join('');
 
   modal.classList.remove('hidden');
 
