@@ -1052,10 +1052,9 @@ function showBetterMatchesModal(matchesData) {
       </${tag}>`;
   })() : '';
 
-  // Interleave: slots 1-3 organic, slot 4 partner, slots 5-6 organic
-  const before = organicCards.slice(0, 3).map(c => c.html).join('');
-  const after  = organicCards.slice(3).map(c => c.html).join('');
-  list.innerHTML = before + partnerCardHtml + after;
+  // Partner always first, then organic matches
+  const organic = organicCards.map(c => c.html).join('');
+  list.innerHTML = partnerCardHtml + organic;
 
   modal.classList.remove('hidden');
 
