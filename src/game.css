@@ -1,0 +1,850 @@
+/* ============================================================
+   CannaGotchi — Retro Pixel-Art Game Styles
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ── Shared retro tokens ── */
+.game-view,
+.game-onboarding {
+  --game-font: 'Press Start 2P', monospace;
+  --game-bg: #0c0c1d;
+  --game-card-bg: rgba(255,255,255,0.04);
+  --game-border: rgba(255,255,255,0.10);
+  font-family: var(--game-font);
+  color: #e2e8f0;
+  padding: 1rem;
+  min-height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── Pixel sprite rendering ── */
+.pixel-sprite-wrap {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  position: relative;
+}
+
+.pixel-sprite {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 0;
+}
+
+/* ── Retro title ── */
+.game-retro-title {
+  font-family: var(--game-font);
+  font-size: 1rem;
+  text-align: center;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  color: #f5f5f5;
+  text-shadow: 0 0 10px rgba(74,222,128,0.4);
+}
+
+.game-subtitle {
+  font-family: var(--game-font);
+  font-size: 0.55rem;
+  text-align: center;
+  color: #94a3b8;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+/* ── Seed selection cards ── */
+.game-seed-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.game-seed-card {
+  background: var(--game-card-bg);
+  border: 2px solid var(--game-border);
+  border-radius: 0;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--game-font);
+  color: #e2e8f0;
+}
+
+.game-seed-card:hover {
+  border-color: rgba(255,255,255,0.25);
+  transform: translateY(-2px);
+}
+
+.game-seed-card--selected {
+  border-color: #4ade80;
+  box-shadow: 0 0 20px rgba(74,222,128,0.3), inset 0 0 20px rgba(74,222,128,0.05);
+}
+
+.game-seed-card__sprite {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-seed-card__name {
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.game-seed-card__desc {
+  font-size: 0.45rem;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.game-seed-card__stats {
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.4rem;
+  color: #64748b;
+}
+
+/* ── Name input ── */
+.game-name-section {
+  text-align: center;
+}
+
+.game-label {
+  font-family: var(--game-font);
+  font-size: 0.55rem;
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #94a3b8;
+}
+
+.game-input {
+  font-family: var(--game-font);
+  font-size: 0.7rem;
+  background: rgba(255,255,255,0.06);
+  border: 2px solid var(--game-border);
+  border-radius: 0;
+  color: #f5f5f5;
+  padding: 0.7rem 1rem;
+  width: 100%;
+  max-width: 260px;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.game-input:focus {
+  border-color: #4ade80;
+}
+
+.game-confirm-btn {
+  font-family: var(--game-font) !important;
+  font-size: 0.6rem !important;
+  margin-top: 1rem;
+  border-radius: 0 !important;
+  letter-spacing: 1px;
+}
+
+/* ── Game header ── */
+.game-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--game-border);
+}
+
+.game-back-btn {
+  font-size: 1.2rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.game-header__info {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.game-header__name {
+  font-family: var(--game-font);
+  font-size: 0.65rem;
+  font-weight: bold;
+}
+
+.game-header__level {
+  font-family: var(--game-font);
+  font-size: 0.55rem;
+  font-weight: bold;
+}
+
+.game-header__evo {
+  font-family: var(--game-font);
+  font-size: 0.4rem;
+  color: #64748b;
+}
+
+/* ── Monster viewport ── */
+.game-viewport {
+  position: relative;
+  background: linear-gradient(180deg, #0c0c1d 0%, #1a1a3e 100%);
+  border: 2px solid var(--game-border);
+  border-radius: 0;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.game-viewport__scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.game-monster {
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Evolution-Specific Idle Animations ── */
+
+/* SEED — tiny subtle tremble, like something's about to sprout */
+.game-anim--seed {
+  animation: idle-seed 2.5s ease-in-out infinite;
+}
+@keyframes idle-seed {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  20% { transform: translateY(-1px) rotate(0.5deg); }
+  40% { transform: translateY(0) rotate(-0.5deg); }
+  60% { transform: translateY(-1px) rotate(0.3deg); }
+  80% { transform: translateY(1px) rotate(-0.3deg); }
+}
+
+/* SPROUT — curious peek side to side, then a little hop */
+.game-anim--sprout {
+  animation: idle-sprout 3.5s ease-in-out infinite;
+}
+@keyframes idle-sprout {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  15% { transform: translateX(-5px) translateY(-1px) rotate(-4deg); }
+  30% { transform: translateX(0) translateY(0) rotate(0deg); }
+  45% { transform: translateX(5px) translateY(-1px) rotate(4deg); }
+  60% { transform: translateX(0) translateY(0) rotate(0deg); }
+  75% { transform: translateX(0) translateY(-8px) scale(1.05); }
+  85% { transform: translateX(0) translateY(0) scale(0.97); }
+  92% { transform: translateX(0) translateY(-2px) scale(1.01); }
+}
+
+/* SAPLING — gentle wind sway with leaf rustle */
+.game-anim--sapling {
+  animation: idle-sapling 4s ease-in-out infinite;
+}
+@keyframes idle-sapling {
+  0%, 100% { transform: rotate(0deg) translateY(0) scaleX(1); }
+  15% { transform: rotate(-3deg) translateY(-2px) scaleX(0.98); }
+  30% { transform: rotate(2deg) translateY(-1px) scaleX(1.02); }
+  50% { transform: rotate(-2deg) translateY(-3px) scaleX(0.99); }
+  65% { transform: rotate(3deg) translateY(-1px) scaleX(1.01); }
+  80% { transform: rotate(-1deg) translateY(-2px) scaleX(1); }
+}
+
+/* BLOOM — proud bounce with energy pulse */
+.game-anim--bloom {
+  animation: idle-bloom 3s ease-in-out infinite;
+}
+@keyframes idle-bloom {
+  0%, 100% { transform: translateY(0) scale(1); filter: brightness(1); }
+  25% { transform: translateY(-6px) scale(1.04); filter: brightness(1.1); }
+  50% { transform: translateY(-2px) scale(1.02); filter: brightness(1); }
+  60% { transform: translateY(-8px) scale(1.06); filter: brightness(1.15); }
+  80% { transform: translateY(-1px) scale(0.98); filter: brightness(1); }
+}
+
+/* ANCIENT — majestic slow float with rotation and glow */
+.game-anim--ancient {
+  animation: idle-ancient 5s ease-in-out infinite;
+}
+@keyframes idle-ancient {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); filter: brightness(1) drop-shadow(0 0 0px transparent); }
+  20% { transform: translateY(-6px) rotate(-2deg) scale(1.03); filter: brightness(1.05) drop-shadow(0 0 4px rgba(74,222,128,0.3)); }
+  40% { transform: translateY(-10px) rotate(1deg) scale(1.05); filter: brightness(1.1) drop-shadow(0 0 8px rgba(74,222,128,0.5)); }
+  60% { transform: translateY(-8px) rotate(-1deg) scale(1.04); filter: brightness(1.08) drop-shadow(0 0 6px rgba(74,222,128,0.4)); }
+  80% { transform: translateY(-3px) rotate(1.5deg) scale(1.01); filter: brightness(1.02) drop-shadow(0 0 2px rgba(74,222,128,0.2)); }
+}
+
+/* ── Feed Reaction Animations (cycle through 3) ── */
+
+/* 1. Munch — quick vertical chomps */
+.game-anim--munch {
+  animation: game-react-munch 0.8s ease-in-out;
+}
+@keyframes game-react-munch {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  20% { transform: translateY(2px) scaleY(0.9); }
+  40% { transform: translateY(-4px) scaleY(1.05); }
+  60% { transform: translateY(2px) scaleY(0.92); }
+  80% { transform: translateY(-2px) scaleY(1.03); }
+}
+
+/* 2. Nom — lean forward, satisfied lean back */
+.game-anim--nom {
+  animation: game-react-nom 1s ease-in-out;
+}
+@keyframes game-react-nom {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  30% { transform: rotate(-8deg) scale(1.05); }
+  50% { transform: rotate(5deg) scale(1.1); }
+  70% { transform: rotate(-3deg) scale(1.05); }
+}
+
+/* 3. Chomp — big excited jump-chomp */
+.game-anim--chomp {
+  animation: game-react-chomp 1s ease-out;
+}
+@keyframes game-react-chomp {
+  0% { transform: translateY(0) scale(1); }
+  15% { transform: translateY(4px) scale(0.9, 1.1); }
+  35% { transform: translateY(-14px) scale(1.1, 0.9); }
+  55% { transform: translateY(0) scale(0.95, 1.05); }
+  75% { transform: translateY(-4px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* ── Water Reaction Animations (cycle through 3) ── */
+
+/* 1. Sip — gentle tilt to drink */
+.game-anim--sip {
+  animation: game-react-sip 1s ease-in-out;
+}
+@keyframes game-react-sip {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  30% { transform: rotate(10deg) translateY(-2px); }
+  60% { transform: rotate(-5deg) translateY(-4px); }
+}
+
+/* 2. Splash — excited shake (got wet!) */
+.game-anim--splash {
+  animation: game-react-splash 0.8s ease-in-out;
+}
+@keyframes game-react-splash {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  15% { transform: rotate(-6deg) scale(1.05); }
+  30% { transform: rotate(6deg) scale(1.05); }
+  45% { transform: rotate(-5deg) scale(1.03); }
+  60% { transform: rotate(5deg) scale(1.02); }
+  75% { transform: rotate(-2deg); }
+}
+
+/* 3. Gulp — stretch up then settle */
+.game-anim--gulp {
+  animation: game-react-gulp 1s ease-out;
+}
+@keyframes game-react-gulp {
+  0% { transform: scaleY(1) scaleX(1) translateY(0); }
+  30% { transform: scaleY(1.15) scaleX(0.92) translateY(-6px); }
+  50% { transform: scaleY(0.9) scaleX(1.08) translateY(2px); }
+  70% { transform: scaleY(1.05) scaleX(0.97) translateY(-2px); }
+  100% { transform: scaleY(1) scaleX(1) translateY(0); }
+}
+
+/* ── Button shake on cooldown ── */
+.game-btn-shake {
+  animation: game-shake 0.4s ease-in-out;
+}
+@keyframes game-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+
+/* ── XP bar ── */
+.game-xp-section {
+  margin-bottom: 1rem;
+}
+
+.game-xp-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--game-font);
+  font-size: 0.4rem;
+  color: #94a3b8;
+  margin-bottom: 0.3rem;
+}
+
+.game-xp-bar {
+  height: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--game-border);
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.game-xp-bar__fill {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+/* Level-up gold flash */
+.game-xp-bar--levelup {
+  animation: xp-levelup 0.8s ease-out;
+}
+@keyframes xp-levelup {
+  0%   { box-shadow: 0 0 0 0 rgba(251,191,36,0); background: inherit; }
+  30%  { box-shadow: 0 0 0 4px rgba(251,191,36,0.6); }
+  60%  { box-shadow: 0 0 0 2px rgba(251,191,36,0.3); }
+  100% { box-shadow: 0 0 0 0 rgba(251,191,36,0); }
+}
+
+/* Evolution countdown hint */
+.game-evo-hint {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.38rem;
+  color: #fbbf24;
+  text-align: center;
+  margin-top: 0.4rem;
+  animation: evo-hint-pulse 1.5s ease-in-out infinite;
+}
+@keyframes evo-hint-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* Streak badge in record row */
+.game-streak {
+  margin-left: 0.75rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.38rem;
+  color: #f97316;
+  text-shadow: 0 0 8px rgba(249,115,22,0.5);
+  animation: streak-pulse 1s ease-in-out infinite;
+}
+@keyframes streak-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.08); }
+}
+
+/* Gold / streak floater variant */
+.floater--gold {
+  color: #fbbf24 !important;
+  text-shadow: 0 0 10px rgba(251,191,36,0.7) !important;
+  font-size: 0.65rem !important;
+}
+.floater--streak {
+  color: #f97316 !important;
+  text-shadow: 0 0 10px rgba(249,115,22,0.6) !important;
+}
+
+/* ── Stat bars ── */
+.game-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.game-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.game-stat-row__label {
+  font-family: var(--game-font);
+  font-size: 0.4rem;
+  color: #94a3b8;
+  width: 28px;
+  text-align: right;
+}
+
+.game-stat-row__bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--game-border);
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.game-stat-row__fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.game-stat-row__val {
+  font-family: var(--game-font);
+  font-size: 0.4rem;
+  width: 30px;
+  color: #e2e8f0;
+}
+
+/* ── Moves section ── */
+.game-section-label {
+  font-family: var(--game-font);
+  font-size: 0.45rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.game-moves {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.game-move {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem;
+  background: var(--game-card-bg);
+  border: 1px solid var(--game-border);
+  border-radius: 0;
+}
+
+.game-move__emoji {
+  font-size: 0.9rem;
+}
+
+.game-move__name {
+  font-family: var(--game-font);
+  font-size: 0.35rem;
+  flex: 1;
+}
+
+.game-move__power {
+  font-family: var(--game-font);
+  font-size: 0.3rem;
+  color: #64748b;
+}
+
+/* ── Record ── */
+.game-record {
+  text-align: center;
+  font-family: var(--game-font);
+  font-size: 0.45rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+}
+
+/* ── Actions ── */
+.game-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.game-action-btn {
+  font-family: var(--game-font) !important;
+  font-size: 0.5rem !important;
+  border-radius: 0 !important;
+  padding: 0.6rem 1rem !important;
+}
+
+/* ── Floating XP indicator ── */
+.game-floater {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--game-font);
+  font-size: 0.6rem;
+  color: #4ade80;
+  text-shadow: 0 0 8px rgba(74,222,128,0.6);
+  z-index: 10;
+  pointer-events: none;
+  animation: game-float-up 1.2s ease-out forwards;
+}
+
+@keyframes game-float-up {
+  0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+}
+
+/* ── Evolution overlay ── */
+.game-evolution-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.game-evolution-card {
+  position: relative;
+  background: #0c0c1d;
+  border: 2px solid #4ade80;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  max-width: 320px;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(74,222,128,0.3);
+}
+
+.game-evolution-card__flash {
+  position: absolute;
+  inset: 0;
+  background: white;
+  animation: evo-flash 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes evo-flash {
+  0% { opacity: 0.9; }
+  100% { opacity: 0; }
+}
+
+.game-evolution-card p {
+  font-family: var(--game-font);
+  font-size: 0.45rem;
+  color: #94a3b8;
+  line-height: 1.8;
+  margin: 0.5rem 0;
+}
+
+.game-evolution-card__name {
+  font-size: 0.65rem !important;
+  color: #4ade80 !important;
+  font-weight: bold;
+  text-shadow: 0 0 12px rgba(74,222,128,0.5);
+}
+
+.game-evolution-card__sprite {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+/* ── Locked button on home screen ── */
+.btn--game-locked {
+  position: relative;
+  opacity: 0.5;
+}
+
+.btn--game-locked .btn__lock {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.btn--game-unlocked {
+  opacity: 1;
+}
+
+.btn--game-unlocked .btn__lock {
+  display: none;
+}
+
+/* ── Persistent CannaGuy Companion ── */
+#cannaguy-companion {
+  position: fixed;
+  bottom: 1.25rem;
+  right: 1rem;
+  z-index: 8888;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  animation: companion-enter 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+
+@keyframes companion-enter {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* ── Tap bounce (wrapper) ── */
+.cg-tap-bounce {
+  animation: cg-tap 0.55s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+@keyframes cg-tap {
+  0%   { transform: translateY(0) scale(1); }
+  35%  { transform: translateY(-16px) scale(1.12); }
+  65%  { transform: translateY(2px) scale(0.94); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* ── 3 Tap Reaction Animations (on the sprite element) ── */
+
+/* 1. Happy — big jump + little shimmy */
+.cg-react--happy {
+  animation: cg-happy 0.9s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes cg-happy {
+  0%   { transform: translateY(0) scale(1) rotate(0deg); }
+  25%  { transform: translateY(-18px) scale(1.15) rotate(-5deg); }
+  45%  { transform: translateY(-10px) scale(1.1) rotate(5deg); }
+  65%  { transform: translateY(-14px) scale(1.12) rotate(-3deg); }
+  80%  { transform: translateY(2px) scale(0.95) rotate(0deg); }
+  100% { transform: translateY(0) scale(1) rotate(0deg); }
+}
+
+/* 2. Excited — rapid side-to-side shimmy */
+.cg-react--excited {
+  animation: cg-excited 0.8s ease-in-out;
+}
+@keyframes cg-excited {
+  0%, 100% { transform: translateX(0) rotate(0deg) scale(1); }
+  15%  { transform: translateX(-5px) rotate(-6deg) scale(1.05); }
+  30%  { transform: translateX(5px) rotate(6deg) scale(1.05); }
+  45%  { transform: translateX(-4px) rotate(-5deg) scale(1.08); }
+  60%  { transform: translateX(4px) rotate(5deg) scale(1.08); }
+  75%  { transform: translateX(-2px) rotate(-2deg) scale(1.03); }
+  90%  { transform: translateX(2px) rotate(2deg) scale(1.01); }
+}
+
+/* 3. Chill — slow dreamy sway */
+.cg-react--chill {
+  animation: cg-chill 1.8s ease-in-out;
+}
+@keyframes cg-chill {
+  0%, 100% { transform: rotate(0deg) translateY(0) scale(1); }
+  20%  { transform: rotate(-6deg) translateY(-4px) scale(1.03); }
+  50%  { transform: rotate(5deg) translateY(-6px) scale(1.05); }
+  75%  { transform: rotate(-3deg) translateY(-2px) scale(1.02); }
+}
+
+/* 4. Annoyed — rapid angry shake */
+.cg-react--annoyed {
+  animation: cg-annoyed 0.5s ease-in-out;
+}
+@keyframes cg-annoyed {
+  0%, 100% { transform: rotate(0deg) translateX(0); }
+  15%  { transform: rotate(-8deg) translateX(-4px); }
+  30%  { transform: rotate(8deg) translateX(4px); }
+  45%  { transform: rotate(-7deg) translateX(-3px); }
+  60%  { transform: rotate(7deg) translateX(3px); }
+  75%  { transform: rotate(-4deg) translateX(-2px); }
+  90%  { transform: rotate(3deg) translateX(1px); }
+}
+
+/* Whole wrapper shake for annoy */
+.cg-annoyed-shake {
+  animation: cg-wrapper-shake 0.55s ease-in-out !important;
+}
+@keyframes cg-wrapper-shake {
+  0%, 100% { transform: translateX(0); }
+  20%  { transform: translateX(-5px); }
+  40%  { transform: translateX(5px); }
+  60%  { transform: translateX(-4px); }
+  80%  { transform: translateX(3px); }
+}
+
+/* ── Stress symbol 💢 ── */
+.cg-stress {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  font-size: 1.1rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), opacity 0.15s;
+  filter: drop-shadow(0 0 4px #ef4444);
+}
+.cg-stress--visible {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+}
+
+/* ── Speech bubble ── */
+.cg-bubble {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background: rgba(14,14,30,0.96);
+  border: 1px solid rgba(74,222,128,0.4);
+  border-radius: 2px;
+  padding: 0.35rem 0.6rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.28rem;
+  color: #e2e8f0;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 0 12px rgba(74,222,128,0.15);
+  transform: translateY(6px);
+  opacity: 0;
+  transition: opacity 0.18s, transform 0.18s;
+  z-index: 1;
+}
+.cg-bubble--show {
+  transform: translateY(0) !important;
+  opacity: 1 !important;
+}
+.cg-bubble--angry {
+  border-color: rgba(239,68,68,0.6) !important;
+  color: #fca5a5 !important;
+  box-shadow: 0 0 12px rgba(239,68,68,0.2) !important;
+}
+.cg-bubble.hidden {
+  display: none;
+}
+
+/* ── Name label ── */
+.cg-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.27rem;
+  color: rgba(148,163,184,0.65);
+  text-align: center;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+}
+.cg-level {
+  color: #4ade80;
+  opacity: 0.8;
+}
+
+/* ── Idle attention getter ── */
+.cg-idle-attention {
+  animation: cg-attention 2s ease-in-out !important;
+}
+@keyframes cg-attention {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  15%  { transform: translateY(-4px) rotate(-3deg); }
+  30%  { transform: translateY(-8px) rotate(3deg); }
+  45%  { transform: translateY(-4px) rotate(-2deg); }
+  55%  { transform: translateY(-6px) rotate(2deg); }
+  70%  { transform: translateY(-2px) rotate(-1deg); }
+  85%  { transform: translateY(-4px) rotate(1deg); }
+}
+
+/* ── Pixel crisp ── */
+#cannaguy-companion .pixel-sprite-wrap {
+  image-rendering: pixelated;
+}
+
+/* ── Hidden override ── */
+#cannaguy-companion.hidden {
+  display: none;
+}

@@ -35,5 +35,8 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+
+    // Note: Game state (CannaGotchi) is stored in users/{uid}.game
+    // and is already covered by the users/{uid} rule above.
   }
 }

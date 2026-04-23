@@ -1,5 +1,7 @@
 import './style.css';
 import './profile.css';
+import './game.css';
+import { initCompanion, destroyCompanion, hideCompanionForGameScreen, showCompanionAfterGameScreen } from './game/companion.js';
 import { inject, track } from '@vercel/analytics';
 import strainsData from './data/strains.json';
 import questionsData from './data/questions.json';
@@ -311,6 +313,26 @@ function initHome() {
       scheduleSync();
       updateStashUI();
     }
+  });
+
+  // CannaGotchi button
+  document.getElementById('btn-cannagotchi').addEventListener('click', async () => {
+    const user = getCurrentUser();
+    if (!user) {
+      document.getElementById('account-modal').classList.remove('hidden');
+      setAccountState('signedout');
+      return;
+    }
+    hideCompanionForGameScreen();
+    showScreen('game');
+    const { initGameScreen } = await import('./game/gameScreen.js');
+    const container = document.getElementById('game-screen');
+    await initGameScreen(container, user.uid, async () => {
+      showScreen('home');
+      showCompanionAfterGameScreen();
+      // Re-init companion in case user leveled up / evolved
+      try { await initCompanion(user.uid); } catch (e) {}
+    });
   });
 
   updateStashUI();
@@ -1306,6 +1328,9 @@ function initAccountModal() {
       profileSignoutBtn.classList.remove('hidden');
       updateProfileAvatar(user);
       modal.classList.add('hidden');
+      // Unlock CannaGotchi button
+      const gotchiBtn = document.getElementById('btn-cannagotchi');
+      if (gotchiBtn) { gotchiBtn.disabled = false; gotchiBtn.classList.remove('btn--game-locked'); gotchiBtn.classList.add('btn--game-unlocked'); }
       try {
         await loadAndResolveProfile(showConflictModal);
       } catch (err) {
@@ -1317,6 +1342,8 @@ function initAccountModal() {
       } catch (err) {
         console.warn('Settings sync failed:', err);
       }
+      // Init persistent companion
+      try { await initCompanion(user.uid); } catch (e) { console.warn('companion init failed', e); }
       // Refresh UI — cloud data may have replaced local
       renderBrowseList();
       renderMyStashList();
@@ -1327,6 +1354,11 @@ function initAccountModal() {
       if (resultCta) resultCta.classList.remove('hidden');
       profileSignoutBtn.classList.add('hidden');
       updateProfileAvatar(null);
+      // Lock CannaGotchi button
+      const gotchiBtn = document.getElementById('btn-cannagotchi');
+      if (gotchiBtn) { gotchiBtn.disabled = true; gotchiBtn.classList.add('btn--game-locked'); gotchiBtn.classList.remove('btn--game-unlocked'); }
+      // Destroy companion
+      destroyCompanion();
     }
   );
 }

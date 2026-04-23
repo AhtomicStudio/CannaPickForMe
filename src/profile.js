@@ -2,6 +2,12 @@ import { getSessionHistory, clearSessionHistory, getTheme, getLightMode } from '
 import { THEMES, saveThemePreference, saveLightModePreference } from './services/themeService.js';
 import { deleteAccount } from './services/userService.js';
 
+// Lazy-load companion to avoid pulling game modules into the eager bundle
+async function getCompanion() {
+  return import('./game/companion.js');
+}
+
+
 let _getAllStrains;
 let _getStash;
 
@@ -78,6 +84,18 @@ function renderActivityTab() {
   </div>`;
 
   // ── Recent Picks ──
+  const PICKS_DEFAULT = 5;
+  const makePickRow = s => {
+    const strain = allStrains.find(st => st.id === s.strainId);
+    const type = strain?.type || 'hybrid';
+    const date = s.timestamp ? new Date(s.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+    return `<div class="history-row">
+      <span class="history-row__dot" data-type="${type}"></span>
+      <span class="history-row__name">${s.name || 'Unknown'}</span>
+      <span class="history-row__meta">${date}${s.matchScore != null ? `<br>${s.matchScore}% match` : ''}</span>
+    </div>`;
+  };
+
   let historyHTML;
   if (sessions.length === 0) {
     historyHTML = `<div class="empty-state">
@@ -86,17 +104,11 @@ function renderActivityTab() {
       <p class="empty-state__sub">Run your first pick to see history here.</p>
     </div>`;
   } else {
-    const rows = sessions.map(s => {
-      const strain = allStrains.find(st => st.id === s.strainId);
-      const type = strain?.type || 'hybrid';
-      const date = s.timestamp ? new Date(s.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
-      return `<div class="history-row">
-        <span class="history-row__dot" data-type="${type}"></span>
-        <span class="history-row__name">${s.name || 'Unknown'}</span>
-        <span class="history-row__meta">${date}${s.matchScore != null ? `<br>${s.matchScore}% match` : ''}</span>
-      </div>`;
-    }).join('');
-    historyHTML = `<div class="history-list">${rows}</div>`;
+    const hasMore = sessions.length > PICKS_DEFAULT;
+    const showAllBtn = hasMore
+      ? `<button class="history-show-all" id="btn-history-show-all">Show all ${sessions.length} picks</button>`
+      : '';
+    historyHTML = `<div class="history-list" id="history-list-inner">${sessions.slice(0, PICKS_DEFAULT).map(makePickRow).join('')}</div>${showAllBtn}`;
   }
 
   panel.innerHTML = `
@@ -104,6 +116,14 @@ function renderActivityTab() {
     <div class="stats-section-label">Recent Picks</div>
     ${historyHTML}
   `;
+
+  const showAllBtn = panel.querySelector('#btn-history-show-all');
+  if (showAllBtn) {
+    showAllBtn.addEventListener('click', () => {
+      panel.querySelector('#history-list-inner').innerHTML = sessions.map(makePickRow).join('');
+      showAllBtn.remove();
+    });
+  }
 }
 
 
@@ -146,6 +166,16 @@ function renderSettingsTab() {
         </label>
         <div class="settings-tooltip">wtf what stoner uses light mode sus 👀</div>
       </div>
+      <div class="settings-row" id="companion-row">
+        <div>
+          <div class="settings-row__label">🌱 CannaGuy Companion</div>
+          <div class="settings-row__sub">Float your CannaGuy across all screens</div>
+        </div>
+        <label class="settings-toggle">
+          <input type="checkbox" id="toggle-companion" ${localStorage.getItem('cpfm_companion_enabled') !== 'false' ? 'checked' : ''} />
+          <span class="settings-toggle__track"></span>
+        </label>
+      </div>
       <div class="settings-row">
         <div>
           <div class="settings-row__label">Email Alerts</div>
@@ -180,6 +210,14 @@ function renderSettingsTab() {
   document.getElementById('toggle-light-mode').addEventListener('change', e => {
     saveLightModePreference(e.target.checked);
   });
+
+  const companionToggle = document.getElementById('toggle-companion');
+  if (companionToggle) {
+    companionToggle.addEventListener('change', async e => {
+      const { setCompanionEnabled } = await getCompanion();
+      setCompanionEnabled(e.target.checked);
+    });
+  }
 
   document.getElementById('btn-clear-history').addEventListener('click', () => {
     if (!confirm('Clear all session history on this device? Your stash and account are not affected.')) return;

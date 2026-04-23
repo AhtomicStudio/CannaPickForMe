@@ -98,27 +98,34 @@
         </button>
         <span id="profile-theme-hint" class="profile-theme-hint">Unlock themes ✦</span>
       </div>
-      <div class="home__header">
-        <span class="home__icon">🌿</span>
-        <h1 class="home__title">Canna<span class="text-glow">Pick</span>ForMe</h1>
-        <p id="home-tagline" class="home__tagline">What are we shmokin' tonight?</p>
+      <div class="home__main">
+        <div class="home__header">
+          <span class="home__icon">🌿</span>
+          <h1 class="home__title">Canna<span class="text-glow">Pick</span>ForMe</h1>
+          <p id="home-tagline" class="home__tagline">What are we shmokin' tonight?</p>
+        </div>
+        <div class="home__actions">
+          <button id="btn-stash" class="btn btn--secondary btn--large">
+            <span class="btn__emoji">🗂️</span>
+            <span class="btn__text">Select Strains</span>
+            <span id="stash-count" class="badge">0</span>
+          </button>
+          <button id="btn-pick" class="btn btn--primary btn--large btn--glow" disabled>
+            <span class="btn__emoji">🔥</span>
+            <span class="btn__text">Pick For Me</span>
+          </button>
+          <button id="btn-clear-stash" class="btn btn--ghost btn--clear-stash hidden">
+            <span class="btn__emoji">🗑️</span>
+            <span class="btn__text">Clear Stash</span>
+          </button>
+          <button id="btn-cannagotchi" class="btn btn--secondary btn--large btn--game-locked" disabled>
+            <span class="btn__emoji">🌱</span>
+            <span class="btn__text">CannaGotchi</span>
+            <span class="btn__lock">🔒</span>
+          </button>
+        </div>
+        <p id="stash-hint" class="home__hint">Add at least 2 strains to your stash to get started!</p>
       </div>
-      <div class="home__actions">
-        <button id="btn-stash" class="btn btn--secondary btn--large">
-          <span class="btn__emoji">🗂️</span>
-          <span class="btn__text">Select Strains</span>
-          <span id="stash-count" class="badge">0</span>
-        </button>
-        <button id="btn-pick" class="btn btn--primary btn--large btn--glow" disabled>
-          <span class="btn__emoji">🔥</span>
-          <span class="btn__text">Pick For Me</span>
-        </button>
-        <button id="btn-clear-stash" class="btn btn--ghost btn--clear-stash hidden">
-          <span class="btn__emoji">🗑️</span>
-          <span class="btn__text">Clear Stash</span>
-        </button>
-      </div>
-      <p id="stash-hint" class="home__hint">Add at least 2 strains to your stash to get started!</p>
       <!-- Ad Slot: Home -->
       <div id="ad-slot-home" class="ad-slot ad-slot--home"></div>
       <footer class="home__footer">
@@ -458,6 +465,9 @@
         </div>
       </div>
     </div>
+
+    <!-- CannaGotchi Game Screen -->
+    <div id="game-screen" class="screen game hidden"></div>
 
     <script type="module" src="/src/main.js"></script>
   </body>
