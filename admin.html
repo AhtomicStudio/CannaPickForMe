@@ -373,15 +373,15 @@
         </div>
       </section>
 
-      <!-- Info Content -->
+      <!-- Lore Topics -->
       <section class="admin-section admin-section--collapsible admin-section--collapsed" id="info-section">
         <button type="button" class="admin-section__toggle" aria-expanded="false">
-          <h2>📚 Info Content</h2>
+          <h2>📜 Lore Topics</h2>
           <span class="admin-section__chevron">▾</span>
         </button>
         <div class="admin-section__body">
           <div>
-            <p class="admin-info-hint">Educational topics shown in the app. Click a topic to expand and edit its content.</p>
+            <p class="admin-info-hint">These topics appear as clickable cards on <a href="/lore" target="_blank" style="color:var(--green-glow)">The Lore page ↗</a>. Each card shows the icon, title, and teaser — tapping expands the full content.</p>
             <div id="info-topics-list" class="info-topics-list"></div>
             <div class="info-add-form">
               <input type="text" id="new-info-topic-title" placeholder="e.g. 🌿 Terpenes" />
@@ -420,8 +420,21 @@
         </button>
         <div class="admin-section__body">
           <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:1rem;">
-            Sponsored strains appear below the main recommendation with a gold ribbon. Mark strains as sponsored in the Manage Strains list above.
+            Sponsored strains appear below the main recommendation with a gold ribbon. Mark strains as sponsored using ⭐ in the Manage Strains list.
           </p>
+
+          <!-- Quick-edit a sponsored strain -->
+          <div class="admin-form-group" style="margin-bottom:1.25rem;padding:0.9rem 1rem;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:8px;">
+            <label class="admin-label" style="margin-bottom:0.5rem;display:block;">✏️ Quick-Edit Sponsored Strain</label>
+            <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;">
+              <select id="sponsor-quick-edit-select" class="admin-input" style="flex:1;min-width:160px;">
+                <option value="">— select a sponsored strain —</option>
+              </select>
+              <button type="button" id="btn-sponsor-quick-edit" class="admin-btn admin-btn--primary" style="white-space:nowrap;">Edit Selected →</button>
+            </div>
+            <p id="sponsor-quick-edit-hint" style="font-size:0.78rem;color:var(--text-muted);margin-top:0.4rem;">No sponsored strains yet. Mark a strain as ⭐ sponsored in Manage Strains first.</p>
+          </div>
+
           <div class="admin-form-group" style="margin-bottom:1rem;">
             <label class="admin-label" for="sponsor-threshold">
               Minimum match % to show sponsored strain

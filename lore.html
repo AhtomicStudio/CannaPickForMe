@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Lore — CannaPickForMe</title>
+  <meta name="description" content="Decode the ancient strain secrets. Learn about terpenes, cannabinoids, strain types, and more." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -12,15 +13,18 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --purple: #a855f7;
+      --purple:      #a855f7;
       --purple-glow: #c084fc;
-      --green: #22c55e;
-      --green-glow: #4ade80;
-      --bg: #0a0e17;
-      --card: #141b2d;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --dim: #64748b;
+      --purple-dim:  #7c3aed;
+      --green:       #22c55e;
+      --green-glow:  #4ade80;
+      --bg:          #0a0e17;
+      --card:        #141b2d;
+      --card-hover:  #1a2440;
+      --border:      rgba(168,85,247,0.18);
+      --text:        #f1f5f9;
+      --muted:       #94a3b8;
+      --dim:         #64748b;
     }
 
     body {
@@ -28,10 +32,6 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow-y: auto;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -43,16 +43,15 @@
       pointer-events: none;
       z-index: 0;
     }
-    /* Lore gets a purple-tinted haze for a more mystical feel */
     .haze-blob--1 {
       width: 640px; height: 640px;
-      background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(168,85,247,0.13) 0%, transparent 70%);
       top: -230px; left: -170px;
       animation: haze-breathe 8s ease-in-out infinite alternate;
     }
     .haze-blob--2 {
       width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(34,197,94,0.10) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(34,197,94,0.09) 0%, transparent 70%);
       bottom: -160px; right: -130px;
       animation: haze-breathe 10s ease-in-out infinite alternate;
       animation-delay: -4s;
@@ -99,9 +98,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 2rem;
+      padding: 2rem 1.25rem 4rem;
       width: 100%;
-      max-width: 460px;
+      max-width: 480px;
+      margin: 0 auto;
     }
 
     .back-btn {
@@ -109,112 +109,278 @@
       color: var(--dim);
       text-decoration: none;
       font-size: 0.85rem;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
       transition: color 0.2s;
       font-family: 'Space Grotesk', sans-serif;
       letter-spacing: 0.02em;
     }
     .back-btn:hover { color: var(--purple); }
 
-    /* ── THE SIGN ── */
-    .sign {
+    /* ── HEADER ── */
+    .lore-header {
       width: 100%;
-      border-radius: 20px;
-      padding: 2.5rem 2rem 0;
       text-align: center;
-      /* Purple-green gradient border for the lore page */
-      background:
-        linear-gradient(var(--card), var(--card)) padding-box,
-        linear-gradient(135deg, rgba(168,85,247,0.55) 0%, rgba(34,197,94,0.12) 50%, rgba(168,85,247,0.45) 100%) border-box;
-      border: 1.5px solid transparent;
-      animation: sign-glow 4s ease-in-out infinite alternate;
-      overflow: hidden;
+      margin-bottom: 2.5rem;
     }
 
-    @keyframes sign-glow {
-      from { box-shadow: 0 0 40px rgba(168,85,247,0.07), 0 8px 40px rgba(0,0,0,0.5); }
-      to   { box-shadow: 0 0 80px rgba(168,85,247,0.18), 0 8px 40px rgba(0,0,0,0.5); }
+    .lore-header__leaf-row {
+      font-size: 1.4rem;
+      letter-spacing: 0.5rem;
+      margin-bottom: 1.25rem;
+      opacity: 0.5;
     }
 
-    .sign__leaf-row {
-      font-size: 1.5rem;
-      letter-spacing: 0.6rem;
-      margin-bottom: 1.75rem;
-      opacity: 0.55;
-    }
-
-    .sign__cone {
-      font-size: 3.2rem;
-      display: block;
-      margin-bottom: 0.6rem;
-      animation: wobble 2.8s ease-in-out infinite;
-    }
-
-    @keyframes wobble {
-      0%, 100% { transform: rotate(-9deg); }
-      50%       { transform: rotate(9deg);  }
-    }
-
-    .sign__overline {
+    .lore-header__overline {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       color: var(--purple-glow);
       text-transform: uppercase;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.25em;
       font-weight: 600;
-      margin-bottom: 0.7rem;
-      opacity: 0.8;
+      margin-bottom: 0.5rem;
+      opacity: 0.75;
     }
 
-    .sign__title {
+    .lore-header__title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 2.4rem;
+      font-size: 2.6rem;
       font-weight: 700;
       color: var(--text);
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       line-height: 1.1;
+      background: linear-gradient(135deg, #f1f5f9 0%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .sign__divider {
+    .lore-header__divider {
       width: 40px;
       height: 2px;
       background: linear-gradient(90deg, transparent, var(--purple), transparent);
-      margin: 0 auto 1.25rem;
+      margin: 0.85rem auto;
       border-radius: 99px;
     }
 
-    .sign__body {
-      font-size: 0.95rem;
-      color: var(--dim);
+    .lore-header__intro {
+      font-size: 0.92rem;
+      color: var(--muted);
       line-height: 1.65;
+      white-space: pre-wrap;
+      text-align: center;
     }
 
-    .sign__tagline {
+    /* ── TOPIC CARDS ── */
+    .topics-grid {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .topic-card {
+      width: 100%;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      overflow: hidden;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .topic-card:hover {
+      border-color: rgba(168,85,247,0.35);
+    }
+
+    .topic-card--open {
+      border-color: rgba(168,85,247,0.45);
+      box-shadow: 0 0 0 1px rgba(168,85,247,0.12), 0 8px 32px rgba(168,85,247,0.10);
+    }
+
+    .topic-card__trigger {
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-align: left;
+      transition: background 0.18s;
+    }
+
+    .topic-card__trigger:hover {
+      background: rgba(168,85,247,0.05);
+    }
+
+    .topic-card__icon {
+      font-size: 1.8rem;
+      flex-shrink: 0;
+      width: 2.5rem;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .topic-card__text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .topic-card__title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .topic-card__teaser {
       font-size: 0.82rem;
-      color: var(--purple-glow);
-      opacity: 0.65;
-      margin-top: 1rem;
-      font-style: italic;
-      padding-bottom: 1.75rem;
+      color: var(--muted);
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    /* Construction tape strip — purple tint for lore */
-    .sign__tape {
-      margin: 0 -2rem;
-      padding: 0.55rem 2rem;
+    .topic-card__chevron {
+      font-size: 0.85rem;
+      color: var(--purple-glow);
+      flex-shrink: 0;
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0.7;
+    }
+
+    .topic-card--open .topic-card__chevron {
+      transform: rotate(180deg);
+    }
+
+    /* Accordion body */
+    .topic-card__body {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .topic-card--open .topic-card__body {
+      grid-template-rows: 1fr;
+    }
+
+    .topic-card__body-inner {
+      overflow: hidden;
+    }
+
+    .topic-card__content {
+      padding: 0 1.25rem 1.4rem 1.25rem;
+      border-top: 1px solid rgba(168,85,247,0.12);
+      margin-top: 0;
+      padding-top: 1.1rem;
+    }
+
+    .topic-card__content p {
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+
+    .topic-card__content p em {
+      color: var(--purple-glow);
+      font-style: normal;
+    }
+
+    /* ── LOADING / EMPTY STATES ── */
+    .topics-loading {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--dim);
+      font-size: 0.9rem;
+    }
+
+    .topics-loading__spinner {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      border: 2px solid rgba(168,85,247,0.2);
+      border-top-color: var(--purple);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 0.75rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .topic-coming-soon {
+      font-size: 0.82rem;
+      color: var(--dim);
+      font-style: italic;
+      margin-top: 0.25rem;
+    }
+
+    /* ── SKELETON CARDS ── */
+    .topic-skeleton {
+      width: 100%;
+      border-radius: 14px;
+      border: 1.5px solid rgba(168,85,247,0.08);
+      background: var(--card);
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .skeleton-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: rgba(168,85,247,0.08);
+      animation: skeleton-pulse 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    .skeleton-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .skeleton-line {
+      height: 0.8rem;
+      border-radius: 6px;
+      background: rgba(168,85,247,0.08);
+      animation: skeleton-pulse 1.5s ease-in-out infinite;
+    }
+
+    .skeleton-line--short { width: 55%; animation-delay: 0.15s; }
+    .skeleton-line--full  { width: 85%; }
+
+    @keyframes skeleton-pulse {
+      0%, 100% { opacity: 0.5; }
+      50%       { opacity: 1; }
+    }
+
+    /* ── FOOTER TAPE ── */
+    .lore-tape {
+      width: 100%;
+      margin-top: 3rem;
+      padding: 0.5rem 1rem;
       background: repeating-linear-gradient(
         -45deg,
-        rgba(168,85,247,0.13),
-        rgba(168,85,247,0.13) 10px,
-        rgba(168,85,247,0.04) 10px,
-        rgba(168,85,247,0.04) 20px
+        rgba(168,85,247,0.10),
+        rgba(168,85,247,0.10) 10px,
+        rgba(168,85,247,0.03) 10px,
+        rgba(168,85,247,0.03) 20px
       );
-      border-top: 1px solid rgba(168,85,247,0.18);
+      border-radius: 8px;
+      border: 1px solid rgba(168,85,247,0.14);
       font-size: 0.58rem;
       font-family: 'Space Grotesk', sans-serif;
       text-transform: uppercase;
-      letter-spacing: 0.3em;
-      color: rgba(192,132,252,0.55);
+      letter-spacing: 0.28em;
+      color: rgba(192,132,252,0.5);
       text-align: center;
     }
   </style>
@@ -241,17 +407,123 @@
   <div class="page">
     <a href="/" class="back-btn">← Back to App</a>
 
-    <div class="sign">
-      <div class="sign__leaf-row">🍃 🌿 🍃</div>
-      <span class="sign__cone">🚧</span>
-      <p class="sign__overline">Under Construction</p>
-      <h1 class="sign__title">The Lore</h1>
-      <div class="sign__divider"></div>
-      <p class="sign__body">Ancient strain secrets are being decoded.<br>The universe is still speaking. 🔮</p>
-      <p class="sign__tagline">— the lore goes deep, be patient</p>
-      <div class="sign__tape">🌿 &nbsp; decoding the cosmos &nbsp; 🌿</div>
+    <div class="lore-header">
+      <div class="lore-header__leaf-row">🍃 🌿 🍃</div>
+      <p class="lore-header__overline">Ancient Knowledge</p>
+      <h1 class="lore-header__title">The Lore</h1>
+      <div class="lore-header__divider"></div>
+      <p class="lore-header__intro" id="lore-intro">Decoding the cosmos, one strain at a time. 🔮</p>
     </div>
+
+    <!-- Topic cards injected here -->
+    <div class="topics-grid" id="topics-grid">
+      <!-- Skeleton placeholders -->
+      <div class="topic-skeleton">
+        <div class="skeleton-icon"></div>
+        <div class="skeleton-text">
+          <div class="skeleton-line skeleton-line--full"></div>
+          <div class="skeleton-line skeleton-line--short"></div>
+        </div>
+      </div>
+      <div class="topic-skeleton" style="animation-delay:0.1s;">
+        <div class="skeleton-icon"></div>
+        <div class="skeleton-text">
+          <div class="skeleton-line skeleton-line--full"></div>
+          <div class="skeleton-line skeleton-line--short"></div>
+        </div>
+      </div>
+      <div class="topic-skeleton" style="animation-delay:0.2s;">
+        <div class="skeleton-icon"></div>
+        <div class="skeleton-text">
+          <div class="skeleton-line skeleton-line--full"></div>
+          <div class="skeleton-line skeleton-line--short"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lore-tape">🌿 &nbsp; the lore goes deep &nbsp; 🌿</div>
   </div>
+
+  <script type="module">
+    import { getInfoTopics } from './src/services/infoService.js';
+    import { getPageContent } from './src/services/pagesService.js';
+
+    function renderTopics(topics) {
+      const grid = document.getElementById('topics-grid');
+      grid.innerHTML = '';
+
+      if (!topics || topics.length === 0) {
+        grid.innerHTML = `
+          <div style="text-align:center;padding:3rem 1rem;color:var(--dim);">
+            <div style="font-size:2rem;margin-bottom:0.75rem;">🔮</div>
+            <p style="font-size:0.9rem;">The lore is being decoded…<br>Check back soon.</p>
+          </div>`;
+        return;
+      }
+
+      topics.forEach((topic, i) => {
+        const icon    = topic.icon    || '🌿';
+        const teaser  = topic.teaser  || '';
+        const content = topic.content || '';
+        // Strip emoji from title for display if icon field is set
+        const titleText = topic.title || '';
+
+        const card = document.createElement('div');
+        card.className = 'topic-card';
+        card.style.animationDelay = `${i * 0.06}s`;
+        card.innerHTML = `
+          <button class="topic-card__trigger" aria-expanded="false" aria-controls="topic-body-${i}">
+            <span class="topic-card__icon" aria-hidden="true">${icon}</span>
+            <span class="topic-card__text">
+              <span class="topic-card__title">${titleText}</span>
+              ${teaser ? `<span class="topic-card__teaser">${teaser}</span>` : ''}
+            </span>
+            <span class="topic-card__chevron" aria-hidden="true">▾</span>
+          </button>
+          <div class="topic-card__body" id="topic-body-${i}" role="region">
+            <div class="topic-card__body-inner">
+              <div class="topic-card__content">
+                ${content
+                  ? `<p>${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`
+                  : '<p class="topic-coming-soon">✦ Content coming soon…</p>'
+                }
+              </div>
+            </div>
+          </div>
+        `;
+
+        const trigger = card.querySelector('.topic-card__trigger');
+        trigger.addEventListener('click', () => {
+          const isOpen = card.classList.contains('topic-card--open');
+          // Close all others
+          document.querySelectorAll('.topic-card--open').forEach(c => {
+            c.classList.remove('topic-card--open');
+            c.querySelector('.topic-card__trigger').setAttribute('aria-expanded', 'false');
+          });
+          if (!isOpen) {
+            card.classList.add('topic-card--open');
+            trigger.setAttribute('aria-expanded', 'true');
+          }
+        });
+
+        grid.appendChild(card);
+      });
+    }
+
+    (async () => {
+      const [topics, loreData] = await Promise.all([
+        getInfoTopics(),
+        getPageContent('lore'),
+      ]);
+
+      // Update intro text if admin has set one
+      if (loreData?.content?.trim()) {
+        document.getElementById('lore-intro').textContent = loreData.content.trim();
+      }
+
+      renderTopics(topics);
+    })();
+  </script>
 
 </body>
 </html>

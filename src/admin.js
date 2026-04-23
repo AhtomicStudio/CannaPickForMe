@@ -323,6 +323,7 @@ function renderStrainList() {
       }
       await authedSaveStrainDelta(strainDelta);
       renderStrainList();
+      populateSponsorDropdown(); // keep dropdown in sync
     });
   });
 }
@@ -338,6 +339,37 @@ function showDashboard() {
   initPagesEditor();
   initSponsorSettings();
   initPartnerStrains();
+}
+
+function populateSponsorDropdown() {
+  const sel  = document.getElementById('sponsor-quick-edit-select');
+  const hint = document.getElementById('sponsor-quick-edit-hint');
+  if (!sel) return;
+
+  const sponsored = strainDelta.sponsored || [];
+  const allStrains = [
+    ...strainsData,
+    ...(strainDelta.additions || []),
+  ];
+
+  sel.innerHTML = '<option value="">— select a sponsored strain —</option>';
+
+  if (sponsored.length === 0) {
+    hint.textContent = 'No sponsored strains yet. Mark a strain as ⭐ sponsored in Manage Strains first.';
+    hint.style.display = '';
+    return;
+  }
+
+  hint.style.display = 'none';
+  for (const id of sponsored) {
+    const override = strainDelta.overrides?.[id];
+    const base = allStrains.find(s => s.id === id);
+    const name = override?.name || base?.name || id;
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = name;
+    sel.appendChild(opt);
+  }
 }
 
 function initSponsorSettings() {
@@ -363,6 +395,24 @@ function initSponsorSettings() {
   thresholdSlider.addEventListener('input', () => {
     thresholdDisplay.textContent = `${thresholdSlider.value}%`;
   });
+
+  // Quick-edit button
+  const quickEditBtn = document.getElementById('btn-sponsor-quick-edit');
+  if (quickEditBtn) {
+    quickEditBtn.addEventListener('click', () => {
+      const sel = document.getElementById('sponsor-quick-edit-select');
+      const id  = sel?.value;
+      if (!id) { alert('Please select a sponsored strain from the dropdown.'); return; }
+      const isAddition = !!(strainDelta.additions || []).find(s => s.id === id);
+      startEditingStrain(id, isAddition);
+      expandSection('strain-form-section');
+      // Also expand the strain list so the user can see the list after editing
+      expandSection('strain-list-section');
+    });
+  }
+
+  // Populate after data loads (initStrainManager sets strainDelta)
+  setTimeout(populateSponsorDropdown, 600);
 
   saveBtn.addEventListener('click', async () => {
     strainDelta.sponsorSettings = {
@@ -1133,6 +1183,17 @@ async function initInfoEditor() {
         </button>
         <div class="info-topic__body">
           <div class="info-topic__content">
+            <div class="admin-form__row" style="margin-bottom:0.75rem;">
+              <div class="admin-form__group">
+                <label style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;display:block;">Icon (emoji)</label>
+                <input type="text" class="info-topic__icon-input" value="${esc(topic.icon || '')}" placeholder="e.g. 🌿" style="width:5rem;font-size:1.3rem;text-align:center;" />
+              </div>
+              <div class="admin-form__group" style="flex:1;">
+                <label style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;display:block;">Teaser (one-liner shown on card)</label>
+                <input type="text" class="info-topic__teaser-input" value="${esc(topic.teaser || '')}" placeholder="e.g. The secret language of plants" />
+              </div>
+            </div>
+            <label style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;display:block;">Full Content</label>
             <textarea placeholder="Write content for ${esc(topic.title)}..." rows="6">${esc(topic.content || '')}</textarea>
             <div class="info-topic__actions">
               <button type="button" class="admin-btn admin-btn--ghost admin-btn--small info-topic__delete">🗑 Delete</button>
@@ -1154,14 +1215,18 @@ async function initInfoEditor() {
         const topicEl = btn.closest('.info-topic');
         const id = topicEl.dataset.id;
         const content = topicEl.querySelector('textarea').value.trim();
+        const icon    = topicEl.querySelector('.info-topic__icon-input')?.value.trim() || '';
+        const teaser  = topicEl.querySelector('.info-topic__teaser-input')?.value.trim() || '';
         const topic = topics.find(t => t.id === id);
         if (!topic) return;
 
         btn.textContent = 'Saving...';
         btn.disabled = true;
         try {
-          await saveInfoTopic(id, { ...topic, content });
+          await saveInfoTopic(id, { ...topic, content, icon, teaser });
           topic.content = content;
+          topic.icon    = icon;
+          topic.teaser  = teaser;
           btn.textContent = 'Saved ✓';
           setTimeout(() => { btn.textContent = 'Save'; btn.disabled = false; }, 2000);
         } catch (err) {
