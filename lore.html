@@ -415,42 +415,73 @@
       <p class="lore-header__intro" id="lore-intro">Decoding the cosmos, one strain at a time. 🔮</p>
     </div>
 
-    <!-- Topic cards injected here -->
-    <div class="topics-grid" id="topics-grid">
-      <!-- Skeleton placeholders -->
-      <div class="topic-skeleton">
-        <div class="skeleton-icon"></div>
-        <div class="skeleton-text">
-          <div class="skeleton-line skeleton-line--full"></div>
-          <div class="skeleton-line skeleton-line--short"></div>
-        </div>
-      </div>
-      <div class="topic-skeleton" style="animation-delay:0.1s;">
-        <div class="skeleton-icon"></div>
-        <div class="skeleton-text">
-          <div class="skeleton-line skeleton-line--full"></div>
-          <div class="skeleton-line skeleton-line--short"></div>
-        </div>
-      </div>
-      <div class="topic-skeleton" style="animation-delay:0.2s;">
-        <div class="skeleton-icon"></div>
-        <div class="skeleton-text">
-          <div class="skeleton-line skeleton-line--full"></div>
-          <div class="skeleton-line skeleton-line--short"></div>
-        </div>
-      </div>
-    </div>
+    <!-- Topic cards / under-construction sign injected here -->
+    <div id="lore-body" style="width:100%;"></div>
 
-    <div class="lore-tape">🌿 &nbsp; the lore goes deep &nbsp; 🌿</div>
+    <div class="lore-tape" id="lore-tape" style="display:none;">🌿 &nbsp; the lore goes deep &nbsp; 🌿</div>
   </div>
+
+  <!-- Under-construction styles (only used when no topics yet) -->
+  <style>
+    .sign {
+      width: 100%;
+      border-radius: 20px;
+      padding: 2.5rem 2rem 0;
+      text-align: center;
+      background:
+        linear-gradient(var(--card), var(--card)) padding-box,
+        linear-gradient(135deg, rgba(168,85,247,0.55) 0%, rgba(34,197,94,0.12) 50%, rgba(168,85,247,0.45) 100%) border-box;
+      border: 1.5px solid transparent;
+      animation: sign-glow 4s ease-in-out infinite alternate;
+      overflow: hidden;
+    }
+    @keyframes sign-glow {
+      from { box-shadow: 0 0 40px rgba(168,85,247,0.07), 0 8px 40px rgba(0,0,0,0.5); }
+      to   { box-shadow: 0 0 80px rgba(168,85,247,0.18), 0 8px 40px rgba(0,0,0,0.5); }
+    }
+    .sign__leaf-row  { font-size:1.5rem; letter-spacing:0.6rem; margin-bottom:1.75rem; opacity:0.55; }
+    .sign__cone      { font-size:3.2rem; display:block; margin-bottom:0.6rem; animation: wobble 2.8s ease-in-out infinite; }
+    @keyframes wobble { 0%,100%{transform:rotate(-9deg)} 50%{transform:rotate(9deg)} }
+    .sign__overline  { font-family:'Space Grotesk',sans-serif; font-size:0.62rem; color:var(--purple-glow); text-transform:uppercase; letter-spacing:0.22em; font-weight:600; margin-bottom:0.7rem; opacity:0.8; }
+    .sign__title     { font-family:'Space Grotesk',sans-serif; font-size:2.4rem; font-weight:700; color:var(--text); margin-bottom:1rem; line-height:1.1; }
+    .sign__divider   { width:40px; height:2px; background:linear-gradient(90deg,transparent,var(--purple),transparent); margin:0 auto 1.25rem; border-radius:99px; }
+    .sign__body      { font-size:0.95rem; color:var(--dim); line-height:1.65; }
+    .sign__tagline   { font-size:0.82rem; color:var(--purple-glow); opacity:0.65; margin-top:1rem; font-style:italic; padding-bottom:1.75rem; }
+    .sign__tape      { margin:0 -2rem; padding:0.55rem 2rem; background:repeating-linear-gradient(-45deg,rgba(168,85,247,0.13),rgba(168,85,247,0.13) 10px,rgba(168,85,247,0.04) 10px,rgba(168,85,247,0.04) 20px); border-top:1px solid rgba(168,85,247,0.18); font-size:0.58rem; font-family:'Space Grotesk',sans-serif; text-transform:uppercase; letter-spacing:0.3em; color:rgba(192,132,252,0.55); text-align:center; }
+  </style>
 
   <script type="module">
     import { getInfoTopics } from './src/services/infoService.js';
     import { getPageContent } from './src/services/pagesService.js';
 
+    const UNDER_CONSTRUCTION = `
+      <div class="sign">
+        <div class="sign__leaf-row">🍃 🌿 🍃</div>
+        <span class="sign__cone">🚧</span>
+        <p class="sign__overline">Under Construction</p>
+        <h2 class="sign__title">The Lore</h2>
+        <div class="sign__divider"></div>
+        <p class="sign__body">Ancient strain secrets are being decoded.<br>The universe is still speaking. 🔮</p>
+        <p class="sign__tagline">— the lore goes deep, be patient</p>
+        <div class="sign__tape">🌿 &nbsp; decoding the cosmos &nbsp; 🌿</div>
+      </div>`;
+
     function renderTopics(topics) {
+      const body   = document.getElementById('lore-body');
+      const tape   = document.getElementById('lore-tape');
+      const header = document.querySelector('.lore-header');
+
+      // If no topics have content yet, show under-construction sign and hide the header
+      const hasContent = topics && topics.some(t => t.content?.trim());
+      if (!hasContent) {
+        header.style.display = 'none';
+        body.innerHTML = UNDER_CONSTRUCTION;
+        return;
+      }
+
+      tape.style.display = '';
+      body.innerHTML = '<div class="topics-grid" id="topics-grid"></div>';
       const grid = document.getElementById('topics-grid');
-      grid.innerHTML = '';
 
       if (!topics || topics.length === 0) {
         grid.innerHTML = `
