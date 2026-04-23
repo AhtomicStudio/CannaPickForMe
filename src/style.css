@@ -1,4 +1,4 @@
-﻿/* ============================================
+/* ============================================
    CannaPickForMe — Design System
    Theme: Dark + Green/Gold/Smoke · Stoner Premium
    ============================================ */
@@ -1672,7 +1672,7 @@ body {
   border: 2px solid #f59e0b;
   background: linear-gradient(135deg, rgba(245,158,11,0.10) 0%, rgba(251,191,36,0.05) 100%);
   box-shadow: 0 0 0 1px rgba(245,158,11,0.15), 0 4px 20px rgba(245,158,11,0.10);
-  overflow: hidden;
+  overflow: visible;
   margin: 0.35rem 0;
   transition: box-shadow 0.2s, transform 0.2s;
 }
@@ -1684,8 +1684,11 @@ a.partner-strain-card:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.25rem;
   background: linear-gradient(90deg, #92400e, #d97706, #92400e);
   padding: 0.28rem 0.9rem;
+  border-radius: calc(var(--radius-md) - 2px) calc(var(--radius-md) - 2px) 0 0;
 }
 .partner-strain-card__badge {
   font-size: 0.68rem;
@@ -1703,9 +1706,10 @@ a.partner-strain-card:hover {
 }
 .partner-strain-card__body {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-md);
   padding: 0.75rem var(--space-lg);
+  min-height: 56px;
 }
 .partner-strain-card__info {
   flex: 1;

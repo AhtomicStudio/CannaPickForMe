@@ -994,8 +994,11 @@ function renderResult(result) {
       const globalResult = matchStrains(globalAvailable, sessionAnswers);
       
       if (globalResult && globalResult.allScores) {
+        // Check if a partner strain is active — it occupies one slot in the modal
+        const hasActivePartner = (strainDelta.partnerStrains || []).some(p => p.active);
+        const maxOrganic = hasActivePartner ? 4 : 5; // 4 organic + 1 partner = 5 max
         // Find strains that have a strictly higher score than the current best stash match
-        topGlobalStrains = globalResult.allScores.filter(s => s.score > matchScore).slice(0, 5);
+        topGlobalStrains = globalResult.allScores.filter(s => s.score > matchScore).slice(0, maxOrganic);
         
         if (topGlobalStrains.length > 0) {
           betterMatchContainer.classList.remove('hidden');
