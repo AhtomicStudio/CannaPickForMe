@@ -1,6 +1,8 @@
-import { getSessionHistory, clearSessionHistory, getTheme, getLightMode } from './storage/store.js';
-import { THEMES, saveThemePreference, saveLightModePreference } from './services/themeService.js';
+import { getSessionHistory, clearSessionHistory, getTheme } from './storage/store.js';
+import { THEMES, saveThemePreference } from './services/themeService.js';
 import { deleteAccount } from './services/userService.js';
+import { showConfirm } from './services/modalService.js';
+import { showToast } from './services/toastService.js';
 
 // Lazy-load companion to avoid pulling game modules into the eager bundle
 async function getCompanion() {
@@ -152,20 +154,9 @@ function renderThemesTab() {
 
 function renderSettingsTab() {
   const panel = document.getElementById('profile-settings-panel');
-  const lightOn = getLightMode();
 
   panel.innerHTML = `
     <div class="settings-group">
-      <div class="settings-row" id="bright-mode-row">
-        <div>
-          <div class="settings-row__label">Bright Mode</div>
-        </div>
-        <label class="settings-toggle">
-          <input type="checkbox" id="toggle-light-mode" ${lightOn ? 'checked' : ''} />
-          <span class="settings-toggle__track"></span>
-        </label>
-        <div class="settings-tooltip">wtf what stoner uses light mode sus 👀</div>
-      </div>
       <div class="settings-row" id="companion-row">
         <div>
           <div class="settings-row__label">🌱 CannaGuy Companion</div>
@@ -207,10 +198,6 @@ function renderSettingsTab() {
     </div>
   `;
 
-  document.getElementById('toggle-light-mode').addEventListener('change', e => {
-    saveLightModePreference(e.target.checked);
-  });
-
   const companionToggle = document.getElementById('toggle-companion');
   if (companionToggle) {
     companionToggle.addEventListener('change', async e => {
@@ -219,8 +206,16 @@ function renderSettingsTab() {
     });
   }
 
-  document.getElementById('btn-clear-history').addEventListener('click', () => {
-    if (!confirm('Clear all session history on this device? Your stash and account are not affected.')) return;
+  document.getElementById('btn-clear-history').addEventListener('click', async () => {
+    const confirmed = await showConfirm({
+      icon: '🧹',
+      title: 'Clear session history?',
+      message: 'Wipes every past pick on this device. Your stash and account are not affected.',
+      confirmLabel: 'Clear History',
+      cancelLabel: 'Keep It',
+      tone: 'danger',
+    });
+    if (!confirmed) return;
     clearSessionHistory();
     // Switch to Activity tab so the cleared empty state is visible
     document.querySelectorAll('[data-profile-tab]').forEach(t =>
@@ -230,6 +225,7 @@ function renderSettingsTab() {
       document.getElementById(`profile-${name}-panel`).classList.toggle('hidden', name !== 'activity');
     });
     renderActivityTab();
+    showToast('Session history cleared.', 'success');
   });
 
   document.getElementById('btn-reset-tips').addEventListener('click', () => {
@@ -240,16 +236,23 @@ function renderSettingsTab() {
   });
 
   document.getElementById('btn-delete-account-profile').addEventListener('click', async () => {
-    const confirmed = confirm('This will delete your account and all cloud data. Your local stash stays on this device.');
+    const confirmed = await showConfirm({
+      icon: '⚠️',
+      title: 'Delete your account?',
+      message: 'This deletes your cloud data permanently. Your local stash stays on this device.',
+      confirmLabel: 'Delete Account',
+      cancelLabel: 'Cancel',
+      tone: 'danger',
+    });
     if (!confirmed) return;
     try {
       await deleteAccount();
       _onBack();
     } catch (err) {
       if (err.code === 'auth/requires-recent-login') {
-        alert('For security, please sign out and sign back in before deleting your account.');
+        showToast('For security, sign out and sign back in before deleting.', 'error');
       } else {
-        alert('Something went wrong. Please try again.');
+        showToast('Something went wrong. Please try again.', 'error');
       }
     }
   });

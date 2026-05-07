@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="default">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,7 +19,21 @@
     <meta name="twitter:title" content="CannaPickForMe — Find Your Perfect Strain" />
     <meta name="twitter:description" content="Answer 4 quick questions and get a personalised strain recommendation matched to your mood, vibe, and intensity. 🌿" />
     <meta name="twitter:image" content="https://cannapickforme.com/icon-512.png" />
-    <title>CannaPickForMe</title>
+    <title>CannaPickForMe — Find Your Perfect Cannabis Strain in 4 Questions</title>
+    <link rel="canonical" href="https://cannapickforme.com/" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "CannaPickForMe",
+      "url": "https://cannapickforme.com/",
+      "description": "Free cannabis strain matcher. Answer 4 questions about your mood, vibe, and intensity to get a personalised strain recommendation from a library of 200+ strains.",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web, iOS, Android",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "audience": { "@type": "Audience", "audienceType": "Adults 21+" }
+    }
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icon-512.png" />
     <link rel="manifest" href="/manifest.json" />
@@ -196,6 +210,11 @@
           </div>
         </div>
         <div id="strain-list" class="strain-list"></div>
+        <div id="filter-empty-state" class="empty-state hidden">
+          <span class="empty-state__icon">🔍</span>
+          <p>No strains match these filters</p>
+          <button id="btn-clear-filters-empty" class="btn btn--primary" style="margin-top: 1rem;">Clear Filters</button>
+        </div>
       </div>
       <div id="my-stash-panel" class="stash__panel hidden">
         <div class="strain-list-header">
@@ -221,10 +240,10 @@
     </div>
 
     <!-- Custom Strain Modal -->
-    <div id="custom-modal" class="modal hidden">
+    <div id="custom-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="custom-modal-title">
       <div class="modal__backdrop"></div>
       <div class="modal__content">
-        <h3>Add Custom Strain</h3>
+        <h3 id="custom-modal-title">Add Custom Strain</h3>
         <form id="custom-strain-form">
           <div class="form-group">
             <label for="custom-name">Strain Name *</label>
@@ -255,7 +274,7 @@
     </div>
 
     <!-- Effect Override Modal -->
-    <div id="override-modal" class="modal hidden">
+    <div id="override-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="override-title">
       <div class="modal__backdrop"></div>
       <div class="modal__content">
         <h3 id="override-title">Edit Effects</h3>
@@ -269,14 +288,14 @@
     </div>
 
     <!-- Better Match Modal -->
-    <div id="better-match-modal" class="modal hidden">
+    <div id="better-match-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="better-match-title">
       <div class="modal__backdrop"></div>
-      <div class="modal__content" style="max-height: 80vh; display: flex; flex-direction: column;">
-        <h3>Better Matches 🌿</h3>
+      <div class="modal__content modal__content--scrollable">
+        <h3 id="better-match-title">Better Matches 🌿</h3>
         <p class="modal__sub">These strains match your vibe better than your current stash.</p>
-        <div id="better-match-list" class="strain-list" style="overflow-y: auto; flex-grow: 1; margin-bottom: 1rem;"></div>
-        <div class="modal__actions" style="margin-top: 0;">
-          <button id="better-match-close" class="btn btn--primary" style="width: 100%;">Close</button>
+        <div id="better-match-list" class="strain-list better-match-list"></div>
+        <div class="modal__actions modal__actions--footer">
+          <button id="better-match-close" class="btn btn--primary btn--full">Close</button>
         </div>
       </div>
     </div>
@@ -322,18 +341,14 @@
           <p id="result-reasoning" class="result__reasoning"></p>
           <div id="result-effects" class="result__effects"></div>
         </div>
-        <div id="better-match-container" class="hidden" style="margin-top: 1.5rem; margin-bottom: 1.5rem; text-align: center;">
-          <button id="btn-better-match" class="btn btn--secondary" style="font-size: 0.85rem; padding: 0.6rem; border: 1px solid rgba(255,255,255,0.2);">Looking for a strain that's a better match but not in your stash?</button>
+        <div id="better-match-container" class="better-match-container hidden">
+          <button id="btn-better-match" class="btn btn--secondary btn--subtle">✨ See strains beyond your stash</button>
         </div>
         <div class="result__actions">
-          <button id="btn-share" class="btn btn--secondary">📤 Share</button>
-          <button id="btn-home" class="btn btn--primary btn--glow">🏠 Return Home</button>
+          <button id="btn-share" class="btn btn--ghost btn--pill">📤 Share</button>
+          <button id="btn-home" class="btn btn--primary btn--glow btn--large">🏠 Return Home</button>
         </div>
-        <!-- Results Signup CTA (signed-out only) -->
-        <div id="result-signup-cta" class="result-signup-cta hidden">
-          <p class="result-signup-cta__text">☁️ <strong>Save your picks.</strong> Create a free account to sync your stash and session history across devices.</p>
-          <a href="#" id="result-signup-btn" class="btn btn--ghost result-signup-cta__btn">Create Account</a>
-        </div>
+        <!-- Results Signup CTA moved to footer -->
         <!-- Sponsored Strain Card -->
         <div id="sponsored-strain-card" class="sponsored-strain-card hidden">
           <div class="sponsored-ribbon">⭐ Sponsored Strain</div>
@@ -348,6 +363,11 @@
         </div>
         <!-- Ad Slot: Result -->
         <div id="ad-slot-result" class="ad-slot ad-slot--result"></div>
+      </div>
+      <!-- Results Signup CTA (signed-out only) -->
+      <div id="result-signup-cta" class="result-signup-cta hidden">
+        <p class="result-signup-cta__text">☁️ <strong>Save your picks across devices.</strong></p>
+        <a href="#" id="result-signup-btn" class="btn btn--primary btn--sm">Create Account</a>
       </div>
     </div>
 
@@ -388,8 +408,9 @@
           <!-- Email magic link -->
           <form id="account-email-form" class="account-email-form" novalidate>
             <input id="account-email-input" type="email" class="account-email-input" placeholder="your@email.com" autocomplete="email" inputmode="email" />
-            <button type="submit" id="account-email-btn" class="btn btn--primary" style="width:100%;margin-top:0.5rem;">Send Magic Link</button>
+            <button type="submit" id="account-email-btn" class="btn btn--primary btn--full btn--stacked">Send Magic Link</button>
           </form>
+          <p class="account-email-hint">We'll email a sign-in link from <strong>noreply@auth.cannapickforme.com</strong>. If it lands in spam, please mark it "Not Spam" so future links go to your inbox.</p>
           <p id="account-email-error" class="account-error hidden"></p>
 
           <div class="account-divider"><span>or</span></div>
@@ -414,9 +435,27 @@
           <div class="account-linksent-icon">📬</div>
           <h3>Check Your Email</h3>
           <p class="modal__sub">We sent a sign-in link to <strong id="account-linksent-email"></strong>. Tap the link in your email to sign in — no password needed.</p>
-          <p class="account-linksent-hint">Link expires in 1 hour. Check spam if you don't see it.</p>
+          <p class="account-linksent-hint">It should arrive within 30 seconds. Sender is <strong>noreply@auth.cannapickforme.com</strong>.</p>
+          <p class="account-linksent-hint"><strong>Don't see it?</strong> Check your spam or promotions folder. If you find it there, tap "Not Spam" so future links go straight to your inbox. The link expires in 1 hour.</p>
+          <p class="account-linksent-hint">Still nothing? <a href="#" id="account-use-code-link" class="account-link">Get a 6-digit code instead</a>.</p>
           <div class="modal__actions">
             <button id="account-linksent-back" class="btn btn--ghost">Use a Different Email</button>
+          </div>
+        </div>
+
+        <!-- State: enter 6-digit code -->
+        <div id="account-state-code" class="hidden">
+          <div class="account-linksent-icon">🔢</div>
+          <h3>Enter Your Code</h3>
+          <p class="modal__sub">We're emailing a 6-digit code to <strong id="account-code-email"></strong>. Enter it below to sign in.</p>
+          <form id="account-code-form" class="account-email-form" novalidate>
+            <input id="account-code-input" type="text" class="account-email-input account-code-input" placeholder="000000" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" />
+            <button type="submit" id="account-code-btn" class="btn btn--primary btn--full btn--stacked">Sign In</button>
+          </form>
+          <p id="account-code-error" class="account-error hidden"></p>
+          <p class="account-linksent-hint">Code expires in 10 minutes. Didn't get it? <a href="#" id="account-resend-code-link" class="account-link">Resend</a>.</p>
+          <div class="modal__actions">
+            <button id="account-code-back" class="btn btn--ghost">Back</button>
           </div>
         </div>
 
@@ -426,7 +465,7 @@
           <p class="modal__sub">You opened this link on a different device. Enter your email to finish signing in.</p>
           <form id="account-confirm-form" class="account-email-form" novalidate>
             <input id="account-confirm-input" type="email" class="account-email-input" placeholder="your@email.com" autocomplete="email" inputmode="email" />
-            <button type="submit" class="btn btn--primary" style="width:100%;margin-top:0.5rem;">Sign In</button>
+            <button type="submit" class="btn btn--primary btn--full btn--stacked">Sign In</button>
           </form>
           <p id="account-confirm-error" class="account-error hidden"></p>
         </div>
@@ -466,9 +505,58 @@
       </div>
     </div>
 
+    <!-- Reusable Confirm Modal — replaces native window.confirm() -->
+    <div id="confirm-modal" class="modal modal--confirm hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title" aria-describedby="confirm-modal-message">
+      <div class="modal__backdrop"></div>
+      <div class="modal__content modal__content--confirm">
+        <div id="confirm-modal-icon" class="confirm-modal__icon" aria-hidden="true">🤔</div>
+        <h3 id="confirm-modal-title" class="confirm-modal__title">Are you sure?</h3>
+        <p id="confirm-modal-message" class="confirm-modal__message modal__sub"></p>
+        <div class="modal__actions confirm-modal__actions">
+          <button type="button" id="confirm-modal-cancel" class="btn btn--ghost">Cancel</button>
+          <button type="button" id="confirm-modal-ok" class="btn btn--primary">Confirm</button>
+        </div>
+      </div>
+    </div>
+
     <!-- CannaGotchi Game Screen -->
     <div id="game-screen" class="screen game hidden"></div>
+
+    <!-- About (SPA-routed) -->
+    <section id="screen-about" class="screen hidden">
+      <div class="page-screen-content">
+        <a href="/" class="page-back-btn">← Back to App</a>
+        <div class="sign">
+          <div class="sign__leaf-row">🌿 🍃 🌿</div>
+          <span class="sign__cone">🚧</span>
+          <p class="sign__overline">Under Construction</p>
+          <h1 class="sign__title">About Me</h1>
+          <div class="sign__divider"></div>
+          <p class="sign__body">The story is still being written.<br>Check back after the next session. 💨</p>
+          <p class="sign__tagline">— coming soon to a dispensary near you</p>
+          <div class="sign__tape">🌿 &nbsp; rolling in progress &nbsp; 🌿</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lore (SPA-routed) -->
+    <section id="screen-lore" class="screen hidden">
+      <div class="page-screen-content">
+        <a href="/" class="page-back-btn">← Back to App</a>
+        <div class="lore-header">
+          <div class="lore-header__leaf-row">🍃 🌿 🍃</div>
+          <p class="lore-header__overline">Ancient Knowledge</p>
+          <h1 class="lore-header__title">The Lore</h1>
+          <div class="lore-header__divider"></div>
+          <p class="lore-header__intro" id="lore-intro">Decoding the cosmos, one strain at a time. 🔮</p>
+        </div>
+        <div id="lore-body" style="width:100%;"></div>
+        <div class="lore-tape" id="lore-tape" style="display:none;">🌿 &nbsp; the lore goes deep &nbsp; 🌿</div>
+      </div>
+    </section>
 
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
+
+ 

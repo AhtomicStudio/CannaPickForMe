@@ -1,8 +1,8 @@
 {
   "framework": "vite",
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/lore",  "destination": "/lore.html"  }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

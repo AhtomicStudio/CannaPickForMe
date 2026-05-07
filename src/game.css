@@ -136,7 +136,6 @@
   width: 100%;
   max-width: 260px;
   text-align: center;
-  outline: none;
   transition: border-color 0.2s;
 }
 
@@ -667,18 +666,54 @@
 /* ── Persistent CannaGuy Companion ── */
 #cannaguy-companion {
   position: fixed;
-  bottom: 1.25rem;
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
   right: 1rem;
   z-index: 8888;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
   cursor: pointer;
   transition: opacity 0.3s ease;
-  animation: companion-enter 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  /* Prevent mobile tap side-effects that caused the "disappear" flicker:
+     - sticky :hover state after touch
+     - blue tap highlight
+     - 300ms double-tap zoom delay
+     The enter animation is deliberately on a separate one-shot class
+     (.cannaguy-companion--entering) so toggling .cg-tap-bounce here
+     doesn't restart companion-enter from its opacity:0 keyframe. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#cannaguy-companion:focus-visible {
+  outline: 2px solid var(--green-primary, #22c55e);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+/* Hover lift only on devices that actually have a hover pointer —
+   on touch, :hover sticks after tap and fights the tap animation. */
+@media (hover: hover) and (pointer: fine) {
+  #cannaguy-companion {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  #cannaguy-companion:hover:not(.cg-tap-bounce):not(.cg-annoyed-shake):not(.cg-idle-attention) {
+    transform: translateY(-2px);
+  }
+}
+@media (min-width: 768px) {
+  #cannaguy-companion {
+    bottom: calc(1.75rem + env(safe-area-inset-bottom, 0px));
+    right: 1.75rem;
+  }
 }
 
+/* One-shot entrance — class is added on first show() and removed in JS
+   after the animation completes so it never re-triggers during taps. */
+.cannaguy-companion--entering {
+  animation: companion-enter 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
 @keyframes companion-enter {
   from { transform: translateY(40px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
@@ -764,14 +799,15 @@
 /* ── Stress symbol 💢 ── */
 .cg-stress {
   position: absolute;
-  top: -28px;
+  top: -24px;
   left: 50%;
   transform: translateX(-50%) scale(0);
-  font-size: 1.1rem;
+  font-size: 1.35rem;
   pointer-events: none;
   opacity: 0;
   transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1), opacity 0.15s;
   filter: drop-shadow(0 0 4px #ef4444);
+  z-index: 2;
 }
 .cg-stress--visible {
   transform: translateX(-50%) scale(1);
@@ -781,22 +817,37 @@
 /* ── Speech bubble ── */
 .cg-bubble {
   position: absolute;
-  bottom: calc(100% + 8px);
+  bottom: calc(100% + 10px);
   right: 0;
   background: rgba(14,14,30,0.96);
-  border: 1px solid rgba(74,222,128,0.4);
-  border-radius: 2px;
-  padding: 0.35rem 0.6rem;
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.28rem;
+  border: 1px solid rgba(74,222,128,0.45);
+  border-radius: 10px;
+  padding: 0.4rem 0.65rem;
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.2px;
   color: #e2e8f0;
   white-space: nowrap;
   pointer-events: none;
-  box-shadow: 0 0 12px rgba(74,222,128,0.15);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 0 12px rgba(74,222,128,0.18);
   transform: translateY(6px);
   opacity: 0;
   transition: opacity 0.18s, transform 0.18s;
-  z-index: 1;
+  z-index: 2;
+}
+/* Bubble tail pointing down toward the sprite */
+.cg-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  right: 14px;
+  width: 10px;
+  height: 10px;
+  background: rgba(14,14,30,0.96);
+  border-right: 1px solid rgba(74,222,128,0.45);
+  border-bottom: 1px solid rgba(74,222,128,0.45);
+  transform: rotate(45deg);
 }
 .cg-bubble--show {
   transform: translateY(0) !important;
@@ -805,24 +856,56 @@
 .cg-bubble--angry {
   border-color: rgba(239,68,68,0.6) !important;
   color: #fca5a5 !important;
-  box-shadow: 0 0 12px rgba(239,68,68,0.2) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 0 12px rgba(239,68,68,0.25) !important;
+}
+.cg-bubble--angry::after {
+  border-right-color: rgba(239,68,68,0.6) !important;
+  border-bottom-color: rgba(239,68,68,0.6) !important;
 }
 .cg-bubble.hidden {
   display: none;
 }
 
+/* Bubble/stress inside the game viewport — position inside the visible area */
+.game-viewport .cg-bubble {
+  top: 12px;
+  right: 12px;
+  bottom: auto;
+}
+.game-viewport .cg-bubble::after {
+  display: none;
+}
+.game-viewport .cg-stress {
+  top: 12px;
+  left: 12px;
+}
+.game-viewport {
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+.game-viewport:hover {
+  filter: brightness(1.06);
+}
+.game-viewport:focus-visible {
+  outline: 2px solid var(--green-primary, #22c55e);
+  outline-offset: 2px;
+}
+
 /* ── Name label ── */
 .cg-label {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 0.27rem;
-  color: rgba(148,163,184,0.65);
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(226,232,240,0.75);
   text-align: center;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   pointer-events: none;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 .cg-level {
   color: #4ade80;
-  opacity: 0.8;
+  opacity: 0.9;
+  margin-left: 2px;
 }
 
 /* ── Idle attention getter ── */

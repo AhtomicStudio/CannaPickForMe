@@ -20,12 +20,14 @@ import { getAvailableMoves } from './moves.js';
 import { renderSprite } from './pixelArt.js';
 import { loadGameState, saveGameState, createInitialGameState } from '../services/gameService.js';
 import { renderOnboarding } from './onboardingScreen.js';
+import { createTapReactor } from './companion.js';
 
 let _gameState = null;
 let _uid = null;
 let _onBack = () => {};
 let _idleInterval = null;
 let _container = null;
+let _tapReactor = null;
 
 // ── Spam Protection ──────────────────────────────────────────
 const ACTION_COOLDOWN_MS = 1500;
@@ -89,6 +91,7 @@ export function destroyGameScreen() {
   if (_idleInterval) clearInterval(_idleInterval);
   if (_saveDebounce) clearTimeout(_saveDebounce);
   if (_streakTimer)  clearTimeout(_streakTimer);
+  if (_tapReactor)   { _tapReactor.destroy(); _tapReactor = null; }
   _idleInterval = null;
   _streakCount  = 0;
 }
@@ -175,8 +178,10 @@ function renderIdleView() {
         <span class="game-header__evo">${evolution.name}</span>
       </div>
 
-      <div class="game-viewport">
+      <div class="game-viewport" role="button" tabindex="0" aria-label="Pet ${_gameState.monsterName}">
         <div class="game-viewport__scanlines"></div>
+        <div class="cg-stress" id="game-cg-stress">💢</div>
+        <div class="cg-bubble hidden" id="game-cg-bubble"></div>
         <div class="game-monster" id="game-monster-sprite"></div>
       </div>
 
@@ -236,6 +241,25 @@ function renderIdleView() {
   renderSprite(spriteEl, evolution.sprite, 6);
   _currentIdleAnim = getIdleAnimForSprite(evolution.sprite);
   applyIdleAnim();
+
+  // Wire tap reactor — shares the same reaction cycle as the persistent companion.
+  if (_tapReactor) { _tapReactor.destroy(); _tapReactor = null; }
+  const viewportEl = _container.querySelector('.game-viewport');
+  _tapReactor = createTapReactor({
+    wrapper: viewportEl,
+    sprite:  spriteEl,
+    bubble:  _container.querySelector('#game-cg-bubble'),
+    stress:  _container.querySelector('#game-cg-stress'),
+    idleAnim: _currentIdleAnim,
+    idleTimer: false, // no idle wiggle on a dedicated screen
+  });
+  // Keyboard activation — Enter/Space pet the sprite.
+  viewportEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      _tapReactor?.handleTap();
+    }
+  });
 
   // Wire events
   _container.querySelector('#game-back').addEventListener('click', () => {

@@ -1,3 +1,7 @@
+import { burstParticles, flashGlow, screenPunch } from './_kinetic.js';
+
+const ACT1 = 1000, ACT2 = 3600, WINDUP = 3600, FLIP = 4000, CLIMAX = 4300, REVEAL = 4500;
+
 const SPARK_POSITIONS = [
   { top: '18%', left: '12%' },
   { top: '14%', left: '78%' },
@@ -10,7 +14,7 @@ export const tarotAnimation = {
   id: 'tarot',
   name: 'Tarot Card Draw',
 
-  render(container, { strainName }) {
+  render(container, { strainName, winnerName }) {
     const sparksHTML = SPARK_POSITIONS.map(
       pos => `<span class="anim-tarot-spark" style="top:${pos.top};left:${pos.left}">✦</span>`
     ).join('');
@@ -18,31 +22,78 @@ export const tarotAnimation = {
     container.innerHTML = `
       <div class="anim-tarot-scene">
         ${sparksHTML}
-        <div class="anim-tarot-card anim-tarot-card--c1"></div>
-        <div class="anim-tarot-card anim-tarot-card--c2"></div>
-        <div class="anim-tarot-card anim-tarot-card--c3"></div>
-        <div class="anim-tarot-card anim-tarot-card--c4"></div>
-        <div class="anim-tarot-card anim-tarot-card--c5"></div>
+        <div class="anim-tarot-card anim-tarot-card--c1 anim-tarot-card--deal1"></div>
+        <div class="anim-tarot-card anim-tarot-card--c2 anim-tarot-card--deal2"></div>
+        <div class="anim-tarot-card anim-tarot-card--c3 anim-tarot-card--deal3" style="z-index:3"></div>
+        <div class="anim-tarot-card anim-tarot-card--c4 anim-tarot-card--deal4"></div>
+        <div class="anim-tarot-card anim-tarot-card--c5 anim-tarot-card--deal5"></div>
+        <div class="anim-tarot-glow"></div>
         <div class="anim-tarot-label"></div>
       </div>
     `;
 
-    // At 4.0s: card is edge-on — swap to winner face while invisible
-    setTimeout(() => {
-      const centerCard = container.querySelector('.anim-tarot-card--c3');
-      if (centerCard) centerCard.classList.add('anim-tarot-card--winner');
-    }, 4000);
+    const scene   = container.querySelector('.anim-tarot-scene');
+    const cards   = container.querySelectorAll('.anim-tarot-card');
+    const glow    = container.querySelector('.anim-tarot-glow');
+    const label   = container.querySelector('.anim-tarot-label');
+    const centerCard = container.querySelector('.anim-tarot-card--c3');
 
-    // At 4.5s: card face-front showing winner — show label + sparkles
+    // Remove deal classes after stagger
+    [120, 240, 360, 480, 600].forEach((delay, i) => {
+      setTimeout(() => {
+        cards[i]?.classList.remove(`anim-tarot-card--deal${i + 1}`);
+        cards[i]?.classList.add('anim-tarot-card--fanned');
+      }, delay);
+    });
+
+    // Act 2 — fan hover animation
     setTimeout(() => {
-      const label = container.querySelector('.anim-tarot-label');
-      if (label) {
-        label.textContent = strainName;
-        label.classList.add('visible');
-      }
+      glow.classList.add('anim-tarot-glow--active');
+      cards.forEach(c => c.classList.add('anim-tarot-card--hover'));
+    }, ACT1);
+
+    // Wind-up — outer cards recede
+    setTimeout(() => {
+      cards.forEach((c, i) => {
+        if (i !== 2) {
+          c.classList.add('anim-tarot-card--recede');
+          c.classList.remove('anim-tarot-card--hover');
+        } else {
+          c.classList.add('anim-tarot-card--focus');
+        }
+      });
+    }, WINDUP);
+
+    // Flip at 4.0s (center card edge-on, swap to winner face, then front)
+    setTimeout(() => {
+      centerCard.classList.add('anim-tarot-card--flip');
+    }, FLIP);
+
+    setTimeout(() => {
+      centerCard.classList.add('anim-tarot-card--winner');
+    }, FLIP + 150);
+
+    // Climax
+    setTimeout(() => {
+      flashGlow(centerCard, { color: 'var(--green-glow)', duration: 400 });
+      burstParticles(scene, {
+        count: 10,
+        origin: { x: '50%', y: '45%' },
+        palette: ['var(--green-glow)', 'var(--gold-glow)', 'var(--purple-glow)'],
+        duration: 800,
+        className: 'kfx-spark kfx-spark--large',
+      });
+      screenPunch(scene, { scale: 1.03 });
       container.querySelectorAll('.anim-tarot-spark').forEach((spark, i) => {
         setTimeout(() => spark.classList.add('pop'), i * 60);
       });
-    }, 4500);
+    }, CLIMAX);
+
+    // Reveal
+    setTimeout(() => {
+      label.textContent = strainName;
+      label.classList.add('visible');
+      centerCard.classList.add('anim-tarot-card--sway');
+    }, REVEAL);
   },
 };

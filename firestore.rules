@@ -19,6 +19,13 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
+    // Sign-in OTP codes — Cloud Functions only. Clients can never read or write
+    // these directly; the codeHash + attempts counter would be a security hole.
+    // Cloud Functions bypass these rules via the Admin SDK.
+    match /signInCodes/{docId} {
+      allow read, write: if false;
+    }
+
     // Pages (about, lore) — public reads, admin writes
     match /pages/{pageId} {
       allow read: if true;

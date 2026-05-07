@@ -10,6 +10,7 @@ import {
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
   signInWithEmailLink,
+  signInWithCustomToken,
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
@@ -17,6 +18,7 @@ import {
   deleteUser,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { db, auth } from '../firebase.js';
 import {
   getStash,
@@ -30,6 +32,11 @@ import {
   setEffectOverridesBulk,
   setSessionHistoryBulk,
 } from '../storage/store.js';
+
+// Cloud Functions client — region must match setGlobalOptions in functions/index.js
+const functions = getFunctions(undefined, 'us-central1');
+const _requestSignInCode = httpsCallable(functions, 'requestSignInCode');
+const _verifySignInCode = httpsCallable(functions, 'verifySignInCode');
 
 const PENDING_EMAIL_KEY = 'cpfm_pending_email';
 export const NEEDS_EMAIL_CONFIRMATION = 'needs-email-confirmation';
@@ -80,6 +87,33 @@ export async function completeSignInWithEmail(email) {
   await signInWithEmailLink(auth, email, window.location.href);
   localStorage.removeItem(PENDING_EMAIL_KEY);
   window.history.replaceState({}, document.title, window.location.pathname);
+}
+
+/**
+ * Request a 6-digit OTP code be emailed to the given address.
+ * Used as a fallback when the magic link doesn't arrive (or lands in spam).
+ * Throws if the Cloud Function rejects (rate-limited, invalid email, SMTP failure).
+ */
+export async function requestSignInCode(email) {
+  const result = await _requestSignInCode({ email });
+  // Stash the email so the verify step doesn't need the user to retype it
+  localStorage.setItem(PENDING_EMAIL_KEY, email);
+  return result.data; // { ok: true, expiresInSeconds: 600 }
+}
+
+/**
+ * Verify a 6-digit code. On success, signs the user in via custom token.
+ * Throws if the code is wrong, expired, or attempts exhausted.
+ */
+export async function verifySignInCode(code) {
+  const email = localStorage.getItem(PENDING_EMAIL_KEY);
+  if (!email) {
+    throw new Error('No pending sign-in. Request a new code.');
+  }
+  const result = await _verifySignInCode({ email, code });
+  const { token } = result.data;
+  await signInWithCustomToken(auth, token);
+  localStorage.removeItem(PENDING_EMAIL_KEY);
 }
 
 /**

@@ -3,6 +3,7 @@
  * Password-gated ad management interface.
  */
 
+import './tokens.css';
 import './admin.css';
 import strainsData from './data/strains.json';
 import { getStrainDelta, saveStrainDelta, getMenuData, saveMenuData } from './services/strainService.js';

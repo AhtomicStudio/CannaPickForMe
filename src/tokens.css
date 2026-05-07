@@ -1,0 +1,178 @@
+/* ============================================================
+   CannaPickForMe — Design Tokens (single source of truth)
+   This file is the canonical definition for every design token
+   in the app. Every other CSS file should consume these via
+   var(--...) and must NOT redeclare :root.
+   ============================================================ */
+
+:root {
+  /* ========================================================
+     COLORS
+     ======================================================== */
+  --bg-deep: #0a0e17;
+  --bg-card: #141b2d;
+  --bg-card-hover: #1a2340;
+  --bg-surface: #111827;
+  --bg-modal: rgba(10, 14, 23, 0.92);
+
+  --green-primary: #22c55e;
+  --green-glow: #4ade80;
+  --green-dark: #166534;
+  --green-muted: #15803d;
+
+  --gold-primary: #f59e0b;
+  --gold-glow: #fbbf24;
+  --gold-dark: #92400e;
+
+  --purple-accent: #a855f7;
+  --purple-glow: #c084fc;
+
+  --smoke-light: rgba(148, 163, 184, 0.12);
+  --smoke-medium: rgba(148, 163, 184, 0.06);
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  --border: rgba(148, 163, 184, 0.1);
+  --border-focus: rgba(34, 197, 94, 0.4);
+
+  --danger: #ef4444;
+  --indica: #8b5cf6;
+  --sativa: #f59e0b;
+  --hybrid: #22c55e;
+
+  /* Green opacity aliases — prevents raw rgba(34, 197, 94, x) drift.
+     Use these whenever you'd reach for a tinted green fill or border. */
+  --green-8:  rgba(34, 197, 94, 0.08);
+  --green-16: rgba(34, 197, 94, 0.16);
+  --green-25: rgba(34, 197, 94, 0.25);
+  --green-40: rgba(34, 197, 94, 0.40);
+
+  /* ========================================================
+     TYPOGRAPHY
+     ======================================================== */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+
+  /* Modular type scale — base 16. Prefer these over raw rem values. */
+  --fs-3xs:     0.75rem;    /* 12 — legal, footnotes */
+  --fs-2xs:     0.8125rem;  /* 13 — helper text */
+  --fs-xs:      0.875rem;   /* 14 — captions, dense UI */
+  --fs-sm:      0.9375rem;  /* 15 — secondary body */
+  --fs-md:      1rem;       /* 16 — body */
+  --fs-lg:      1.125rem;   /* 18 — strong body, buttons */
+  --fs-xl:      1.25rem;    /* 20 — h4 */
+  --fs-2xl:     1.5rem;     /* 24 — h3 */
+  --fs-3xl:     2rem;       /* 32 — h2 */
+  --fs-4xl:     2.5rem;     /* 40 — h1 */
+  --fs-display: 3.25rem;    /* hero */
+
+  /* ========================================================
+     SPACING
+     ======================================================== */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+
+  /* ========================================================
+     RADII
+     ======================================================== */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+  --radius-full: 9999px;
+
+  /* ========================================================
+     TIMING & EASING
+     ======================================================== */
+  --dur-fast:    120ms;
+  --dur-base:    240ms;
+  --dur-slow:    400ms;
+  --dur-ambient: 14s;
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-snap:    cubic-bezier(0.2, 0.9, 0.3, 1.4);    /* overshoot punch */
+  --ease-thwack:  cubic-bezier(0.36, 0.07, 0.19, 0.97); /* shake */
+  --ease-charge:  cubic-bezier(0.4, 0, 0.6, 1);         /* hold then release */
+  --anim-act1-end: 1400ms;
+  --anim-act2-end: 3800ms;
+  --anim-climax:   4200ms;
+  --anim-reveal:   4500ms;
+
+  /* ========================================================
+     Z-INDEX LAYERING CONTRACT
+     Use tokens, not raw values. 9999 should never appear again.
+     ======================================================== */
+  --z-base:    0;
+  --z-content: 10;
+  --z-sticky:  100;
+  --z-nav:     200;
+  --z-modal:   1000;
+  --z-toast:   2000;
+}
+
+/* ============================================================
+   ACCESSIBILITY — GLOBAL FOCUS RING
+   Many buttons and inputs set `outline: none` to suppress the
+   default browser ring; this rule restores a visible, on-brand
+   focus indicator for keyboard users without affecting mouse
+   or touch interactions.
+   ============================================================ */
+:where(
+  button,
+  a,
+  input,
+  textarea,
+  select,
+  summary,
+  [role="button"],
+  [role="tab"],
+  [tabindex]:not([tabindex="-1"])
+):focus-visible {
+  outline: 2px solid var(--green-glow);
+  outline-offset: 2px;
+  border-radius: inherit;
+  box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.15);
+}
+
+/* ============================================================
+   ACCESSIBILITY — PREFERS-REDUCED-MOTION
+   Respect users who've asked for less motion WITHOUT nuking the
+   ambient vibe. We take a targeted approach:
+     • The ambient background (drifting leaves, breathing haze,
+       theme starfields/sparks) is intentionally LEFT ALONE. It
+       moves slowly and gently — pausing it broke the app's
+       visual identity for users with OS-level Reduce Motion on,
+       which is the default on a lot of devices. The motion is
+       slow enough that it shouldn't trigger vestibular issues.
+     • Long-running attention-grabbers (pulse-glow, breathe, blink,
+       float, flame flicker, smoke rise) are disabled.
+     • Transitions are kept short so the UI still feels responsive
+       (collapsing them to 0.01ms makes taps feel "stuck").
+     • Scroll behavior switches to instant.
+   This intentionally avoids a universal `*` override that would
+   suppress every keyframe in the app.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  /* Decorative pulses/breathes/flickers that repeat forever. */
+  .smoke-particle,
+  .smoke,
+  .profile-avatar--signed-out {
+    animation: none !important;
+  }
+
+  :root {
+    --dur-fast: 80ms;
+    --dur-base: 140ms;
+    --dur-slow: 180ms;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+}

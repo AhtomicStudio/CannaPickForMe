@@ -44,12 +44,21 @@ export function applyLightMode(on) {
 
 export function loadSavedTheme() {
   applyTheme(getTheme());
-  applyLightMode(getLightMode());
+  // Light mode is intentionally disabled — the app's visual identity
+  // (neon glows, glassmorphism, smoke/leaf background) is tuned for dark.
+  // We force it off here so anyone who enabled it in a previous build
+  // is returned to the default experience.
+  applyLightMode(false);
 }
 
 export async function saveThemePreference(key) {
   const safeKey = applyTheme(key);
   setTheme(safeKey);
+  // Companion reacts to theme flip
+  try {
+    const { reactToEvent } = await import('../game/companion.js');
+    reactToEvent('theme-change');
+  } catch (_) { /* companion is non-critical */ }
   try {
     const { getCurrentUser, saveSettingsToFirestore } = await import('./userService.js');
     const user = getCurrentUser();

@@ -1,7 +1,12 @@
+import './tokens.css';
 import './style.css';
 import './profile.css';
 import './game.css';
-import { initCompanion, destroyCompanion, hideCompanionForGameScreen, showCompanionAfterGameScreen } from './game/companion.js';
+import './pages.css';
+import { initCompanion, destroyCompanion, hideCompanionForGameScreen, showCompanionAfterGameScreen, reactToEvent } from './game/companion.js';
+import { showToast } from './services/toastService.js';
+import { openModal, closeModal, closeTopModal, showConfirm } from './services/modalService.js';
+import { initRouter } from './router.js';
 import { inject, track } from '@vercel/analytics';
 import strainsData from './data/strains.json';
 import questionsData from './data/questions.json';
@@ -20,6 +25,7 @@ import {
   getCurrentUser, signInWithGoogle,
   scheduleSync, loadAndResolveProfile, signOutUser, deleteAccount, initAuth,
   sendSignInLink, handleSignInLink, completeSignInWithEmail, NEEDS_EMAIL_CONFIRMATION,
+  requestSignInCode, verifySignInCode,
 } from './services/userService.js';
 import { loadSavedTheme } from './services/themeService.js';
 import { shareResult } from './shareCard.js';
@@ -154,7 +160,7 @@ let currentSortAsc = true;
 let overrideStrainId = null;
 
 // === SCREEN NAVIGATION ===
-function showScreen(id) {
+export function showScreen(id) {
   const prev = document.getElementById(currentScreen + '-screen') || document.getElementById(currentScreen);
   const next = document.getElementById(id + '-screen') || document.getElementById(id);
 
@@ -262,7 +268,35 @@ function initHome() {
     const timeWord = new Date().getHours() < 12 ? 'today' : 'tonight';
     tagline.textContent = `What are we shmokin' ${timeWord}?`;
   }
-  document.getElementById('btn-pick').addEventListener('click', () => {
+  document.getElementById('btn-pick').addEventListener('click', async () => {
+    const draft = localStorage.getItem('cpfm.session.draft');
+    if (draft) {
+      try {
+        const parsed = JSON.parse(draft);
+        if (Date.now() - parsed.timestamp < 30 * 60 * 1000) {
+          const progress = Math.min(
+            Object.keys(parsed.answers || {}).length,
+            questionsData.length
+          );
+          const resume = await showConfirm({
+            icon: '🌿',
+            title: 'Pick up where you left off?',
+            message: `You have an unfinished session — ${progress} of ${questionsData.length} questions answered.`,
+            confirmLabel: 'Resume',
+            cancelLabel: 'Start Fresh',
+            tone: 'glow',
+          });
+          if (resume) {
+            sessionAnswers = parsed.answers;
+            currentQuestionIndex = parsed.index;
+            renderQuestion();
+            showScreen('session');
+            return;
+          }
+        }
+      } catch (e) {}
+    }
+    localStorage.removeItem('cpfm.session.draft');
     sessionAnswers = {};
     currentQuestionIndex = 0;
     renderQuestion();
@@ -290,8 +324,8 @@ function initHome() {
   document.getElementById('btn-profile').addEventListener('click', () => {
     const user = getCurrentUser();
     if (!user) {
-      document.getElementById('account-modal').classList.remove('hidden');
       setAccountState('signedout');
+      openModal('account-modal');
       return;
     }
     renderProfileScreen();
@@ -304,14 +338,22 @@ function initHome() {
   });
 
   // Clear Stash
-  document.getElementById('btn-clear-stash').addEventListener('click', () => {
+  document.getElementById('btn-clear-stash').addEventListener('click', async () => {
     const count = getStash().length;
     if (count === 0) return;
-    const confirmed = confirm(`Clear all ${count} strain${count > 1 ? 's' : ''} from your stash?`);
+    const confirmed = await showConfirm({
+      icon: '🗑️',
+      title: 'Clear your stash?',
+      message: `This will remove all ${count} strain${count > 1 ? 's' : ''} from your stash. Custom strains you added will also be deleted.`,
+      confirmLabel: `Clear ${count === 1 ? 'It' : 'All'}`,
+      cancelLabel: 'Keep Them',
+      tone: 'danger',
+    });
     if (confirmed) {
       clearStash();
       scheduleSync();
       updateStashUI();
+      showToast('Stash cleared.', 'success');
     }
   });
 
@@ -319,8 +361,8 @@ function initHome() {
   document.getElementById('btn-cannagotchi').addEventListener('click', async () => {
     const user = getCurrentUser();
     if (!user) {
-      document.getElementById('account-modal').classList.remove('hidden');
       setAccountState('signedout');
+      openModal('account-modal');
       return;
     }
     hideCompanionForGameScreen();
@@ -506,6 +548,7 @@ function initMultiSelects() {
   });
 
   document.getElementById('btn-clear-filters')?.addEventListener('click', clearAllFilters);
+  document.getElementById('btn-clear-filters-empty')?.addEventListener('click', clearAllFilters);
 
   document.getElementById('sort-strains-btn')?.addEventListener('click', () => {
     if (!currentSortAlpha) {
@@ -548,6 +591,15 @@ function renderBrowseList() {
     );
   }
 
+  const emptyState = document.getElementById('filter-empty-state');
+  if (strains.length === 0) {
+    list.classList.add('hidden');
+    if (emptyState) emptyState.classList.remove('hidden');
+  } else {
+    list.classList.remove('hidden');
+    if (emptyState) emptyState.classList.add('hidden');
+  }
+
   list.innerHTML = strains.map(strain => {
     const inStash = isInStash(strain.id);
     const hasOverride = !!getStrainEffectOverride(strain.id);
@@ -585,6 +637,7 @@ function renderBrowseList() {
       } else {
         addToStash(id);
         track('stash_add', { strain: id });
+        reactToEvent('stash-add');
       }
       scheduleSync();
       renderBrowseList();
@@ -668,9 +721,6 @@ function renderMyStashList() {
 
 // === CUSTOM STRAIN MODAL ===
 function openCustomModal() {
-  const modal = document.getElementById('custom-modal');
-  modal.classList.remove('hidden');
-
   // Populate effect chips
   const effectsContainer = document.getElementById('custom-effects');
   effectsContainer.innerHTML = ALL_EFFECTS.map(e =>
@@ -683,21 +733,23 @@ function openCustomModal() {
     `<button type="button" class="chip" data-value="${f}">${f}</button>`
   ).join('');
 
+  const modal = document.getElementById('custom-modal');
   // Chip toggle
   modal.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => chip.classList.toggle('chip--selected'));
   });
 
-  // Cancel
-  document.getElementById('custom-cancel').addEventListener('click', () => {
-    modal.classList.add('hidden');
-    document.getElementById('custom-strain-form').reset();
-  });
+  // Cancel (listener attached once — modalService handles backdrop + ESC)
+  const cancelBtn = document.getElementById('custom-cancel');
+  if (!cancelBtn.dataset.bound) {
+    cancelBtn.addEventListener('click', () => {
+      closeModal('custom-modal');
+      document.getElementById('custom-strain-form').reset();
+    });
+    cancelBtn.dataset.bound = 'true';
+  }
 
-  // Backdrop close
-  modal.querySelector('.modal__backdrop').addEventListener('click', () => {
-    modal.classList.add('hidden');
-  });
+  openModal('custom-modal');
 }
 
 function initCustomForm() {
@@ -711,7 +763,7 @@ function initCustomForm() {
 
     if (!name) return;
     if (effects.length === 0) {
-      alert('Please select at least one effect.');
+      showToast('Please select at least one effect.', 'error');
       return;
     }
 
@@ -726,7 +778,8 @@ function initCustomForm() {
 
     addToStash(strain.id);
     scheduleSync();
-    document.getElementById('custom-modal').classList.add('hidden');
+    reactToEvent('stash-add');
+    closeModal('custom-modal');
     document.getElementById('custom-strain-form').reset();
     renderBrowseList();
     renderMyStashList();
@@ -737,11 +790,8 @@ function initCustomForm() {
 // === EFFECT OVERRIDE MODAL ===
 function openOverrideModal(strainId) {
   overrideStrainId = strainId;
-  const modal = document.getElementById('override-modal');
   const strain = getAllStrains().find(s => s.id === strainId);
   if (!strain) return;
-
-  modal.classList.remove('hidden');
 
   document.getElementById('override-title').textContent = `Edit Effects — ${strain.name}`;
 
@@ -760,12 +810,12 @@ function openOverrideModal(strainId) {
   document.getElementById('override-save').onclick = () => {
     const selected = Array.from(container.querySelectorAll('.chip--selected')).map(c => c.dataset.value);
     if (selected.length === 0) {
-      alert('Select at least one effect.');
+      showToast('Select at least one effect.', 'error');
       return;
     }
     setEffectOverride(strainId, selected);
     scheduleSync();
-    modal.classList.add('hidden');
+    closeModal('override-modal');
     renderBrowseList();
   };
 
@@ -773,12 +823,11 @@ function openOverrideModal(strainId) {
   document.getElementById('override-reset').onclick = () => {
     clearEffectOverride(strainId);
     scheduleSync();
-    modal.classList.add('hidden');
+    closeModal('override-modal');
     renderBrowseList();
   };
 
-  // Backdrop
-  modal.querySelector('.modal__backdrop').onclick = () => modal.classList.add('hidden');
+  openModal('override-modal');
 }
 
 
@@ -823,10 +872,17 @@ function renderQuestion() {
       sessionAnswers[q.id] = opt.dataset.value;
       opt.classList.add('session__option--selected');
 
+      localStorage.setItem('cpfm.session.draft', JSON.stringify({
+        answers: sessionAnswers,
+        index: currentQuestionIndex + 1,
+        timestamp: Date.now()
+      }));
+
       setTimeout(() => {
         document.activeElement?.blur();
         currentQuestionIndex++;
         if (currentQuestionIndex >= questionsData.length) {
+          localStorage.removeItem('cpfm.session.draft');
           startResult();
         } else {
           renderQuestion();
@@ -842,6 +898,11 @@ function initSession() {
       currentQuestionIndex--;
       const q = questionsData[currentQuestionIndex];
       delete sessionAnswers[q.id];
+      localStorage.setItem('cpfm.session.draft', JSON.stringify({
+        answers: sessionAnswers,
+        index: currentQuestionIndex,
+        timestamp: Date.now()
+      }));
       renderQuestion();
     } else {
       showScreen('home');
@@ -883,8 +944,9 @@ function startResult() {
     host.innerHTML = '';
     if (anim) {
       anim.render(host, {
-        strainName: result.pickedStrain.name,
-        allScores: result.allScores,
+        strainName:  result.pickedStrain.name,
+        winnerName:  result.allScores[0]?.strainName ?? result.pickedStrain.name,
+        allScores:   result.allScores,
       });
     }
   }
@@ -899,6 +961,7 @@ function startResult() {
     document.getElementById('weighing-phase').classList.add('hidden');
     document.getElementById('reveal-phase').classList.remove('hidden');
     renderResult(result);
+    reactToEvent('result-revealed');
   }, WEIGH_DURATION);
 }
 
@@ -1082,13 +1145,10 @@ function showBetterMatchesModal(matchesData) {
   if (partnerCardHtml) slots.splice(3, 0, partnerCardHtml);
   list.innerHTML = slots.join('');
 
-  modal.classList.remove('hidden');
-
   const closeBtn = document.getElementById('better-match-close');
-  if (closeBtn) closeBtn.onclick = () => modal.classList.add('hidden');
+  if (closeBtn) closeBtn.onclick = () => closeModal('better-match-modal');
 
-  const backdrop = modal.querySelector('.modal__backdrop');
-  if (backdrop) backdrop.onclick = () => modal.classList.add('hidden');
+  openModal('better-match-modal');
 }
 
 
@@ -1106,15 +1166,22 @@ function initResult() {
     btn.disabled = true;
     try {
       await shareResult(lastShareData);
+      btn.innerHTML = '✓ Shared!';
+      setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
+      return;
     } catch {
       // fallback: plain text share
       try {
         const text = `🌿 CannaPickForMe picked ${lastShareData.strainName} for me! ${lastShareData.matchScore}% match — cannapickforme.com`;
         await navigator.clipboard.writeText(text);
-        btn.innerHTML = '✓ Copied!';
+        btn.innerHTML = '✓ Copied to clipboard!';
         setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
         return;
-      } catch { /* silent */ }
+      } catch { 
+        btn.innerHTML = 'Share failed';
+        setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
+        return;
+      }
     }
     btn.innerHTML = original;
     btn.disabled = false;
@@ -1174,52 +1241,74 @@ async function loadAds() {
 // === ACCOUNT MODAL ===
 
 function setAccountState(state) {
-  ['signedout', 'signedin', 'linksent', 'confirmemail'].forEach(s =>
+  ['signedout', 'signedin', 'linksent', 'confirmemail', 'code'].forEach(s =>
     document.getElementById(`account-state-${s}`)?.classList.toggle('hidden', s !== state)
   );
 }
 
+/**
+ * Request an OTP code for the given email and transition to the code-entry state.
+ * Used both by the "Get a code instead" link and the "Resend" link.
+ */
+async function requestCodeAndShowEntry(email, errorEl) {
+  errorEl?.classList.add('hidden');
+  try {
+    await requestSignInCode(email);
+    document.getElementById('account-code-email').textContent = email;
+    document.getElementById('account-code-input').value = '';
+    setAccountState('code');
+    // Focus input after state transition so the user can immediately type
+    setTimeout(() => document.getElementById('account-code-input')?.focus(), 50);
+  } catch (err) {
+    const msg = err?.message || 'Could not send the code. Please try again.';
+    if (errorEl) {
+      errorEl.textContent = msg;
+      errorEl.classList.remove('hidden');
+    } else {
+      alert(msg);
+    }
+    console.error('requestSignInCode error:', err);
+  }
+}
+
 function showConflictModal(localTs, cloudTs) {
   return new Promise((resolve) => {
-    const modal = document.getElementById('conflict-modal');
     document.getElementById('conflict-local-time').textContent =
       localTs > 0 ? new Date(localTs).toLocaleString() : 'No sync history on this device';
     document.getElementById('conflict-cloud-time').textContent =
       cloudTs > 0 ? new Date(cloudTs).toLocaleString() : 'No cloud data';
-    modal.classList.remove('hidden');
 
     document.getElementById('conflict-keep-local').onclick = () => {
-      modal.classList.add('hidden');
+      closeModal('conflict-modal');
       resolve('local');
     };
     document.getElementById('conflict-use-cloud').onclick = () => {
-      modal.classList.add('hidden');
+      closeModal('conflict-modal');
       resolve('cloud');
     };
+
+    // Forcing a choice — no backdrop dismiss.
+    openModal('conflict-modal', { preventBackdropClose: true });
   });
 }
 
 function initAccountModal() {
-  const modal = document.getElementById('account-modal');
   const authLinks = document.getElementById('auth-links');
 
   // Open modal on log in / sign up link click
   function openAccountModal() {
-    modal.classList.remove('hidden');
     const user = getCurrentUser();
     setAccountState(user ? 'signedin' : 'signedout');
     if (user) {
       document.getElementById('account-user-email').textContent = user.email;
     }
+    openModal('account-modal');
   }
   authLinks.addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
   document.getElementById('result-signup-btn').addEventListener('click', (e) => { e.preventDefault(); openAccountModal(); });
 
-  // Close on backdrop click
-  modal.querySelector('.modal__backdrop').addEventListener('click', () => modal.classList.add('hidden'));
-
-  // Cancel button
-  document.getElementById('account-cancel-btn').addEventListener('click', () => modal.classList.add('hidden'));
+  // Cancel button (backdrop + ESC handled by modalService)
+  document.getElementById('account-cancel-btn').addEventListener('click', () => closeModal('account-modal'));
 
   // Google sign-in
   document.getElementById('account-google-btn').addEventListener('click', async () => {
@@ -1230,7 +1319,7 @@ function initAccountModal() {
     btn.textContent = 'Signing in…';
     try {
       await signInWithGoogle();
-      modal.classList.add('hidden');
+      closeModal('account-modal');
     } catch (err) {
       const code = err.code || '';
       console.error('Google sign-in error:', code, err);
@@ -1273,6 +1362,55 @@ function initAccountModal() {
     setAccountState('signedout');
   });
 
+  // OTP — switch from "link sent" view to code entry. Sends a fresh code.
+  document.getElementById('account-use-code-link').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('account-linksent-email').textContent.trim();
+    if (!email) return;
+    await requestCodeAndShowEntry(email, document.getElementById('account-code-error'));
+  });
+
+  // OTP — submit code
+  document.getElementById('account-code-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const code = document.getElementById('account-code-input').value.trim();
+    const errEl = document.getElementById('account-code-error');
+    const btn = document.getElementById('account-code-btn');
+    if (!/^\d{6}$/.test(code)) {
+      errEl.textContent = 'Please enter the 6-digit code from your email.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+    errEl.classList.add('hidden');
+    btn.disabled = true;
+    btn.textContent = 'Verifying…';
+    try {
+      await verifySignInCode(code);
+      closeModal('account-modal');
+    } catch (err) {
+      const msg = err?.message || 'Incorrect or expired code.';
+      errEl.textContent = msg;
+      errEl.classList.remove('hidden');
+      console.error('verifySignInCode error:', err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+    }
+  });
+
+  // OTP — resend
+  document.getElementById('account-resend-code-link').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('account-code-email').textContent.trim();
+    if (!email) return;
+    await requestCodeAndShowEntry(email, document.getElementById('account-code-error'));
+  });
+
+  // OTP — back to "link sent" view
+  document.getElementById('account-code-back').addEventListener('click', () => {
+    setAccountState('linksent');
+  });
+
   // Magic link — cross-device email confirm
   document.getElementById('account-confirm-form').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1282,7 +1420,7 @@ function initAccountModal() {
     errEl.classList.add('hidden');
     try {
       await completeSignInWithEmail(email);
-      modal.classList.add('hidden');
+      closeModal('account-modal');
     } catch (err) {
       errEl.textContent = 'Sign-in failed. Make sure this is the same email you used.';
       errEl.classList.remove('hidden');
@@ -1293,22 +1431,29 @@ function initAccountModal() {
   // Sign out
   document.getElementById('account-signout-btn').addEventListener('click', async () => {
     await signOutUser();
-    modal.classList.add('hidden');
+    closeModal('account-modal');
   });
 
   // Delete account
   document.getElementById('account-delete-btn').addEventListener('click', async () => {
-    const confirmed = confirm('Delete your account and all cloud data? Your local data will remain on this device.');
+    const confirmed = await showConfirm({
+      icon: '⚠️',
+      title: 'Delete your account?',
+      message: 'This deletes your cloud data permanently. Your local data stays on this device.',
+      confirmLabel: 'Delete Account',
+      cancelLabel: 'Cancel',
+      tone: 'danger',
+    });
     if (!confirmed) return;
     try {
       await deleteAccount();
-      modal.classList.add('hidden');
-      alert('Account deleted. Your local data is still on this device.');
+      closeModal('account-modal');
+      showToast('Account deleted. Your local data is still on this device.', 'success');
     } catch (err) {
       if (err.code === 'auth/requires-recent-login') {
-        alert('For security, please sign out and sign back in before deleting your account.');
+        showToast('For security, please sign out and sign back in before deleting your account.', 'error');
       } else {
-        alert('Something went wrong. Please try again.');
+        showToast('Something went wrong. Please try again.', 'error');
         console.error('deleteAccount error:', err);
       }
     }
@@ -1330,7 +1475,7 @@ function initAccountModal() {
       if (resultCta) resultCta.classList.add('hidden');
       profileSignoutBtn.classList.remove('hidden');
       updateProfileAvatar(user);
-      modal.classList.add('hidden');
+      closeModal('account-modal');
       // Unlock CannaGotchi button
       const gotchiBtn = document.getElementById('btn-cannagotchi');
       if (gotchiBtn) { gotchiBtn.disabled = false; gotchiBtn.classList.remove('btn--game-locked'); gotchiBtn.classList.add('btn--game-unlocked'); }
@@ -1399,6 +1544,18 @@ function updateProfileAvatar(user) {
   }
 }
 
+// === GLOBAL MODAL ESCAPE ===
+// One listener closes whichever ad-hoc modal is currently visible.
+// Escape only dismisses one layer at a time.
+function initModalEscape() {
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (closeTopModal()) {
+      e.stopPropagation();
+    }
+  });
+}
+
 // === BOOT ===
 async function init() {
   loadSavedTheme();
@@ -1415,15 +1572,16 @@ async function init() {
   initProfile({ getAllStrains, getStash: getStashStrains });
   setProfileBackHandler(() => showScreen('home'));
   initAccountModal();
+  initModalEscape();
+  initRouter();
 
   // Handle magic link return — must run after initAccountModal sets up the modal
   try {
     const result = await handleSignInLink();
     if (result === NEEDS_EMAIL_CONFIRMATION) {
       // Opened on a different device — ask for email to complete sign-in
-      const modal = document.getElementById('account-modal');
-      modal.classList.remove('hidden');
       setAccountState('confirmemail');
+      openModal('account-modal');
     }
     // true = signed in successfully, false = no link in URL — both silent
   } catch (err) {
@@ -1432,4 +1590,3 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
-

@@ -1,0 +1,58 @@
+<!--
+  Paste the HTML below into:
+  Firebase Console → Authentication → Templates → "Email address sign-in" → Edit (pencil icon) → Message body.
+
+  Also set on the same screen:
+    Sender name:  CannaPickForMe
+    From:         noreply@auth.cannapickforme.com   (after custom sender domain is verified)
+    Reply-to:     support@cannapickforme.com        (or any real address you monitor)
+    Subject:      Your sign-in link for CannaPickForMe
+
+  Firebase placeholders used:
+    %LINK%         the magic sign-in URL (do NOT display the raw URL — wrap it in a link/button)
+    %APP_NAME%     auto-filled with your project's public app name
+    %EMAIL%        recipient's email address
+-->
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f5f5;padding:32px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="480" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border-radius:12px;padding:40px 32px;max-width:480px;">
+        <tr>
+          <td align="left" style="font-size:22px;font-weight:600;color:#1a1a1a;padding-bottom:8px;">
+            Sign in to CannaPickForMe
+          </td>
+        </tr>
+        <tr>
+          <td align="left" style="font-size:15px;line-height:1.5;color:#444;padding-bottom:24px;">
+            Hi there — tap the button below to sign in to your CannaPickForMe account. This link is valid for one hour and can only be used once.
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding:8px 0 24px 0;">
+            <a href="%LINK%"
+               style="display:inline-block;background:#2e7d32;color:#ffffff;text-decoration:none;font-size:16px;font-weight:600;padding:14px 32px;border-radius:8px;">
+              Sign in to CannaPickForMe
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td align="left" style="font-size:13px;line-height:1.5;color:#666;padding-bottom:16px;">
+            If the button doesn't work, copy and paste this link into your browser. The link is long because it contains a one-time security token.
+          </td>
+        </tr>
+        <tr>
+          <td align="left" style="font-size:13px;line-height:1.5;color:#999;padding-bottom:24px;border-bottom:1px solid #eee;">
+            Didn't request this? You can safely ignore this email — no one will be signed in unless they click the link above.
+          </td>
+        </tr>
+        <tr>
+          <td align="left" style="font-size:12px;line-height:1.5;color:#999;padding-top:16px;">
+            CannaPickForMe · <a href="https://cannapickforme.com" style="color:#2e7d32;text-decoration:none;">cannapickforme.com</a><br>
+            You're receiving this email because someone (hopefully you) requested a sign-in link for %EMAIL%.
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
