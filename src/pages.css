@@ -244,7 +244,7 @@
   padding: 2.5rem 2rem 2rem;
   text-align: center;
   border: 1px solid transparent;
-  overflow: hidden;
+  overflow: visible;
 }
 
 #screen-about .sign {
@@ -346,6 +346,8 @@
   text-transform: uppercase;
   letter-spacing: 0.3em;
   text-align: center;
+  overflow: hidden;
+  border-radius: 0 0 20px 20px;
 }
 
 #screen-about .sign__tape {
@@ -379,4 +381,183 @@
   font-size: 0.97rem;
   line-height: 1.75;
   padding-bottom: 2rem;
+}
+
+
+/* ================= LEGAL PAGE ================= */
+
+.legal-page {
+  padding-bottom: 6rem;
+}
+
+#screen-legal .page-back-btn:hover { color: var(--text-primary); }
+
+.legal-header {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.legal-header__icon {
+  font-size: 2.4rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.legal-header__title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  line-height: 1.1;
+}
+
+.legal-header__divider {
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--text-muted), transparent);
+  margin: 0.75rem auto;
+  border-radius: 99px;
+}
+
+.legal-header__updated {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* ── LEGAL SECTIONS ── */
+.legal-section {
+  width: 100%;
+  margin-bottom: 1.25rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  overflow: hidden;
+}
+
+.legal-section__title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 1rem 1.25rem;
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+  background: rgba(148, 163, 184, 0.04);
+}
+
+.legal-section__body {
+  padding: 1rem 1.25rem 1.25rem;
+}
+
+.legal-section__body p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin: 0 0 0.75rem;
+}
+
+.legal-section__body p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-section__body h3 {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 1.25rem 0 0.5rem;
+}
+
+.legal-section__body h3:first-child {
+  margin-top: 0;
+}
+
+.legal-section__body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.legal-section__body li {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding: 0.4rem 0 0.4rem 1.25rem;
+  position: relative;
+}
+
+.legal-section__body li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--text-dim);
+  font-weight: 700;
+}
+
+.legal-section__body li strong {
+  color: var(--text-primary);
+}
+
+.legal-callout {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  font-weight: 600;
+  color: var(--text-primary) !important;
+  font-size: 0.85rem !important;
+  line-height: 1.55 !important;
+}
+
+.legal-ext-link {
+  color: var(--green-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.legal-ext-link:hover {
+  color: var(--green-glow);
+}
+
+.legal-section--contact {
+  border-color: rgba(74, 222, 128, 0.2);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.04) 0%, var(--bg-card) 100%);
+}
+
+.legal-contact-email {
+  font-family: var(--font-display);
+  font-size: 1rem !important;
+  font-weight: 700;
+  color: var(--green-glow) !important;
+  letter-spacing: 0.02em;
+}
+
+.legal-contact-location {
+  font-size: 0.82rem !important;
+  color: var(--text-dim) !important;
+}
+
+.legal-tape {
+  width: 100%;
+  margin-top: 2.5rem;
+  padding: 0.55rem 1rem;
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(148, 163, 184, 0.08),
+    rgba(148, 163, 184, 0.08) 10px,
+    rgba(148, 163, 184, 0.02) 10px,
+    rgba(148, 163, 184, 0.02) 20px
+  );
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  font-size: 0.58rem;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--text-dim);
+  text-align: center;
 }

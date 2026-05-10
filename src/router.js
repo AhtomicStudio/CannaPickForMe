@@ -8,10 +8,10 @@ export function initRouter() {
     if (link && link.host === window.location.host && !link.hasAttribute('target')) {
       // Don't intercept auth links or anchor links
       if (link.getAttribute('href').startsWith('#')) return;
-      if (link.id === 'auth-links' || link.id === 'result-signup-btn' || link.id === 'legal-link') return;
+      if (link.id === 'auth-links' || link.id === 'result-signup-btn') return;
 
       const path = link.pathname;
-      if (path === '/' || path === '/about' || path === '/lore') {
+      if (path === '/' || path === '/about' || path === '/lore' || path === '/legal') {
         e.preventDefault();
         window.history.pushState({}, '', path);
         handleRoute();
@@ -32,18 +32,20 @@ async function handleRoute() {
   } else if (path === '/lore') {
     showScreen('screen-lore');
     await loadLoreContent();
+  } else if (path === '/legal') {
+    showScreen('screen-legal');
   } else if (path.startsWith('/r/')) {
     // Phase 2 feature: resultId deep linking
     // For now, handled by index.html hash/URL query if any, or just show home
     const ageGateHidden = document.getElementById('age-gate')?.classList.contains('hidden') ?? true;
-    const disclaimerHidden = document.getElementById('disclaimer')?.classList.contains('hidden') ?? true;
+    const disclaimerHidden = document.getElementById('disclaimer-screen')?.classList.contains('hidden') ?? true;
     if (ageGateHidden && disclaimerHidden) {
       showScreen('home');
     }
   } else {
     // Default to home if past the age gate
     const ageGateHidden = document.getElementById('age-gate')?.classList.contains('hidden') ?? true;
-    const disclaimerHidden = document.getElementById('disclaimer')?.classList.contains('hidden') ?? true;
+    const disclaimerHidden = document.getElementById('disclaimer-screen')?.classList.contains('hidden') ?? true;
     if (ageGateHidden && disclaimerHidden) {
       showScreen('home');
     }

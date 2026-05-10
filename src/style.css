@@ -818,7 +818,7 @@ body {
 .modal {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: var(--z-modal);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -1252,8 +1252,7 @@ body {
   transform: scale(0.98);
 }
 
-.session__option:focus,
-.session__option:focus-visible {
+.session__option:focus:not(:focus-visible) {
   border-color: var(--border);
   background: var(--bg-card);
 }
@@ -1491,12 +1490,15 @@ body {
 .result__card {
   position: relative;
   z-index: 2;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  background: rgba(20, 27, 45, 0.75);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(74, 222, 128, 0.15);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   animation: revealCard 1.1s var(--ease-bounce) both;
   margin-bottom: var(--space-xl);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 80px rgba(74, 222, 128, 0.06);
 }
 
 @keyframes revealCard {
@@ -1829,9 +1831,9 @@ a.partner-strain-card:hover {
   flex-shrink: 0;
 }
 
-.sponsored-strain-card__type-dot[data-type="indica"]  { background: #818cf8; }
-.sponsored-strain-card__type-dot[data-type="sativa"]  { background: #4ade80; }
-.sponsored-strain-card__type-dot[data-type="hybrid"]  { background: #fb923c; }
+.sponsored-strain-card__type-dot[data-type="indica"]  { background: var(--indica); }
+.sponsored-strain-card__type-dot[data-type="sativa"]  { background: var(--sativa); }
+.sponsored-strain-card__type-dot[data-type="hybrid"]  { background: var(--hybrid); }
 
 .sponsored-strain-card__info {
   flex: 1;
@@ -4913,4 +4915,97 @@ html.light-mode .app-bg__haze {
 .anim-wheel-name.visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ============================================
+   GOOGLE SIGN-IN BUTTON
+   ============================================ */
+.btn--google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background: #fff;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out);
+}
+.btn--google:hover {
+  background: #f7f8f8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+.btn--google:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn--google svg {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   STRAIN CARD — type-colored hover glow
+   ============================================ */
+.strain-card:hover .strain-card__type-dot[data-type="indica"] ~ .strain-card__info {
+  text-shadow: 0 0 0 transparent; /* ancestor selector trick — see below */
+}
+.strain-card:hover {
+  border-left: 3px solid transparent;
+}
+.strain-card[data-id]:hover .strain-card__type-dot[data-type="indica"] {
+  box-shadow: 0 0 8px var(--indica), 0 0 16px rgba(139, 92, 246, 0.25);
+}
+.strain-card[data-id]:hover .strain-card__type-dot[data-type="sativa"] {
+  box-shadow: 0 0 8px var(--sativa), 0 0 16px rgba(245, 158, 11, 0.25);
+}
+.strain-card[data-id]:hover .strain-card__type-dot[data-type="hybrid"] {
+  box-shadow: 0 0 8px var(--hybrid), 0 0 16px rgba(34, 197, 94, 0.25);
+}
+
+/* ============================================
+   CANNAGOTCHI LOCKED TOOLTIP (P2)
+   ============================================ */
+.btn--game-locked {
+  position: relative;
+}
+.btn--game-locked::after {
+  content: 'Sign in to play';
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s var(--ease-out);
+  z-index: 10;
+}
+.btn--game-locked:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ============================================
+   MATCH SCORE COUNT-UP (U6)
+   ============================================ */
+@keyframes scoreCountUp {
+  from { opacity: 0; transform: scale(0.7) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.result__score {
+  animation: scoreCountUp 0.8s var(--ease-bounce) 0.3s both;
 }

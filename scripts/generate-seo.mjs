@@ -444,7 +444,14 @@ async function main() {
   console.log(`[generate-seo] wrote sitemap.xml (${strains.length + 3} URLs) and robots.txt`);
 }
 
-main().catch((err) => {
-  console.error('[generate-seo] failed:', err);
-  process.exit(1);
-});
+main().then(
+  () => {
+    // Belt-and-suspenders: explicitly exit so this script never holds the
+    // CI build hanging on a lingering handle (Vercel was hanging here).
+    process.exit(0);
+  },
+  (err) => {
+    console.error('[generate-seo] failed:', err);
+    process.exit(1);
+  }
+);

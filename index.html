@@ -147,7 +147,7 @@
         <span class="footer-divider">•</span>
         <a href="/lore" class="footer-link">Lore</a>
         <span class="footer-divider">•</span>
-        <a href="#" id="legal-link" class="footer-link">Legal Info</a>
+        <a href="/legal" class="footer-link">Legal Info</a>
         <span class="footer-divider">•</span>
         <span class="footer-text">Made with 💨 in California</span>
       </footer>
@@ -418,7 +418,7 @@
           <button id="account-google-btn" class="btn btn--google">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
-              <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.60-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+              <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
               <path d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z" fill="#FBBC05"/>
               <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 6.294C4.672 4.167 6.656 3.58 9 3.58z" fill="#EA4335"/>
             </svg>
@@ -552,6 +552,141 @@
         </div>
         <div id="lore-body" style="width:100%;"></div>
         <div class="lore-tape" id="lore-tape" style="display:none;">🌿 &nbsp; the lore goes deep &nbsp; 🌿</div>
+      </div>
+    </section>
+
+    <!-- Legal Info (SPA-routed) -->
+    <section id="screen-legal" class="screen hidden">
+      <div class="page-screen-content legal-page">
+        <a href="/" class="page-back-btn">← Back to App</a>
+        <div class="legal-header">
+          <span class="legal-header__icon">⚖️</span>
+          <h1 class="legal-header__title">Legal Information</h1>
+          <div class="legal-header__divider"></div>
+          <p class="legal-header__updated">Last updated: May 10, 2026</p>
+        </div>
+
+        <!-- Terms of Use -->
+        <div class="legal-section">
+          <h2 class="legal-section__title">📋 Terms of Use</h2>
+          <div class="legal-section__body">
+            <p>By accessing or using CannaPickForMe ("the App"), you agree to these Terms. If you do not agree, you must discontinue use immediately.</p>
+            <ul>
+              <li><strong>Eligibility:</strong> You must be at least 21 years of age to use this App. By proceeding past the age gate, you confirm you are of legal age to purchase and consume cannabis in your jurisdiction.</li>
+              <li><strong>Informational Only:</strong> The App provides strain recommendations for informational and entertainment purposes only. Recommendations are algorithmically generated and do not constitute medical, legal, or professional advice.</li>
+              <li><strong>No Sales:</strong> CannaPickForMe does not sell, distribute, or facilitate the sale of cannabis or cannabis products. We are a recommendation tool only.</li>
+              <li><strong>User Responsibility:</strong> You are solely responsible for complying with all applicable federal, state, and local laws when purchasing and consuming cannabis.</li>
+              <li><strong>Account Data:</strong> If you create an account, you may delete your data at any time through the profile settings.</li>
+              <li><strong>Modifications:</strong> We reserve the right to modify these terms at any time. Continued use constitutes acceptance of updated terms.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Medical & Health Disclaimer -->
+        <div class="legal-section">
+          <h2 class="legal-section__title">🏥 Medical &amp; Health Disclaimer</h2>
+          <div class="legal-section__body">
+            <p class="legal-callout">⚠️ Cannabis products have not been evaluated by the Food and Drug Administration (FDA) and are not intended to diagnose, treat, cure, or prevent any disease.</p>
+            <ul>
+              <li>Cannabis may have intoxicating effects and may be habit-forming. Do not drive or operate heavy machinery while under the influence.</li>
+              <li>Consult a physician before using cannabis, especially if you are pregnant, nursing, have a medical condition, or take prescription medication.</li>
+              <li>Cannabis can impair concentration, coordination, and judgment. Use responsibly.</li>
+              <li>Individual reactions to cannabis strains vary significantly. The App's match scores are algorithmic estimates, not guarantees of personal experience.</li>
+              <li>If you experience adverse reactions, discontinue use and seek medical attention.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- California Compliance -->
+        <div class="legal-section">
+          <h2 class="legal-section__title">🐻 California Cannabis Compliance</h2>
+          <div class="legal-section__body">
+            <p>CannaPickForMe operates in compliance with California's cannabis regulations:</p>
+            <ul>
+              <li><strong>Prop 64 (AUMA):</strong> Cannabis is legal for adults 21+ in California. This App is designed for use by adults of legal age only.</li>
+              <li><strong>BCC Regulations:</strong> All dispensaries advertised on this platform are assumed to hold valid state and local licenses issued by the California Department of Cannabis Control (DCC).</li>
+              <li><strong>Advertising Standards:</strong> Sponsored content and advertisements on this App are clearly labeled as "Sponsored" in compliance with California Business and Professions Code §26151.</li>
+              <li><strong>No Youth Targeting:</strong> This App does not target, appeal to, or knowingly collect data from individuals under the age of 21, in compliance with California cannabis advertising regulations.</li>
+              <li><strong>Federal Law Notice:</strong> Cannabis remains a Schedule I Controlled Substance under federal law (21 U.S.C. § 812). Federal and state cannabis laws may conflict. Users assume all risk.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Privacy Policy -->
+        <div class="legal-section">
+          <h2 class="legal-section__title">🔒 Privacy Policy</h2>
+          <div class="legal-section__body">
+            <p>Your privacy is important to us. Here's what we collect and how we use it:</p>
+            <h3>Data We Collect</h3>
+            <ul>
+              <li><strong>Account Data:</strong> If you sign in, we store your email address and authentication state via Firebase Authentication. This is used solely for sign-in and syncing your stash across devices.</li>
+              <li><strong>Stash & Preferences:</strong> Your strain selections and session history are stored in your browser's localStorage. If signed in, this data syncs to Firebase Firestore.</li>
+              <li><strong>Analytics:</strong> We use Vercel Analytics to collect anonymous, cookieless usage data (page views, feature interactions). No personally identifiable information is collected through analytics.</li>
+            </ul>
+            <h3>Data We Do NOT Collect</h3>
+            <ul>
+              <li>Location data or GPS coordinates</li>
+              <li>Purchase history or financial information</li>
+              <li>Health or medical records</li>
+              <li>Social media profiles or contacts</li>
+              <li>Device identifiers or advertising IDs</li>
+            </ul>
+            <h3>Third-Party Services</h3>
+            <ul>
+              <li><strong>Firebase (Google):</strong> Authentication, Firestore database, and Storage. Subject to <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer" class="legal-ext-link">Google's Privacy Policy</a>.</li>
+              <li><strong>Vercel:</strong> Hosting and anonymous analytics. Subject to <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer" class="legal-ext-link">Vercel's Privacy Policy</a>.</li>
+            </ul>
+            <h3>Your Rights (CCPA)</h3>
+            <p>Under the California Consumer Privacy Act, you have the right to:</p>
+            <ul>
+              <li>Know what personal information we collect</li>
+              <li>Request deletion of your personal information</li>
+              <li>Opt out of the sale of personal information (we do not sell your data)</li>
+              <li>Non-discrimination for exercising your privacy rights</li>
+            </ul>
+            <p>To exercise these rights, contact us through the app's profile section or delete your account directly.</p>
+          </div>
+        </div>
+
+        <!-- Advertising Disclosure -->
+        <div class="legal-section">
+          <h2 class="legal-section__title">📢 Advertising Disclosure</h2>
+          <div class="legal-section__body">
+            <p>CannaPickForMe may display sponsored content from licensed cannabis dispensaries and brands. All sponsored content is:</p>
+            <ul>
+              <li>Clearly labeled with a "Sponsored" or "Partner" badge</li>
+              <li>Visually distinguished from organic strain recommendations</li>
+              <li>Subject to our editorial standards — sponsorship does not influence the App's algorithmic matching results</li>
+              <li>From businesses assumed to hold valid California cannabis licenses</li>
+            </ul>
+            <p>Sponsored strain recommendations appear separately from your personalized match results. Your match score is never altered by advertising.</p>
+          </div>
+        </div>
+
+        <!-- Intellectual Property -->
+        <div class="legal-section">
+          <h2 class="legal-section__title">©️ Intellectual Property</h2>
+          <div class="legal-section__body">
+            <ul>
+              <li>Strain names, genetics, and effect profiles are sourced from public databases and community knowledge. Strain names may be trademarks of their respective breeders or brands.</li>
+              <li>The CannaPickForMe name, logo, matching algorithm, and CannaGotchi game are original works.</li>
+              <li>User-submitted custom strains remain the intellectual property of their creators.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="legal-section legal-section--contact">
+          <h2 class="legal-section__title">✉️ Contact</h2>
+          <div class="legal-section__body">
+            <p>For legal inquiries, privacy requests, or advertising partnerships:</p>
+            <!-- TODO: Set up a dedicated legal@cannapickforme.com email and update this -->
+            <p class="legal-contact-email">📧 twotales89@gmail.com</p>
+            <p class="legal-contact-location">📍 Made with 💨 in California</p>
+          </div>
+        </div>
+
+        <div class="legal-tape">⚖️ &nbsp; know your rights · know your limits · know your strain &nbsp; ⚖️</div>
       </div>
     </section>
 
