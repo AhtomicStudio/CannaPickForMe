@@ -9,9 +9,15 @@ const THEME_EMOJIS = {
   bubbles:  ['🫧','⚪','🔵','🫧','⚪','🫧','🔵','🫧','⚪','🔵','🫧','⚪'],
   fire:     ['🌿','🔥','💨','🌿','🔥','💨','🌿','🔥','💨','🌿','🔥','💨'],
   realfire: ['🔥','🔥','🔥','🔥','🔥','🔥','🔥','🔥','🔥','🔥','🔥','🔥'],
+  // ── Premium themes (unlocked through the Cannagotchi shop) ──
+  galaxy:    ['🌌','✨','🌠','🪐','💫','🌌','⭐','✨','🌠','💫','🪐','🌌'],
+  cyberpunk: ['💾','🟣','🔵','🟢','💜','🩻','🟣','🔵','💾','💜','🩻','🟢'],
+  zen:       ['🌸','🍵','🪷','🌸','🍃','🪷','🍵','🌸','🪷','🍃','🌸','🪷'],
+  prismatic: ['🌈','💎','✨','🌈','💎','🔷','✨','🌈','🔷','💎','🌈','✨'],
 };
 
 export const THEMES = [
+  // Free themes
   { key: 'default',  label: 'Default',   preview: ['🌿','💨','🔥'] },
   { key: 'fall',     label: 'Fall',      preview: ['🍂','🍁','🌾'] },
   { key: 'love',     label: 'Love',      preview: ['💕','💖','🌹'] },
@@ -20,9 +26,56 @@ export const THEMES = [
   { key: 'bubbles',  label: 'Bubbles',   preview: ['🫧','⚪','🔵'] },
   { key: 'fire',     label: 'Fire',      preview: ['🌿','🔥','💨'] },
   { key: 'realfire', label: 'Real Fire', preview: ['🔥','🔥','🔥'] },
+  // Premium / unlockable through the Cannagotchi shop. `cur` is in-game
+  // currency only — Buds or Seeds, never real money.
+  { key: 'galaxy',    label: 'Galaxy',     preview: ['🌌','✨','🌠'], premium: true, price: 800,  cur: 'buds',  desc: 'Animated nebula backdrop with drifting stars.' },
+  { key: 'cyberpunk', label: 'Cyberpunk',  preview: ['💾','🟣','🔵'], premium: true, price: 1200, cur: 'buds',  desc: 'Neon grid horizons and chromatic glitch borders.' },
+  { key: 'zen',       label: 'Zen Garden', preview: ['🌸','🍵','🪷'], premium: true, price: 12,   cur: 'seeds', desc: 'Soft cherry-blossom palette with calm motion.' },
+  { key: 'prismatic', label: 'Prismatic',  preview: ['🌈','💎','✨'], premium: true, price: 18,   cur: 'seeds', desc: 'Shifting rainbow gradient — endgame flex.' },
 ];
 
+export const PREMIUM_THEME_KEYS = THEMES.filter(t => t.premium).map(t => t.key);
+export function isPremiumTheme(key) {
+  return PREMIUM_THEME_KEYS.includes(key);
+}
+
 const VALID_THEME_KEYS = THEMES.map(t => t.key);
+
+// ── Unlock state ─────────────────────────────────────────────
+// Premium themes are unlocked by purchase in the Cannagotchi shop. We persist
+// the unlocked-set in localStorage for instant access on app load and mirror
+// it onto gameState.unlockedThemes when the game module is around.
+const UNLOCK_KEY = 'cpfm_unlocked_themes';
+
+function readUnlockedFromStorage() {
+  try {
+    const raw = localStorage.getItem(UNLOCK_KEY);
+    return new Set(raw ? JSON.parse(raw) : []);
+  } catch (_) { return new Set(); }
+}
+function writeUnlockedToStorage(set) {
+  try { localStorage.setItem(UNLOCK_KEY, JSON.stringify([...set])); } catch (_) {}
+}
+
+export function isThemeUnlocked(key) {
+  if (!isPremiumTheme(key)) return true;
+  return readUnlockedFromStorage().has(key);
+}
+
+export function unlockTheme(key) {
+  if (!isPremiumTheme(key)) return;
+  const s = readUnlockedFromStorage();
+  s.add(key);
+  writeUnlockedToStorage(s);
+}
+
+/** Hydrate the unlock-set from a gameState.unlockedThemes array (Firestore-backed). */
+export function syncUnlockedThemesFromGame(gameState) {
+  if (!gameState?.unlockedThemes) return;
+  const s = readUnlockedFromStorage();
+  for (const k of gameState.unlockedThemes) s.add(k);
+  writeUnlockedToStorage(s);
+}
 
 function updateLeafEmojis(key) {
   const emojis = THEME_EMOJIS[key] || THEME_EMOJIS.default;
@@ -32,7 +85,9 @@ function updateLeafEmojis(key) {
 }
 
 export function applyTheme(key) {
-  const safeKey = VALID_THEME_KEYS.includes(key) ? key : 'default';
+  let safeKey = VALID_THEME_KEYS.includes(key) ? key : 'default';
+  // Premium themes that haven't been unlocked silently fall back to default.
+  if (isPremiumTheme(safeKey) && !isThemeUnlocked(safeKey)) safeKey = 'default';
   document.documentElement.setAttribute('data-theme', safeKey);
   updateLeafEmojis(safeKey);
   return safeKey;

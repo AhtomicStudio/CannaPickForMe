@@ -15,10 +15,11 @@
  * (CannaGotchi screen) can share the same reaction behavior.
  */
 
-import { renderSprite } from './pixelArt.js';
+import { renderSprite, renderHat } from './pixelArt.js';
 import { loadGameState } from '../services/gameService.js';
 import { getLevel, getCurrentEvolution } from './gameEngine.js';
-import { getMonsterType } from './monsters.js';
+import { getMonsterType, getVariant } from './monsters.js';
+import { COSMETICS_BY_ID } from './cosmetics.js';
 
 const STORAGE_KEY  = 'cpfm_companion_enabled';
 const COMPANION_ID = 'cannaguy-companion';
@@ -96,7 +97,7 @@ export function createTapReactor(cfg) {
       if (!state.destroyed) cfg.sprite.className = `game-monster ${cfg.idleAnim}`;
     }, dur);
 
-    const quip = getTimedQuip() || r.quips[Math.floor(Math.random() * r.quips.length)];
+    const quip = getTimedQuip(_gameState) || r.quips[Math.floor(Math.random() * r.quips.length)];
     showBubble(cfg.bubble, quip, false);
 
     cfg.wrapper.classList.add('cg-tap-bounce');
@@ -180,7 +181,52 @@ function showBubble(bubble, text, isAngry) {
     isAngry ? ANNOY_COOLDOWN : 2000);
 }
 
-function getTimedQuip() {
+// Trait-flavored personality quips. ~25% of taps fire one of these instead
+// of the default cycle, biased by the bud's actual trait + lowest need.
+const TRAIT_QUIPS = {
+  dense:        ['💪 sturdy ✓', '🪨 i am wall', '🛡️ unbreakable.'],
+  twitchy:      ['⚡ go fast!', '⚡⚡⚡', '🏃 zoom!', '⚡ wired'],
+  hearty:       ['💖 big heart', '💖 hp 4 days', '💖 squish'],
+  sharp:        ['🔪 ready to swing', '🔪 sharp boy', '⚔️ point first'],
+  balanced:     ['⚖️ all is well', '⚖️ centered', '🧘 zen.'],
+  crystalline:  ['💎 sparkle', '✨ ✨ ✨', '💎 shine bright'],
+  slippery:     ['💨 woop missed me', '💨 too slick', '💨 slip n slide'],
+  lucky:        ['🍀 lucky day', '🍀 fortune favors', '🍀 trust'],
+  pungent:      ['👃 smell that?', '👃 strong notes', '🌿 funk forever'],
+  resinous:     ['🍯 sticky vibes', '🍯 slow drip', '🍯 trichome time'],
+  zen:          ['🧘 om', '🧘 still water', '🌸 breathe.'],
+  thicc:        ['🍑 thick king', '🍑 chonk life', '🍑 cant rush this'],
+  photosynthetic:['☀️ photosynthesizing', '☀️ recharging', '☀️ solar bath'],
+  greedy:       ['🪙 gimme', '🪙 cha-ching', '🪙 more buds plz'],
+  evergreen:    ['🌲 eternal vibes', '🌲 still here', '🌲 evergreen'],
+};
+
+const NEED_QUIPS = {
+  hydration:   ['💧 thirsty…', '💧 a sip pls', '💧 kinda dry'],
+  nutrition:   ['🌿 hangry', '🌿 feed me', '🌿 stomach rumble'],
+  light:       ['☀️ where sun', '☀️ need rays', '🌑 lil dim'],
+  cleanliness: ['✨ feeling crusty', '✨ wash me', '🧹 dust everywhere'],
+  happiness:   ['💔 lonely…', '😟 pet me?', '💔 down in the dumps'],
+};
+
+function getTimedQuip(gameState) {
+  // Need-driven first — if a need is critically low, complain
+  if (gameState?.needs) {
+    const lows = Object.entries(gameState.needs)
+      .filter(([k, v]) => k !== 'lastDecayTick' && v < 30);
+    if (lows.length && Math.random() < 0.5) {
+      const [key] = lows[Math.floor(Math.random() * lows.length)];
+      const pool = NEED_QUIPS[key];
+      if (pool) return pool[Math.floor(Math.random() * pool.length)];
+    }
+  }
+  // Trait-driven next
+  const tid = gameState?.trait;
+  if (tid && TRAIT_QUIPS[tid] && Math.random() < 0.40) {
+    const pool = TRAIT_QUIPS[tid];
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+  // Time-of-day fallback
   const h = new Date().getHours();
   if (Math.random() > 0.35) return null;
   if (h >= 22 || h < 4)  return '😴 sleepy…';
@@ -195,23 +241,35 @@ function getTimedQuip() {
 // PUBLIC API — Persistent companion
 // ══════════════════════════════════════════════════════════════
 
-export async function initCompanion(uid) {
-  _uid     = uid;
-  _enabled = loadPref();
+// In-flight guard: initCompanion is called from several spots (auth state
+// change, game-screen exit, plot switch, plot plant, offspring claim). If
+// two calls overlap they could race — the second one's loadGameState may
+// resolve AFTER the first has mounted, then the second runs unmountAll +
+// mount with stale state, causing a flicker. We coalesce concurrent calls
+// onto a single in-flight promise instead.
+let _initInFlight = null;
 
-  _gameState = await loadGameState(uid);
-  if (!_gameState) return;
-
-  mount();
-  if (_enabled) show();
+export function initCompanion(uid) {
+  if (_initInFlight) return _initInFlight;
+  _initInFlight = (async () => {
+    try {
+      _uid     = uid;
+      _enabled = loadPref();
+      _gameState = await loadGameState(uid);
+      if (!_gameState) return;
+      mount();          // mount() already calls unmountAll() first → idempotent
+      if (_enabled) show();
+    } finally {
+      _initInFlight = null;
+    }
+  })();
+  return _initInFlight;
 }
 
 export function destroyCompanion() {
   _uid = null;
   _gameState = null;
-  if (_companionReactor) { _companionReactor.destroy(); _companionReactor = null; }
-  const el = document.getElementById(COMPANION_ID);
-  if (el) el.remove();
+  unmountAll();
 }
 
 export function setCompanionEnabled(on) {
@@ -224,14 +282,16 @@ export function setCompanionEnabled(on) {
 export function getCompanionEnabled() { return loadPref(); }
 
 export function hideCompanionForGameScreen() {
-  const el = document.getElementById(COMPANION_ID);
-  if (el) el.style.opacity = '0';
+  for (const c of _mountedCompanions) {
+    if (c.wrapper) c.wrapper.style.opacity = '0';
+  }
 }
 
 export function showCompanionAfterGameScreen() {
   if (!_enabled || !_gameState) return;
-  const el = document.getElementById(COMPANION_ID);
-  if (el) el.style.opacity = '1';
+  for (const c of _mountedCompanions) {
+    if (c.wrapper) c.wrapper.style.opacity = '1';
+  }
 }
 
 /**
@@ -267,74 +327,135 @@ function getIdleAnimClass(spriteName) {
   return 'game-anim--seed';
 }
 
-function mount() {
-  const existing = document.getElementById(COMPANION_ID);
-  if (existing) existing.remove();
-  if (_companionReactor) { _companionReactor.destroy(); _companionReactor = null; }
+// ── Multi-companion infrastructure ──────────────────────────
+// Each entry is { id, plotId, wrapper, reactor }. Plot 1 is the active /
+// "main" companion in the bottom-right (existing position). Plot 2 + 3
+// are quirky additions that peek from the top-left and bottom-left edges.
+const COMPANION_BASE_ID = COMPANION_ID;
+const POSITIONS = {
+  plot_1: 'cg-pos--main',     // bottom-right (existing)
+  plot_2: 'cg-pos--peek-tl',  // top-left, peeks from edge
+  plot_3: 'cg-pos--peek-bl',  // bottom-left, peeks around the corner
+};
+let _mountedCompanions = []; // { id, plotId, wrapper, reactor }
 
-  const monType   = getMonsterType(_gameState.monsterType);
-  const level     = getLevel(_gameState.xp);
+function mount() {
+  // Tear down ALL previous companions
+  unmountAll();
+
+  // Determine which plots have buds
+  const plots = [];
+  // Active plot — the live state
+  plots.push({ plotId: _gameState.activePlotId || 'plot_1', data: _gameState, isActive: true });
+  // Other plots — only those that have a bud
+  if (_gameState.plots) {
+    for (const pid of Object.keys(_gameState.plots)) {
+      if (pid === (_gameState.activePlotId || 'plot_1')) continue;
+      const snap = _gameState.plots[pid];
+      if (snap && snap.monsterType) {
+        plots.push({ plotId: pid, data: snap, isActive: false });
+      }
+    }
+  }
+
+  for (const p of plots) {
+    mountOne(p.plotId, p.data, p.isActive);
+  }
+}
+
+function mountOne(plotId, data, isActive) {
+  const monType   = getMonsterType(data.monsterType);
+  const level     = getLevel(data.xp || 0);
   const evolution = getCurrentEvolution(monType.evolutions, level);
   const idleAnim  = getIdleAnimClass(evolution.sprite);
+  const variant   = getVariant(data.monsterType, data.monsterVariant || 'classic');
+
+  const id = `${COMPANION_BASE_ID}--${plotId}`;
+  const positionClass = POSITIONS[plotId] || POSITIONS.plot_1;
 
   const wrapper = document.createElement('div');
-  wrapper.id = COMPANION_ID;
-  wrapper.className = 'cannaguy-companion hidden';
-  wrapper.setAttribute('title', `${_gameState.monsterName} • Lv.${level}`);
+  wrapper.id = id;
+  wrapper.className = `cannaguy-companion hidden ${positionClass}`;
+  wrapper.dataset.plotId = plotId;
+  wrapper.setAttribute('title', `${data.monsterName} • Lv.${level}`);
   wrapper.setAttribute('role', 'button');
-  wrapper.setAttribute('aria-label', `Pet ${_gameState.monsterName}`);
+  wrapper.setAttribute('aria-label', `Pet ${data.monsterName}`);
   wrapper.tabIndex = 0;
   wrapper.innerHTML = `
-    <div class="cg-stress" id="cg-stress">💢</div>
-    <div class="cg-bubble hidden" id="cg-bubble"></div>
-    <div class="game-monster ${idleAnim}" id="cg-sprite"></div>
-    <div class="cg-label">${_gameState.monsterName} <span class="cg-level">Lv.${level}</span></div>
+    <div class="cg-stress" id="cg-stress--${plotId}">💢</div>
+    <div class="cg-bubble hidden" id="cg-bubble--${plotId}"></div>
+    <div class="game-monster ${idleAnim}" id="cg-sprite--${plotId}"></div>
+    <div class="cg-label">${data.monsterName} <span class="cg-level">Lv.${level}</span></div>
   `;
+  // Belt-and-suspenders: if a previous mount left an element with this id,
+  // nuke it before we add the new one. Prevents any chance of duplicates.
+  document.getElementById(id)?.remove();
   document.body.appendChild(wrapper);
 
-  // Render sprite — scale 7 so he's unmissable on mobile and desktop.
-  const spriteEl = wrapper.querySelector('#cg-sprite');
-  renderSprite(spriteEl, evolution.sprite, 7);
+  // Render sprite + equipped hat. Cosmetics are GLOBAL to the account, so all
+  // floating companions share the player's currently-equipped hat — feels
+  // unified and avoids needing per-plot equip slots.
+  const spriteEl = wrapper.querySelector(`#cg-sprite--${plotId}`);
+  renderSprite(spriteEl, evolution.sprite, 7, { paletteRemap: variant?.paletteRemap });
+  const equippedHatId = _gameState?.cosmetics?.equipped?.hat;
+  if (equippedHatId && equippedHatId !== 'hat_none') {
+    renderHat(spriteEl, equippedHatId, 7);
+  }
   spriteEl.className = `game-monster ${idleAnim}`;
 
-  // Keyboard activation mirrors tap.
+  const reactor = createTapReactor({
+    wrapper,
+    sprite: spriteEl,
+    bubble: wrapper.querySelector(`#cg-bubble--${plotId}`),
+    stress: wrapper.querySelector(`#cg-stress--${plotId}`),
+    idleAnim,
+  });
+
   wrapper.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      _companionReactor?.handleTap();
+      reactor?.handleTap();
     }
   });
 
-  _companionReactor = createTapReactor({
-    wrapper,
-    sprite: spriteEl,
-    bubble: wrapper.querySelector('#cg-bubble'),
-    stress: wrapper.querySelector('#cg-stress'),
-    idleAnim,
-  });
+  _mountedCompanions.push({ id, plotId, wrapper, reactor, isActive });
+
+  // Active companion is the one event-bus reactions target
+  if (isActive) _companionReactor = reactor;
+}
+
+function unmountAll() {
+  for (const c of _mountedCompanions) {
+    try { c.reactor?.destroy(); } catch (_) {}
+    c.wrapper?.remove();
+  }
+  _mountedCompanions = [];
+  _companionReactor = null;
+  // Also remove any legacy single-id companion left over from older mounts
+  document.getElementById(COMPANION_BASE_ID)?.remove();
 }
 
 let _enterTimer = null;
 function show() {
-  const el = document.getElementById(COMPANION_ID);
-  if (!el) return;
-  el.classList.remove('hidden');
-  el.classList.add('cannaguy-companion--visible');
-  // One-shot entrance — kept as a class we remove in JS so future class
-  // toggles (like cg-tap-bounce) don't restart the enter animation
-  // from its opacity:0 keyframe and flicker the mascot on mobile taps.
-  el.classList.add('cannaguy-companion--entering');
+  for (const c of _mountedCompanions) {
+    if (!c.wrapper) continue;
+    c.wrapper.classList.remove('hidden');
+    c.wrapper.classList.add('cannaguy-companion--visible');
+    c.wrapper.classList.add('cannaguy-companion--entering');
+  }
   if (_enterTimer) clearTimeout(_enterTimer);
   _enterTimer = setTimeout(() => {
-    el.classList.remove('cannaguy-companion--entering');
+    for (const c of _mountedCompanions) {
+      c.wrapper?.classList.remove('cannaguy-companion--entering');
+    }
     _enterTimer = null;
   }, 550);
 }
 
 function hide() {
-  const el = document.getElementById(COMPANION_ID);
-  if (el) {
-    el.classList.remove('cannaguy-companion--visible');
-    el.classList.add('hidden');
+  for (const c of _mountedCompanions) {
+    if (!c.wrapper) continue;
+    c.wrapper.classList.remove('cannaguy-companion--visible');
+    c.wrapper.classList.add('hidden');
   }
 }

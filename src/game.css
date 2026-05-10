@@ -664,10 +664,11 @@
 }
 
 /* ── Persistent CannaGuy Companion ── */
-#cannaguy-companion {
+/* Class-based so MULTI-PLOT mounts (cannaguy-companion--plot_1/2/3) inherit
+   the same fixed-positioning + tap-handling. The cg-pos--* classes below
+   layer on the ACTUAL anchor (bottom-right / top-left edge / etc). */
+.cannaguy-companion {
   position: fixed;
-  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
-  right: 1rem;
   z-index: 8888;
   display: flex;
   flex-direction: column;
@@ -675,37 +676,19 @@
   gap: 4px;
   cursor: pointer;
   transition: opacity 0.3s ease;
-  /* Prevent mobile tap side-effects that caused the "disappear" flicker:
-     - sticky :hover state after touch
-     - blue tap highlight
-     - 300ms double-tap zoom delay
-     The enter animation is deliberately on a separate one-shot class
-     (.cannaguy-companion--entering) so toggling .cg-tap-bounce here
-     doesn't restart companion-enter from its opacity:0 keyframe. */
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
 }
-#cannaguy-companion:focus-visible {
+.cannaguy-companion:focus-visible {
   outline: 2px solid var(--green-primary, #22c55e);
   outline-offset: 4px;
   border-radius: 6px;
 }
-/* Hover lift only on devices that actually have a hover pointer —
-   on touch, :hover sticks after tap and fights the tap animation. */
 @media (hover: hover) and (pointer: fine) {
-  #cannaguy-companion {
+  .cannaguy-companion {
     transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  #cannaguy-companion:hover:not(.cg-tap-bounce):not(.cg-annoyed-shake):not(.cg-idle-attention) {
-    transform: translateY(-2px);
-  }
-}
-@media (min-width: 768px) {
-  #cannaguy-companion {
-    bottom: calc(1.75rem + env(safe-area-inset-bottom, 0px));
-    right: 1.75rem;
   }
 }
 
@@ -931,3 +914,2212 @@
 #cannaguy-companion.hidden {
   display: none;
 }
+
+/* ════════════════════════════════════════════════════════════
+   CannaGotchi v2 — Tabbed Game Screen
+   ════════════════════════════════════════════════════════════ */
+
+.game-view--tabbed {
+  --gv-accent: #4ade80;
+  --gv-accent-rgb: 74, 222, 128;
+  --gv-card: rgba(255,255,255,0.04);
+  --gv-card-hi: rgba(255,255,255,0.07);
+  --gv-border: rgba(255,255,255,0.10);
+  max-width: 520px;
+  padding: 0.85rem 0.85rem 4.5rem;
+  position: relative;
+}
+
+/* ── Top bar ── */
+.game-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--gv-border);
+}
+.game-topbar__info {
+  flex: 1;
+  min-width: 0;
+}
+.game-topbar__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+  color: #f5f5f5;
+  text-shadow: 0 0 8px rgba(var(--gv-accent-rgb), 0.4);
+}
+.game-topbar__sub {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 2px;
+}
+.game-topbar__sub .dim { color: #94a3b8; }
+
+.game-topbar__resources {
+  display: flex;
+  gap: 0.35rem;
+}
+.res-pill {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid var(--gv-border);
+  padding: 0.35rem 0.5rem;
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+  letter-spacing: 0.5px;
+}
+.res-pill b {
+  font-weight: normal;
+  color: #fde047;
+}
+.res-pill:nth-child(2) b { color: #4ade80; }
+
+.game-mute-btn {
+  font-size: 1rem;
+  padding: 0.3rem 0.5rem;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--gv-border);
+  cursor: pointer;
+  color: #e2e8f0;
+}
+
+/* ── XP strip in topbar ── */
+.game-xp-strip {
+  margin: 0.5rem 0 0.6rem;
+}
+.game-xp-strip__label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.36rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+  text-align: right;
+}
+
+/* ── Tabs ── */
+.game-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.25rem;
+  margin: 0.4rem 0 0.7rem;
+  border: 1px solid var(--gv-border);
+  background: rgba(0,0,0,0.30);
+  padding: 0.25rem;
+}
+.game-tab {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1rem;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0.65rem 0.2rem 0.5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  transition: background-color 0.15s, color 0.15s;
+  text-align: center;
+}
+.game-tab span { font-size: 0.55rem; letter-spacing: 0.5px; }
+.game-tab:hover { color: #e2e8f0; background: rgba(255,255,255,0.04); }
+.game-tab--active {
+  color: var(--gv-accent);
+  background: rgba(var(--gv-accent-rgb), 0.10);
+  box-shadow: inset 0 -2px 0 var(--gv-accent);
+}
+
+.game-tab-body {
+  position: relative;
+  outline: none;
+}
+.fade-in { animation: gv-fade-in 0.22s ease-out; }
+@keyframes gv-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.tab-pane { display: flex; flex-direction: column; gap: 0.6rem; }
+
+/* ── Cards ── */
+.card {
+  background: var(--gv-card);
+  border: 1px solid var(--gv-border);
+  padding: 0.7rem;
+}
+.card-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 1px;
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.dim { color: #94a3b8; }
+/* Body / description text uses a more readable mono than Press Start 2P at small sizes */
+.dim.small, .small {
+  font-size: 0.72rem;
+  font-family: 'Courier New', ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.2px;
+  line-height: 1.5;
+}
+
+/* ── Garden viewport ── */
+.garden-viewport {
+  position: relative;
+  background: linear-gradient(180deg, #0c0c1d 0%, #1a1a3e 100%);
+  border: 2px solid var(--gv-border);
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+.garden-viewport__caption {
+  position: absolute;
+  bottom: 0.4rem;
+  left: 0.4rem;
+  right: 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  color: #e2e8f0;
+  pointer-events: none;
+}
+
+/* ── Need rows ── */
+.needs-card .need-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 32px;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+.need-row__icon { font-size: 1rem; text-align: center; }
+.need-row__bar {
+  height: 8px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--gv-border);
+  overflow: hidden;
+}
+.need-row__fill { height: 100%; transition: width 0.5s ease; }
+.need-row__val {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  color: #cbd5e1;
+  text-align: right;
+}
+.need-row--low { animation: need-pulse 1.1s ease-in-out infinite; }
+.need-row--mid .need-row__icon { opacity: 0.7; }
+@keyframes need-pulse {
+  0%,100% { background: transparent; }
+  50% { background: rgba(248,113,113, 0.05); }
+}
+.needs-hint {
+  margin-top: 0.5rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  color: #fbbf24;
+  text-align: center;
+}
+
+/* ── Big juicy buttons ── */
+.btn-juicy {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 1px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.18));
+  border: 2px solid var(--gv-border);
+  color: #e2e8f0;
+  padding: 0.7rem 0.6rem;
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: center;
+  transition: transform 0.08s, border-color 0.15s, box-shadow 0.15s;
+}
+.btn-juicy:hover:not(:disabled) {
+  border-color: var(--gv-accent);
+  box-shadow: 0 0 14px rgba(var(--gv-accent-rgb), 0.30);
+  transform: translateY(-1px);
+}
+.btn-juicy:active:not(:disabled) { transform: translateY(0); }
+.btn-juicy:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn-juicy.compact {
+  padding: 0.4rem 0.55rem;
+  font-size: 0.42rem;
+  flex-direction: row;
+  gap: 0.3rem;
+}
+.btn-juicy.big {
+  width: 100%;
+  padding: 0.85rem 0.6rem;
+  font-size: 0.55rem;
+}
+.btn-juicy.danger {
+  border-color: rgba(248, 113, 113, 0.5);
+}
+.btn-juicy.danger:hover:not(:disabled) {
+  border-color: #f87171;
+  box-shadow: 0 0 14px rgba(248,113,113,0.35);
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+@media (min-width: 480px) {
+  .action-row { grid-template-columns: 1fr 1fr 1fr 1fr; }
+}
+
+/* ── Stats card ── */
+.stats-card .game-stat-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+.stats-card .game-stat-row__label,
+.stats-card .game-stat-row__val {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  color: #cbd5e1;
+}
+
+/* ── Garden setup card ── */
+.garden-card .garden-slot {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.garden-slot__emoji { font-size: 1.05rem; text-align: center; }
+.garden-slot__label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  color: #94a3b8;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.garden-slot__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: #f5f5f5;
+}
+.garden-slot__mods { text-align: right; }
+
+/* ── Inventory ── */
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 0.4rem;
+}
+.inv-item {
+  background: rgba(0,0,0,0.20);
+  border: 1px solid var(--gv-border);
+  padding: 0.6rem 0.4rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  transition: border-color 0.15s, transform 0.08s;
+  color: #e2e8f0;
+}
+.inv-item:hover { border-color: var(--gv-accent); transform: translateY(-1px); }
+.inv-item__emoji { font-size: 1.6rem; line-height: 1; }
+.inv-item__name {
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 0.72rem;
+  line-height: 1.3;
+  text-align: center;
+  color: #e2e8f0;
+}
+.inv-item__count {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  color: #fde047;
+  margin-top: 0.2rem;
+}
+
+.inventory-empty {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  line-height: 1.6;
+  color: #94a3b8;
+  text-align: center;
+  padding: 1rem 0.6rem;
+  border: 1px dashed var(--gv-border);
+  background: rgba(0,0,0,0.15);
+  letter-spacing: 0.5px;
+}
+.inventory-empty b { color: #fde047; }
+
+/* ── Prestige strip ── */
+.prestige-strip {
+  text-align: center;
+  padding: 0.2rem 0;
+}
+
+/* ── Battle tab cards ── */
+.battle-tab .boss-card {
+  background: rgba(0,0,0,0.25);
+  border: 1px dashed rgba(248,113,113,0.4);
+  padding: 0.6rem;
+  margin-top: 0.5rem;
+}
+.boss-card__title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  color: #f87171;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+}
+.boss-card__flavor {
+  margin-bottom: 0.4rem;
+  line-height: 1.6;
+}
+
+/* ── Battle Arena ── */
+.battle-arena, .versus-arena {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.battler {
+  background: rgba(0,0,0,0.30);
+  border: 2px solid var(--gv-border);
+  padding: 0.55rem 0.6rem;
+  position: relative;
+}
+.battler__head {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  margin-bottom: 0.25rem;
+  color: #f5f5f5;
+}
+.battler__hp {
+  height: 10px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--gv-border);
+  overflow: hidden;
+}
+.battler__hp-fill { height: 100%; transition: width 0.5s ease; }
+.battler__hpnum {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.36rem;
+  color: #cbd5e1;
+  text-align: right;
+  margin-top: 0.2rem;
+}
+.battler__sprite {
+  display: flex; align-items: center; justify-content: center;
+  margin: 0.4rem 0 0.2rem;
+  min-height: 80px;
+  transition: transform 0.18s;
+}
+.battler__statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.status-chip {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.34rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--gv-border);
+  padding: 0.2rem 0.35rem;
+  letter-spacing: 0.5px;
+}
+
+.battler-attack { animation: bt-attack 0.32s ease-in-out; }
+@keyframes bt-attack {
+  0% { transform: translateX(0); }
+  35% { transform: translateX(8px) scale(1.08); }
+  60% { transform: translateX(-3px) scale(1.04); }
+  100% { transform: translateX(0); }
+}
+.battler--player.battler-attack .battler__sprite { animation: bt-attack-up 0.32s ease-in-out; }
+@keyframes bt-attack-up {
+  0% { transform: translateY(0); }
+  35% { transform: translateY(-12px) scale(1.08); }
+  100% { transform: translateY(0); }
+}
+
+.battler-hit { animation: bt-hit 0.30s ease-in-out; }
+@keyframes bt-hit {
+  0%, 100% { transform: translateX(0); filter: brightness(1); }
+  10% { transform: translateX(-4px); filter: brightness(2.0) hue-rotate(-30deg); }
+  30% { transform: translateX(4px); filter: brightness(1.8); }
+  55% { transform: translateX(-3px); filter: brightness(1.4); }
+  80% { transform: translateX(2px); filter: brightness(1); }
+}
+
+.battler-buff { animation: bt-buff 0.6s ease-in-out; }
+@keyframes bt-buff {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 0 transparent); }
+  50% { filter: brightness(1.2) drop-shadow(0 0 8px rgba(74,222,128,0.7)); }
+}
+.battler-ko { animation: bt-ko 1s ease-out forwards; }
+@keyframes bt-ko {
+  0% { opacity: 1; transform: rotate(0deg) scale(1); }
+  60% { opacity: 0.4; transform: rotate(-30deg) scale(0.9); }
+  100% { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+}
+
+/* ── Battle log ── */
+.battle-log {
+  max-height: 110px;
+  overflow-y: auto;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  line-height: 1.6;
+  padding: 0.5rem;
+}
+.battle-log__line {
+  color: #cbd5e1;
+  padding: 0.1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+.battle-log__line:last-child { color: #f5f5f5; }
+
+/* ── Battle moves grid ── */
+.moves-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+.move-btn {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--gv-border);
+  padding: 0.55rem;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, transform 0.08s, box-shadow 0.15s;
+}
+.move-btn:hover:not(:disabled) {
+  border-color: var(--gv-accent);
+  box-shadow: 0 0 12px rgba(var(--gv-accent-rgb), 0.25);
+  transform: translateY(-1px);
+}
+.move-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.move-btn__emoji { font-size: 1.05rem; text-align: center; }
+.move-btn__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.42rem;
+  color: #f5f5f5;
+}
+.move-btn__pwr {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.34rem;
+  color: #94a3b8;
+}
+
+.battle-secondary {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+  justify-content: flex-end;
+}
+
+/* ── Item menu overlay ── */
+.item-menu-overlay, .battle-result-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+.item-menu, .battle-result-card {
+  background: #0c0c1d;
+  border: 2px solid var(--gv-accent);
+  padding: 1.2rem 1rem;
+  max-width: 360px;
+  width: 100%;
+  box-shadow: 0 0 40px rgba(var(--gv-accent-rgb), 0.30);
+}
+.battle-result-card { text-align: center; }
+.battle-result-card .rewards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  margin: 0.7rem 0;
+  color: #fde047;
+}
+.battle-result-card .result-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+/* ── Shop tab ── */
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.5rem;
+}
+.shop-card {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--gv-border);
+  padding: 0.7rem 0.55rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  text-align: center;
+}
+.shop-card__emoji { font-size: 1.8rem; line-height: 1; }
+.shop-card__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: #f5f5f5;
+  letter-spacing: 0.4px;
+  line-height: 1.4;
+}
+.shop-card .dim.small {
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.upgrade-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.upgrade-row__emoji { font-size: 1.1rem; }
+.upgrade-row__label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.36rem;
+  color: #94a3b8;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.upgrade-row__current {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  color: #f5f5f5;
+}
+
+/* ── Quests tab ── */
+.quest-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.quest-row__emoji { font-size: 1.1rem; text-align: center; }
+.quest-row__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  color: #f5f5f5;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.quest-info-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgba(253, 224, 71, 0.50);
+  background: rgba(253, 224, 71, 0.08);
+  color: #fde047;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  line-height: 1;
+}
+.quest-info-btn:hover { background: rgba(253, 224, 71, 0.20); }
+.quest-row__bar {
+  height: 5px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--gv-border);
+  margin: 0.25rem 0;
+  overflow: hidden;
+}
+.quest-row__fill {
+  height: 100%;
+  background: var(--gv-accent);
+  transition: width 0.4s ease;
+}
+.quest-row--done .quest-row__fill { background: #fde047; }
+
+.achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.4rem;
+}
+.ach-card {
+  background: rgba(0,0,0,0.20);
+  border: 1px solid var(--gv-border);
+  padding: 0.5rem;
+  font-family: 'Press Start 2P', monospace;
+  filter: grayscale(70%);
+  opacity: 0.7;
+}
+.ach-card__title { font-size: 0.4rem; color: #cbd5e1; margin-bottom: 0.25rem; }
+.ach-card .small { line-height: 1.5; }
+.ach-card--unlocked {
+  filter: none;
+  opacity: 1;
+  border-color: rgba(253, 224, 71, 0.45);
+  box-shadow: 0 0 12px rgba(253, 224, 71, 0.10);
+}
+.ach-card--unlocked .ach-card__title { color: #fde047; }
+
+/* ── Versus tab ── */
+.versus-banner {
+  text-align: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 1px;
+  padding: 0.5rem 0;
+  color: var(--gv-accent);
+  text-shadow: 0 0 12px rgba(var(--gv-accent-rgb), 0.4);
+  border-top: 1px solid var(--gv-border);
+  border-bottom: 1px solid var(--gv-border);
+}
+.versus-flash {
+  position: absolute;
+  inset: 30% 1rem;
+  text-align: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  color: #fb923c;
+  text-shadow: 0 0 12px rgba(251,146,60,0.5);
+  animation: vp-flash 0.8s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes vp-flash {
+  0% { opacity: 0; transform: scale(0.8); }
+  30% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.05); }
+}
+
+/* ── Battle Environments — gradient backdrops ── */
+.battle-arena {
+  border-radius: 0;
+  padding: 0.4rem;
+  transition: background 0.4s ease;
+}
+.battle-arena.env-greenhouse  { background: linear-gradient(180deg, #052e16 0%, #14532d 100%); }
+.battle-arena.env-growlights  { background: linear-gradient(180deg, #1e1b4b 0%, #4338ca 100%); }
+.battle-arena.env-tent        { background: linear-gradient(180deg, #1e3a8a 0%, #0c4a6e 100%); }
+.battle-arena.env-outdoor     { background: linear-gradient(180deg, #fde68a 0%, #f59e0b 50%, #6b21a8 100%); }
+.battle-arena.env-basement    { background: linear-gradient(180deg, #18181b 0%, #27272a 100%); }
+.battle-arena.env-co2         { background: linear-gradient(180deg, #064e3b 0%, #14532d 60%, #052e16 100%); }
+
+.env-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.5rem 0.6rem;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid var(--gv-border);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  margin-bottom: 0.45rem;
+  color: #fde047;
+  text-shadow: 0 0 8px rgba(253, 224, 71, 0.4);
+}
+.env-banner .small { font-size: 0.36rem; color: #cbd5e1; max-width: 60%; text-align: right; line-height: 1.5; }
+
+/* ── Trait chip ── */
+.trait-chip {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.34rem;
+  padding: 0.18rem 0.35rem;
+  margin-left: 0.35rem;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(253, 224, 71, 0.35);
+  color: #fde047;
+  letter-spacing: 0.3px;
+}
+.trait-card .trait-line {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.45rem;
+  letter-spacing: 0.5px;
+  color: #fde047;
+  text-shadow: 0 0 10px rgba(253, 224, 71, 0.30);
+  text-align: center;
+  padding: 0.2rem 0;
+}
+
+/* ── Damage popups & FX ── */
+.dmg-pop {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  color: #f87171;
+  text-shadow: 0 0 8px rgba(248,113,113,0.6);
+  pointer-events: none;
+  animation: dmg-fly 1.0s ease-out forwards;
+  z-index: 6;
+}
+.dmg-pop--crit {
+  font-size: 0.85rem;
+  color: #fde047;
+  text-shadow: 0 0 12px rgba(253, 224, 71, 0.8), 0 0 4px #f87171;
+  animation: dmg-fly-crit 1.0s ease-out forwards;
+}
+@keyframes dmg-fly {
+  0%   { transform: translate(-50%, 0) scale(1); opacity: 0; }
+  20%  { opacity: 1; transform: translate(-50%, -8px) scale(1.15); }
+  100% { transform: translate(-50%, -34px) scale(1); opacity: 0; }
+}
+@keyframes dmg-fly-crit {
+  0%   { transform: translate(-50%, 0) scale(0.7) rotate(-6deg); opacity: 0; }
+  15%  { opacity: 1; transform: translate(-50%, -10px) scale(1.4) rotate(4deg); }
+  60%  { transform: translate(-50%, -20px) scale(1.15); }
+  100% { transform: translate(-50%, -36px) scale(1); opacity: 0; }
+}
+
+.battle-fx {
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  color: #fde047;
+  pointer-events: none;
+  z-index: 7;
+  text-shadow: 0 0 10px rgba(253, 224, 71, 0.7);
+}
+.fx-crit {
+  animation: fx-crit-burst 0.85s ease-out forwards;
+}
+@keyframes fx-crit-burst {
+  0%   { opacity: 0; transform: translate(-50%, 0) scale(0.5) rotate(-12deg); }
+  20%  { opacity: 1; transform: translate(-50%, -4px) scale(1.6) rotate(6deg); }
+  100% { opacity: 0; transform: translate(-50%, -22px) scale(1.0); }
+}
+.fx-dodge {
+  color: #67e8f9;
+  text-shadow: 0 0 8px rgba(103, 232, 249, 0.7);
+  animation: fx-dodge 0.7s ease-out forwards;
+}
+@keyframes fx-dodge {
+  0%   { opacity: 0; transform: translate(-50%, 0) scale(0.7); }
+  30%  { opacity: 1; transform: translate(-90%, -8px) scale(1.05); }
+  100% { opacity: 0; transform: translate(-130%, -10px) scale(1); }
+}
+.fx-confuse {
+  font-size: 1.1rem;
+  animation: fx-confuse 0.8s ease-out forwards;
+}
+@keyframes fx-confuse {
+  0%   { opacity: 0; transform: translate(-50%, -10px) rotate(0deg); }
+  30%  { opacity: 1; transform: translate(-50%, -16px) rotate(180deg); }
+  100% { opacity: 0; transform: translate(-50%, -26px) rotate(360deg); }
+}
+
+/* Battler container needs relative positioning so absolute popups land inside */
+.battler { position: relative; }
+
+/* ── Move Library (Shop tab) ── */
+.move-lib {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.move-lib-row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 0.7rem;
+  background: rgba(0,0,0,0.22);
+  border: 1px solid var(--gv-border);
+  padding: 0.7rem 0.65rem;
+}
+.move-lib-row.eq {
+  border-color: var(--gv-accent);
+  box-shadow: inset 0 0 0 1px rgba(var(--gv-accent-rgb), 0.20);
+}
+.move-lib__emoji { font-size: 1.4rem; text-align: center; line-height: 1; }
+.move-lib__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  color: #f5f5f5;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.2rem;
+}
+.move-lib__info .small,
+.move-lib__info .dim.small {
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Cosmetics / Hats / Frames / Auras / Shop Subtabs / Themes
+   ════════════════════════════════════════════════════════════ */
+
+/* Pixel-art hat overlay — anchored to top of bud sprite by renderHat() */
+.pixel-hat-wrap {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+.pixel-hat-wrap .pixel-sprite { border-radius: 0; }
+
+/* ── Multi-plot quirky positions (anchored to viewport edges) ──
+   All three sit ON THE EDGE of the page so they hover next to UI without
+   covering interactive elements. They idly drift to feel alive — like a
+   desktop buddy. */
+
+/* Plot 1 — main companion, bottom-right */
+.cg-pos--main {
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)) !important;
+  right: 1rem !important;
+  top: auto !important;
+  left: auto !important;
+  animation: cg-wander-right 9s ease-in-out infinite;
+}
+@media (min-width: 768px) {
+  .cg-pos--main {
+    bottom: calc(1.75rem + env(safe-area-inset-bottom, 0px)) !important;
+    right: 1.75rem !important;
+  }
+}
+
+/* Plot 2 — bottom-left, mirror of main */
+.cg-pos--peek-bl {
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px)) !important;
+  left: 1rem !important;
+  top: auto !important;
+  right: auto !important;
+  z-index: 8800;
+  animation: cg-wander-left 11s ease-in-out infinite;
+}
+@media (min-width: 768px) {
+  .cg-pos--peek-bl {
+    bottom: calc(1.75rem + env(safe-area-inset-bottom, 0px)) !important;
+    left: 1.75rem !important;
+  }
+}
+
+/* Plot 3 — middle-right edge, gently bobbing — sits next to scroll edge */
+.cg-pos--peek-tl {
+  top: 38% !important;
+  right: 0.4rem !important;
+  bottom: auto !important;
+  left: auto !important;
+  z-index: 8800;
+  animation: cg-wander-side 13s ease-in-out infinite;
+}
+@media (min-width: 768px) {
+  .cg-pos--peek-tl {
+    top: 40% !important;
+    right: 1rem !important;
+  }
+}
+
+/* ── Desktop-buddy idle wandering ── */
+/* Slow, low-amplitude motion that makes the bud feel alive without
+   getting in the way of clickable UI underneath. */
+@keyframes cg-wander-right {
+  0%   { transform: translateY(0) translateX(0)     rotate(0deg); }
+  20%  { transform: translateY(-6px) translateX(-3px) rotate(-2deg); }
+  45%  { transform: translateY(0)    translateX(-6px) rotate(0deg); }
+  60%  { transform: translateY(-10px) translateX(-3px) rotate(2deg); }   /* hop */
+  80%  { transform: translateY(0)    translateX(0)    rotate(-1deg); }
+  100% { transform: translateY(0) translateX(0)     rotate(0deg); }
+}
+@keyframes cg-wander-left {
+  0%   { transform: translateY(0) translateX(0)     rotate(0deg); }
+  25%  { transform: translateY(-5px) translateX(4px) rotate(2deg); }
+  50%  { transform: translateY(0)    translateX(8px) rotate(0deg); }
+  65%  { transform: translateY(-12px) translateX(4px) rotate(-3deg); }   /* hop */
+  85%  { transform: translateY(0)    translateX(0)    rotate(1deg); }
+  100% { transform: translateY(0) translateX(0)     rotate(0deg); }
+}
+@keyframes cg-wander-side {
+  0%   { transform: translateY(0)     rotate(0deg); }
+  25%  { transform: translateY(-8px)  rotate(3deg); }
+  50%  { transform: translateY(0)     rotate(0deg); }
+  75%  { transform: translateY(8px)   rotate(-3deg); }
+  100% { transform: translateY(0)     rotate(0deg); }
+}
+
+/* Pause wandering on hover so the bud feels reactive when you go to tap it */
+@media (hover: hover) and (pointer: fine) {
+  .cannaguy-companion:hover { animation-play-state: paused; }
+}
+
+/* The existing tap/annoy/idle-attention rules already use !important so they
+   automatically supersede the wandering animation while active. */
+
+/* Frame variants on .garden-viewport (and .battler__sprite when needed) */
+.frame-default     { /* baseline already in .garden-viewport */ }
+.frame-neon        { border-color: #ec4899 !important; box-shadow: 0 0 18px rgba(236,72,153,0.5), inset 0 0 18px rgba(236,72,153,0.18); }
+.frame-wood        { border: 6px ridge #8b5a2b !important; box-shadow: inset 0 0 0 2px #4a2e10; }
+.frame-gold        { border-color: #fde047 !important; box-shadow: 0 0 18px rgba(253,224,71,0.55), inset 0 0 12px rgba(253,224,71,0.18); }
+.frame-velvet      { border: 4px solid #7c3aed !important; box-shadow: inset 0 0 24px rgba(124,58,237,0.30), 0 0 12px rgba(124,58,237,0.45); }
+.frame-arcade      { border: 4px solid #38bdf8 !important; box-shadow: 0 0 0 2px #0c0c1d, 0 0 0 6px #38bdf8, inset 0 0 12px rgba(56,189,248,0.20); }
+.frame-crystal     { border: 3px solid #67e8f9 !important; box-shadow: 0 0 18px rgba(103,232,249,0.5), inset 0 0 14px rgba(103,232,249,0.18); animation: crystal-flicker 4s ease-in-out infinite; }
+.frame-obsidian    { border: 4px solid #18181b !important; box-shadow: inset 0 0 18px rgba(0,0,0,0.7), 0 0 0 2px #52525b; }
+
+@keyframes crystal-flicker {
+  0%,100% { box-shadow: 0 0 18px rgba(103,232,249,0.5), inset 0 0 14px rgba(103,232,249,0.18); }
+  50%     { box-shadow: 0 0 24px rgba(103,232,249,0.7), inset 0 0 18px rgba(103,232,249,0.25); }
+}
+
+/* Aura — sits behind the sprite in .aura-layer */
+.aura-layer { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.aura-glow     .aura-layer { background: radial-gradient(ellipse at 50% 60%, rgba(74,222,128,0.18), transparent 60%); animation: aura-glow-pulse 4s ease-in-out infinite; }
+.aura-sparkle  .aura-layer { background: radial-gradient(circle at 30% 40%, rgba(253,224,71,0.30) 0%, transparent 6%),
+                                          radial-gradient(circle at 70% 60%, rgba(253,224,71,0.30) 0%, transparent 6%),
+                                          radial-gradient(circle at 50% 30%, rgba(253,224,71,0.30) 0%, transparent 6%);
+                              animation: aura-sparkle 2.4s ease-in-out infinite; }
+.aura-smoke    .aura-layer { background: radial-gradient(ellipse at 50% 90%, rgba(74,222,128,0.30), transparent 70%); animation: aura-smoke 6s ease-in-out infinite; filter: blur(6px); }
+.aura-rainbow  .aura-layer { background: conic-gradient(from 0deg, #ef4444, #f59e0b, #fde047, #4ade80, #38bdf8, #a78bfa, #ec4899, #ef4444); opacity: 0.20; animation: aura-spin 18s linear infinite; }
+.aura-cosmic   .aura-layer { background: radial-gradient(circle at 50% 60%, #1e1b4b 0%, #000 80%),
+                                          radial-gradient(circle at 20% 30%, white 0%, transparent 1%),
+                                          radial-gradient(circle at 80% 40%, white 0%, transparent 1%),
+                                          radial-gradient(circle at 60% 80%, white 0%, transparent 1%);
+                              animation: aura-spin 30s linear infinite; opacity: 0.7; }
+.aura-sunsoaked .aura-layer { background: radial-gradient(ellipse at 50% 50%, rgba(253, 224, 71, 0.30), transparent 70%); animation: aura-glow-pulse 3s ease-in-out infinite; }
+.aura-boss      .aura-layer { background: radial-gradient(ellipse at 50% 50%, rgba(248,113,113,0.25), transparent 65%); animation: aura-glow-pulse 1.6s ease-in-out infinite; }
+
+@keyframes aura-glow-pulse { 0%,100% { opacity: 0.7; } 50% { opacity: 1; } }
+@keyframes aura-sparkle    { 0%,100% { opacity: 0.4; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.06); } }
+@keyframes aura-smoke      { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes aura-spin       { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* ── Shop subtabs ── */
+.shop-subtabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.25rem;
+  margin: 0 0 0.6rem;
+  border: 1px solid var(--gv-border);
+  background: rgba(0,0,0,0.30);
+  padding: 0.25rem;
+}
+.shop-subtab {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0.7rem 0.2rem;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+.shop-subtab:hover  { color: #e2e8f0; background: rgba(255,255,255,0.04); }
+.shop-subtab.active {
+  color: #fde047;
+  background: rgba(253, 224, 71, 0.10);
+  box-shadow: inset 0 -2px 0 #fde047;
+}
+
+.shop-currency-banner { border-color: rgba(253, 224, 71, 0.30); }
+
+/* ── Cosmetic grid ── */
+.cosmetic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.4rem;
+}
+.cosmetic-card {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--gv-border);
+  padding: 0.7rem 0.55rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  text-align: center;
+  position: relative;
+}
+.cosmetic-card.owned {
+  border-color: rgba(74,222,128,0.5);
+  box-shadow: inset 0 0 0 1px rgba(var(--gv-accent-rgb), 0.20);
+}
+.cosmetic-card.locked { opacity: 0.85; }
+.cosmetic-card__glyph { font-size: 2rem; line-height: 1; }
+.cosmetic-card__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: #f5f5f5;
+  letter-spacing: 0.4px;
+  line-height: 1.4;
+}
+.cosmetic-card .dim.small {
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+.cosmetic-card__theme-preview {
+  font-size: 1.2rem;
+  letter-spacing: 0.4rem;
+  padding: 0.2rem 0.4rem;
+  background: rgba(0,0,0,0.30);
+  border: 1px dashed var(--gv-border);
+}
+
+/* "Equipped" button green tone */
+.btn-juicy.compact.eq {
+  border-color: rgba(74, 222, 128, 0.6);
+  color: #4ade80;
+}
+
+/* ── Versus Pairing ── */
+.pairing-pane .qr-wrap {
+  display: flex;
+  justify-content: center;
+  background: #fff;
+  padding: 0.6rem;
+  margin: 0.5rem auto;
+  width: fit-content;
+  border: 2px solid var(--gv-accent);
+}
+.pairing-pane #qr-canvas {
+  image-rendering: pixelated;
+  display: block;
+}
+.qr-shortcode {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  background: rgba(0,0,0,0.4);
+  border: 1px dashed var(--gv-border);
+  padding: 0.5rem;
+  margin: 0.4rem 0;
+  word-break: break-all;
+  letter-spacing: 0.5px;
+  color: #fde047;
+}
+.qr-input {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--gv-border);
+  color: #f5f5f5;
+  padding: 0.5rem;
+  width: 100%;
+  margin: 0.4rem 0;
+  resize: vertical;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Async Battle League rows
+   ════════════════════════════════════════════════════════════ */
+.lg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+.lg-row {
+  background: rgba(0,0,0,0.22);
+  border: 1px solid var(--gv-border);
+  padding: 0.6rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.lg-row--me {
+  border-color: rgba(253, 224, 71, 0.5);
+  background: rgba(253, 224, 71, 0.06);
+}
+.lg-row__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.lg-row__type { font-size: 1.2rem; line-height: 1; }
+.lg-row__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: #f5f5f5;
+  letter-spacing: 0.4px;
+}
+.lg-row__lvl { color: #fde047; }
+.lg-row__trait { font-size: 1rem; line-height: 1; }
+.lg-row__by { line-height: 1.5; }
+.lg-row .btn-juicy.compact { align-self: flex-end; }
+
+/* ════════════════════════════════════════════════════════════
+   First-time Tutorial
+   ════════════════════════════════════════════════════════════ */
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  pointer-events: auto;
+}
+.tutorial-overlay::before {
+  /* Fallback dim — replaced visually by the ring's box-shadow on supported steps */
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: -1;
+}
+.tutorial-card {
+  background: #0c0c1d;
+  border: 2px solid #fde047;
+  padding: 1rem 0.9rem;
+  font-family: 'Press Start 2P', monospace;
+  box-shadow: 0 0 30px rgba(253, 224, 71, 0.4);
+  pointer-events: auto;
+}
+.tutorial-card__step {
+  font-size: 0.5rem;
+  color: #fde047;
+  letter-spacing: 1px;
+  margin-bottom: 0.4rem;
+}
+.tutorial-card__title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  color: #f5f5f5;
+  margin: 0 0 0.6rem;
+  letter-spacing: 0.5px;
+}
+.tutorial-card__body {
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0 0 0.8rem;
+}
+.tutorial-card__actions {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.tutorial-ring { /* set inline by JS */ }
+
+/* ════════════════════════════════════════════════════════════
+   Care Mini-Games
+   ════════════════════════════════════════════════════════════ */
+.minigame-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9997;
+  background: rgba(0,0,0,0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.minigame {
+  background: #0c0c1d;
+  border: 2px solid var(--gv-accent);
+  padding: 1.4rem 1.1rem 1rem;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  font-family: 'Press Start 2P', monospace;
+  box-shadow: 0 0 30px rgba(var(--gv-accent-rgb), 0.30);
+}
+.minigame__hint {
+  font-size: 0.55rem;
+  color: #cbd5e1;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+.minigame__track {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--gv-border);
+  margin-bottom: 0.8rem;
+  overflow: hidden;
+}
+.minigame__zone {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 14%;
+  transform: translateX(-50%);
+  background: rgba(74, 222, 128, 0.20);
+  border-left: 1px dashed rgba(74, 222, 128, 0.6);
+  border-right: 1px dashed rgba(74, 222, 128, 0.6);
+}
+.minigame__cursor {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  font-size: 1.8rem;
+  transform: translate(-50%, -50%);
+  animation: minigame-slide 1.4s linear infinite alternate;
+}
+@keyframes minigame-slide {
+  from { left: 0%; }
+  to   { left: 100%; }
+}
+
+.minigame__charge {
+  position: relative;
+  width: 60px;
+  height: 130px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--gv-border);
+  margin: 0 auto 0.8rem;
+  overflow: hidden;
+}
+.minigame__charge-fill {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 0;
+  background: linear-gradient(0deg, #4ade80, #fde047);
+}
+.minigame__charge-zone {
+  position: absolute;
+  left: 0; right: 0; top: 6%;
+  height: 14%;
+  background: rgba(74, 222, 128, 0.20);
+  border-top: 1px dashed rgba(74, 222, 128, 0.7);
+  border-bottom: 1px dashed rgba(74, 222, 128, 0.7);
+}
+
+.minigame__count {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 2.2rem;
+  color: #fde047;
+  margin: 0.5rem 0;
+  text-shadow: 0 0 12px rgba(253, 224, 71, 0.6);
+}
+.minigame__timer-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--gv-border);
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+.minigame__timer-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #fde047, #f87171);
+  width: 100%;
+  transition: width 0.05s linear;
+}
+.mash-pulse { transform: scale(1.05); transition: transform 0.04s; }
+
+.minigame--perfect { animation: mg-perfect-flash 0.4s; }
+.minigame--ok      { animation: mg-ok-flash 0.4s; }
+.minigame--miss    { animation: mg-miss-flash 0.4s; }
+@keyframes mg-perfect-flash { 0% { box-shadow: 0 0 50px rgba(253, 224, 71, 0.9); } 100% { box-shadow: 0 0 0 transparent; } }
+@keyframes mg-ok-flash      { 0% { box-shadow: 0 0 30px rgba(74, 222, 128, 0.7); }  100% { box-shadow: 0 0 0 transparent; } }
+@keyframes mg-miss-flash    { 0% { box-shadow: 0 0 30px rgba(248, 113, 113, 0.7); } 100% { box-shadow: 0 0 0 transparent; } }
+
+.minigame-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  background: rgba(0,0,0,0.20);
+  border: 1px solid var(--gv-border);
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  cursor: pointer;
+  user-select: none;
+}
+.minigame-toggle input { accent-color: #4ade80; }
+
+/* ── Mini-game variant visuals ── */
+
+/* Drop track (Water — Catch the falling drop) */
+.minigame__drop-track {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--gv-border);
+  margin-bottom: 0.8rem;
+  overflow: hidden;
+}
+.minigame__drop {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.8rem;
+  animation: mg-drop-fall 1.6s linear infinite;
+}
+.minigame__drop-line {
+  position: absolute;
+  bottom: 18%;
+  left: 6%;
+  right: 6%;
+  height: 2px;
+  background: rgba(74, 222, 128, 0.7);
+  border-top: 1px dashed rgba(74, 222, 128, 0.9);
+  border-bottom: 1px dashed rgba(74, 222, 128, 0.9);
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
+@keyframes mg-drop-fall {
+  0%   { top: -10%; }
+  100% { top: 105%; }
+}
+
+/* Match buttons (Feed — Match pair, Clean — Drag sweep) */
+.minigame__match-prompt {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.75rem;
+  color: #fde047;
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.5px;
+}
+.minigame__match-row {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0.5rem 0 0.8rem;
+}
+.minigame__match-btn {
+  font-size: 2rem;
+  background: rgba(0,0,0,0.30);
+  border: 2px solid var(--gv-border);
+  padding: 0.8rem 1.1rem;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.08s;
+  min-width: 70px;
+  min-height: 70px;
+}
+.minigame__match-btn:hover:not(:disabled) {
+  border-color: var(--gv-accent);
+  transform: translateY(-2px);
+}
+.minigame__match-btn:disabled { cursor: not-allowed; }
+
+/* Heart (Pet — Double-tap when heart is biggest) */
+.minigame__heart {
+  font-size: 2.4rem;
+  margin: 0.4rem auto 0.8rem;
+  display: inline-block;
+  animation: mg-heart-pulse 1.3s ease-in-out infinite;
+  text-shadow: 0 0 12px rgba(248, 113, 113, 0.5);
+}
+@keyframes mg-heart-pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.45); }
+}
+
+/* Beats (Pet — Rhythm three) */
+.minigame__beats {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0.6rem 0 0.8rem;
+}
+.minigame__beat {
+  font-size: 1.8rem;
+  color: rgba(148, 163, 184, 0.4);
+  transition: all 0.18s;
+  display: inline-block;
+}
+.minigame__beat--lit {
+  color: #fde047;
+  text-shadow: 0 0 16px rgba(253, 224, 71, 0.9);
+  transform: scale(1.4);
+  animation: mg-beat-flash 0.4s ease-out;
+}
+@keyframes mg-beat-flash {
+  0%   { transform: scale(0.6); opacity: 0.4; }
+  40%  { transform: scale(1.6); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 1; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   Trichome-tier cosmetic frames + auras (Apothecary)
+   ════════════════════════════════════════════════════════════ */
+.frame-lattice {
+  border: 3px double rgba(253, 224, 71, 0.7) !important;
+  box-shadow: 0 0 14px rgba(253, 224, 71, 0.40), inset 0 0 10px rgba(253, 224, 71, 0.20);
+  animation: lattice-shimmer 3.2s ease-in-out infinite;
+}
+@keyframes lattice-shimmer {
+  0%,100% { box-shadow: 0 0 14px rgba(253, 224, 71, 0.40), inset 0 0 10px rgba(253, 224, 71, 0.20); }
+  50%     { box-shadow: 0 0 22px rgba(253, 224, 71, 0.65), inset 0 0 16px rgba(253, 224, 71, 0.30); }
+}
+.aura-kief .aura-layer {
+  background:
+    radial-gradient(circle at 30% 50%, rgba(253, 224, 71, 0.40) 0%, transparent 8%),
+    radial-gradient(circle at 60% 35%, rgba(253, 224, 71, 0.40) 0%, transparent 8%),
+    radial-gradient(circle at 80% 60%, rgba(253, 224, 71, 0.40) 0%, transparent 8%),
+    radial-gradient(circle at 45% 70%, rgba(253, 224, 71, 0.40) 0%, transparent 8%);
+  animation: kief-drift 5s ease-in-out infinite;
+}
+@keyframes kief-drift {
+  0%,100% { transform: translateY(0); opacity: 0.7; }
+  50%     { transform: translateY(-3px); opacity: 1; }
+}
+.aura-mythic .aura-layer {
+  background:
+    conic-gradient(from 0deg,
+      #fde047, #ec4899, #38bdf8, #4ade80, #a78bfa, #ec4899, #fde047);
+  opacity: 0.30;
+  animation: mythic-spin 8s linear infinite, mythic-pulse 2s ease-in-out infinite;
+}
+@keyframes mythic-spin  { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes mythic-pulse { 0%,100% { opacity: 0.25; } 50% { opacity: 0.5; } }
+
+/* ════════════════════════════════════════════════════════════
+   Daily World Event banner
+   ════════════════════════════════════════════════════════════ */
+.world-event-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  margin: 0.4rem 0 0.6rem;
+  background: linear-gradient(90deg, rgba(74,222,128,0.10), rgba(56,189,248,0.10));
+  border: 1px solid rgba(74,222,128,0.25);
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 0.72rem;
+  color: #cbd5e1;
+}
+.world-event-banner__emoji { font-size: 1.2rem; line-height: 1; }
+.world-event-banner__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: #fde047;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Evolution Path Choice modal (Lv.30)
+   ════════════════════════════════════════════════════════════ */
+.path-choice-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(0,0,0,0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+.path-choice-card {
+  background: #0c0c1d;
+  border: 2px solid var(--gv-accent);
+  padding: 1.4rem 1rem 1rem;
+  max-width: 460px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(var(--gv-accent-rgb), 0.30);
+}
+.path-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+.path-option {
+  background: rgba(0,0,0,0.30);
+  border: 2px solid var(--gv-border);
+  padding: 0.8rem 0.5rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  transition: border-color 0.15s, transform 0.08s, box-shadow 0.15s;
+}
+.path-option:hover {
+  border-color: var(--gv-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(var(--gv-accent-rgb), 0.30);
+}
+.path-option__sprite {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.path-option__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: #f5f5f5;
+  letter-spacing: 0.4px;
+}
+.path-option .small {
+  line-height: 1.5;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Breeding Lab card (Quests tab)
+   ════════════════════════════════════════════════════════════ */
+.breed-card { border: 1px solid rgba(167, 139, 250, 0.40); }
+.mythic-tag {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  margin-left: 0.5rem;
+  background: linear-gradient(90deg, #fde047, #ec4899, #38bdf8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: 1px;
+  animation: mythic-shimmer 2.4s ease-in-out infinite;
+}
+@keyframes mythic-shimmer {
+  0%,100% { filter: brightness(1); }
+  50%     { filter: brightness(1.4); }
+}
+.breed-progress { margin: 0.4rem 0; }
+.breed-progress__bar {
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--gv-border);
+  overflow: hidden;
+  margin-bottom: 0.2rem;
+}
+.breed-progress__fill {
+  height: 100%;
+  background: linear-gradient(90deg, #a78bfa, #ec4899);
+  transition: width 0.5s ease;
+}
+.breed-preview {
+  background: rgba(0,0,0,0.30);
+  padding: 0.5rem;
+  border: 1px dashed var(--gv-border);
+  margin: 0.4rem 0;
+}
+.breed-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+.breed-parents {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.4rem;
+  margin: 0.5rem 0;
+}
+.breed-parent {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem;
+  background: rgba(0,0,0,0.30);
+  border: 1px solid var(--gv-border);
+  cursor: pointer;
+  font-family: 'Courier New', ui-monospace, monospace;
+}
+.breed-parent input { accent-color: #a78bfa; }
+.breed-parent__name { font-weight: bold; color: #f5f5f5; }
+.breed-parent:has(input:checked) {
+  border-color: #a78bfa;
+  background: rgba(167, 139, 250, 0.10);
+}
+
+/* ════════════════════════════════════════════════════════════
+   Multi-plot picker (top of Garden tab)
+   ════════════════════════════════════════════════════════════ */
+.plot-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+.plot-slot {
+  background: rgba(0,0,0,0.30);
+  border: 1px solid var(--gv-border);
+  padding: 0.55rem 0.4rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.08s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 78px;
+  color: #e2e8f0;
+  font-family: 'Press Start 2P', monospace;
+}
+.plot-slot:hover { border-color: var(--gv-accent); transform: translateY(-1px); }
+.plot-slot__head {
+  font-size: 0.45rem;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+.plot-slot__bud {
+  font-size: 0.55rem;
+  font-weight: bold;
+  line-height: 1.4;
+}
+.plot-slot__body {
+  font-size: 0.7rem;
+  line-height: 1.2;
+  margin: 0.2rem 0;
+}
+.plot-slot__cost {
+  font-family: 'Courier New', ui-monospace, monospace;
+  font-size: 0.7rem;
+  color: #fde047;
+}
+.plot-slot--active {
+  border-color: var(--gv-accent);
+  background: rgba(var(--gv-accent-rgb), 0.10);
+  box-shadow: 0 0 12px rgba(var(--gv-accent-rgb), 0.30), inset 0 0 0 1px rgba(var(--gv-accent-rgb), 0.30);
+}
+.plot-slot--locked {
+  opacity: 0.7;
+  border-style: dashed;
+}
+.plot-slot--locked .plot-slot__body { color: #fde047; }
+.plot-slot--empty {
+  border-style: dashed;
+  border-color: rgba(74,222,128,0.45);
+}
+.plot-slot--empty .plot-slot__body { color: #4ade80; }
+
+/* Plant-a-bud modal overlay (re-uses onboarding inside) */
+.plot-plant-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto;
+}
+.plot-plant-card {
+  position: relative;
+  background: #0c0c1d;
+  border: 2px solid var(--gv-accent);
+  padding: 1.5rem 1rem 1rem;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 0 40px rgba(var(--gv-accent-rgb), 0.30);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.plot-plant-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.6rem;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  background: transparent;
+  border: 1px solid var(--gv-border);
+  color: #cbd5e1;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  z-index: 1;
+}
+.plot-plant-close:hover { border-color: var(--gv-accent); color: var(--gv-accent); }
+
+/* ════════════════════════════════════════════════════════════
+   Care effect overlays — Water / Feed / Clean / Pet
+   ════════════════════════════════════════════════════════════ */
+.care-fx {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  font-size: 1.5rem;
+}
+.care-fx__tool {
+  position: absolute;
+  font-size: 2.2rem;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.4));
+}
+
+/* WATER — shower head from above-right, drops fall onto the bud */
+.care-fx--water .care-fx__tool {
+  top: 8%; right: 18%;
+  animation: care-water-tool 1.2s ease-out forwards;
+}
+.care-fx__drop {
+  position: absolute;
+  font-size: 0.95rem;
+  opacity: 0;
+}
+.care-fx__drop--1 { top: 22%; left: 38%; animation: care-water-drop 1.0s 0.10s ease-in forwards; }
+.care-fx__drop--2 { top: 22%; left: 50%; animation: care-water-drop 1.0s 0.18s ease-in forwards; }
+.care-fx__drop--3 { top: 22%; left: 60%; animation: care-water-drop 1.0s 0.26s ease-in forwards; }
+.care-fx__drop--4 { top: 22%; left: 45%; animation: care-water-drop 1.0s 0.34s ease-in forwards; }
+@keyframes care-water-tool {
+  0%   { transform: translateY(-12px) rotate(-15deg); opacity: 0; }
+  20%  { transform: translateY(0) rotate(-25deg); opacity: 1; }
+  85%  { transform: translateY(0) rotate(-25deg); opacity: 1; }
+  100% { transform: translateY(-8px) rotate(-15deg); opacity: 0; }
+}
+@keyframes care-water-drop {
+  0%   { transform: translateY(0) scale(1); opacity: 0; }
+  15%  { opacity: 1; }
+  80%  { transform: translateY(60px) scale(0.8); opacity: 1; }
+  100% { transform: translateY(80px) scale(0.4); opacity: 0; }
+}
+
+/* FEED — leaf falls from above, food bits scatter */
+.care-fx--feed .care-fx__tool {
+  top: 6%; left: 50%; transform: translateX(-50%);
+  animation: care-feed-tool 1.1s ease-out forwards;
+}
+.care-fx__bit {
+  position: absolute;
+  font-size: 1rem;
+  opacity: 0;
+}
+.care-fx__bit--1 { top: 30%; left: 35%; animation: care-feed-bit 1.0s 0.20s ease-out forwards; }
+.care-fx__bit--2 { top: 32%; left: 50%; animation: care-feed-bit 1.0s 0.30s ease-out forwards; }
+.care-fx__bit--3 { top: 30%; left: 62%; animation: care-feed-bit 1.0s 0.40s ease-out forwards; }
+@keyframes care-feed-tool {
+  0%   { transform: translateX(-50%) translateY(-30px) rotate(-15deg); opacity: 0; }
+  20%  { transform: translateX(-50%) translateY(0) rotate(0deg); opacity: 1; }
+  60%  { transform: translateX(-50%) translateY(-4px) rotate(8deg); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-30px) rotate(-15deg); opacity: 0; }
+}
+@keyframes care-feed-bit {
+  0%   { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
+  20%  { transform: translateY(8px) scale(1.1) rotate(45deg); opacity: 1; }
+  100% { transform: translateY(30px) scale(0.7) rotate(180deg); opacity: 0; }
+}
+
+/* CLEAN — broom sweeps L→R, sparkles erupt */
+.care-fx--clean .care-fx__tool {
+  top: 35%;
+  animation: care-clean-tool 1.1s ease-in-out forwards;
+}
+.care-fx__sparkle {
+  position: absolute;
+  font-size: 1rem;
+  opacity: 0;
+}
+.care-fx__sparkle--1 { top: 38%; left: 25%; animation: care-clean-sparkle 0.8s 0.25s ease-out forwards; }
+.care-fx__sparkle--2 { top: 32%; left: 55%; animation: care-clean-sparkle 0.8s 0.45s ease-out forwards; }
+.care-fx__sparkle--3 { top: 42%; left: 70%; animation: care-clean-sparkle 0.8s 0.65s ease-out forwards; }
+@keyframes care-clean-tool {
+  0%   { left: -20%; transform: rotate(-30deg); opacity: 0; }
+  15%  { opacity: 1; }
+  50%  { left: 50%; transform: rotate(20deg); }
+  85%  { left: 100%; transform: rotate(40deg); opacity: 1; }
+  100% { left: 120%; opacity: 0; }
+}
+@keyframes care-clean-sparkle {
+  0%   { transform: scale(0) rotate(0deg); opacity: 0; }
+  40%  { transform: scale(1.2) rotate(180deg); opacity: 1; }
+  100% { transform: scale(0.8) rotate(360deg); opacity: 0; }
+}
+
+/* PET — hand reaches in from the right, taps, retreats */
+.care-fx--pet .care-fx__tool {
+  top: 30%;
+  font-size: 2.4rem;
+  animation: care-pet-tool 1.1s ease-in-out forwards;
+}
+.care-fx__heart {
+  position: absolute;
+  font-size: 1rem;
+  opacity: 0;
+}
+.care-fx__heart--1 { top: 25%; left: 50%; animation: care-pet-heart 0.9s 0.45s ease-out forwards; }
+.care-fx__heart--2 { top: 30%; left: 60%; animation: care-pet-heart 0.9s 0.65s ease-out forwards; }
+@keyframes care-pet-tool {
+  0%   { right: -25%; transform: rotate(35deg); opacity: 0; }
+  20%  { right: 25%;  transform: rotate(15deg); opacity: 1; }
+  45%  { right: 35%;  transform: rotate(0deg);  opacity: 1; }
+  60%  { right: 25%;  transform: rotate(15deg); opacity: 1; }
+  100% { right: -25%; transform: rotate(35deg); opacity: 0; }
+}
+@keyframes care-pet-heart {
+  0%   { transform: translateY(0) scale(0.5); opacity: 0; }
+  30%  { transform: translateY(-10px) scale(1.2); opacity: 1; }
+  100% { transform: translateY(-30px) scale(0.8); opacity: 0; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   Garden viewport — visual representation of pot/soil/light
+   ════════════════════════════════════════════════════════════ */
+.garden-viewport { position: relative; }
+
+/* Layers — stack bottom→top: light, pot, soil, scanlines, aura, bud */
+.garden-light-layer,
+.garden-pot-layer,
+.garden-soil-layer {
+  position: absolute;
+  pointer-events: none;
+}
+
+/* LIGHT — paints the top half */
+.garden-light-layer {
+  inset: 0;
+  z-index: 0;
+}
+.garden-viewport[data-light="light_window"] .garden-light-layer {
+  background: linear-gradient(180deg, rgba(253, 224, 71, 0.10) 0%, transparent 55%);
+}
+.garden-viewport[data-light="light_cfl"] .garden-light-layer {
+  background: linear-gradient(180deg, rgba(226, 232, 240, 0.16) 0%, transparent 55%);
+}
+.garden-viewport[data-light="light_led"] .garden-light-layer {
+  background:
+    /* Light beam — narrow cone */
+    conic-gradient(from 180deg at 50% -10%, transparent 60deg, rgba(236, 72, 153, 0.12) 70deg, rgba(167, 139, 250, 0.20) 90deg, rgba(236, 72, 153, 0.12) 110deg, transparent 120deg),
+    radial-gradient(ellipse at 50% 0%, rgba(167, 139, 250, 0.30) 0%, transparent 55%);
+  animation: garden-led-pulse 4s ease-in-out infinite;
+}
+.garden-viewport[data-light="light_cob"] .garden-light-layer {
+  background:
+    /* COB — wider, brighter beam with sparkle hotspots */
+    conic-gradient(from 180deg at 50% -10%, transparent 50deg, rgba(255, 255, 255, 0.18) 65deg, rgba(255, 255, 255, 0.32) 90deg, rgba(255, 255, 255, 0.18) 115deg, transparent 130deg),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.40) 0%, transparent 50%),
+    radial-gradient(circle at 30% 8%, rgba(253, 224, 71, 0.35) 0%, transparent 12%),
+    radial-gradient(circle at 70% 12%, rgba(56, 189, 248, 0.30) 0%, transparent 12%);
+  animation: garden-cob-pulse 2.6s ease-in-out infinite;
+}
+@keyframes garden-led-pulse {
+  0%, 100% { opacity: 0.85; }
+  50%      { opacity: 1; }
+}
+@keyframes garden-cob-pulse {
+  0%, 100% { opacity: 0.9;  filter: brightness(1); }
+  50%      { opacity: 1.05; filter: brightness(1.1); }
+}
+
+/* POT — silhouette with a rim, taper, and base shadow */
+.garden-pot-layer {
+  bottom: 0;
+  left: 14%;
+  right: 14%;
+  height: 26%;
+  z-index: 1;
+  /* Pot is a flat-top trapezoid with a darker rim band on top */
+  clip-path: polygon(6% 0, 94% 0, 88% 100%, 12% 100%);
+  box-shadow: 0 6px 0 rgba(0,0,0,0.4);
+}
+.garden-pot-layer::before {
+  /* Pot rim — slightly wider lip */
+  content: '';
+  position: absolute;
+  top: 0; left: -3%; right: -3%;
+  height: 18%;
+  background: inherit;
+  filter: brightness(1.20);
+  clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%);
+}
+.garden-pot-layer::after {
+  /* Pot bottom shadow — implies depth */
+  content: '';
+  position: absolute;
+  bottom: 0; left: 5%; right: 5%;
+  height: 18%;
+  background: rgba(0,0,0,0.25);
+  filter: blur(2px);
+}
+.garden-viewport[data-pot="pot_basic"]  .garden-pot-layer {
+  background:
+    linear-gradient(180deg, #6b7280 0%, #4b5563 40%, #1f2937 100%);
+  border-bottom: 2px solid #111827;
+}
+.garden-viewport[data-pot="pot_clay"]   .garden-pot-layer {
+  background:
+    linear-gradient(180deg, #ea580c 0%, #c2410c 50%, #7c2d12 100%);
+  border-bottom: 2px solid #4a1a05;
+}
+.garden-viewport[data-pot="pot_fabric"] .garden-pot-layer {
+  background:
+    repeating-linear-gradient(45deg, #1f1f1f 0 5px, #2a2a2a 5px 10px);
+  border-bottom: 2px solid #0a0a0a;
+}
+.garden-viewport[data-pot="pot_smart"]  .garden-pot-layer {
+  background: linear-gradient(180deg, #f9fafb 0%, #d1d5db 40%, #9ca3af 100%);
+  border-bottom: 2px solid #4b5563;
+}
+.garden-viewport[data-pot="pot_smart"] .garden-pot-layer::before {
+  /* Smart pot — chrome highlight on the rim */
+  background: linear-gradient(90deg, #f9fafb 0%, #e5e7eb 50%, #f9fafb 100%);
+}
+
+/* SOIL — textured fill that sits in the rim of the pot */
+.garden-soil-layer {
+  bottom: 22%;
+  left: 19%;
+  right: 19%;
+  height: 4%;
+  z-index: 2;
+  clip-path: polygon(4% 0, 96% 0, 92% 100%, 8% 100%);
+}
+.garden-viewport[data-soil="soil_basic"]   .garden-soil-layer {
+  background:
+    radial-gradient(circle at 25% 30%, rgba(0,0,0,0.30) 0%, transparent 18%),
+    radial-gradient(circle at 65% 60%, rgba(0,0,0,0.30) 0%, transparent 14%),
+    linear-gradient(180deg, #7d4f24, #4a2d12);
+}
+.garden-viewport[data-soil="soil_organic"] .garden-soil-layer {
+  background:
+    radial-gradient(circle at 25% 30%, rgba(74,222,128,0.45) 0%, transparent 12%),
+    radial-gradient(circle at 75% 70%, rgba(74,222,128,0.30) 0%, transparent 12%),
+    linear-gradient(180deg, #44260f, #2c1607);
+}
+.garden-viewport[data-soil="soil_super"] .garden-soil-layer {
+  background:
+    radial-gradient(circle at 20% 30%, rgba(74,222,128,0.65) 0%, transparent 14%),
+    radial-gradient(circle at 50% 50%, rgba(167,139,250,0.50) 0%, transparent 14%),
+    radial-gradient(circle at 80% 70%, rgba(74,222,128,0.45) 0%, transparent 14%),
+    linear-gradient(180deg, #2a1606, #100702);
+  box-shadow: 0 0 6px rgba(74,222,128,0.20);
+}
+.garden-viewport[data-soil="soil_living"] .garden-soil-layer {
+  background:
+    radial-gradient(circle at 15% 50%, #a78bfa 0%, transparent 10%),
+    radial-gradient(circle at 35% 30%, #4ade80 0%, transparent 8%),
+    radial-gradient(circle at 60% 60%, #fbbf24 0%, transparent 9%),
+    radial-gradient(circle at 85% 40%, #a78bfa 0%, transparent 8%),
+    linear-gradient(180deg, #1a0a02, #050200);
+  box-shadow: 0 0 8px rgba(74,222,128,0.30), inset 0 0 6px rgba(167,139,250,0.30);
+  animation: living-soil-shimmer 6s ease-in-out infinite;
+}
+@keyframes living-soil-shimmer {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.15); }
+}
+
+/* ════════════════════════════════════════════════════════════
+   Garden Setup card — inline upgrade rows
+   ════════════════════════════════════════════════════════════ */
+.garden-card .garden-slot-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+  padding: 0.6rem;
+  margin-bottom: 0.5rem;
+  background: rgba(0,0,0,0.20);
+  border: 1px solid var(--gv-border);
+}
+.garden-slot-row__head {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  align-items: center;
+  gap: 0.5rem;
+}
+.garden-slot-row__emoji { font-size: 1.3rem; text-align: center; }
+.garden-slot-row__label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.garden-slot-row__name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.6rem;
+  color: #f5f5f5;
+  margin-top: 0.2rem;
+}
+.garden-slot-row__bonuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.bonus-pill {
+  font-family: 'Courier New', monospace;
+  font-size: 0.7rem;
+  color: #fde047;
+  background: rgba(253, 224, 71, 0.10);
+  border: 1px solid rgba(253, 224, 71, 0.30);
+  padding: 0.18rem 0.45rem;
+  letter-spacing: 0.3px;
+}
+
+/* ── Topbar title chip ── */
+.topbar-title {
+  font-size: 0.42rem;
+  margin-left: 0.4rem;
+  color: #fde047;
+  text-shadow: 0 0 8px rgba(253, 224, 71, 0.4);
+  letter-spacing: 0.5px;
+  font-weight: normal;
+  font-style: italic;
+}
+
+/* ── Daily Streak strip ── */
+.streak-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+.streak-cell {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--gv-border);
+  padding: 0.45rem 0.2rem;
+  text-align: center;
+  font-family: 'Press Start 2P', monospace;
+  opacity: 0.55;
+  transition: all 0.2s;
+}
+.streak-cell.reached {
+  opacity: 1;
+  border-color: rgba(253, 224, 71, 0.50);
+  background: rgba(253, 224, 71, 0.08);
+}
+.streak-cell.today {
+  border-color: #fde047;
+  box-shadow: 0 0 12px rgba(253, 224, 71, 0.5);
+  animation: streak-cell-pulse 1.5s ease-in-out infinite;
+}
+@keyframes streak-cell-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(253, 224, 71, 0.3); }
+  50%      { box-shadow: 0 0 16px rgba(253, 224, 71, 0.7); }
+}
+.streak-cell__day    { font-size: 0.36rem; color: #94a3b8; }
+.streak-cell.reached .streak-cell__day { color: #fde047; }
+.streak-cell__reward { font-size: 0.95rem; margin-top: 0.2rem; }
+
+/* ── Titles picker ── */
+.titles-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.title-chip {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.4rem;
+  background: rgba(0,0,0,0.30);
+  border: 1px solid var(--gv-border);
+  color: #cbd5e1;
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.5px;
+}
+.title-chip:hover { border-color: rgba(253, 224, 71, 0.5); }
+.title-chip.eq {
+  border-color: #fde047;
+  color: #fde047;
+  background: rgba(253, 224, 71, 0.08);
+}
+
+/* ── Memory Wall ── */
+.memories-row {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.3rem 0.1rem 0.5rem;
+}
+.mem-card {
+  flex: 0 0 110px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--gv-border);
+  padding: 0.5rem 0.3rem;
+  text-align: center;
+}
+.mem-card__sprite {
+  min-height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 0.3rem;
+}
+.mem-card__caption {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.34rem;
+  line-height: 1.4;
+  color: #f5f5f5;
+}
+
+/* ── Strain Dex pills ── */
+.dex-strip {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+}
+.dex-pill {
+  flex: 1 1 100px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid var(--gv-border);
+  padding: 0.6rem;
+  text-align: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  color: #fde047;
+}
+
+/* ── Achievement progress bars ── */
+.ach-progress {
+  margin-top: 0.4rem;
+}
+.ach-progress__bar {
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--gv-border);
+  overflow: hidden;
+  margin-bottom: 0.15rem;
+}
+.ach-progress__fill {
+  height: 100%;
+  background: var(--gv-accent);
+  transition: width 0.4s ease;
+}
+.ach-progress__text {
+  font-size: 0.34rem;
+  text-align: right;
+}
+
+/* ── Toasts ── */
+.game-toast {
+  position: fixed;
+  bottom: 5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0c0c1d;
+  border: 2px solid var(--gv-accent);
+  color: #f5f5f5;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.5rem;
+  padding: 0.6rem 1rem;
+  z-index: 8999;
+  animation: gt-in 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: 0 4px 20px rgba(var(--gv-accent-rgb), 0.30);
+}
+.game-toast--gold { border-color: #fde047; box-shadow: 0 4px 20px rgba(253, 224, 71, 0.30); }
+.game-toast--red  { border-color: #f87171; box-shadow: 0 4px 20px rgba(248,113,113,0.30); }
+.game-toast--out { animation: gt-out 0.4s ease-in forwards; }
+@keyframes gt-in  { from { transform: translate(-50%, 30px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+@keyframes gt-out { to { transform: translate(-50%, 30px); opacity: 0; } }
+

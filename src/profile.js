@@ -1,5 +1,5 @@
 import { getSessionHistory, clearSessionHistory, getTheme } from './storage/store.js';
-import { THEMES, saveThemePreference } from './services/themeService.js';
+import { THEMES, saveThemePreference, isThemeUnlocked, isPremiumTheme } from './services/themeService.js';
 import { deleteAccount } from './services/userService.js';
 import { showConfirm } from './services/modalService.js';
 import { showToast } from './services/toastService.js';
@@ -12,10 +12,12 @@ async function getCompanion() {
 
 let _getAllStrains;
 let _getStash;
+let _onPickRowClick = null;
 
-export function initProfile({ getAllStrains, getStash }) {
+export function initProfile({ getAllStrains, getStash, onPickRowClick }) {
   _getAllStrains = getAllStrains;
   _getStash = getStash;
+  _onPickRowClick = onPickRowClick || null;
 
   document.getElementById('profile-back').addEventListener('click', () => {
     _onBack();
@@ -87,15 +89,16 @@ function renderActivityTab() {
 
   // ── Recent Picks ──
   const PICKS_DEFAULT = 5;
-  const makePickRow = s => {
+  const makePickRow = (s, idx) => {
     const strain = allStrains.find(st => st.id === s.strainId);
     const type = strain?.type || 'hybrid';
     const date = s.timestamp ? new Date(s.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
-    return `<div class="history-row">
+    return `<button type="button" class="history-row history-row--clickable" data-pick-idx="${idx}" data-strain-id="${s.strainId || ''}">
       <span class="history-row__dot" data-type="${type}"></span>
       <span class="history-row__name">${s.name || 'Unknown'}</span>
       <span class="history-row__meta">${date}${s.matchScore != null ? `<br>${s.matchScore}% match` : ''}</span>
-    </div>`;
+      <span class="history-row__chevron">›</span>
+    </button>`;
   };
 
   let historyHTML;
@@ -110,7 +113,11 @@ function renderActivityTab() {
     const showAllBtn = hasMore
       ? `<button class="history-show-all" id="btn-history-show-all">Show all ${sessions.length} picks</button>`
       : '';
-    historyHTML = `<div class="history-list" id="history-list-inner">${sessions.slice(0, PICKS_DEFAULT).map(makePickRow).join('')}</div>${showAllBtn}`;
+    // Constrain expanded list to a scroll container so the stat strip above
+    // stays in view when the user expands a long history.
+    historyHTML = `<div class="history-list-wrap" id="history-list-wrap">
+      <div class="history-list" id="history-list-inner">${sessions.slice(0, PICKS_DEFAULT).map(makePickRow).join('')}</div>
+    </div>${showAllBtn}`;
   }
 
   panel.innerHTML = `
@@ -119,10 +126,28 @@ function renderActivityTab() {
     ${historyHTML}
   `;
 
+  function wireRowClicks(scope) {
+    scope.querySelectorAll('.history-row--clickable').forEach(row => {
+      row.addEventListener('click', () => {
+        const idx = parseInt(row.dataset.pickIdx, 10);
+        const s = sessions[idx];
+        if (!s || !_onPickRowClick) return;
+        const strain = allStrains.find(st => st.id === s.strainId);
+        if (!strain) return;
+        _onPickRowClick({ strain, session: s });
+      });
+    });
+  }
+  wireRowClicks(panel);
+
   const showAllBtn = panel.querySelector('#btn-history-show-all');
   if (showAllBtn) {
     showAllBtn.addEventListener('click', () => {
-      panel.querySelector('#history-list-inner').innerHTML = sessions.map(makePickRow).join('');
+      const inner = panel.querySelector('#history-list-inner');
+      inner.innerHTML = sessions.map(makePickRow).join('');
+      // Mark wrap as "expanded" so CSS gives it a scroll container.
+      panel.querySelector('#history-list-wrap')?.classList.add('history-list-wrap--expanded');
+      wireRowClicks(inner);
       showAllBtn.remove();
     });
   }
@@ -133,19 +158,39 @@ function renderThemesTab() {
   const panel = document.getElementById('profile-themes-panel');
   const currentTheme = getTheme();
 
-  const cards = THEMES.map(t => `
-    <button class="theme-card ${t.key === currentTheme ? 'theme-card--active' : ''}" data-theme-key="${t.key}">
-      <div class="theme-card__preview">${t.preview.join('')}</div>
-      <div class="theme-card__name">${t.label}</div>
-      <span class="theme-card__check">✓</span>
-    </button>
-  `).join('');
+  const cards = THEMES.map(t => {
+    const premium = isPremiumTheme(t.key);
+    const unlocked = isThemeUnlocked(t.key);
+    const locked = premium && !unlocked;
+    const active = t.key === currentTheme;
 
-  panel.innerHTML = `<div class="themes-grid">${cards}</div>`;
+    const priceChip = premium
+      ? `<div class="theme-card__price">${t.cur === 'seeds' ? '🌱' : '🪙'} ${t.price}</div>`
+      : '';
+
+    return `
+      <button class="theme-card ${active ? 'theme-card--active' : ''} ${locked ? 'theme-card--locked' : ''} ${premium ? 'theme-card--premium' : ''}"
+              data-theme-key="${t.key}" ${locked ? 'aria-disabled="true"' : ''}>
+        <div class="theme-card__preview">${t.preview.join('')}</div>
+        <div class="theme-card__name">${t.label}</div>
+        <span class="theme-card__check">✓</span>
+        ${locked ? `<div class="theme-card__lock-veil"><span class="theme-card__lock">🔒</span>${priceChip}<div class="theme-card__lock-hint">Unlock in Cannagotchi shop</div></div>` : (premium ? priceChip : '')}
+      </button>`;
+  }).join('');
+
+  panel.innerHTML = `
+    <div class="themes-section-label">Free Themes</div>
+    <div class="themes-grid">${cards}</div>
+    <div class="themes-footer dim small">Premium themes unlock in the <b>Cannagotchi shop</b> using in-game currency only — Buds 🪙 and Seeds 🌱 earned through play.</div>`;
 
   panel.querySelectorAll('.theme-card').forEach(card => {
     card.addEventListener('click', async () => {
       const key = card.dataset.themeKey;
+      // Locked premium themes route the user to the Cannagotchi shop instead.
+      if (card.classList.contains('theme-card--locked')) {
+        showToast(`🔒 Unlock "${THEMES.find(t => t.key === key)?.label}" in the Cannagotchi → Shop tab.`, 'info');
+        return;
+      }
       await saveThemePreference(key);
       panel.querySelectorAll('.theme-card').forEach(c => c.classList.toggle('theme-card--active', c.dataset.themeKey === key));
     });

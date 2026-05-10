@@ -90,6 +90,35 @@
   gap: var(--space-md);
   padding: 0.625rem var(--space-md);
   background: var(--bg-card);
+  width: 100%;
+  text-align: left;
+}
+
+/* Clickable variant — entire row is a button that opens the result screen */
+button.history-row--clickable {
+  border: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+button.history-row--clickable:hover {
+  background: var(--bg-card-hi, rgba(255,255,255,0.04));
+}
+.history-row__chevron {
+  margin-left: auto;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* Wrapper that becomes a scroll container once expanded so the stats strip
+   above stays visible when the user scrolls through a long history. */
+.history-list-wrap--expanded {
+  max-height: 50vh;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
 }
 
 .history-row__dot {
@@ -214,6 +243,141 @@
 
 .theme-card--active .theme-card__check {
   opacity: 1;
+}
+
+/* ── Premium / Locked theme cards ── */
+.theme-card--premium {
+  border-color: rgba(253, 224, 71, 0.45);
+}
+.theme-card--premium .theme-card__name {
+  background: linear-gradient(90deg, #fde047 0%, #ec4899 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.theme-card__price {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fde047;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(253, 224, 71, 0.35);
+  border-radius: var(--radius-sm, 4px);
+  padding: 2px 8px;
+  margin-top: 4px;
+}
+
+.theme-card--locked {
+  cursor: not-allowed;
+  filter: grayscale(70%) brightness(0.55);
+}
+.theme-card--locked:hover {
+  filter: grayscale(60%) brightness(0.65);
+}
+
+.theme-card__lock-veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  pointer-events: none;
+  filter: none;
+}
+.theme-card__lock {
+  font-size: 1.6rem;
+  filter: drop-shadow(0 0 8px rgba(253, 224, 71, 0.5));
+}
+.theme-card__lock-hint {
+  font-size: 0.65rem;
+  color: #fde047;
+  opacity: 0.85;
+  text-align: center;
+  padding: 0 4px;
+  filter: none;
+}
+
+.themes-section-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--space-sm);
+}
+
+.themes-footer {
+  margin-top: var(--space-md);
+  padding: var(--space-md);
+  background: rgba(253, 224, 71, 0.06);
+  border: 1px dashed rgba(253, 224, 71, 0.30);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 0.78rem;
+}
+
+/* ── Premium theme backgrounds ── */
+[data-theme="galaxy"] {
+  --app-bg-1: #0c0a1f;
+  --app-bg-2: #1e1b4b;
+}
+[data-theme="galaxy"] body {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(167, 139, 250, 0.28) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 80%, rgba(56, 189, 248, 0.22) 0%, transparent 55%),
+    linear-gradient(180deg, #0c0a1f 0%, #1e1b4b 100%) !important;
+}
+
+[data-theme="cyberpunk"] {
+  --app-bg-1: #0f0524;
+  --app-bg-2: #2d004a;
+}
+[data-theme="cyberpunk"] body {
+  background:
+    repeating-linear-gradient(0deg,
+      rgba(236, 72, 153, 0.06) 0,
+      rgba(236, 72, 153, 0.06) 1px,
+      transparent 1px,
+      transparent 30px),
+    repeating-linear-gradient(90deg,
+      rgba(56, 189, 248, 0.06) 0,
+      rgba(56, 189, 248, 0.06) 1px,
+      transparent 1px,
+      transparent 30px),
+    linear-gradient(180deg, #0f0524 0%, #2d004a 100%) !important;
+}
+
+[data-theme="zen"] {
+  --app-bg-1: #1a0f17;
+  --app-bg-2: #2d1a26;
+}
+[data-theme="zen"] body {
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(251, 207, 232, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 80%, rgba(167, 139, 250, 0.10) 0%, transparent 60%),
+    linear-gradient(180deg, #1a0f17 0%, #2d1a26 100%) !important;
+}
+
+[data-theme="prismatic"] {
+  --app-bg-1: #050818;
+  --app-bg-2: #0e0a26;
+}
+[data-theme="prismatic"] body {
+  background:
+    conic-gradient(from 0deg at 50% 50%,
+      rgba(239, 68, 68, 0.12),
+      rgba(245, 158, 11, 0.12),
+      rgba(253, 224, 71, 0.12),
+      rgba(74, 222, 128, 0.12),
+      rgba(56, 189, 248, 0.12),
+      rgba(167, 139, 250, 0.12),
+      rgba(236, 72, 153, 0.12),
+      rgba(239, 68, 68, 0.12)),
+    linear-gradient(180deg, #050818 0%, #0e0a26 100%) !important;
 }
 
 /* ── Settings Tab ── */

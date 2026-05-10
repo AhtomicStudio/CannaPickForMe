@@ -3,6 +3,10 @@ import './style.css';
 import './profile.css';
 import './game.css';
 import './pages.css';
+// Register globals (evolution-path resolver, mythic traits) so they're
+// available app-wide without circular imports inside the game module.
+import './game/evolutionPaths.js';
+import './game/breeding.js';
 import { initCompanion, destroyCompanion, hideCompanionForGameScreen, showCompanionAfterGameScreen, reactToEvent } from './game/companion.js';
 import { showToast } from './services/toastService.js';
 import { openModal, closeModal, closeTopModal, showConfirm } from './services/modalService.js';
@@ -321,7 +325,10 @@ function initHome() {
     }
   });
 
-  document.getElementById('btn-profile').addEventListener('click', () => {
+  // Profile / Sign-in entry — both the icon AND the "Sign In" text label
+  // (and the surrounding wrapper) trigger the same flow. Users were
+  // missing the click target when they tapped only the text.
+  function handleProfileClick() {
     const user = getCurrentUser();
     if (!user) {
       setAccountState('signedout');
@@ -330,7 +337,24 @@ function initHome() {
     }
     renderProfileScreen();
     showScreen('profile');
-  });
+  }
+  document.getElementById('btn-profile').addEventListener('click', handleProfileClick);
+  // Make the entire avatar wrapper (icon + label + theme hint) clickable.
+  const avatarWrap = document.getElementById('profile-avatar-wrap');
+  if (avatarWrap) {
+    avatarWrap.addEventListener('click', (e) => {
+      // If the actual button was clicked, its handler already fires — don't double-fire.
+      if (e.target.closest('#btn-profile')) return;
+      handleProfileClick();
+    });
+    // Make the wrapper feel tappable
+    avatarWrap.style.cursor = 'pointer';
+    avatarWrap.setAttribute('role', 'button');
+    avatarWrap.setAttribute('tabindex', '0');
+    avatarWrap.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleProfileClick(); }
+    });
+  }
 
   document.getElementById('legal-link').addEventListener('click', (e) => {
     e.preventDefault();
@@ -962,6 +986,16 @@ function startResult() {
     document.getElementById('reveal-phase').classList.remove('hidden');
     renderResult(result);
     reactToEvent('result-revealed');
+
+    // Award the user's Cannabud for completing a pick session.
+    // Lazy-imported so the game module only loads when needed.
+    const user = getCurrentUser();
+    if (user) {
+      import('./game/gameScreen.js').then(mod => {
+        try { mod.grantSessionXP?.(result?.strain || null, user.uid); }
+        catch (e) { console.warn('[cannagotchi] pick reward failed', e); }
+      }).catch(() => {});
+    }
   }, WEIGH_DURATION);
 }
 
@@ -992,6 +1026,32 @@ function renderSponsoredStrain(allScores) {
   dot.setAttribute('data-type', strain.type);
 
   card.classList.remove('hidden');
+}
+
+/**
+ * Re-open the result screen for a strain from the user's history. Doesn't
+ * record a new session entry, fire analytics, or change any state — it
+ * just paints the result card so the user can re-share it.
+ */
+function showResultFromHistory(strain, session) {
+  if (!strain) return;
+  document.getElementById('weighing-phase')?.classList.add('hidden');
+  document.getElementById('reveal-phase')?.classList.remove('hidden');
+
+  document.getElementById('result-strain-name').textContent = strain.name;
+  const typeEl = document.getElementById('result-strain-type');
+  typeEl.textContent = strain.type.charAt(0).toUpperCase() + strain.type.slice(1);
+  typeEl.setAttribute('data-type', strain.type);
+
+  const score = session?.matchScore;
+  const scoreEl = document.getElementById('result-match-score');
+  if (scoreEl) {
+    scoreEl.innerHTML = score != null ? `${score}<span>% match</span>` : `<span style="font-size:0.85rem;color:var(--text-muted)">From your history</span>`;
+  }
+  const reasonEl = document.getElementById('result-reasoning');
+  if (reasonEl) reasonEl.textContent = strain.description || '';
+
+  showScreen('session');
 }
 
 function renderResult(result) {
@@ -1522,6 +1582,20 @@ function getInitials(email) {
   return local.slice(0, 2).toUpperCase();
 }
 
+// Remembered identity for instant pre-paint on app launch — eliminates the
+// "Sign In" flash that fired before Firebase hydrated its IndexedDB session.
+const REMEMBER_KEY = 'cpfm_last_user_email';
+function rememberLastUser(user) {
+  try {
+    if (user?.email) localStorage.setItem(REMEMBER_KEY, user.email);
+    else             localStorage.removeItem(REMEMBER_KEY);
+  } catch (_) {}
+}
+function getRememberedUserEmail() {
+  try { return localStorage.getItem(REMEMBER_KEY) || null; }
+  catch (_) { return null; }
+}
+
 function updateProfileAvatar(user) {
   const btn = document.getElementById('btn-profile');
   const initials = document.getElementById('profile-avatar-initials');
@@ -1535,12 +1609,35 @@ function updateProfileAvatar(user) {
     btn.classList.add('profile-avatar--signed-in');
     if (wrap) { wrap.classList.remove('profile-avatar-wrap--signed-out'); wrap.classList.add('profile-avatar-wrap--signed-in'); }
     if (loginLabel) loginLabel.style.display = 'none';
+    rememberLastUser(user);
   } else {
     initials.textContent = '';
     btn.classList.add('profile-avatar--signed-out');
     btn.classList.remove('profile-avatar--signed-in');
     if (wrap) { wrap.classList.add('profile-avatar-wrap--signed-out'); wrap.classList.remove('profile-avatar-wrap--signed-in'); }
     if (loginLabel) loginLabel.style.display = '';
+    rememberLastUser(null);
+  }
+}
+
+/**
+ * Pre-paint the avatar as signed-in on page load BEFORE Firebase Auth hydrates
+ * the cached session. Eliminates the "logged out" flash for returning users.
+ * Firebase's onAuthStateChanged will overwrite this in ~100-1500ms — if we
+ * had a stale cache, the UI flips to signed-out at that point. The key UX
+ * win: returning users never see "Sign In" if they're actually signed in.
+ */
+function prePaintRememberedAvatar() {
+  const email = getRememberedUserEmail();
+  if (!email) return;
+  // Build a fake "user" shape for updateProfileAvatar; only `email` is used.
+  updateProfileAvatar({ email });
+  // Also unlock the Cannagotchi button so it doesn't flicker locked → unlocked.
+  const gotchiBtn = document.getElementById('btn-cannagotchi');
+  if (gotchiBtn) {
+    gotchiBtn.disabled = false;
+    gotchiBtn.classList.remove('btn--game-locked');
+    gotchiBtn.classList.add('btn--game-unlocked');
   }
 }
 
@@ -1560,6 +1657,9 @@ function initModalEscape() {
 async function init() {
   loadSavedTheme();
   inject();
+  // Pre-paint as signed-in if we have a remembered email — kills the flash of
+  // "Sign In" while Firebase Auth hydrates its session from IndexedDB.
+  prePaintRememberedAvatar();
   initAgeGate();
   initDisclaimer();
   initHome();
@@ -1569,7 +1669,11 @@ async function init() {
   initResult();
   loadAds();
   initStrainDelta();
-  initProfile({ getAllStrains, getStash: getStashStrains });
+  initProfile({
+    getAllStrains,
+    getStash: getStashStrains,
+    onPickRowClick: ({ strain, session }) => showResultFromHistory(strain, session),
+  });
   setProfileBackHandler(() => showScreen('home'));
   initAccountModal();
   initModalEscape();
