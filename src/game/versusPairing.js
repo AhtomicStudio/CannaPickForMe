@@ -17,8 +17,7 @@
  * deterministic engine locally; no network needed after the exchange.
  */
 
-import { detectTransports, exportMySnapshot, createSession } from './multiplayer.js';
-import { mpBleAdapter, mpWebBleAdapter, mpQrAdapter } from './mpAdapters.js';
+import { detectTransports, exportMySnapshot, createSession, mpBleAdapter, mpWebBleAdapter, mpQrAdapter } from './multiplayer.js';
 import { renderSprite } from './pixelArt.js';
 import { createBattle, submitRound, isOver, pickAIAction } from './battle.js';
 import { sfx } from './sfx.js';
