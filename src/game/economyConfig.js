@@ -56,7 +56,6 @@ export const NEEDS = Object.freeze({
   // Hours to drain from 100 → 0 if untouched. Slow & forgiving.
   HYDRATION_DRAIN_HOURS: 16,    // ~2 days
   NUTRITION_DRAIN_HOURS: 24,
-  LIGHT_DRAIN_HOURS: 36,
   CLEANLINESS_DRAIN_HOURS: 48,  // pests appear over 2 days
   HAPPINESS_DRAIN_HOURS: 20,
 

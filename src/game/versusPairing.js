@@ -22,11 +22,57 @@ import { renderSprite } from './pixelArt.js';
 import { createBattle, submitRound, isOver, pickAIAction } from './battle.js';
 import { sfx } from './sfx.js';
 import { getTrait } from './traits.js';
-import QRCode from 'qrcode';
+import {
+  createRoom, joinRoom, listenRoom,
+  submitAction, advanceRound, endRoom, sendEmote, cleanupRoom,
+} from '../services/battleRoomService.js';
+
+// Lazy-loaded so the module still works even if qrcode has bundler issues
+let _QRCode = null;
+async function getQRCode() {
+  if (!_QRCode) {
+    try {
+      const mod = await import('qrcode');
+      _QRCode = mod.default || mod;
+    } catch (err) {
+      console.warn('[QR] qrcode library failed to load:', err);
+      _QRCode = null;
+    }
+  }
+  return _QRCode;
+}
 
 let _container = null;
 let _gameState = null;
 let _onExit = () => {};
+
+// Guard: returns false if _container has been detached from the document
+// (i.e. the tab body was re-rendered while a versus session was loading).
+function isAlive() {
+  return _container && document.body.contains(_container);
+}
+
+// ── Online battle state ─────────────────────────────────────
+let _onlineUid = null;
+let _onlineDisplayName = null;
+let _roomCode = null;
+let _isHostOnline = false;
+let _unsubRoom = null;       // Firestore onSnapshot unsubscribe
+let _onlineBattle = null;    // deterministic battle state (local)
+let _localRound = 0;         // round we're currently on (tracks room.round)
+let _submittedThisRound = false;  // prevents double-submit
+let _currentRoom = null;     // latest snapshot from Firestore
+
+function _cleanupOnline() {
+  if (_unsubRoom) { _unsubRoom(); _unsubRoom = null; }
+  _roomCode = null;
+  _onlineBattle = null;
+  _localRound = 0;
+  _submittedThisRound = false;
+  _currentRoom = null;
+}
+
+const EMOTES = ['🔥', '💨', '😎', '😴', '💪', '🌿', '👏', '💀'];
 
 // ── Public entry points ─────────────────────────────────────
 export async function mountBlePairing(opts) {
@@ -52,6 +98,7 @@ export async function mountQrPairing(opts) {
 
 // ── BLE pairing ─────────────────────────────────────────────
 function drawScanScreen({ title, available, transport }) {
+  if (!isAlive()) return;
   _container.innerHTML = `
     <section class="tab-pane pairing-pane">
       <div class="card">
@@ -104,6 +151,7 @@ async function startBle(role, transport) {
 
 function drawLiveBattle(session) {
   const refresh = () => {
+    if (!isAlive()) return;
     const b = session.battle;
     if (!b) return;
     const p = session.isHost ? b.player : b.opponent;
@@ -154,7 +202,7 @@ function drawLiveBattle(session) {
 }
 
 function drawEndScreen(battle) {
-  if (!battle) return;
+  if (!battle || !isAlive()) return;
   const win = battle.winner;
   _container.innerHTML = `
     <section class="tab-pane">
@@ -171,6 +219,7 @@ function drawEndScreen(battle) {
 
 // ── QR pairing ──────────────────────────────────────────────
 function drawQrChooser() {
+  if (!isAlive()) return;
   _container.innerHTML = `
     <section class="tab-pane pairing-pane">
       <div class="card">
@@ -211,23 +260,31 @@ function decodeShortCode(code) {
 }
 
 async function drawQrHost() {
+  if (!isAlive()) return;
   const payload = buildQrPayload();
   const code = shortCodeFor(payload);
   _container.innerHTML = `
     <section class="tab-pane pairing-pane">
       <div class="card">
-        <div class="card-title">📤 Host — Show This Code</div>
-        <div class="qr-wrap">
-          <canvas id="qr-canvas" width="220" height="220" aria-label="Pairing QR"></canvas>
+        <div class="card-title">📤 Host — Show This QR</div>
+        <div class="dim small" style="text-align:center">Have your friend scan this with their camera</div>
+        <div class="qr-wrap" style="margin:0.5rem auto">
+          <canvas id="qr-canvas" width="200" height="200" aria-label="Pairing QR"></canvas>
         </div>
-        <div class="dim small">Or have your friend type this code:</div>
-        <div class="qr-shortcode" id="qr-shortcode">${code.slice(0, 64)}…</div>
-        <div class="dim small">When they confirm, both phones run the same battle locally.</div>
-        <div class="action-row">
-          <button class="btn-juicy" id="qr-copy">📋 Copy Full Code</button>
-          <button class="btn-juicy" id="qr-confirm">▶️ I'm Ready — Start</button>
+        <div class="qr-manual-row">
+          <span class="dim small">Can't scan?</span>
+          <button class="btn-juicy compact" id="qr-copy">📋 Copy Code</button>
+          <button class="btn-juicy compact" id="qr-reveal">👁 Show Text</button>
         </div>
-        <button class="btn-juicy compact" id="qr-back" style="margin-top:0.6rem">← Back</button>
+        <div id="qr-code-reveal" style="display:none;margin:0.4rem 0">
+          <textarea id="qr-shortcode" class="qr-input" rows="3" readonly
+            style="font-size:0.35rem;cursor:text;word-break:break-all;user-select:all"
+            onclick="this.select()">${code}</textarea>
+          <div class="dim small" style="opacity:0.6;font-size:0.42rem">Paste this into the Guest's "Enter Code" box</div>
+        </div>
+        <div class="dim small" style="margin-top:0.4rem;text-align:center">Once your friend connects, tap Ready to start!</div>
+        <button class="btn-juicy big" id="qr-confirm" style="margin-top:0.5rem">▶️ I'm Ready — Start Battle</button>
+        <button class="btn-juicy compact" id="qr-back" style="margin-top:0.4rem">← Back</button>
       </div>
     </section>
   `;
@@ -235,14 +292,39 @@ async function drawQrHost() {
   // Render QR
   const canvas = _container.querySelector('#qr-canvas');
   try {
-    await QRCode.toCanvas(canvas, code, { errorCorrectionLevel: 'L', margin: 1, width: 220 });
+    const QRCode = await getQRCode();
+    if (QRCode) {
+      await QRCode.toCanvas(canvas, code, { errorCorrectionLevel: 'L', margin: 1, width: 220 });
+    } else {
+      canvas.style.display = 'none';
+    }
   } catch (err) {
+    console.warn('[QR] Canvas render failed:', err);
     canvas.style.display = 'none';
   }
 
   _container.querySelector('#qr-back').addEventListener('click', drawQrChooser);
-  _container.querySelector('#qr-copy').addEventListener('click', () => {
-    navigator.clipboard?.writeText(code).then(() => sfx.click());
+  _container.querySelector('#qr-copy').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      sfx.click?.();
+      const btn = _container.querySelector('#qr-copy');
+      if (btn) { btn.textContent = '✅ Copied!'; setTimeout(() => { if (isAlive()) btn.textContent = '📋 Copy Code'; }, 2000); }
+    } catch (_) {
+      // Clipboard failed — reveal the text area as fallback
+      const rev = _container.querySelector('#qr-code-reveal');
+      if (rev) rev.style.display = 'block';
+    }
+  });
+  _container.querySelector('#qr-reveal').addEventListener('click', () => {
+    const rev = _container.querySelector('#qr-code-reveal');
+    const btn = _container.querySelector('#qr-reveal');
+    if (rev) {
+      const visible = rev.style.display !== 'none';
+      rev.style.display = visible ? 'none' : 'block';
+      if (btn) btn.textContent = visible ? '👁 Show Text' : '🙈 Hide Text';
+      if (!visible) _container.querySelector('#qr-shortcode')?.select();
+    }
   });
   _container.querySelector('#qr-confirm').addEventListener('click', () => {
     runQrBattle(payload, /*isHost=*/true);
@@ -250,6 +332,7 @@ async function drawQrHost() {
 }
 
 function drawQrGuest() {
+  if (!isAlive()) return;
   _container.innerHTML = `
     <section class="tab-pane pairing-pane">
       <div class="card">
@@ -301,9 +384,11 @@ function runQrBattle(payload, isHost) {
 
   // The local-side player picks moves; the AI picks for the other side.
   // (Full live-sync requires an open transport — BLE.)
+  sfx.battleStart();
   draw();
 
   function draw() {
+    if (!isAlive()) return;
     const me  = isHost ? battle.player : battle.opponent;
     const foe = isHost ? battle.opponent : battle.player;
     _container.innerHTML = `
@@ -337,6 +422,9 @@ function runQrBattle(payload, isHost) {
                   <span class="move-btn__pwr">${m.power > 0 ? 'PWR ' + m.power : 'STAT'}</span>
                 </button>`).join('')}
             </div>
+            <div class="battle-secondary">
+              <button class="btn-juicy compact danger" id="qb-forfeit">🏃 Forfeit</button>
+            </div>
           </div>`}
       </section>
     `;
@@ -349,6 +437,10 @@ function runQrBattle(payload, isHost) {
       _container.querySelectorAll('[data-qb]').forEach(btn => {
         btn.addEventListener('click', () => playerStep(btn.dataset.qb));
       });
+      _container.querySelector('#qb-forfeit')?.addEventListener('click', () => {
+        sfx.defeat();
+        _onExit();
+      });
     }
   }
 
@@ -359,4 +451,495 @@ function runQrBattle(payload, isHost) {
     battle = r.state;
     draw();
   }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ONLINE BATTLE — Firebase Firestore real-time rooms
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * Entry point called from gameScreen.js wireVersusTab.
+ * uid + displayName come from the game's auth / gameState.
+ */
+export async function mountOnlineBattle({ container, gameState, uid, displayName, onExit }) {
+  _container  = container;
+  _gameState  = gameState;
+  _onlineUid  = uid;
+  _onlineDisplayName = displayName || 'Trainer';
+  _onExit     = onExit || (() => {});
+  _cleanupOnline();
+  drawOnlineChooser();
+}
+
+// ── Chooser: Host or Guest ───────────────────────────────────
+function drawOnlineChooser() {
+  if (!isAlive()) return;
+  _container.innerHTML = `
+    <section class="tab-pane pairing-pane">
+      <div class="card">
+        <div class="card-title">🌐 Online Battle</div>
+        <div class="dim small">Real-time versus over the internet. Host creates a room code; Guest types it in. Both pick moves simultaneously.</div>
+        <div class="action-row" style="margin-top:0.8rem">
+          <button class="btn-juicy big" id="ob-host">🏠 Host a Room</button>
+          <button class="btn-juicy big" id="ob-join">🚪 Join a Room</button>
+        </div>
+        <button class="btn-juicy compact" id="ob-back" style="margin-top:0.6rem">← Back</button>
+      </div>
+    </section>`;
+  _container.querySelector('#ob-back').addEventListener('click', () => { _cleanupOnline(); _onExit(); });
+  _container.querySelector('#ob-host').addEventListener('click', startHosting);
+  _container.querySelector('#ob-join').addEventListener('click', drawJoinScreen);
+}
+
+// ── HOST: create room + wait ──────────────────────────────────
+async function startHosting() {
+  if (!isAlive()) return;
+  _isHostOnline = true;
+  const mySnap = exportMySnapshot(_gameState);
+
+  // Show spinner while Firestore creates the doc
+  _container.innerHTML = `
+    <section class="tab-pane pairing-pane">
+      <div class="card">
+        <div class="card-title">🏠 Creating Room…</div>
+        <div class="dim small">Connecting to server…</div>
+        <button class="btn-juicy compact" id="ob-back2" style="margin-top:0.6rem">← Cancel</button>
+      </div>
+    </section>`;
+  _container.querySelector('#ob-back2').addEventListener('click', () => { _cleanupOnline(); drawOnlineChooser(); });
+
+  try {
+    const { code } = await createRoom({
+      hostUid: _onlineUid || 'anon',
+      hostName: _onlineDisplayName,
+      hostSnapshot: mySnap,
+    });
+    _roomCode = code;
+  } catch (err) {
+    if (!isAlive()) return;
+    _container.innerHTML = `
+      <section class="tab-pane pairing-pane">
+        <div class="card">
+          <div class="card-title">⚠️ Couldn't Create Room</div>
+          <div class="dim small" style="color:#f87171">${err?.message || String(err)}</div>
+          <button class="btn-juicy compact" id="ob-back3" style="margin-top:0.6rem">← Back</button>
+        </div>
+      </section>`;
+    _container.querySelector('#ob-back3').addEventListener('click', drawOnlineChooser);
+    return;
+  }
+
+  drawWaitingHost();
+
+  // Start listening — when guest joins (status → 'active'), kick off battle
+  _unsubRoom = listenRoom(_roomCode, (room) => {
+    _currentRoom = room;
+    if (room.status === 'active' && room.guestSnapshot && !_onlineBattle) {
+      // Guest arrived — start the battle
+      _startOnlineBattle(room);
+    } else if (room.status === 'active' && _onlineBattle) {
+      _handleRoomUpdate(room);
+    } else if (room.status === 'ended') {
+      _handleRoomUpdate(room);
+    }
+  });
+}
+
+async function drawWaitingHost() {
+  if (!isAlive()) return;
+  _container.innerHTML = `
+    <section class="tab-pane pairing-pane">
+      <div class="card">
+        <div class="card-title">⏳ Waiting for Opponent</div>
+        <div class="dim small" style="text-align:center">Share this code with your friend:</div>
+        <div class="room-code-display" id="ob-code-display" title="Tap to copy">${_roomCode}</div>
+        <div id="ob-qr-wrap" style="display:flex;justify-content:center;margin:0.4rem 0 0.2rem"></div>
+        <button class="btn-juicy compact" id="ob-copy-code" style="width:100%;margin-bottom:0.4rem">📋 Copy Code</button>
+        <div class="dim small ob-waiting">🟢 Waiting for someone to join…</div>
+        <button class="btn-juicy compact danger" id="ob-cancel-host" style="margin-top:0.6rem">✕ Cancel</button>
+      </div>
+    </section>`;
+
+  // Generate a small QR for the room code — purely the 6-char code so it's
+  // tiny, clean, and easy to scan with any QR app or camera.
+  const qrWrap = _container.querySelector('#ob-qr-wrap');
+  try {
+    const QR = await getQRCode();
+    if (QR && qrWrap && isAlive()) {
+      const canvas = document.createElement('canvas');
+      canvas.style.cssText = 'border-radius:6px;image-rendering:pixelated;width:96px;height:96px';
+      await QR.toCanvas(canvas, _roomCode, {
+        width: 96, margin: 1,
+        color: { dark: '#4ade80', light: '#0a0a0a' },
+      });
+      qrWrap.appendChild(canvas);
+    }
+  } catch (_) { /* QR optional */ }
+
+  const copyRoomCode = async () => {
+    try {
+      await navigator.clipboard.writeText(_roomCode);
+      sfx.tap?.();
+      const btn = _container.querySelector('#ob-copy-code');
+      if (btn) { btn.textContent = '✅ Copied!'; setTimeout(() => { if (isAlive()) btn.textContent = '📋 Copy Code'; }, 1800); }
+    } catch (_) {}
+  };
+  _container.querySelector('#ob-copy-code').addEventListener('click', copyRoomCode);
+  _container.querySelector('#ob-code-display')?.addEventListener('click', copyRoomCode);
+  _container.querySelector('#ob-cancel-host').addEventListener('click', async () => {
+    _unsubRoom?.(); _unsubRoom = null;
+    await cleanupRoom(_roomCode);
+    _cleanupOnline();
+    drawOnlineChooser();
+  });
+}
+
+// ── GUEST: enter code + join ──────────────────────────────────
+function drawJoinScreen() {
+  if (!isAlive()) return;
+  _isHostOnline = false;
+  _container.innerHTML = `
+    <section class="tab-pane pairing-pane">
+      <div class="card">
+        <div class="card-title">🚪 Join a Room</div>
+        <div class="dim small">Type the 6-character room code your friend shared:</div>
+        <input id="ob-code-input" class="ob-code-input" maxlength="6" placeholder="ABC123" autocomplete="off" autocorrect="off" spellcheck="false">
+        <button class="btn-juicy big" id="ob-connect">▶️ Connect</button>
+        <div id="ob-join-err" class="dim small" style="color:#f87171;min-height:1.2em;margin-top:0.3rem"></div>
+        <button class="btn-juicy compact" id="ob-back-join" style="margin-top:0.6rem">← Back</button>
+      </div>
+    </section>`;
+  const inp = _container.querySelector('#ob-code-input');
+  inp.focus();
+  inp.addEventListener('input', () => { inp.value = inp.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
+  inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') attemptJoin(); });
+  _container.querySelector('#ob-back-join').addEventListener('click', drawOnlineChooser);
+  _container.querySelector('#ob-connect').addEventListener('click', attemptJoin);
+}
+
+async function attemptJoin() {
+  if (!isAlive()) return;
+  const code = _container.querySelector('#ob-code-input')?.value.trim().toUpperCase();
+  const errEl = _container.querySelector('#ob-join-err');
+  if (!code || code.length !== 6) { if (errEl) errEl.textContent = '❌ Enter the full 6-character code.'; return; }
+
+  const btn = _container.querySelector('#ob-connect');
+  if (btn) { btn.disabled = true; btn.textContent = 'Connecting…'; }
+  if (errEl) errEl.textContent = '';
+
+  // Peek at the room first (via a one-shot listen to check existence + status)
+  let resolved = false;
+  const unsub = listenRoom(code, async (room) => {
+    if (resolved) return;
+    resolved = true;
+    unsub();
+
+    if (!room) { if (errEl && isAlive()) errEl.textContent = '❌ Room not found. Check the code.'; if (btn) { btn.disabled = false; btn.textContent = '▶️ Connect'; } return; }
+    if (room.status !== 'waiting') { if (errEl && isAlive()) errEl.textContent = '❌ That room is already ' + room.status + '.'; if (btn) { btn.disabled = false; btn.textContent = '▶️ Connect'; } return; }
+
+    _roomCode = code;
+    const mySnap = exportMySnapshot(_gameState);
+    try {
+      await joinRoom({ code, guestUid: _onlineUid || 'anon', guestName: _onlineDisplayName, guestSnapshot: mySnap });
+    } catch (err) {
+      if (!isAlive()) return;
+      if (errEl) errEl.textContent = '❌ Failed to join: ' + (err?.message || String(err));
+      if (btn) { btn.disabled = false; btn.textContent = '▶️ Connect'; }
+      return;
+    }
+
+    // Start listening for updates
+    _unsubRoom = listenRoom(_roomCode, (r) => {
+      _currentRoom = r;
+      if (r.status === 'active' && !_onlineBattle && r.hostSnapshot && r.guestSnapshot) {
+        _startOnlineBattle(r);
+      } else if (_onlineBattle) {
+        _handleRoomUpdate(r);
+      } else if (r.status === 'ended') {
+        _handleRoomUpdate(r);
+      }
+    });
+  });
+
+  // If Firestore doesn't respond in 6 s, surface a useful error
+  setTimeout(() => {
+    if (!resolved) {
+      resolved = true;
+      unsub();
+      if (isAlive() && errEl) errEl.textContent = '❌ Timed out. Check your connection.';
+      if (btn) { btn.disabled = false; btn.textContent = '▶️ Connect'; }
+    }
+  }, 6000);
+}
+
+// ── Battle start ─────────────────────────────────────────────
+function _startOnlineBattle(room) {
+  if (!isAlive()) return;
+  // Host is always 'player', guest is always 'opponent' in the engine.
+  _onlineBattle = createBattle({
+    player:   room.hostSnapshot,
+    opponent: room.guestSnapshot,
+    seed:     room.seed,
+  });
+  _localRound = room.round;  // should be 0
+  _submittedThisRound = false;
+  sfx.battleStart?.();
+
+  // Show VS splash for 1.6 s then cut to the battle
+  const mySnap  = _isHostOnline ? room.hostSnapshot : room.guestSnapshot;
+  const foeSnap = _isHostOnline ? room.guestSnapshot : room.hostSnapshot;
+  _container.innerHTML = `
+    <section class="tab-pane pairing-pane ob-vs-splash">
+      <div class="ob-vs-me">
+        <div class="battler__sprite" id="vs-me-sprite"></div>
+        <div class="ob-vs-name">${mySnap.name}</div>
+        <div class="dim small">Lv.${mySnap.level}</div>
+      </div>
+      <div class="ob-vs-badge">⚔️</div>
+      <div class="ob-vs-foe">
+        <div class="battler__sprite" id="vs-foe-sprite" style="filter:hue-rotate(${foeSnap.hueShift||0}deg)"></div>
+        <div class="ob-vs-name">${foeSnap.name}</div>
+        <div class="dim small">Lv.${foeSnap.level}</div>
+      </div>
+    </section>`;
+  renderSprite(_container.querySelector('#vs-me-sprite'),  mySnap.sprite,  5);
+  renderSprite(_container.querySelector('#vs-foe-sprite'), foeSnap.sprite, 5);
+  setTimeout(() => { if (isAlive() && _onlineBattle) drawOnlineBattleScreen(); }, 1600);
+}
+
+// ── Firestore update handler ─────────────────────────────────
+function _handleRoomUpdate(room) {
+  if (!_onlineBattle || !isAlive()) return;
+
+  // Both actions arrived for the round we're waiting on → resolve locally
+  if (
+    room.round === _localRound &&
+    room.hostAction != null &&
+    room.guestAction != null
+  ) {
+    const result = submitRound(_onlineBattle, room.hostAction, room.guestAction);
+    _onlineBattle = result.state;
+    _submittedThisRound = false;
+    _localRound += 1;
+
+    // Host advances the counter in Firestore (clears actions, bumps round)
+    if (_isHostOnline) {
+      advanceRound({ code: _roomCode, nextRound: _localRound }).catch(() => {});
+    }
+
+    if (_onlineBattle.winner) {
+      const firestoreWinner = _onlineBattle.winner === 'player' ? 'host' : 'guest';
+      if (_isHostOnline) endRoom({ code: _roomCode, winner: firestoreWinner }).catch(() => {});
+      drawOnlineEndScreen();
+      return;
+    }
+
+    drawOnlineBattleScreen();
+    return;
+  }
+
+  // Room ended externally (opponent forfeited or disconnected)
+  if (room.status === 'ended' && !_onlineBattle.winner) {
+    _onlineBattle = { ..._onlineBattle, winner: _isHostOnline ? 'player' : 'opponent' };
+    drawOnlineEndScreen();
+    return;
+  }
+
+  // Just emotes arriving — refresh to show them without disrupting moves UI
+  if (_onlineBattle && !_onlineBattle.winner) {
+    _refreshEmotes(room);
+  }
+}
+
+// ── Battle draw ───────────────────────────────────────────────
+function drawOnlineBattleScreen() {
+  if (!isAlive() || !_onlineBattle) return;
+  const b = _onlineBattle;
+  // From this client's perspective: "me" = host → player, guest → opponent
+  const me  = _isHostOnline ? b.player   : b.opponent;
+  const foe = _isHostOnline ? b.opponent : b.player;
+  const room = _currentRoom || {};
+  const myEmote  = _isHostOnline ? room.hostEmote : room.guestEmote;
+  const foeEmote = _isHostOnline ? room.guestEmote : room.hostEmote;
+
+  _container.innerHTML = `
+    <section class="tab-pane battle-arena ${b.env?.bgClass || ''}">
+      ${b.env ? `<div class="env-banner"><span>${b.env.emoji} ${b.env.name}</span><span class="dim small">🌐 Online</span></div>` : ''}
+
+      <div class="battler battler--opponent" style="position:relative">
+        <div class="battler__head">
+          <span class="battler__name">${foe.name}${foe.trait ? ` <span class="trait-chip">${getTrait(foe.trait)?.emoji||''} ${getTrait(foe.trait)?.name||''}</span>` : ''}</span>
+          <span class="battler__lv">Lv.${foe.level}</span>
+        </div>
+        <div class="battler__hp"><div class="battler__hp-fill" style="width:${Math.max(0,(foe.hp/foe.hpMax)*100)}%;background:${foe.color}"></div></div>
+        <div class="battler__hpnum">${foe.hp} / ${foe.hpMax}</div>
+        <div class="battler__sprite" id="ob-opp" style="filter:hue-rotate(${foe.hueShift||0}deg)"></div>
+        ${foeEmote ? `<div class="online-emote online-emote--foe">${foeEmote}</div>` : ''}
+      </div>
+
+      <div class="battle-log card" id="ob-log">
+        ${(b.log||[]).slice(-5).map(l=>`<div class="battle-log__line">${l}</div>`).join('')}
+      </div>
+
+      <div class="battler battler--player" style="position:relative">
+        <div class="battler__head">
+          <span class="battler__name">${me.name}${me.trait ? ` <span class="trait-chip">${getTrait(me.trait)?.emoji||''} ${getTrait(me.trait)?.name||''}</span>` : ''}</span>
+          <span class="battler__lv">Lv.${me.level}</span>
+        </div>
+        <div class="battler__hp"><div class="battler__hp-fill" style="width:${Math.max(0,(me.hp/me.hpMax)*100)}%;background:${me.color}"></div></div>
+        <div class="battler__hpnum">${me.hp} / ${me.hpMax}</div>
+        <div class="battler__sprite" id="ob-me"></div>
+        ${myEmote ? `<div class="online-emote online-emote--me">${myEmote}</div>` : ''}
+      </div>
+
+      ${_submittedThisRound ? `
+        <div class="card" style="text-align:center;padding:0.8rem">
+          <div class="dim small">⏳ Waiting for opponent to pick…</div>
+        </div>
+      ` : `
+        <div class="battle-actions">
+          <div class="moves-grid">
+            ${(me.moves||[]).slice(0,4).map(m=>`
+              <button class="move-btn" data-ob-move="${m.id}">
+                <span class="move-btn__emoji">${m.emoji??'⚔️'}</span>
+                <span class="move-btn__name">${m.name}</span>
+                <span class="move-btn__pwr">${m.power>0?'PWR '+m.power:'STAT'}</span>
+              </button>`).join('')}
+          </div>
+          <div class="battle-secondary">
+            <div class="emote-bar" id="ob-emote-bar">
+              ${EMOTES.map(e=>`<button class="emote-btn" data-emote="${e}" title="Send emote">${e}</button>`).join('')}
+            </div>
+            <button class="btn-juicy compact danger" id="ob-forfeit">🏃 Forfeit</button>
+          </div>
+        </div>
+      `}
+    </section>`;
+
+  renderSprite(_container.querySelector('#ob-opp'), foe.sprite, 6);
+  renderSprite(_container.querySelector('#ob-me'),  me.sprite,  6);
+
+  // Scroll log to bottom
+  const logEl = _container.querySelector('#ob-log');
+  if (logEl) logEl.scrollTop = logEl.scrollHeight;
+
+  if (!_submittedThisRound) {
+    _container.querySelectorAll('[data-ob-move]').forEach(btn => {
+      btn.addEventListener('click', () => _pickOnlineMove({ kind: 'move', moveId: btn.dataset.obMove }));
+    });
+    _container.querySelectorAll('[data-emote]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sendEmote({ code: _roomCode, role: _isHostOnline ? 'host' : 'guest', emote: btn.dataset.emote });
+        sfx.tap?.();
+      });
+    });
+    _container.querySelector('#ob-forfeit')?.addEventListener('click', () => _forfeit());
+  }
+}
+
+function _refreshEmotes(room) {
+  if (!isAlive()) return;
+  const myEmote  = _isHostOnline ? room.hostEmote : room.guestEmote;
+  const foeEmote = _isHostOnline ? room.guestEmote : room.hostEmote;
+
+  // Swap emote overlays without re-rendering the whole screen
+  const foeSlot = _container.querySelector('.online-emote--foe');
+  const meSlot  = _container.querySelector('.online-emote--me');
+  const foeParent = _container.querySelector('.battler--opponent');
+  const meParent  = _container.querySelector('.battler--player');
+
+  function setEmote(parent, slot, emote) {
+    if (!parent) return;
+    if (emote) {
+      if (slot) { slot.textContent = emote; }
+      else {
+        const el = document.createElement('div');
+        el.className = parent.classList.contains('battler--opponent') ? 'online-emote online-emote--foe' : 'online-emote online-emote--me';
+        el.textContent = emote;
+        parent.appendChild(el);
+      }
+    } else if (slot) {
+      slot.remove();
+    }
+  }
+  setEmote(foeParent, foeSlot, foeEmote);
+  setEmote(meParent,  meSlot,  myEmote);
+}
+
+async function _pickOnlineMove(action) {
+  if (_submittedThisRound || !isAlive()) return;
+  _submittedThisRound = true;
+  sfx.tap?.();
+  // Optimistically re-render to show "Waiting…"
+  drawOnlineBattleScreen();
+  try {
+    await submitAction({ code: _roomCode, role: _isHostOnline ? 'host' : 'guest', action });
+  } catch (err) {
+    // Submission failed — roll back and let them retry
+    _submittedThisRound = false;
+    if (isAlive()) drawOnlineBattleScreen();
+  }
+}
+
+async function _forfeit() {
+  if (!isAlive()) return;
+  _unsubRoom?.(); _unsubRoom = null;
+  const winner = _isHostOnline ? 'guest' : 'host';
+  await endRoom({ code: _roomCode, winner }).catch(() => {});
+  _onlineBattle = { ..._onlineBattle, winner: _isHostOnline ? 'opponent' : 'player' };
+  drawOnlineEndScreen();
+}
+
+// ── End screen ────────────────────────────────────────────────
+function drawOnlineEndScreen() {
+  if (!isAlive()) return;
+  _unsubRoom?.(); _unsubRoom = null;
+
+  const b = _onlineBattle;
+  const myWin = _isHostOnline
+    ? b?.winner === 'player'
+    : b?.winner === 'opponent';
+
+  myWin ? sfx.victory() : sfx.defeat();
+
+  const me  = _isHostOnline ? b?.player   : b?.opponent;
+  const foe = _isHostOnline ? b?.opponent : b?.player;
+
+  _container.innerHTML = `
+    <section class="tab-pane pairing-pane">
+      <div class="card">
+        <div class="card-title" style="font-size:1.6rem">${myWin ? '🏆 You Won!' : '💀 You Lost'}</div>
+        ${me && foe ? `
+          <div style="display:flex;gap:1rem;align-items:center;justify-content:center;margin:0.5rem 0">
+            <div style="text-align:center">
+              <div class="battler__sprite" id="ob-end-me" style="margin:0 auto"></div>
+              <div class="dim small">${me.name}</div>
+              <div style="font-weight:700;color:${myWin?'var(--gv-accent,#4ade80)':'#f87171'}">${me.hp}/${me.hpMax} HP</div>
+            </div>
+            <div style="font-size:1.4rem;opacity:0.5">⚔️</div>
+            <div style="text-align:center">
+              <div class="battler__sprite" id="ob-end-foe" style="margin:0 auto;filter:hue-rotate(${foe.hueShift||0}deg)"></div>
+              <div class="dim small">${foe.name}</div>
+              <div style="font-weight:700;color:${!myWin?'var(--gv-accent,#4ade80)':'#f87171'}">${foe.hp}/${foe.hpMax} HP</div>
+            </div>
+          </div>` : ''}
+        <div class="dim small">Online match — friendly only, no XP or Buds risked.</div>
+        <div style="display:flex;gap:0.6rem;margin-top:0.8rem">
+          <button class="btn-juicy big" id="ob-play-again" style="flex:1">🔄 Play Again</button>
+          <button class="btn-juicy compact" id="ob-done" style="flex:0 0 auto">✅ Done</button>
+        </div>
+      </div>
+    </section>`;
+
+  if (me)  renderSprite(_container.querySelector('#ob-end-me'),  me.sprite,  5);
+  if (foe) renderSprite(_container.querySelector('#ob-end-foe'), foe.sprite, 5);
+
+  _container.querySelector('#ob-play-again').addEventListener('click', () => {
+    _cleanupOnline();
+    drawOnlineChooser();
+  });
+  _container.querySelector('#ob-done').addEventListener('click', () => {
+    _cleanupOnline();
+    _onExit();
+  });
 }

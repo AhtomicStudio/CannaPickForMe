@@ -139,16 +139,6 @@ export const GARDEN_UPGRADES = {
       { id: 'soil_living',  name: 'Old-Growth',  cost: 1800, decayMult: 0.78, xpMult: 1.18, budMult: 1.10, desc: 'Decades of mycelium.' },
     ],
   },
-  light: {
-    label: 'Light',
-    emoji: '💡',
-    tiers: [
-      { id: 'light_window', name: 'Sunny Window',  cost: 0,    decayMult: 1.00, xpMult: 1.00, budMult: 1.00, desc: 'Free, but moody.' },
-      { id: 'light_cfl',    name: 'CFL Setup',     cost: 120,  decayMult: 0.95, xpMult: 1.04, budMult: 1.02, desc: 'Reliable spectrum.' },
-      { id: 'light_led',    name: 'Full-Spectrum', cost: 600,  decayMult: 0.88, xpMult: 1.12, budMult: 1.08, desc: 'Modern LED panel.' },
-      { id: 'light_cob',    name: 'COB Pro Array', cost: 2000, decayMult: 0.78, xpMult: 1.22, budMult: 1.15, desc: 'Commercial-tier rig.' },
-    ],
-  },
 };
 
 // ── Helpers ─────────────────────────────────────────────────
@@ -163,9 +153,8 @@ export function createInitialInventory() {
 
 export function createInitialGarden() {
   return {
-    pot:   'pot_basic',
-    soil:  'soil_basic',
-    light: 'light_window',
+    pot:  'pot_basic',
+    soil: 'soil_basic',
   };
 }
 
@@ -178,13 +167,12 @@ export function getEquippedTier(garden, slot) {
 
 /** Aggregate multipliers from all equipped garden upgrades. */
 export function getGardenBonuses(garden) {
-  const pot   = getEquippedTier(garden, 'pot');
-  const soil  = getEquippedTier(garden, 'soil');
-  const light = getEquippedTier(garden, 'light');
+  const pot  = getEquippedTier(garden, 'pot');
+  const soil = getEquippedTier(garden, 'soil');
   return {
-    decayMult: pot.decayMult * soil.decayMult * light.decayMult, // < 1 = slower decay
-    xpMult:    pot.xpMult * soil.xpMult * light.xpMult,           // > 1 = more XP
-    budMult:   pot.budMult * soil.budMult * light.budMult,        // > 1 = more buds
+    decayMult: pot.decayMult * soil.decayMult, // < 1 = slower decay
+    xpMult:    pot.xpMult   * soil.xpMult,     // > 1 = more XP
+    budMult:   pot.budMult  * soil.budMult,     // > 1 = more buds
   };
 }
 

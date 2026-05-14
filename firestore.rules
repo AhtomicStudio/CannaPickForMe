@@ -26,6 +26,22 @@ service cloud.firestore {
       allow write: if request.auth != null && request.auth.uid == uid;
     }
 
+    // Battle rooms — real-time PvP via Online Battle mode.
+    //   • Anyone authenticated can CREATE a room (setDoc).
+    //   • Anyone authenticated can READ a room (to join or watch the state).
+    //   • Only the host or guest may UPDATE their room once it exists.
+    //   • Only the host may DELETE (cleanup) their own room.
+    match /battleRooms/{code} {
+      allow read:   if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null
+                    && (resource.data.hostUid == request.auth.uid
+                        || resource.data.guestUid == request.auth.uid
+                        || resource.data.guestUid == null);
+      allow delete: if request.auth != null
+                    && resource.data.hostUid == request.auth.uid;
+    }
+
     // Sign-in OTP codes — Cloud Functions only. Clients can never read or write
     // these directly; the codeHash + attempts counter would be a security hole.
     // Cloud Functions bypass these rules via the Admin SDK.

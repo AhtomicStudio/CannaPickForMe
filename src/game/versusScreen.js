@@ -26,6 +26,10 @@ let _phase = 'p1-pick';      // 'p1-pick' | 'p2-pick' | 'resolve' | 'end'
 let _p1Action = null;
 let _p2Action = null;
 
+function isAlive() {
+  return _container && document.body.contains(_container);
+}
+
 export function mountLocalDuel({ container, gameState, onExit }) {
   _container = container;
   _gameState = gameState;
@@ -45,6 +49,7 @@ export function mountLocalDuel({ container, gameState, onExit }) {
 }
 
 function draw() {
+  if (!isAlive()) return;
   const p = _state.player, o = _state.opponent;
   const isP1Turn = _phase === 'p1-pick';
   const activeSide = isP1Turn ? 'player' : 'opponent';
@@ -90,7 +95,20 @@ function draw() {
     _container.querySelectorAll('[data-vp-move]').forEach(btn => {
       btn.addEventListener('click', () => onPick({ kind: 'move', moveId: btn.dataset.vpMove }));
     });
-    _container.querySelector('#vp-flee')?.addEventListener('click', () => onPick({ kind: 'flee' }));
+    _container.querySelector('#vp-flee')?.addEventListener('click', () => {
+      // P2 is the opponent side; the battle engine's flee only short-circuits
+      // for side === 'player'. Manually handle P2 forfeit so it actually ends
+      // the battle instead of silently using their first move.
+      if (_phase === 'p2-pick') {
+        _state = { ..._state, winner: 'player',
+          log: [...(_state.log || []), '🏃 Player 2 forfeited!'] };
+        _phase = 'end';
+        sfx.defeat();
+        draw();
+        return;
+      }
+      onPick({ kind: 'flee' });
+    });
   } else {
     _container.querySelector('#vp-exit')?.addEventListener('click', () => _onExit());
   }
@@ -131,9 +149,8 @@ function onPick(action) {
     _p1Action = action;
     _phase = 'p2-pick';
     sfx.tap();
-    // Tiny visual transition between turns
-    flashBanner('🔄 Pass to Player 2…', 'orange');
-    draw();
+    draw(); // render the P2 pick screen first …
+    flashBanner('🔄 Pass to Player 2…', 'orange'); // … then overlay the flash on top
     return;
   }
   if (_phase === 'p2-pick') {
@@ -161,6 +178,7 @@ function paintLog() {
 }
 
 function flashBanner(text, color) {
+  if (!isAlive()) return;
   const el = document.createElement('div');
   el.className = 'versus-flash';
   el.textContent = text;

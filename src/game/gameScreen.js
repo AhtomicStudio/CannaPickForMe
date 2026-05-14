@@ -484,6 +484,9 @@ function renderShell() {
 }
 
 function switchTab(name) {
+  // Don't allow tab switching while a versus session is live — the user
+  // needs to exit the versus mode deliberately via the in-screen Back button.
+  if (_versusSession && name !== 'versus') return;
   _activeTab = name;
   sfx.click();
   _container.querySelectorAll('.game-tab').forEach(btn => {
@@ -494,6 +497,10 @@ function switchTab(name) {
 
 function refreshActiveTab(animate = false) {
   if (!_container) return;
+  // Never re-render the tab body while a versus session owns it.
+  // The versus modules manage their own DOM; forcing a re-render here
+  // would wipe the live battle or QR screen mid-session.
+  if (_versusSession) { syncTopbar(); return; }
   const body = _container.querySelector('#game-tab-body');
   if (!body) return;
   // Tear down per-tab listeners by re-rendering
@@ -565,16 +572,14 @@ function renderGardenTab() {
   // Garden upgrades — paint into the background so the player SEES their setup
   const potTier   = getEquippedTier(_gameState.garden, 'pot');
   const soilTier  = getEquippedTier(_gameState.garden, 'soil');
-  const lightTier = getEquippedTier(_gameState.garden, 'light');
 
   return `
     <section class="tab-pane">
       ${renderPlotPicker()}
 
       <div class="garden-viewport ${frameClass} ${auraClass}"
-           data-pot="${potTier.id}" data-soil="${soilTier.id}" data-light="${lightTier.id}"
+           data-pot="${potTier.id}" data-soil="${soilTier.id}"
            role="button" tabindex="0" aria-label="Pet ${_gameState.monsterName}">
-        <div class="garden-light-layer"></div>
         <div class="garden-pot-layer"></div>
         <div class="garden-soil-layer"></div>
         <div class="game-viewport__scanlines"></div>
@@ -625,7 +630,7 @@ function renderGardenTab() {
 
       <div class="garden-card">
         <div class="card-title">Garden Setup <span class="dim small">tap to upgrade</span></div>
-        ${['pot','soil','light'].map(slot => {
+        ${['pot','soil'].map(slot => {
           const cfg = GARDEN_UPGRADES[slot];
           const tier = getEquippedTier(_gameState.garden, slot);
           const idx = cfg.tiers.findIndex(t => t.id === tier.id);
@@ -1188,7 +1193,7 @@ function renderShopCare() {
 
     <div class="card">
       <div class="card-title">Garden Upgrades</div>
-      ${['pot','soil','light'].map(slot => renderGardenUpgradeBlock(slot)).join('')}
+      ${['pot','soil'].map(slot => renderGardenUpgradeBlock(slot)).join('')}
     </div>
 
     <div class="card">
@@ -1822,6 +1827,12 @@ function renderVersusTab() {
       </div>
 
       <div class="card">
+        <div class="card-title">🌐 Online Battle</div>
+        <div class="dim small">Real-time versus over the internet. Host creates a 6-char room code; Guest types it in. Both pick moves simultaneously.</div>
+        <button class="btn-juicy big" id="btn-versus-online">⚡ Online Battle</button>
+      </div>
+
+      <div class="card">
         <div class="card-title">🏆 Async Battle League</div>
         <div class="dim small">Publish your Cannabud to a global leaderboard. Pull challengers any time and fight their snapshots — no friend has to be online.</div>
         <button class="btn-juicy big" id="btn-versus-league">📡 Open League</button>
@@ -1831,42 +1842,126 @@ function renderVersusTab() {
 }
 
 function wireVersusTab(body) {
-  body.querySelector('#btn-versus-local')?.addEventListener('click', () => {
-    import('./versusScreen.js').then(mod => {
-      mod.mountLocalDuel({
-        container: _container.querySelector('#game-tab-body'),
-        gameState: _gameState,
-        onExit: () => refreshActiveTab(true),
+  // Guard: marks a versus session active so refreshActiveTab / switchTab
+  // won't overwrite the container while a live session is running.
+  function enterVersus(tabBody) {
+    _versusSession = true;
+    // Immediately show a loading placeholder so the tab body isn't blank
+    // during the async import(). This also prevents a split-second where
+    // another call to refreshActiveTab could wipe the tab before the module
+    // mounts its own HTML.
+    tabBody.innerHTML = `
+      <section class="tab-pane pairing-pane" style="display:flex;align-items:center;justify-content:center;min-height:200px">
+        <div class="dim small">⏳ Loading versus screen…</div>
+      </section>`;
+  }
+  function exitVersus() {
+    _versusSession = null;
+    _activeTab = 'versus'; // ensure we land back on the versus tab menu
+    // Re-render the versus tab menu cleanly
+    const b = _container?.querySelector('#game-tab-body');
+    if (b) {
+      _container.querySelectorAll('.game-tab').forEach(btn => {
+        btn.classList.toggle('game-tab--active', btn.dataset.tab === 'versus');
       });
+      b.innerHTML = renderVersusTab();
+      wireVersusTab(b);
+    }
+    syncTopbar();
+  }
+
+  const tabBody = _container.querySelector('#game-tab-body');
+
+  // Show a visible error card when a versus mode can't load, rather than
+  // silently snapping back to the menu with no explanation.
+  // NOTE: _versusSession stays truthy until the user clicks Back so the
+  // idle tick doesn't wipe the error card before they can read it.
+  function versusLoadFailed(label, err) {
+    console.error(`[Versus] ${label} error:`, err);
+    // Do NOT clear _versusSession here — keep it truthy so the idle tick
+    // can't overwrite the error card with the versus menu before the user
+    // has a chance to read it. We clear it only when they click Back.
+    _activeTab = 'versus';
+    const b = _container?.querySelector('#game-tab-body');
+    if (!b) { _versusSession = null; syncTopbar(); return; }
+    // Keep the Versus tab button highlighted while showing the error
+    _container.querySelectorAll('.game-tab').forEach(btn =>
+      btn.classList.toggle('game-tab--active', btn.dataset.tab === 'versus'));
+    b.innerHTML = `
+      <section class="tab-pane pairing-pane">
+        <div class="card">
+          <div class="card-title">⚠️ Couldn't Start</div>
+          <div class="dim small">${label} failed to load.</div>
+          <div class="dim small" style="color:#f87171;font-size:0.6rem;word-break:break-all;margin-top:0.3rem">${err instanceof Error ? (err.message || err.toString()) : (err != null ? String(err) : 'Unknown error')}</div>
+          <button class="btn-juicy compact" id="vs-err-back" style="margin-top:0.8rem">← Back</button>
+        </div>
+      </section>`;
+    syncTopbar();
+    // Clear _versusSession HERE, when the user explicitly dismisses the error.
+    b.querySelector('#vs-err-back')?.addEventListener('click', () => {
+      _versusSession = null;
+      b.innerHTML = renderVersusTab();
+      wireVersusTab(b);
     });
+  }
+
+  body.querySelector('#btn-versus-local')?.addEventListener('click', () => {
+    enterVersus(tabBody);
+    import('./versusScreen.js').then(mod => {
+      if (!_versusSession) return; // user exited before module loaded
+      mod.mountLocalDuel({
+        container: tabBody,
+        gameState: _gameState,
+        onExit: exitVersus,
+      });
+    }).catch(err => versusLoadFailed('Hot-seat battle', err));
   });
   body.querySelector('#btn-versus-ble')?.addEventListener('click', () => {
+    enterVersus(tabBody);
     import('./versusPairing.js').then(mod => {
-      mod.mountBlePairing({
-        container: _container.querySelector('#game-tab-body'),
+      if (!_versusSession) return;
+      return mod.mountBlePairing({      // return Promise so async errors reach .catch
+        container: tabBody,
         gameState: _gameState,
-        onExit: () => refreshActiveTab(true),
+        onExit: exitVersus,
       });
-    });
+    }).catch(err => versusLoadFailed('Bluetooth pairing', err));
   });
   body.querySelector('#btn-versus-qr')?.addEventListener('click', () => {
+    enterVersus(tabBody);
     import('./versusPairing.js').then(mod => {
-      mod.mountQrPairing({
-        container: _container.querySelector('#game-tab-body'),
+      if (!_versusSession) return;
+      return mod.mountQrPairing({       // return Promise so async errors reach .catch
+        container: tabBody,
         gameState: _gameState,
-        onExit: () => refreshActiveTab(true),
+        onExit: exitVersus,
       });
-    });
+    }).catch(err => versusLoadFailed('QR pairing', err));
   });
-  body.querySelector('#btn-versus-league')?.addEventListener('click', () => {
-    import('./leagueScreen.js').then(mod => {
-      mod.mountLeague({
-        container: _container.querySelector('#game-tab-body'),
+  body.querySelector('#btn-versus-online')?.addEventListener('click', () => {
+    enterVersus(tabBody);
+    import('./versusPairing.js').then(mod => {
+      if (!_versusSession) return;
+      return mod.mountOnlineBattle({
+        container: tabBody,
         gameState: _gameState,
         uid: _uid,
-        onExit: () => refreshActiveTab(true),
+        displayName: _gameState?.monsterName || 'Trainer',
+        onExit: exitVersus,
       });
-    });
+    }).catch(err => versusLoadFailed('Online Battle', err));
+  });
+  body.querySelector('#btn-versus-league')?.addEventListener('click', () => {
+    enterVersus(tabBody);
+    import('./leagueScreen.js').then(mod => {
+      if (!_versusSession) return;
+      return mod.mountLeague({          // return Promise so async errors reach .catch
+        container: tabBody,
+        gameState: _gameState,
+        uid: _uid,
+        onExit: exitVersus,
+      });
+    }).catch(err => versusLoadFailed('Battle League', err));
   });
 }
 

@@ -686,6 +686,18 @@
   outline-offset: 4px;
   border-radius: 6px;
 }
+/* Dragging state — lifted shadow + grab cursor */
+.cannaguy-companion.cg-dragging {
+  cursor: grabbing !important;
+  opacity: 0.9;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.5));
+  z-index: 9999;
+  transition: none !important; /* disable smooth transitions while dragging */
+}
+/* Hint that the companion is draggable */
+.cannaguy-companion:not(.cg-dragging) {
+  cursor: grab;
+}
 @media (hover: hover) and (pointer: fine) {
   .cannaguy-companion {
     transition: opacity 0.3s ease, transform 0.3s ease;
@@ -2040,6 +2052,165 @@
   width: 100%;
   margin: 0.4rem 0;
   resize: vertical;
+}
+
+/* QR manual-reveal row */
+.qr-manual-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin: 0.3rem 0;
+}
+.qr-manual-row .dim { flex: 1; min-width: 4rem; }
+
+/* ── Online Battle: emote bar ── */
+.emote-bar {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.3rem;
+}
+.emote-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--gv-border);
+  border-radius: 4px;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.25rem 0.3rem;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.1s;
+  min-width: 2rem;
+  text-align: center;
+}
+.emote-btn:hover {
+  background: rgba(255,255,255,0.12);
+  transform: scale(1.2);
+}
+.emote-btn:active { transform: scale(0.95); }
+
+/* ── Online Battle: floating emote overlays ── */
+.online-emote {
+  position: absolute;
+  font-size: 2rem;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 10;
+  animation: emote-pop 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.7));
+}
+.online-emote--foe {
+  top: 0.3rem;
+  right: 0.5rem;
+}
+.online-emote--me {
+  bottom: 0.3rem;
+  right: 0.5rem;
+}
+@keyframes emote-pop {
+  from { opacity: 0; transform: scale(0.4) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Online battle: waiting state ── */
+.ob-waiting {
+  text-align: center;
+  padding: 1rem 0.5rem;
+  animation: pulse-dim 1.4s ease-in-out infinite;
+}
+@keyframes pulse-dim {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+/* ── Room code display (host waiting screen) ── */
+.room-code-display {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-align: center;
+  padding: 0.7rem 0.4rem;
+  color: var(--gv-accent, #4ade80);
+  background: rgba(74, 222, 128, 0.07);
+  border: 1px dashed rgba(74, 222, 128, 0.3);
+  border-radius: 4px;
+  margin: 0.5rem 0;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.room-code-display:hover {
+  background: rgba(74, 222, 128, 0.13);
+}
+
+/* ── Online battle: code input ── */
+.ob-code-input {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-align: center;
+  text-transform: uppercase;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--gv-border);
+  color: var(--gv-accent, #4ade80);
+  padding: 0.5rem;
+  width: 100%;
+  margin: 0.6rem 0;
+}
+.ob-code-input:focus {
+  outline: none;
+  border-color: var(--gv-accent, #4ade80);
+  box-shadow: 0 0 0 2px rgba(74,222,128,0.2);
+}
+
+/* ── Online battle: VS splash screen ── */
+.ob-vs-splash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 2rem 1rem;
+  animation: ob-vs-in 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes ob-vs-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.ob-vs-me,
+.ob-vs-foe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  flex: 1;
+}
+.ob-vs-me  { animation: ob-slide-right 0.4s 0.1s cubic-bezier(0.34,1.56,0.64,1) both; }
+.ob-vs-foe { animation: ob-slide-left  0.4s 0.1s cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes ob-slide-right {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes ob-slide-left {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.ob-vs-badge {
+  font-size: 2.2rem;
+  animation: ob-badge-pop 0.5s 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  flex-shrink: 0;
+}
+@keyframes ob-badge-pop {
+  from { opacity: 0; transform: scale(0); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.ob-vs-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.65rem;
+  color: var(--gv-accent, #4ade80);
+  text-align: center;
+  word-break: break-word;
+  max-width: 100px;
 }
 
 /* ════════════════════════════════════════════════════════════

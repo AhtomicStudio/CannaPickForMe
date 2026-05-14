@@ -187,5 +187,10 @@ export function exportMySnapshot(gameState) {
     sprite: me.sprite,
     baseStats: me.baseStats,
     moves: me.moves,
+    trait: me.trait || null,
+    hueShift: me.hueShift || 0,
+    variant: me.variant || 'classic',
+    paletteRemap: me.paletteRemap || null,
+    evolutionPath: me.evolutionPath || null,
   };
 }

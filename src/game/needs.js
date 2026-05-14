@@ -1,10 +1,9 @@
 /**
  * CannaGotchi — Needs System
  *
- * Five needs decay over real time and shape your monster's mood:
+ * Four needs decay over real time and shape your monster's mood:
  *   💧 Hydration     — drained fastest, most visible
  *   🌿 Nutrition     — drains medium speed
- *   ☀️ Light         — drains slow; matters more for Sativa
  *   ✨ Cleanliness   — pests appear if low
  *   😊 Happiness     — derived; rises with the others + petting
  *
@@ -14,12 +13,11 @@
 
 import { NEEDS } from './economyConfig.js';
 
-export const NEED_KEYS = ['hydration', 'nutrition', 'light', 'cleanliness', 'happiness'];
+export const NEED_KEYS = ['hydration', 'nutrition', 'cleanliness', 'happiness'];
 
 export const NEED_META = {
   hydration:   { label: 'Hydration',   emoji: '💧', color: '#38bdf8', drainHours: NEEDS.HYDRATION_DRAIN_HOURS },
   nutrition:   { label: 'Nutrition',   emoji: '🌿', color: '#22c55e', drainHours: NEEDS.NUTRITION_DRAIN_HOURS },
-  light:       { label: 'Light',       emoji: '☀️', color: '#fbbf24', drainHours: NEEDS.LIGHT_DRAIN_HOURS },
   cleanliness: { label: 'Cleanliness', emoji: '✨', color: '#a78bfa', drainHours: NEEDS.CLEANLINESS_DRAIN_HOURS },
   happiness:   { label: 'Happiness',   emoji: '😊', color: '#f472b6', drainHours: NEEDS.HAPPINESS_DRAIN_HOURS },
 };
@@ -28,7 +26,6 @@ export function createInitialNeeds() {
   return {
     hydration:   NEEDS.MAX,
     nutrition:   NEEDS.MAX,
-    light:       NEEDS.MAX,
     cleanliness: NEEDS.MAX,
     happiness:   NEEDS.MAX,
     lastDecayTick: Date.now(),
@@ -55,10 +52,10 @@ export function applyDecay(needs, nowMs = Date.now()) {
     needs[key] = clamp01_100(next);
   }
 
-  // Happiness drifts toward the average of the other four needs,
+  // Happiness drifts toward the average of the other three needs,
   // with its own slow drain so a fully-cared-for monster still
   // benefits from being interacted with.
-  const others = (needs.hydration + needs.nutrition + needs.light + needs.cleanliness) / 4;
+  const others = (needs.hydration + needs.nutrition + needs.cleanliness) / 3;
   const baseDrainPerHour = NEEDS.MAX / NEEDS.HAPPINESS_DRAIN_HOURS;
   const happDelta = (others - (needs.happiness ?? NEEDS.MAX)) * Math.min(1, hours / 4)  // pull toward others
                   - baseDrainPerHour * hours * 0.4;                                      // gentle drain
@@ -88,7 +85,7 @@ export function moodSummary(needs) {
   if (!needs) {
     return { avg: 100, label: 'Thriving', emoji: '✨', statMult: 1 + NEEDS.STAT_BUFF_MAX, xpMult: 1 + NEEDS.XP_BUFF_MAX };
   }
-  const avg = (needs.hydration + needs.nutrition + needs.light + needs.cleanliness + needs.happiness) / 5;
+  const avg = (needs.hydration + needs.nutrition + needs.cleanliness + needs.happiness) / 4;
 
   let label, emoji;
   if (avg >= NEEDS.THRESHOLD_HAPPY)      { label = 'Thriving';   emoji = '✨'; }

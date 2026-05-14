@@ -74,6 +74,7 @@ export function createTapReactor(cfg) {
   };
 
   function handleTap() {
+    if (cfg.wrapper.dataset.wasDragged === 'true') return;
     if (state.annoyed || state.destroyed) return;
     const now = Date.now();
     state.tapTimes = state.tapTimes.filter(t => now - t < TAP_SPAM_WINDOW);
@@ -204,7 +205,6 @@ const TRAIT_QUIPS = {
 const NEED_QUIPS = {
   hydration:   ['💧 thirsty…', '💧 a sip pls', '💧 kinda dry'],
   nutrition:   ['🌿 hangry', '🌿 feed me', '🌿 stomach rumble'],
-  light:       ['☀️ where sun', '☀️ need rays', '🌑 lil dim'],
   cleanliness: ['✨ feeling crusty', '✨ wash me', '🧹 dust everywhere'],
   happiness:   ['💔 lonely…', '😟 pet me?', '💔 down in the dumps'],
 };
@@ -363,6 +363,64 @@ function mount() {
   }
 }
 
+function makeDraggable(el) {
+  let isDragging = false;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let initialLeft = 0;
+  let initialTop = 0;
+  let hasMoved = false;
+
+  el.addEventListener('pointerdown', (e) => {
+    if (!e.isPrimary || e.button !== 0) return;
+    const rect = el.getBoundingClientRect();
+    
+    el.style.left = `${rect.left}px`;
+    el.style.top = `${rect.top}px`;
+    el.style.right = 'auto';
+    el.style.bottom = 'auto';
+    el.classList.remove('cg-pos--main', 'cg-pos--peek-tl', 'cg-pos--peek-bl');
+
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    initialLeft = rect.left;
+    initialTop = rect.top;
+    
+    isDragging = true;
+    hasMoved = false;
+    el.setPointerCapture(e.pointerId);
+  });
+
+  el.addEventListener('pointermove', (e) => {
+    if (!isDragging || !el.hasPointerCapture(e.pointerId)) return;
+    
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+    
+    if (!hasMoved && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+      hasMoved = true;
+      el.classList.add('cg-dragging');
+    }
+    
+    if (hasMoved) {
+      el.style.left = `${initialLeft + dx}px`;
+      el.style.top = `${initialTop + dy}px`;
+    }
+  });
+
+  el.addEventListener('pointerup', (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    el.releasePointerCapture(e.pointerId);
+    
+    if (hasMoved) {
+      el.classList.remove('cg-dragging');
+      el.dataset.wasDragged = 'true';
+      setTimeout(() => { delete el.dataset.wasDragged; }, 100);
+    }
+  });
+}
+
 function mountOne(plotId, data, isActive) {
   const monType   = getMonsterType(data.monsterType);
   const level     = getLevel(data.xp || 0);
@@ -417,6 +475,8 @@ function mountOne(plotId, data, isActive) {
       reactor?.handleTap();
     }
   });
+
+  makeDraggable(wrapper);
 
   _mountedCompanions.push({ id, plotId, wrapper, reactor, isActive });
 
