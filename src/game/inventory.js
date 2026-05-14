@@ -6,7 +6,7 @@
  *
  * Schema in gameState:
  *   inventory: { itemId: count }
- *   garden:    { pot, soil, light, water } — equipped upgrade ids
+ *   garden:    { pot, soil } — equipped upgrade ids
  */
 
 import { NEEDS } from './economyConfig.js';
