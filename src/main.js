@@ -34,6 +34,13 @@ import {
 import { loadSavedTheme } from './services/themeService.js';
 import { shareResult } from './shareCard.js';
 import { initProfile, setProfileBackHandler, renderProfileScreen } from './profile.js';
+import {
+  getDispensaryMap, getDispensaryNameSync,
+} from './services/dispensaryService.js';
+import {
+  getActiveSponsoredEntries, getActivePartnerStrains, getActiveAdsForPlacement,
+  recordImpression, recordClick,
+} from './services/sponsorshipService.js';
 
 // === CONSTANTS ===
 const ALL_EFFECTS = ['Relaxed','Happy','Euphoric','Creative','Uplifted','Energetic','Focused','Talkative','Giggly','Sleepy','Hungry','Tingly'];
@@ -53,22 +60,13 @@ const SMOKE_NEON_COLORS = [
   { glow: '#22d3ee', rgb: '34, 211, 238' },   // Cyan
 ];
 
-const DISPENSARY_NAMES = {
-  'cookies-hayward': 'Cookies Hayward',
-  'garden-of-eden': 'Garden of Eden',
-  'we-are-hemp': 'We Are Hemp',
-  'hayward-dispensary-delivery': 'Hayward Dispensary Delivery',
-  'nug-wellness': 'NUG Wellness',
-  'flor-union-city': 'FLOR - Union City Dispensary',
-  'lemonnade-union-city': 'Lemonnade Union City Dispensary',
-  'harborside-san-leandro': 'Harborside San Leandro Dispensary',
-  '4twenty-market-oakland': '4Twenty Market Weed Dispensary Oakland',
-  'three-trees-oakland': 'Three Trees Weed Dispensary Kiosk',
-  'kanna-oakland': 'KANNA Weed Dispensary Oakland',
-  'harborside-oakland': 'Harborside Oakland Dispensary',
-  'ivy-hill-oakland': 'Ivy Hill Weed Dispensary Oakland',
-  'urbana-oakland': 'Urbana Weed Dispensary Oakland',
-};
+// Dispensary names are now Firestore-backed. We prefetch the map at
+// boot (see initStrainDelta) so the synchronous lookups below resolve
+// against an in-memory cache, then fall back to the raw slug if the
+// dispensary doc hasn't loaded or doesn't exist.
+function dispensaryLabel(slug) {
+  return getDispensaryNameSync(slug);
+}
 
 // Apply both effect and dispensary overrides to a strain before rendering
 function applyAllOverrides(strain) {
@@ -116,7 +114,7 @@ function buildExpandBody(strain) {
 
   const dispensaryHTML = dispensaries.length > 0
     ? `<div class="strain-card__expand-dispensaries">
-        ${dispensaries.map(d => `<span class="strain-pill--dispensary">📍 ${DISPENSARY_NAMES[d] || d}</span>`).join('')}
+        ${dispensaries.map(d => `<span class="strain-pill--dispensary">📍 ${dispensaryLabel(d)}</span>`).join('')}
       </div>`
     : '';
 
@@ -190,7 +188,14 @@ function getAllStrains() {
 async function initStrainDelta() {
   try {
     const { getStrainDelta } = await import('./services/strainService.js');
-    strainDelta = await getStrainDelta();
+    // Fan out: strain delta + dispensary map in parallel. Dispensaries
+    // are tiny (≤ ~20 docs) and we want them resolved before the result
+    // screen renders so partner card labels resolve synchronously.
+    const [delta] = await Promise.all([
+      getStrainDelta(),
+      getDispensaryMap().catch(() => ({})),
+    ]);
+    strainDelta = delta;
     // Re-render browse list if it is currently visible
     const list = document.getElementById('strain-list');
     if (list) renderBrowseList();
@@ -1000,20 +1005,38 @@ function startResult() {
   }, WEIGH_DURATION);
 }
 
-function renderSponsoredStrain(allScores) {
+async function renderSponsoredStrain(allScores) {
   const card = document.getElementById('sponsored-strain-card');
   if (!card) return;
 
-  const { sponsored = [], sponsorSettings = {} } = strainDelta;
-  const { threshold = 50, alwaysShow = false } = sponsorSettings;
+  // Score threshold below which we don't promote a sponsored strain.
+  // This used to live in strainDelta.sponsorSettings; with campaigns
+  // taking over, threshold is a global UX guardrail rather than a
+  // per-sponsor knob. Honest match scores protect user trust; if no
+  // sponsored strain is a good fit, the card stays hidden.
+  const THRESHOLD = 50;
 
-  if (sponsored.length === 0) { card.classList.add('hidden'); return; }
+  let entries = [];
+  try {
+    entries = await getActiveSponsoredEntries();
+  } catch (err) {
+    console.warn('Failed to load sponsored entries:', err);
+  }
 
-  const sponsoredScores = allScores.filter(s => sponsored.includes(s.strainId));
-  if (sponsoredScores.length === 0) { card.classList.add('hidden'); return; }
+  if (!entries.length) { card.classList.add('hidden'); return; }
 
-  const best = sponsoredScores[0]; // allScores already sorted desc
-  if (!alwaysShow && best.score < threshold) { card.classList.add('hidden'); return; }
+  // For each sponsored strainId, find its match score in allScores and
+  // keep the best-scoring one. We also remember which campaign it came
+  // from so the impression bumps the right counter.
+  const scoreById = new Map(allScores.map(s => [s.strainId, s.score]));
+  let best = null;
+  for (const e of entries) {
+    const score = scoreById.get(e.strainId);
+    if (score == null) continue;
+    if (!best || score > best.score) best = { ...e, score };
+  }
+
+  if (!best || best.score < THRESHOLD) { card.classList.add('hidden'); return; }
 
   const strain = getAllStrains().find(s => s.id === best.strainId);
   if (!strain) { card.classList.add('hidden'); return; }
@@ -1027,6 +1050,10 @@ function renderSponsoredStrain(allScores) {
   dot.setAttribute('data-type', strain.type);
 
   card.classList.remove('hidden');
+
+  // Bump the campaign impression counter. Fire-and-forget; if the write
+  // fails (rules, offline, etc.) the user sees the card regardless.
+  recordImpression('sponsored', { campaignId: best.campaignId });
 }
 
 /**
@@ -1055,8 +1082,20 @@ function showResultFromHistory(strain, session) {
   showScreen('session');
 }
 
-function renderResult(result) {
+async function renderResult(result) {
   const { pickedStrain, matchScore, isPerfectMatch, reasoning } = result;
+
+  // Fetch live partner strains once for this result render. The first
+  // active one (if any) occupies slot 4 in the better-match modal.
+  // We do this BEFORE deciding maxOrganic below so the modal layout is
+  // consistent.
+  let activePartner = null;
+  try {
+    const partners = await getActivePartnerStrains();
+    activePartner = partners[0] || null;
+  } catch (err) {
+    console.warn('Failed to load partner strains:', err);
+  }
 
   track('strain_picked', {
     strain: pickedStrain.name,
@@ -1132,12 +1171,11 @@ function renderResult(result) {
       const globalResult = matchStrains(globalAvailable, sessionAnswers);
       
       if (globalResult && globalResult.allScores) {
-        // Check if a partner strain is active — it occupies one slot in the modal
-        const hasActivePartner = (strainDelta.partnerStrains || []).some(p => p.active);
-        const maxOrganic = hasActivePartner ? 4 : 5; // 4 organic + 1 partner = 5 max
+        // If a partner is active, it occupies one slot in the modal (slot 4)
+        const maxOrganic = activePartner ? 4 : 5; // 4 organic + 1 partner = 5 max
         // Find strains that have a strictly higher score than the current best stash match
         topGlobalStrains = globalResult.allScores.filter(s => s.score > matchScore).slice(0, maxOrganic);
-        
+
         if (topGlobalStrains.length > 0) {
           betterMatchContainer.classList.remove('hidden');
         }
@@ -1146,7 +1184,7 @@ function renderResult(result) {
 
     if (btnBetterMatch) {
       btnBetterMatch.onclick = () => {
-        showBetterMatchesModal(topGlobalStrains);
+        showBetterMatchesModal(topGlobalStrains, activePartner);
       };
     }
   }
@@ -1162,14 +1200,10 @@ function renderResult(result) {
   };
 }
 
-function showBetterMatchesModal(matchesData) {
+function showBetterMatchesModal(matchesData, partner = null) {
   const modal = document.getElementById('better-match-modal');
   const list = document.getElementById('better-match-list');
   const allStrains = getAllStrains();
-
-  // Find the active partner strain
-  const partnerStrains = (strainDelta.partnerStrains || []).filter(p => p.active);
-  const partner = partnerStrains[0] || null;
 
   // Build organic cards (slots 1-3 and 5-6 around the partner)
   const organicCards = matchesData.map((match, i) => {
@@ -1194,11 +1228,11 @@ function showBetterMatchesModal(matchesData) {
   const partnerCardHtml = partner ? (() => {
     const type = (partner.strainType || 'hybrid').charAt(0).toUpperCase() + (partner.strainType || 'hybrid').slice(1);
     const effects = (partner.effects || []).slice(0, 3).join(', ');
-    const dispName = partner.dispensaryId ? (DISPENSARY_NAMES[partner.dispensaryId] || partner.dispensaryId) : null;
+    const dispName = partner.dispensaryId ? dispensaryLabel(partner.dispensaryId) : null;
     const clickAttr = partner.clickUrl ? `href="${partner.clickUrl}" target="_blank" rel="noopener"` : '';
     const tag = partner.clickUrl ? 'a' : 'div';
     return `
-      <${tag} ${clickAttr} class="partner-strain-card">
+      <${tag} ${clickAttr} class="partner-strain-card" data-partner-campaign="${partner.campaignId || ''}">
         <div class="partner-strain-card__header">
           <span class="partner-strain-card__badge">✦ Partnered Strain</span>
           <span class="partner-strain-card__brand">${partner.brandName || ''}</span>
@@ -1219,6 +1253,19 @@ function showBetterMatchesModal(matchesData) {
   const slots = organicCards.map(c => c.html);
   if (partnerCardHtml) slots.splice(3, 0, partnerCardHtml);
   list.innerHTML = slots.join('');
+
+  // Wire impression + click tracking on the partner card (if present).
+  // The card lives inside #better-match-list which is rebuilt every time
+  // we open the modal, so no listener cleanup is needed.
+  if (partner) {
+    recordImpression('partner', { campaignId: partner.campaignId });
+    const partnerEl = list.querySelector('.partner-strain-card');
+    if (partnerEl && partner.clickUrl) {
+      partnerEl.addEventListener('click', () => {
+        recordClick('partner', { campaignId: partner.campaignId });
+      }, { once: true });
+    }
+  }
 
   const closeBtn = document.getElementById('better-match-close');
   if (closeBtn) closeBtn.onclick = () => closeModal('better-match-modal');
@@ -1262,6 +1309,15 @@ function initResult() {
 }
 
 // === ADS ===
+//
+// Ads flow through the sponsorshipService aggregator (which filters to
+// the ads belonging to a currently-live campaign), then we render the
+// single highest-priority ad per placement.
+//
+// Tracking is fire-and-forget: impressions bump on render, clicks bump
+// on the anchor click. Failures are silent (counters that don't tick are
+// strictly better than ads that don't render).
+
 function renderAdSlot(containerId, ads) {
   const container = document.getElementById(containerId);
   if (!container || !ads || ads.length === 0) return;
@@ -1272,10 +1328,11 @@ function renderAdSlot(containerId, ads) {
   const posX = Math.max(0, Math.min(100, Number(ad.imagePosition?.x) || 50));
   const posY = Math.max(0, Math.min(100, Number(ad.imagePosition?.y) || 50));
   const imgPos = `object-position: ${posX}% ${posY}%`;
+  const campaignAttr = ad.campaignId ? `data-campaign-id="${ad.campaignId}"` : '';
 
   if (displayType === 'banner') {
     container.innerHTML = `
-      <a href="${ad.clickUrl}" target="_blank" rel="noopener noreferrer" class="ad-banner" title="${ad.title || 'Sponsored'}">
+      <a href="${ad.clickUrl}" target="_blank" rel="noopener noreferrer" class="ad-banner" title="${ad.title || 'Sponsored'}" data-ad-id="${ad.id}" ${campaignAttr}>
         <img src="${ad.imageUrl}" alt="${ad.title || 'Ad'}" class="ad-banner__image" style="${imgPos}" />
         <div class="ad-banner__footer">
           <span class="ad-banner__label">✦ Sponsored</span>
@@ -1285,7 +1342,7 @@ function renderAdSlot(containerId, ads) {
   } else {
     // Card style (default)
     container.innerHTML = `
-      <a href="${ad.clickUrl}" target="_blank" rel="noopener noreferrer" class="ad-card" title="${ad.title || 'Sponsored'}">
+      <a href="${ad.clickUrl}" target="_blank" rel="noopener noreferrer" class="ad-card" title="${ad.title || 'Sponsored'}" data-ad-id="${ad.id}" ${campaignAttr}>
         <span class="ad-card__sponsored">Sponsored</span>
         <img src="${ad.imageUrl}" alt="${ad.title || 'Ad'}" class="ad-card__image" style="${imgPos}" />
         <div class="ad-card__info">
@@ -1295,14 +1352,25 @@ function renderAdSlot(containerId, ads) {
       </a>
     `;
   }
+
+  // Impression on render.
+  recordImpression('ad', { adId: ad.id, campaignId: ad.campaignId });
+
+  // Click handler — once because the anchor reloads on navigation and
+  // the container is regenerated next page load anyway.
+  const anchor = container.querySelector('a[data-ad-id]');
+  if (anchor) {
+    anchor.addEventListener('click', () => {
+      recordClick('ad', { adId: ad.id, campaignId: ad.campaignId });
+    }, { once: true });
+  }
 }
 
 async function loadAds() {
   try {
-    const { getActiveAds } = await import('./services/adService.js');
     const [homeAds, resultAds] = await Promise.all([
-      getActiveAds('home'),
-      getActiveAds('result'),
+      getActiveAdsForPlacement('home'),
+      getActiveAdsForPlacement('result'),
     ]);
     renderAdSlot('ad-slot-home', homeAds);
     renderAdSlot('ad-slot-result', resultAds);

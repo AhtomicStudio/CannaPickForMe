@@ -13,26 +13,34 @@ import { getInfoTopics, saveInfoTopic, deleteInfoTopic } from './services/infoSe
 import { auth } from './firebase.js';
 import { signInAnonymously } from 'firebase/auth';
 
+// Phase 1 sponsorship system — campaign-based inventory.
+import {
+  listDispensaries, saveDispensary, deleteDispensary,
+  getDispensaryNameSync, getDispensaryMap, invalidateDispensaryCache,
+} from './services/dispensaryService.js';
+import {
+  listAdvertisers, createAdvertiser, updateAdvertiser, deleteAdvertiser, getAdvertiser,
+  ADVERTISER_STATUS,
+} from './services/advertiserService.js';
+import {
+  listCampaigns, createCampaign, updateCampaign, deleteCampaign, getCampaign,
+  CAMPAIGN_STATUS, CAMPAIGN_TIER, TIER_DEFAULTS, isCampaignLive,
+} from './services/campaignService.js';
+import { invalidateSponsorshipCache } from './services/sponsorshipService.js';
+import { runSponsorshipMigrationIfNeeded } from './services/sponsorshipMigration.js';
+
 // SHA-256 hash of the admin password
 const ADMIN_HASH = 'b6cba8b101e45c8b2eddd705efc782ef96d4e32b090a5db14ccdb77d1247426a';
 const SESSION_KEY = 'cpfm_admin_auth';
 
-const DISPENSARY_NAMES = {
-  'cookies-hayward': 'Cookies Hayward',
-  'garden-of-eden': 'Garden of Eden',
-  'we-are-hemp': 'We Are Hemp',
-  'hayward-dispensary-delivery': 'Hayward Dispensary Delivery',
-  'nug-wellness': 'NUG Wellness',
-  'flor-union-city': 'FLOR - Union City Dispensary',
-  'lemonnade-union-city': 'Lemonnade Union City Dispensary',
-  'harborside-san-leandro': 'Harborside San Leandro Dispensary',
-  '4twenty-market-oakland': '4Twenty Market Weed Dispensary Oakland',
-  'three-trees-oakland': 'Three Trees Weed Dispensary Kiosk',
-  'kanna-oakland': 'KANNA Weed Dispensary Oakland',
-  'harborside-oakland': 'Harborside Oakland Dispensary',
-  'ivy-hill-oakland': 'Ivy Hill Weed Dispensary Oakland',
-  'urbana-oakland': 'Urbana Weed Dispensary Oakland',
-};
+// Dispensaries are now Firestore-backed (see dispensaryService.js).
+// The map is prefetched at dashboard init (showDashboard) and refreshed
+// after any mutation. _dispensaryPairs holds [slug, name] tuples in
+// display-name order so the form rendering code can stay synchronous.
+let _dispensaryPairs = [];
+function dispensaryLabel(slug) {
+  return getDispensaryNameSync(slug);
+}
 
 const ALL_EFFECTS = ['Creative','Energetic','Euphoric','Focused','Giggly','Happy','Hungry','Relaxed','Sleepy','Talkative','Tingly','Uplifted'];
 const ALL_FLAVORS  = ['Apple','Banana','Berry','Blueberry','Candy','Cheese','Cherry','Chocolate','Citrus','Coffee','Creamy','Diesel','Earthy','Floral','Flowery','Fruity','Grape','Guava','Lemon','Mango','Melon','Mint','Minty','Nutty','Orange','Peach','Pine','Pineapple','Plum','Pungent','Sour','Spicy','Strawberry','Sweet','Tropical','Vanilla','Woody'];
@@ -149,7 +157,7 @@ function refreshFlavors() {
 
 function renderDispensaryCheckboxes(selected = []) {
   const group = document.getElementById('strain-dispensaries-group');
-  group.innerHTML = Object.entries(DISPENSARY_NAMES).map(([key, label]) =>
+  group.innerHTML = _dispensaryPairs.map(([key, label]) =>
     `<label class="admin-checkbox-label">
       <input type="checkbox" value="${key}" ${selected.includes(key) ? 'checked' : ''} />
       ${label}
@@ -252,11 +260,17 @@ function renderStrainList() {
     return;
   }
 
+  // Phase 1: the ⭐ button is gone — sponsorship is managed inside a
+  // campaign now. We still show a small read-only badge if a strain is
+  // currently part of any live campaign's sponsored inventory, so the
+  // operator can see at a glance what's active without leaving this list.
+  const liveSponsoredIds = _liveSponsoredStrainIds || new Set();
+
   container.innerHTML = rows.map(s => {
     const isHidden    = strainDelta.hidden.includes(s.id);
     const isAddition  = s._isAddition;
     const hasOverride = !isAddition && !!strainDelta.overrides[s.id];
-    const isSponsored = (strainDelta.sponsored || []).includes(s.id);
+    const inLiveCampaign = liveSponsoredIds.has(s.id);
 
     return `
       <div class="admin-strain-row ${isHidden ? 'admin-strain-row--hidden' : ''}" data-id="${esc(s.id)}">
@@ -266,13 +280,12 @@ function renderStrainList() {
           ${isAddition  ? '<span class="admin-tag" style="border-color:var(--green-primary);color:var(--green-glow)">🌱 Added</span>' : ''}
           ${hasOverride ? '<span class="admin-tag" style="border-color:#fbbf24;color:#fbbf24">edited</span>' : ''}
           ${s.needsReview ? '<span class="admin-tag" style="border-color:#f87171;color:#f87171">⚠️ Review</span>' : ''}
-          ${isSponsored ? '<span class="admin-tag" style="border-color:#f59e0b;color:#f59e0b">⭐ Sponsored</span>' : ''}
+          ${inLiveCampaign ? '<span class="admin-tag" style="border-color:#f59e0b;color:#f59e0b" title="This strain is sponsored by a live campaign">⭐ Sponsored</span>' : ''}
         </div>
         <div class="admin-strain-row__actions">
           ${isHidden
             ? `<button class="admin-btn admin-btn--small" data-action="restore" data-id="${esc(s.id)}">↩ Restore</button>`
             : `<button class="admin-btn admin-btn--small" data-action="edit" data-id="${esc(s.id)}" data-addition="${isAddition}">✏️</button>
-               <button class="admin-btn admin-btn--small ${isSponsored ? 'admin-btn--active' : ''}" data-action="sponsor" data-id="${esc(s.id)}" title="${isSponsored ? 'Remove sponsor' : 'Mark as sponsored'}">⭐</button>
                <button class="admin-btn admin-btn--small admin-btn--danger" data-action="${isAddition ? 'delete' : 'hide'}" data-id="${esc(s.id)}">
                  ${isAddition ? '🗑️' : '🙈 Hide'}
                </button>`
@@ -313,26 +326,61 @@ function renderStrainList() {
     });
   });
 
-  container.querySelectorAll('[data-action="sponsor"]').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const id = btn.dataset.id;
-      const sponsored = strainDelta.sponsored || [];
-      if (sponsored.includes(id)) {
-        strainDelta.sponsored = sponsored.filter(s => s !== id);
-      } else {
-        strainDelta.sponsored = [...sponsored, id];
-      }
-      await authedSaveStrainDelta(strainDelta);
-      renderStrainList();
-      populateSponsorDropdown(); // keep dropdown in sync
-    });
-  });
+  // [data-action="sponsor"] listener removed in Phase 1 — sponsorship
+  // is managed inside campaigns now (see initCampaignManager).
 }
 
 // === UI ===
-function showDashboard() {
+async function showDashboard() {
   document.getElementById('login-gate').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
+
+  // Prefetch the dispensary map BEFORE rendering any UI that depends
+  // on it. Falls back to empty so the dashboard still loads if the
+  // collection isn't seeded yet (the migration runs next and seeds it).
+  try {
+    const map = await getDispensaryMap();
+    _dispensaryPairs = Object.entries(map).map(([slug, data]) => [slug, data.name || slug]);
+    _dispensaryPairs.sort((a, b) => a[1].localeCompare(b[1]));
+  } catch (err) {
+    console.warn('Dispensary prefetch failed:', err);
+    _dispensaryPairs = [];
+  }
+
+  // One-shot migration sweep: seed dispensaries, convert legacy sponsor
+  // state into a Legacy campaign, attach orphan ads. Safe to call on
+  // every load — the sentinel doc gates it after the first successful run.
+  try {
+    const summary = await runSponsorshipMigrationIfNeeded();
+    if (summary) {
+      // Migration just ran — refresh the dispensary cache so any newly
+      // seeded entries are visible without a manual reload.
+      invalidateDispensaryCache();
+      const map = await getDispensaryMap();
+      _dispensaryPairs = Object.entries(map).map(([slug, data]) => [slug, data.name || slug]);
+      _dispensaryPairs.sort((a, b) => a[1].localeCompare(b[1]));
+
+      const banner = document.getElementById('migration-banner');
+      const text   = document.getElementById('migration-banner-text');
+      if (banner && text) {
+        const parts = [];
+        if (summary.dispensariesSeeded > 0) parts.push(`${summary.dispensariesSeeded} dispensaries seeded`);
+        if (summary.legacyCampaignId)      parts.push(`legacy sponsorships consolidated into a Legacy campaign`);
+        if (summary.orphanAdsAttached > 0) parts.push(`${summary.orphanAdsAttached} existing ads linked`);
+        text.textContent = parts.length ? parts.join(' · ') + '.' : 'Schema upgraded. No changes were needed.';
+        banner.classList.remove('hidden');
+      }
+    }
+  } catch (err) {
+    console.error('Sponsorship migration failed:', err);
+  }
+
+  // Wire dismiss
+  const dismiss = document.getElementById('migration-banner-dismiss');
+  if (dismiss) dismiss.addEventListener('click', () => {
+    document.getElementById('migration-banner')?.classList.add('hidden');
+  });
+
   loadAdsList();
   initStrainManager();
   initMenuSync();
@@ -340,6 +388,10 @@ function showDashboard() {
   initPagesEditor();
   initSponsorSettings();
   initPartnerStrains();
+  // Phase 1 additions:
+  initCampaignManager();
+  initAdvertiserManager();
+  initDispensaryManager();
 }
 
 function populateSponsorDropdown() {
@@ -374,6 +426,13 @@ function populateSponsorDropdown() {
 }
 
 function initSponsorSettings() {
+  // Phase 1: this section is deprecated — campaigns replace the
+  // threshold/alwaysShow knobs (the render path uses a fixed 50%).
+  // We early-return if the section is marked deprecated so we don't
+  // wire listeners to hidden DOM.
+  const section = document.getElementById('sponsor-settings-section');
+  if (section?.dataset.deprecated === 'true') return;
+
   const thresholdSlider  = document.getElementById('sponsor-threshold');
   const thresholdDisplay = document.getElementById('sponsor-threshold-display');
   const alwaysShowCheck  = document.getElementById('sponsor-always-show');
@@ -520,6 +579,17 @@ function startEditing(ad) {
   document.getElementById('ad-priority').value = ad.priority || 5;
   document.getElementById('priority-display').textContent = ad.priority || 5;
   document.getElementById('ad-description').value = ad.description || '';
+  // Pre-select the ad's owning campaign in the dropdown. The dropdown
+  // is populated at dashboard init; if it hasn't loaded yet, refresh
+  // and then set the value.
+  const campSel = document.getElementById('ad-campaign');
+  if (campSel) {
+    if (campSel.options.length > 1) {
+      campSel.value = ad.campaignId || '';
+    } else if (typeof refreshAdCampaignDropdown === 'function') {
+      refreshAdCampaignDropdown().then(() => { campSel.value = ad.campaignId || ''; });
+    }
+  }
 
   // Show existing image preview
   const preview = document.getElementById('image-preview');
@@ -855,6 +925,9 @@ async function init() {
         imageUrl,
         imagePosition: { x: previewPosition.x, y: previewPosition.y },
         active: true,
+        // Phase 1: every ad belongs to a campaign. Unassigned ads sit
+        // dormant — the new aggregator filters them out.
+        campaignId: document.getElementById('ad-campaign')?.value || null,
       };
 
       if (editingAdId) {
@@ -865,6 +938,12 @@ async function init() {
 
       cancelEditing();
       loadAdsList();
+      // Refresh campaign data — the new ad's impressions/clicks counters
+      // live on the ad doc and are surfaced inside the campaign editor.
+      try {
+        if (typeof invalidateSponsorshipCache === 'function') invalidateSponsorshipCache();
+        if (typeof refreshCampaignList === 'function') await refreshCampaignList();
+      } catch { /* non-fatal */ }
     } catch (err) {
       console.error('Error saving ad:', err);
       alert('Failed to save ad. Check console for details.');
@@ -1325,10 +1404,15 @@ async function initPagesEditor() {
 
 // === PARTNER STRAINS ===
 async function initPartnerStrains() {
+  // Phase 1: deprecated — partner strains belong to a campaign now.
+  // Early-return if the section is marked deprecated.
+  const section = document.getElementById('partner-strains-section');
+  if (section?.dataset.deprecated === 'true') return;
+
   // Populate dispensary select
   const dispSel = document.getElementById('partner-dispensary');
   dispSel.innerHTML = '<option value="">— none —</option>' +
-    Object.entries(DISPENSARY_NAMES).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+    _dispensaryPairs.map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
 
   function splitTags(str) {
     return str.split(',').map(s => s.trim()).filter(Boolean);
@@ -1352,7 +1436,7 @@ async function initPartnerStrains() {
     const listEl = document.getElementById('partner-strains-list');
     if (!partners.length) { listEl.innerHTML = '<p class="admin-hint">No partner strains yet.</p>'; return; }
     listEl.innerHTML = partners.map((p, i) => {
-      const disp = p.dispensaryId ? (DISPENSARY_NAMES[p.dispensaryId] || p.dispensaryId) : '—';
+      const disp = p.dispensaryId ? dispensaryLabel(p.dispensaryId) : '—';
       return `
         <div class="partner-row ${p.active ? '' : 'partner-row--inactive'}">
           <div class="partner-row__info">
@@ -1451,6 +1535,830 @@ async function initPartnerStrains() {
 
   document.getElementById('partner-cancel-btn').addEventListener('click', resetForm);
 }
+
+// ─────────────────────────────────────────────────────────────────────────
+// PHASE 1: Campaign / Advertiser / Dispensary managers
+// ─────────────────────────────────────────────────────────────────────────
+//
+// These three managers replace the prior "edit one Firestore doc at a
+// time" mental model with: an Advertiser owns N Campaigns, a Campaign
+// owns its inventory (sponsored strains, partner strains, ads). The
+// user-facing app reads everything via the sponsorshipService aggregator.
+//
+// Single rule the operator needs to remember:
+//   A campaign is only visible to users while status === 'live' AND
+//   now is between startsAt and endsAt. Everything else is a knob.
+
+let _campaignsCache    = [];
+let _advertisersCache  = [];
+let _editingCampaign   = null; // the campaign object being edited, or null for "new"
+let _editingPartners   = [];   // working copy of inventory.partnerStrains during edit
+let _liveSponsoredStrainIds = new Set(); // strain IDs currently sponsored by any live campaign — used for the read-only ⭐ badge in Manage Strains
+
+function fmtDate(value) {
+  if (!value) return '—';
+  const d = value instanceof Date ? value : (value.toDate ? value.toDate() : new Date(value));
+  if (isNaN(d)) return '—';
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function toDateInputValue(value) {
+  if (!value) return '';
+  const d = value instanceof Date ? value : (value.toDate ? value.toDate() : new Date(value));
+  if (isNaN(d)) return '';
+  return d.toISOString().slice(0, 10);
+}
+
+function fmtMoney(cents) {
+  if (cents == null || isNaN(cents)) return '$0';
+  return `$${(cents / 100).toFixed(0)}`;
+}
+
+function fmtNumber(n) {
+  if (n == null || isNaN(n)) return '0';
+  return Number(n).toLocaleString();
+}
+
+function ctr(impressions, clicks) {
+  if (!impressions) return '—';
+  const pct = (clicks / impressions) * 100;
+  return `${pct.toFixed(1)}%`;
+}
+
+// ─── Campaign Manager ────────────────────────────────────────────────────
+
+async function initCampaignManager() {
+  const newBtn         = document.getElementById('btn-new-campaign');
+  const editor         = document.getElementById('campaign-editor');
+  const editorClose    = document.getElementById('campaign-editor-close');
+  const saveBtn        = document.getElementById('btn-campaign-save');
+  const deleteBtn      = document.getElementById('btn-campaign-delete');
+  const newAdvLink     = document.getElementById('campaign-new-advertiser-link');
+  const addPartnerBtn  = document.getElementById('btn-campaign-add-partner');
+  const tierSelect     = document.getElementById('campaign-tier');
+  const priceInput     = document.getElementById('campaign-price');
+
+  if (!editor) return; // safety: only init if the section is present
+
+  newBtn?.addEventListener('click', () => openCampaignEditor(null));
+  editorClose?.addEventListener('click', closeCampaignEditor);
+  saveBtn?.addEventListener('click', saveCampaignFromEditor);
+  deleteBtn?.addEventListener('click', deleteCampaignFromEditor);
+  newAdvLink?.addEventListener('click', (e) => { e.preventDefault(); openAdvertiserModal(null); });
+  addPartnerBtn?.addEventListener('click', () => openPartnerMiniModal(null));
+
+  // When the tier changes, suggest the matching default price.
+  tierSelect?.addEventListener('change', () => {
+    const def = TIER_DEFAULTS[tierSelect.value];
+    if (def && priceInput) priceInput.value = Math.round(def.monthlyPriceCents / 100);
+  });
+
+  // Partner mini-modal save/cancel
+  document.getElementById('partner-mini-cancel')?.addEventListener('click', () => closeModal('partner-mini-modal'));
+  document.getElementById('partner-mini-save')?.addEventListener('click', savePartnerMiniModal);
+
+  await refreshCampaignList();
+}
+
+function closeModal(id) {
+  document.getElementById(id)?.classList.add('hidden');
+}
+function openModal(id) {
+  document.getElementById(id)?.classList.remove('hidden');
+}
+
+async function refreshCampaignList() {
+  const loading = document.getElementById('campaigns-loading');
+  const empty   = document.getElementById('campaigns-empty');
+  const wrap    = document.getElementById('campaigns-by-status');
+
+  loading?.classList.remove('hidden');
+  empty?.classList.add('hidden');
+  if (wrap) wrap.innerHTML = '';
+
+  try {
+    [_campaignsCache, _advertisersCache] = await Promise.all([
+      listCampaigns(),
+      listAdvertisers(),
+    ]);
+  } catch (err) {
+    console.error('Failed to load campaigns/advertisers:', err);
+    _campaignsCache = []; _advertisersCache = [];
+  }
+
+  loading?.classList.add('hidden');
+
+  // Snapshot stats
+  const now = new Date();
+  const live = _campaignsCache.filter(c => isCampaignLive(c, now));
+
+  // Rebuild the read-only "in live campaign" set used by Manage Strains.
+  _liveSponsoredStrainIds = new Set();
+  for (const c of live) {
+    for (const id of (c.inventory?.sponsoredStrainIds || [])) {
+      _liveSponsoredStrainIds.add(id);
+    }
+  }
+  // Re-render strain list if it's already on screen so badges update.
+  if (document.getElementById('strains-admin-list')?.children.length) {
+    renderStrainList();
+  }
+
+  // Renewal banner — campaigns ending in the next 7 days.
+  renderRenewalBanner(_campaignsCache, _advertisersCache);
+  const mrrCents = live.reduce((sum, c) => sum + (c.monthlyPriceCents || 0), 0);
+  const totalImpr = _campaignsCache.reduce((s, c) => s + (c.impressions || 0), 0);
+  const totalClicks = _campaignsCache.reduce((s, c) => s + (c.clicks || 0), 0);
+  document.getElementById('stat-live-count').textContent   = String(live.length);
+  document.getElementById('stat-mrr').textContent          = fmtMoney(mrrCents);
+  document.getElementById('stat-impressions').textContent  = fmtNumber(totalImpr);
+  document.getElementById('stat-clicks').textContent       = fmtNumber(totalClicks);
+
+  if (_campaignsCache.length === 0) {
+    empty?.classList.remove('hidden');
+    return;
+  }
+
+  // Group by status (live, scheduled, paused, draft, ended)
+  const groups = {
+    live:      { title: 'Live',      list: [] },
+    scheduled: { title: 'Scheduled', list: [] },
+    paused:    { title: 'Paused',    list: [] },
+    draft:     { title: 'Draft',     list: [] },
+    ended:     { title: 'Ended',     list: [] },
+  };
+  for (const c of _campaignsCache) {
+    const key = groups[c.status] ? c.status : 'draft';
+    groups[key].list.push(c);
+  }
+
+  const advertiserNameById = Object.fromEntries(_advertisersCache.map(a => [a.id, a.name]));
+
+  const html = Object.entries(groups)
+    .filter(([, g]) => g.list.length > 0)
+    .map(([key, g]) => `
+      <div class="campaign-status-group">
+        <div class="campaign-status-group__title">${g.title} · ${g.list.length}</div>
+        ${g.list.map(c => renderCampaignCard(c, advertiserNameById)).join('')}
+      </div>
+    `).join('');
+
+  if (wrap) wrap.innerHTML = html;
+
+  // Wire actions
+  wrap?.querySelectorAll('[data-campaign-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.campaignId;
+      const action = btn.dataset.campaignAction;
+      const c = _campaignsCache.find(x => x.id === id);
+      if (!c) return;
+      if (action === 'edit')    return openCampaignEditor(c);
+      if (action === 'pause')   return quickStatusChange(c, CAMPAIGN_STATUS.PAUSED);
+      if (action === 'resume')  return quickStatusChange(c, CAMPAIGN_STATUS.LIVE);
+      if (action === 'end')     return quickStatusChange(c, CAMPAIGN_STATUS.ENDED);
+      if (action === 'preview') return copyPreviewLink(c, btn);
+      if (action === 'clone')   return cloneCampaign(c);
+    });
+  });
+}
+
+/**
+ * Render the renewal alert banner. Lists every campaign whose endsAt
+ * is within the next 7 days, with a one-click "Clone for next month"
+ * action. Hidden entirely if nothing is expiring soon.
+ *
+ * Why this exists: a paying advertiser who lapses unnoticed is harder
+ * to win back than a current advertiser whose campaign was renewed on
+ * time. This is the single biggest churn defense at our scale.
+ */
+function renderRenewalBanner(campaigns, advertisers) {
+  const banner = document.getElementById('renewal-banner');
+  if (!banner) return;
+
+  const now = new Date();
+  const horizon = new Date(now);
+  horizon.setDate(horizon.getDate() + 7);
+
+  const expiring = campaigns.filter(c => {
+    if (c.status !== CAMPAIGN_STATUS.LIVE) return false;
+    if (!c.endsAt) return false;
+    const ends = c.endsAt.toDate ? c.endsAt.toDate() : new Date(c.endsAt);
+    return ends >= now && ends <= horizon;
+  }).sort((a, b) => {
+    const ad = a.endsAt.toDate ? a.endsAt.toDate() : new Date(a.endsAt);
+    const bd = b.endsAt.toDate ? b.endsAt.toDate() : new Date(b.endsAt);
+    return ad - bd;
+  });
+
+  if (expiring.length === 0) {
+    banner.classList.add('hidden');
+    banner.innerHTML = '';
+    return;
+  }
+
+  const advertiserName = id => advertisers.find(a => a.id === id)?.name || '— unknown —';
+
+  banner.innerHTML = `
+    <div class="renewal-banner__head">
+      <span class="renewal-banner__icon">⏰</span>
+      <div class="renewal-banner__head-text">
+        <strong>${expiring.length} campaign${expiring.length > 1 ? 's' : ''} ending in the next 7 days.</strong>
+        <span class="renewal-banner__sub">Clone for next month before they expire to avoid lapses.</span>
+      </div>
+    </div>
+    <ul class="renewal-banner__list">
+      ${expiring.map(c => {
+        const ends = c.endsAt.toDate ? c.endsAt.toDate() : new Date(c.endsAt);
+        const daysLeft = Math.max(0, Math.ceil((ends - now) / (1000 * 60 * 60 * 24)));
+        return `
+          <li class="renewal-banner__row" data-campaign-id="${esc(c.id)}">
+            <div class="renewal-banner__row-main">
+              <span class="renewal-banner__name">${esc(c.name || 'Untitled')}</span>
+              <span class="renewal-banner__meta">${esc(advertiserName(c.advertiserId))} · ends in ${daysLeft} day${daysLeft === 1 ? '' : 's'} · ${fmtMoney(c.monthlyPriceCents)}/mo</span>
+            </div>
+            <button class="admin-btn admin-btn--small admin-btn--primary" data-renewal-action="clone" data-campaign-id="${esc(c.id)}">⎘ Clone for next month</button>
+          </li>`;
+      }).join('')}
+    </ul>
+  `;
+  banner.classList.remove('hidden');
+
+  banner.querySelectorAll('[data-renewal-action="clone"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const c = expiring.find(x => x.id === btn.dataset.campaignId);
+      if (c) cloneCampaign(c);
+    });
+  });
+}
+
+/**
+ * Copy the public preview URL for a campaign to the clipboard. The
+ * button gives a brief "Copied ✓" flash so the operator knows the
+ * action succeeded — clipboard writes are otherwise invisible.
+ */
+async function copyPreviewLink(campaign, btn) {
+  const url = `${window.location.origin}/preview.html?c=${encodeURIComponent(campaign.id)}`;
+  try {
+    await navigator.clipboard.writeText(url);
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(() => { btn.textContent = orig; }, 1800);
+  } catch {
+    // Fallback for clipboard API failures: prompt the user
+    prompt('Copy this preview link:', url);
+  }
+}
+
+/**
+ * Clone a campaign. Opens the editor pre-filled with the same
+ * advertiser, inventory, and tier. Dates default to "today" and
+ * "today + one month" so the operator can confirm and save.
+ *
+ * Most renewals are the same campaign with new dates — this drops
+ * month-2 setup time from a few minutes to under a minute.
+ */
+function cloneCampaign(source) {
+  const now = new Date();
+  const monthLater = new Date(now);
+  monthLater.setMonth(monthLater.getMonth() + 1);
+
+  const clone = {
+    // No id — this signals the editor to "create new" on save.
+    advertiserId: source.advertiserId,
+    name:         (source.name || 'Untitled') + ' — renewal',
+    tier:         source.tier,
+    monthlyPriceCents: source.monthlyPriceCents,
+    status:       CAMPAIGN_STATUS.DRAFT, // safe default; operator promotes to live
+    startsAt:     now,
+    endsAt:       monthLater,
+    inventory: {
+      sponsoredStrainIds: [...(source.inventory?.sponsoredStrainIds || [])],
+      partnerStrains:     JSON.parse(JSON.stringify(source.inventory?.partnerStrains || [])),
+      adIds:              [], // ads stay with the original; the operator reassigns explicitly
+    },
+    // Counters intentionally start at 0 — the clone is a new campaign.
+    impressions: 0,
+    clicks: 0,
+  };
+  openCampaignEditor(clone);
+}
+
+function renderCampaignCard(c, advertiserNameById) {
+  const advName = advertiserNameById[c.advertiserId] || '— unknown —';
+  const tier    = c.tier || 'custom';
+  const dateRange = `${fmtDate(c.startsAt)} → ${c.endsAt ? fmtDate(c.endsAt) : 'open'}`;
+  const impressions = c.impressions || 0;
+  const clicks      = c.clicks || 0;
+
+  let actionButtons = '';
+  if (c.status === CAMPAIGN_STATUS.LIVE)   actionButtons = `<button class="admin-btn admin-btn--small" data-campaign-action="pause"  data-campaign-id="${c.id}">Pause</button>`;
+  if (c.status === CAMPAIGN_STATUS.PAUSED) actionButtons = `<button class="admin-btn admin-btn--small" data-campaign-action="resume" data-campaign-id="${c.id}">Resume</button>`;
+
+  return `
+    <div class="campaign-card campaign-card--${c.status || 'draft'}">
+      <div class="campaign-card__main">
+        <div class="campaign-card__title-row">
+          <span class="campaign-card__name">${esc(c.name || 'Untitled')}</span>
+          <span class="campaign-card__tier campaign-card__tier--${tier}">${tier}</span>
+        </div>
+        <div class="campaign-card__meta">
+          ${esc(advName)} · ${dateRange} · ${fmtMoney(c.monthlyPriceCents)}/mo
+        </div>
+      </div>
+      <div class="campaign-card__stats">
+        <div class="campaign-card__stat"><strong>${fmtNumber(impressions)}</strong>impressions</div>
+        <div class="campaign-card__stat"><strong>${fmtNumber(clicks)}</strong>clicks</div>
+        <div class="campaign-card__stat"><strong>${ctr(impressions, clicks)}</strong>CTR</div>
+      </div>
+      <div class="campaign-card__actions">
+        ${actionButtons}
+        <button class="admin-btn admin-btn--small" data-campaign-action="preview" data-campaign-id="${c.id}" title="Copy a shareable preview link to your clipboard">📋 Preview link</button>
+        <button class="admin-btn admin-btn--small" data-campaign-action="clone" data-campaign-id="${c.id}" title="Clone this campaign for next month">⎘ Clone</button>
+        <button class="admin-btn admin-btn--small admin-btn--primary" data-campaign-action="edit" data-campaign-id="${c.id}">Manage</button>
+      </div>
+    </div>
+  `;
+}
+
+async function quickStatusChange(campaign, nextStatus) {
+  try {
+    await updateCampaign(campaign.id, { status: nextStatus });
+    invalidateSponsorshipCache();
+    await refreshCampaignList();
+  } catch (err) {
+    alert(`Status change failed: ${err.message}`);
+  }
+}
+
+async function openCampaignEditor(campaign) {
+  _editingCampaign = campaign;
+  _editingPartners = campaign ? [...(campaign.inventory?.partnerStrains || [])] : [];
+
+  document.getElementById('campaign-editor-title').textContent = campaign ? 'Edit Campaign' : 'New Campaign';
+  document.getElementById('campaign-edit-id').value = campaign?.id || '';
+  document.getElementById('campaign-name').value  = campaign?.name || '';
+  document.getElementById('campaign-tier').value  = campaign?.tier || CAMPAIGN_TIER.BRONZE;
+  document.getElementById('campaign-price').value =
+    campaign?.monthlyPriceCents != null ? Math.round(campaign.monthlyPriceCents / 100)
+                                        : Math.round((TIER_DEFAULTS[CAMPAIGN_TIER.BRONZE].monthlyPriceCents) / 100);
+  document.getElementById('campaign-starts').value = toDateInputValue(campaign?.startsAt);
+  document.getElementById('campaign-ends').value   = toDateInputValue(campaign?.endsAt);
+  document.getElementById('campaign-status').value = campaign?.status || CAMPAIGN_STATUS.DRAFT;
+
+  // Populate advertiser dropdown
+  const advSel = document.getElementById('campaign-advertiser');
+  advSel.innerHTML = '<option value="">— select —</option>' +
+    _advertisersCache.map(a => `<option value="${a.id}" ${campaign?.advertiserId === a.id ? 'selected' : ''}>${esc(a.name)}</option>`).join('');
+
+  // Populate partner-mini dispensary dropdown
+  const pmDisp = document.getElementById('partner-mini-dispensary');
+  if (pmDisp) {
+    pmDisp.innerHTML = '<option value="">— none —</option>' +
+      _dispensaryPairs.map(([k, v]) => `<option value="${esc(k)}">${esc(v)}</option>`).join('');
+  }
+
+  renderSponsoredPicker(campaign?.inventory?.sponsoredStrainIds || []);
+  renderPartnerListInEditor();
+  await renderAdsInEditor(campaign);
+  renderPerfPanel(campaign);
+
+  // Show Delete only when editing an existing campaign — not for
+  // brand-new ones or clones (clones have no id until saved).
+  document.getElementById('btn-campaign-delete').classList.toggle('hidden', !campaign?.id);
+  document.getElementById('campaign-editor').classList.remove('hidden');
+  document.getElementById('campaign-editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeCampaignEditor() {
+  _editingCampaign = null;
+  _editingPartners = [];
+  document.getElementById('campaign-editor').classList.add('hidden');
+}
+
+function renderSponsoredPicker(selectedIds) {
+  const picker = document.getElementById('campaign-sponsored-picker');
+  if (!picker) return;
+
+  // Combine base strains + admin-added strains. We're tolerant of the
+  // strainDelta cache not being loaded yet — the rendered picker just
+  // shows base strains in that case.
+  const all = [
+    ...strainsData,
+    ...(strainDelta.additions || []),
+  ].sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+  const selected = new Set(selectedIds);
+  picker.innerHTML = all.map(s => {
+    const isSel = selected.has(s.id);
+    return `
+      <label class="campaign-picker__item ${isSel ? 'campaign-picker__item--selected' : ''}" data-strain-id="${esc(s.id)}">
+        <input type="checkbox" ${isSel ? 'checked' : ''} />
+        <span>${esc(s.name)}</span>
+      </label>`;
+  }).join('');
+
+  picker.querySelectorAll('.campaign-picker__item').forEach(item => {
+    item.addEventListener('change', () => {
+      const cb = item.querySelector('input');
+      item.classList.toggle('campaign-picker__item--selected', cb.checked);
+    });
+  });
+}
+
+function getSelectedSponsoredIds() {
+  return [...document.querySelectorAll('#campaign-sponsored-picker .campaign-picker__item')]
+    .filter(el => el.querySelector('input').checked)
+    .map(el => el.dataset.strainId);
+}
+
+function renderPartnerListInEditor() {
+  const list = document.getElementById('campaign-partners-list');
+  if (!list) return;
+
+  if (_editingPartners.length === 0) {
+    list.innerHTML = '<p class="admin-hint" style="padding:0.5rem 0;">No partners yet. Click "+ Add partner" above.</p>';
+    return;
+  }
+
+  list.innerHTML = _editingPartners.map((p, i) => `
+    <div class="campaign-partner-row">
+      <div class="campaign-partner-row__main">
+        <span class="campaign-partner-row__name">${esc(p.strainName || '—')} <small style="color:var(--text-muted);">${esc(p.brandName || '')}</small></span>
+        <span class="campaign-partner-row__meta">${esc(p.strainType || 'hybrid')} · ${p.dispensaryId ? esc(dispensaryLabel(p.dispensaryId)) : 'no dispensary'} · ${p.clickUrl ? 'linked' : 'no link'}</span>
+      </div>
+      <div class="campaign-partner-row__actions">
+        <button class="admin-btn admin-btn--small" data-partner-idx="${i}" data-partner-action="edit">Edit</button>
+        <button class="admin-btn admin-btn--small admin-btn--danger" data-partner-idx="${i}" data-partner-action="delete">✕</button>
+      </div>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('[data-partner-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.partnerIdx, 10);
+      const action = btn.dataset.partnerAction;
+      if (action === 'delete') {
+        if (!confirm('Remove this partner from the campaign?')) return;
+        _editingPartners.splice(idx, 1);
+        renderPartnerListInEditor();
+      } else if (action === 'edit') {
+        openPartnerMiniModal(idx);
+      }
+    });
+  });
+}
+
+function openPartnerMiniModal(idx) {
+  document.getElementById('partner-mini-index').value = idx == null ? '' : String(idx);
+  document.getElementById('partner-mini-title').textContent = idx == null ? 'Add Partner Strain' : 'Edit Partner Strain';
+
+  const p = idx == null ? {} : _editingPartners[idx] || {};
+  document.getElementById('partner-mini-name').value     = p.strainName || '';
+  document.getElementById('partner-mini-type').value     = p.strainType || 'hybrid';
+  document.getElementById('partner-mini-brand').value    = p.brandName || '';
+  document.getElementById('partner-mini-effects').value  = (p.effects || []).join(', ');
+  document.getElementById('partner-mini-flavors').value  = (p.flavors || []).join(', ');
+  document.getElementById('partner-mini-dispensary').value = p.dispensaryId || '';
+  document.getElementById('partner-mini-url').value      = p.clickUrl || '';
+  document.getElementById('partner-mini-active').checked = p.active !== false;
+
+  openModal('partner-mini-modal');
+}
+
+function savePartnerMiniModal() {
+  const idxRaw = document.getElementById('partner-mini-index').value;
+  const idx    = idxRaw === '' ? null : parseInt(idxRaw, 10);
+
+  const entry = {
+    strainName:   document.getElementById('partner-mini-name').value.trim(),
+    strainType:   document.getElementById('partner-mini-type').value,
+    brandName:    document.getElementById('partner-mini-brand').value.trim(),
+    effects:      document.getElementById('partner-mini-effects').value.split(',').map(s => s.trim()).filter(Boolean),
+    flavors:      document.getElementById('partner-mini-flavors').value.split(',').map(s => s.trim()).filter(Boolean),
+    dispensaryId: document.getElementById('partner-mini-dispensary').value || null,
+    clickUrl:     document.getElementById('partner-mini-url').value.trim() || null,
+    active:       document.getElementById('partner-mini-active').checked,
+  };
+
+  if (!entry.strainName) { alert('Strain name is required.'); return; }
+
+  if (idx == null) {
+    _editingPartners.push(entry);
+  } else {
+    _editingPartners[idx] = entry;
+  }
+
+  renderPartnerListInEditor();
+  closeModal('partner-mini-modal');
+}
+
+async function renderAdsInEditor(campaign) {
+  const wrap = document.getElementById('campaign-ads-list');
+  if (!wrap) return;
+
+  // Show ads currently assigned to this campaign. Editing the campaignId
+  // on each ad happens in the existing Add/Edit Ad form below.
+  const ads = await getAllAds();
+  const assigned = campaign ? ads.filter(a => a.campaignId === campaign.id) : [];
+
+  if (assigned.length === 0) {
+    wrap.innerHTML = `<p class="admin-hint" style="padding:0.5rem 0;">
+      No ads assigned to this campaign yet. Create an ad in "Add New Ad" below and set its Campaign to this one.
+    </p>`;
+    return;
+  }
+
+  wrap.innerHTML = assigned.map(ad => `
+    <div class="campaign-ad-row">
+      <img src="${ad.imageUrl}" class="campaign-ad-row__thumb" alt="" />
+      <div class="campaign-ad-row__title">${esc(ad.title || '(untitled)')}</div>
+      <span class="campaign-ad-row__meta">${esc(ad.placement)} · ${esc(ad.displayType || 'card')} · ${fmtNumber(ad.impressions || 0)} impressions</span>
+    </div>
+  `).join('');
+}
+
+function renderPerfPanel(campaign) {
+  const wrap = document.getElementById('campaign-editor-perf');
+  if (!wrap) return;
+  if (!campaign) { wrap.innerHTML = ''; return; }
+
+  const impressions = campaign.impressions || 0;
+  const clicks      = campaign.clicks || 0;
+  wrap.innerHTML = `
+    <div><div class="perf-stat__label">Impressions</div><div class="perf-stat__value">${fmtNumber(impressions)}</div></div>
+    <div><div class="perf-stat__label">Clicks</div><div class="perf-stat__value">${fmtNumber(clicks)}</div></div>
+    <div><div class="perf-stat__label">CTR</div><div class="perf-stat__value">${ctr(impressions, clicks)}</div></div>
+    <div><div class="perf-stat__label">Last activity</div><div class="perf-stat__value" style="font-size:0.95rem;">${fmtDate(campaign.lastImpressionAt) || '—'}</div></div>
+  `;
+}
+
+async function saveCampaignFromEditor() {
+  const id = document.getElementById('campaign-edit-id').value || null;
+  const advertiserId = document.getElementById('campaign-advertiser').value;
+  const name = document.getElementById('campaign-name').value.trim();
+  const tier = document.getElementById('campaign-tier').value;
+  const priceRaw = document.getElementById('campaign-price').value;
+  const monthlyPriceCents = priceRaw ? Math.round(parseFloat(priceRaw) * 100) : 0;
+  const startsAtStr = document.getElementById('campaign-starts').value;
+  const endsAtStr   = document.getElementById('campaign-ends').value;
+  const status = document.getElementById('campaign-status').value;
+  const sponsoredStrainIds = getSelectedSponsoredIds();
+
+  if (!advertiserId) { alert('Please pick an advertiser.'); return; }
+  if (!name)         { alert('Campaign needs a name.');    return; }
+
+  const btn = document.getElementById('btn-campaign-save');
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  try {
+    const payload = {
+      advertiserId,
+      name,
+      tier,
+      monthlyPriceCents,
+      status,
+      startsAt: startsAtStr ? new Date(startsAtStr) : null,
+      endsAt:   endsAtStr   ? new Date(endsAtStr)   : null,
+      inventory: {
+        sponsoredStrainIds,
+        partnerStrains: _editingPartners,
+        // adIds isn't edited here; ads carry their own campaignId and
+        // are listed read-only above. We don't mirror them to keep one
+        // source of truth (the ad doc).
+      },
+    };
+
+    if (id) {
+      await updateCampaign(id, payload);
+    } else {
+      await createCampaign(payload);
+    }
+    invalidateSponsorshipCache();
+    closeCampaignEditor();
+    await refreshCampaignList();
+    await refreshAdCampaignDropdown();
+    btn.textContent = 'Saved ✓';
+    setTimeout(() => { btn.textContent = 'Save Campaign'; btn.disabled = false; }, 1500);
+  } catch (err) {
+    console.error(err);
+    alert(`Save failed: ${err.message}`);
+    btn.textContent = 'Save Campaign';
+    btn.disabled = false;
+  }
+}
+
+async function deleteCampaignFromEditor() {
+  const id = document.getElementById('campaign-edit-id').value;
+  if (!id) return;
+  if (!confirm('Permanently delete this campaign? Ads assigned to it will become unassigned (won\'t serve).')) return;
+  try {
+    await deleteCampaign(id);
+    invalidateSponsorshipCache();
+    closeCampaignEditor();
+    await refreshCampaignList();
+    await refreshAdCampaignDropdown();
+  } catch (err) {
+    alert(`Delete failed: ${err.message}`);
+  }
+}
+
+// ─── Advertiser Manager ──────────────────────────────────────────────────
+
+function initAdvertiserManager() {
+  document.getElementById('btn-new-advertiser')?.addEventListener('click', () => openAdvertiserModal(null));
+  document.getElementById('advertiser-modal-cancel')?.addEventListener('click', () => closeModal('advertiser-modal'));
+  document.getElementById('advertiser-modal-save')?.addEventListener('click', saveAdvertiserFromModal);
+  refreshAdvertiserList();
+}
+
+function openAdvertiserModal(advertiser) {
+  document.getElementById('advertiser-modal-title').textContent = advertiser ? 'Edit Advertiser' : 'New Advertiser';
+  document.getElementById('advertiser-edit-id').value = advertiser?.id || '';
+  document.getElementById('advertiser-name').value    = advertiser?.name || '';
+  document.getElementById('advertiser-contact').value = advertiser?.contactName || '';
+  document.getElementById('advertiser-email').value   = advertiser?.contactEmail || '';
+  document.getElementById('advertiser-phone').value   = advertiser?.phone || '';
+  document.getElementById('advertiser-notes').value   = advertiser?.notes || '';
+
+  const dispSel = document.getElementById('advertiser-dispensary');
+  dispSel.innerHTML = '<option value="">— none —</option>' +
+    _dispensaryPairs.map(([k, v]) => `<option value="${esc(k)}" ${advertiser?.dispensaryId === k ? 'selected' : ''}>${esc(v)}</option>`).join('');
+
+  openModal('advertiser-modal');
+}
+
+async function saveAdvertiserFromModal() {
+  const id = document.getElementById('advertiser-edit-id').value || null;
+  const payload = {
+    name:         document.getElementById('advertiser-name').value.trim(),
+    contactName:  document.getElementById('advertiser-contact').value.trim(),
+    contactEmail: document.getElementById('advertiser-email').value.trim(),
+    phone:        document.getElementById('advertiser-phone').value.trim(),
+    dispensaryId: document.getElementById('advertiser-dispensary').value || null,
+    notes:        document.getElementById('advertiser-notes').value.trim(),
+  };
+  if (!payload.name) { alert('Business name required.'); return; }
+
+  try {
+    if (id) await updateAdvertiser(id, payload);
+    else    await createAdvertiser(payload);
+    closeModal('advertiser-modal');
+    await refreshAdvertiserList();
+    await refreshCampaignList(); // advertiser names show up there
+  } catch (err) {
+    alert(`Save failed: ${err.message}`);
+  }
+}
+
+async function refreshAdvertiserList() {
+  const wrap = document.getElementById('advertisers-list');
+  if (!wrap) return;
+
+  const [advertisers, campaigns] = await Promise.all([
+    listAdvertisers(),
+    listCampaigns(),
+  ]);
+  _advertisersCache = advertisers;
+
+  if (advertisers.length === 0) {
+    wrap.innerHTML = '<p class="admin-hint">No advertisers yet. Create one to start a campaign.</p>';
+    return;
+  }
+
+  const countByAdvId = campaigns.reduce((acc, c) => {
+    acc[c.advertiserId] = (acc[c.advertiserId] || 0) + 1;
+    return acc;
+  }, {});
+
+  wrap.innerHTML = advertisers.map(a => {
+    const liveCount = campaigns.filter(c => c.advertiserId === a.id && isCampaignLive(c)).length;
+    return `
+      <div class="advertiser-row" data-id="${esc(a.id)}">
+        <div class="advertiser-row__main">
+          <span class="advertiser-row__name">${esc(a.name)}</span>
+          <span class="advertiser-row__meta">${esc(a.contactName || '—')}${a.contactEmail ? ' · ' + esc(a.contactEmail) : ''}</span>
+          <span class="advertiser-row__campaigns">${countByAdvId[a.id] || 0} campaigns · ${liveCount} live</span>
+        </div>
+        <div class="advertiser-row__actions">
+          <button class="admin-btn admin-btn--small" data-action="edit" data-id="${esc(a.id)}">Edit</button>
+          <button class="admin-btn admin-btn--small admin-btn--danger" data-action="delete" data-id="${esc(a.id)}">✕</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  wrap.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+      if (action === 'edit') {
+        const adv = await getAdvertiser(id);
+        if (adv) openAdvertiserModal(adv);
+      } else if (action === 'delete') {
+        if (!confirm('Delete this advertiser? Their campaigns will remain but will reference a missing advertiser.')) return;
+        try { await deleteAdvertiser(id); await refreshAdvertiserList(); await refreshCampaignList(); }
+        catch (err) { alert(`Delete failed: ${err.message}`); }
+      }
+    });
+  });
+}
+
+// ─── Dispensary Manager ──────────────────────────────────────────────────
+
+function initDispensaryManager() {
+  document.getElementById('btn-save-dispensary')?.addEventListener('click', saveDispensaryFromForm);
+  refreshDispensaryList();
+}
+
+async function saveDispensaryFromForm() {
+  const slug = document.getElementById('dispensary-slug').value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const name = document.getElementById('dispensary-name').value.trim();
+  const city = document.getElementById('dispensary-city').value.trim();
+  if (!slug || !name) { alert('Slug and name are required.'); return; }
+
+  try {
+    await saveDispensary(slug, { name, city, active: true });
+    document.getElementById('dispensary-slug').value = '';
+    document.getElementById('dispensary-name').value = '';
+    document.getElementById('dispensary-city').value = '';
+    invalidateDispensaryCache();
+    const map = await getDispensaryMap();
+    _dispensaryPairs = Object.entries(map).map(([slug, data]) => [slug, data.name || slug]);
+    _dispensaryPairs.sort((a, b) => a[1].localeCompare(b[1]));
+    await refreshDispensaryList();
+    // Also refresh forms that show dispensary dropdowns
+    renderDispensaryCheckboxes(getSelectedDispensaries());
+  } catch (err) {
+    alert(`Save failed: ${err.message}`);
+  }
+}
+
+async function refreshDispensaryList() {
+  const wrap = document.getElementById('dispensaries-list');
+  if (!wrap) return;
+  const list = await listDispensaries();
+
+  if (list.length === 0) {
+    wrap.innerHTML = '<p class="admin-hint">No dispensaries yet.</p>';
+    return;
+  }
+
+  wrap.innerHTML = list.map(d => `
+    <div class="dispensary-row">
+      <div>
+        <div class="dispensary-row__name">${esc(d.name)}</div>
+        <div class="dispensary-row__slug">${esc(d.id)}${d.city ? ' · ' + esc(d.city) : ''}</div>
+      </div>
+      <button class="admin-btn admin-btn--small" data-disp-action="rename" data-disp-id="${esc(d.id)}">Rename</button>
+      <button class="admin-btn admin-btn--small admin-btn--danger" data-disp-action="delete" data-disp-id="${esc(d.id)}">✕</button>
+    </div>`).join('');
+
+  wrap.querySelectorAll('[data-disp-action]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.dispId;
+      const action = btn.dataset.dispAction;
+      if (action === 'rename') {
+        const newName = prompt('New display name:', _dispensaryPairs.find(([s]) => s === id)?.[1] || id);
+        if (!newName) return;
+        await saveDispensary(id, { name: newName });
+        invalidateDispensaryCache();
+        const map = await getDispensaryMap();
+        _dispensaryPairs = Object.entries(map).map(([slug, data]) => [slug, data.name || slug]);
+        _dispensaryPairs.sort((a, b) => a[1].localeCompare(b[1]));
+        await refreshDispensaryList();
+      } else if (action === 'delete') {
+        if (!confirm(`Delete "${id}"? Existing references will fall back to the raw slug.`)) return;
+        await deleteDispensary(id);
+        invalidateDispensaryCache();
+        const map = await getDispensaryMap();
+        _dispensaryPairs = Object.entries(map).map(([slug, data]) => [slug, data.name || slug]);
+        _dispensaryPairs.sort((a, b) => a[1].localeCompare(b[1]));
+        await refreshDispensaryList();
+      }
+    });
+  });
+}
+
+// ─── Ad form: keep the Campaign dropdown populated ───────────────────────
+
+async function refreshAdCampaignDropdown() {
+  const sel = document.getElementById('ad-campaign');
+  if (!sel) return;
+  const current = sel.value;
+  const campaigns = await listCampaigns();
+  sel.innerHTML = '<option value="">— unassigned (won\'t serve) —</option>' +
+    campaigns.map(c => `<option value="${esc(c.id)}" ${current === c.id ? 'selected' : ''}>${esc(c.name)} · ${esc(c.status)}</option>`).join('');
+}
+
+// The existing ad form's submit handler already reads
+// `document.getElementById('ad-campaign')` and writes campaignId into
+// adData, so we only need to keep the dropdown populated. The dropdown
+// is refreshed at dashboard boot (via initCampaignManager) and after
+// any campaign mutation (via refreshAdCampaignDropdown()).
+//
+// Pre-selecting the right campaign when editing an existing ad is
+// handled directly inside startEditing() — see the campaign-pre-select
+// block in that function.
 
 // Module scripts are deferred — DOM is always ready when this runs
 init();

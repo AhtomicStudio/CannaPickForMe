@@ -35,6 +35,254 @@
         <button id="btn-logout" class="admin-btn admin-btn--ghost">🚪 Log Out</button>
       </header>
 
+      <!-- Migration banner (auto-hidden if nothing migrated) -->
+      <div id="migration-banner" class="admin-banner hidden">
+        <span class="admin-banner__icon">✓</span>
+        <div class="admin-banner__body">
+          <strong>Sponsorship system upgraded.</strong>
+          <span id="migration-banner-text">Existing sponsored content has been preserved.</span>
+        </div>
+        <button type="button" id="migration-banner-dismiss" class="admin-banner__dismiss" aria-label="Dismiss">✕</button>
+      </div>
+
+      <!-- Campaigns — the new primary sponsor management surface -->
+      <section class="admin-section">
+        <div class="campaigns-header">
+          <div>
+            <h2 style="margin:0;">🎯 Campaigns</h2>
+            <p class="admin-hint" style="margin:0.35rem 0 0;">Each campaign bundles ads, sponsored strains, and partner listings for one advertiser, over a date range.</p>
+          </div>
+          <button type="button" id="btn-new-campaign" class="admin-btn admin-btn--primary">+ New Campaign</button>
+        </div>
+
+        <!-- Renewal alert banner — populated only when at least one
+             campaign is ending in the next 7 days. -->
+        <div id="renewal-banner" class="renewal-banner hidden"></div>
+
+        <!-- Snapshot strip — at-a-glance health -->
+        <div class="campaign-stats">
+          <div class="campaign-stat">
+            <span class="campaign-stat__label">Live</span>
+            <span class="campaign-stat__value" id="stat-live-count">—</span>
+          </div>
+          <div class="campaign-stat">
+            <span class="campaign-stat__label">MRR</span>
+            <span class="campaign-stat__value" id="stat-mrr">—</span>
+          </div>
+          <div class="campaign-stat">
+            <span class="campaign-stat__label">Impressions (30d)</span>
+            <span class="campaign-stat__value" id="stat-impressions">—</span>
+          </div>
+          <div class="campaign-stat">
+            <span class="campaign-stat__label">Clicks (30d)</span>
+            <span class="campaign-stat__value" id="stat-clicks">—</span>
+          </div>
+        </div>
+
+        <!-- Campaign editor (modal-ish inline expansion) -->
+        <div id="campaign-editor" class="campaign-editor hidden">
+          <div class="campaign-editor__header">
+            <h3 id="campaign-editor-title">New Campaign</h3>
+            <button type="button" id="campaign-editor-close" class="admin-btn admin-btn--ghost admin-btn--small">Close</button>
+          </div>
+          <input type="hidden" id="campaign-edit-id" />
+
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label for="campaign-advertiser">Advertiser *</label>
+              <select id="campaign-advertiser" required></select>
+              <p class="admin-hint"><a href="#" id="campaign-new-advertiser-link">+ New advertiser</a></p>
+            </div>
+            <div class="admin-form__group">
+              <label for="campaign-name">Campaign Name *</label>
+              <input type="text" id="campaign-name" required placeholder="e.g., Cookies Hayward — June 2026" />
+            </div>
+          </div>
+
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label for="campaign-tier">Tier</label>
+              <select id="campaign-tier">
+                <option value="bronze">Bronze — $99/mo (1 ad, 1 sponsored strain)</option>
+                <option value="silver">Silver — $199/mo (2 ads, 3 sponsored strains, 1 partner)</option>
+                <option value="gold">Gold — $399/mo (5 ads, 8 sponsored strains, 3 partners)</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div class="admin-form__group">
+              <label for="campaign-price">Monthly price (USD)</label>
+              <input type="number" id="campaign-price" min="0" step="1" placeholder="99" />
+            </div>
+          </div>
+
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label for="campaign-starts">Starts</label>
+              <input type="date" id="campaign-starts" />
+            </div>
+            <div class="admin-form__group">
+              <label for="campaign-ends">Ends</label>
+              <input type="date" id="campaign-ends" />
+              <p class="admin-hint">Leave blank for open-ended.</p>
+            </div>
+            <div class="admin-form__group">
+              <label for="campaign-status">Status</label>
+              <select id="campaign-status">
+                <option value="draft">Draft (not visible)</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="live">Live</option>
+                <option value="paused">Paused</option>
+                <option value="ended">Ended</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Inventory pickers -->
+          <div class="campaign-inventory">
+            <div class="campaign-inventory__section">
+              <div class="campaign-inventory__head">
+                <h4>⭐ Sponsored Strains</h4>
+                <p class="admin-hint">Featured on the result screen when they match a user's vibe at ≥50%.</p>
+              </div>
+              <div id="campaign-sponsored-picker" class="campaign-picker"></div>
+            </div>
+
+            <div class="campaign-inventory__section">
+              <div class="campaign-inventory__head">
+                <h4>✦ Partner Strains</h4>
+                <p class="admin-hint">Appear in the Better Matches modal with brand badge + dispensary link.</p>
+                <button type="button" id="btn-campaign-add-partner" class="admin-btn admin-btn--small">+ Add partner</button>
+              </div>
+              <div id="campaign-partners-list" class="campaign-partners-list"></div>
+            </div>
+
+            <div class="campaign-inventory__section">
+              <div class="campaign-inventory__head">
+                <h4>📢 Display Ads</h4>
+                <p class="admin-hint">Manage individual ad creatives below. Set each ad's "Campaign" to this one.</p>
+              </div>
+              <div id="campaign-ads-list" class="campaign-ads-list"></div>
+            </div>
+          </div>
+
+          <div class="campaign-editor__perf" id="campaign-editor-perf">
+            <!-- populated dynamically -->
+          </div>
+
+          <div class="admin-form__actions">
+            <button type="button" id="btn-campaign-delete" class="admin-btn admin-btn--danger admin-btn--small hidden">Delete Campaign</button>
+            <button type="button" id="btn-campaign-save" class="admin-btn admin-btn--primary">Save Campaign</button>
+          </div>
+        </div>
+
+        <!-- Campaign list, grouped by status -->
+        <div id="campaign-list-wrap">
+          <div id="campaigns-loading" class="admin-loading">Loading campaigns…</div>
+          <div id="campaigns-empty" class="admin-empty hidden">
+            <span>🌱</span>
+            <p>No campaigns yet. Create one above to start running sponsorships.</p>
+          </div>
+          <div id="campaigns-by-status"></div>
+        </div>
+      </section>
+
+      <!-- Partner-strain mini-editor (used by the campaign inventory) -->
+      <div id="partner-mini-modal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content">
+          <h3 id="partner-mini-title">Add Partner Strain</h3>
+          <input type="hidden" id="partner-mini-index" />
+          <div class="admin-form__group">
+            <label>Strain Name *</label>
+            <input type="text" id="partner-mini-name" required />
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>Type</label>
+              <select id="partner-mini-type">
+                <option value="hybrid">Hybrid</option>
+                <option value="sativa">Sativa</option>
+                <option value="indica">Indica</option>
+              </select>
+            </div>
+            <div class="admin-form__group">
+              <label>Brand</label>
+              <input type="text" id="partner-mini-brand" placeholder="e.g., Cookies SF" />
+            </div>
+          </div>
+          <div class="admin-form__group">
+            <label>Effects <span class="admin-optional">(comma-separated)</span></label>
+            <input type="text" id="partner-mini-effects" placeholder="Happy, Relaxed, Creative" />
+          </div>
+          <div class="admin-form__group">
+            <label>Flavors <span class="admin-optional">(comma-separated)</span></label>
+            <input type="text" id="partner-mini-flavors" placeholder="Berry, Sweet, Earthy" />
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>Dispensary Badge</label>
+              <select id="partner-mini-dispensary">
+                <option value="">— none —</option>
+              </select>
+            </div>
+            <div class="admin-form__group">
+              <label>Click URL <span class="admin-optional">(optional)</span></label>
+              <input type="url" id="partner-mini-url" placeholder="https://dispensary.com/menu/runtz" />
+            </div>
+          </div>
+          <label class="admin-checkbox-label">
+            <input type="checkbox" id="partner-mini-active" checked /> Active
+          </label>
+          <div class="modal__actions">
+            <button type="button" id="partner-mini-cancel" class="admin-btn admin-btn--ghost">Cancel</button>
+            <button type="button" id="partner-mini-save" class="admin-btn admin-btn--primary">Save Partner</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advertiser editor modal -->
+      <div id="advertiser-modal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content">
+          <h3 id="advertiser-modal-title">New Advertiser</h3>
+          <input type="hidden" id="advertiser-edit-id" />
+          <div class="admin-form__group">
+            <label>Business Name *</label>
+            <input type="text" id="advertiser-name" required placeholder="e.g., Cookies Hayward" />
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>Contact Name</label>
+              <input type="text" id="advertiser-contact" placeholder="Jane Smith" />
+            </div>
+            <div class="admin-form__group">
+              <label>Contact Email</label>
+              <input type="email" id="advertiser-email" placeholder="jane@cookies.com" />
+            </div>
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label>Phone</label>
+              <input type="tel" id="advertiser-phone" placeholder="(555) 123-4567" />
+            </div>
+            <div class="admin-form__group">
+              <label>Primary Dispensary</label>
+              <select id="advertiser-dispensary">
+                <option value="">— none —</option>
+              </select>
+            </div>
+          </div>
+          <div class="admin-form__group">
+            <label>Notes</label>
+            <textarea id="advertiser-notes" rows="3" placeholder="Internal notes only — never shown to the advertiser."></textarea>
+          </div>
+          <div class="modal__actions">
+            <button type="button" id="advertiser-modal-cancel" class="admin-btn admin-btn--ghost">Cancel</button>
+            <button type="button" id="advertiser-modal-save" class="admin-btn admin-btn--primary">Save Advertiser</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Add/Edit Ad Form -->
       <section class="admin-section">
         <h2 id="form-title">➕ Add New Ad</h2>
@@ -75,6 +323,15 @@
             <div class="admin-form__group">
               <label for="ad-description">Description (card only)</label>
               <input type="text" id="ad-description" placeholder="Short tagline..." />
+            </div>
+          </div>
+          <div class="admin-form__row">
+            <div class="admin-form__group">
+              <label for="ad-campaign">Campaign</label>
+              <select id="ad-campaign">
+                <option value="">— unassigned (won't serve) —</option>
+              </select>
+              <p class="admin-hint">Ads only serve while their campaign is live. Unassigned ads sit dormant.</p>
             </div>
           </div>
           <div class="admin-form__row admin-form__row--preview">
@@ -214,14 +471,16 @@
         </div>
       </section>
 
-      <!-- Partner Strains -->
-      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="partner-strains-section">
+      <!-- Partner Strains — DEPRECATED in Phase 1.
+           Partner strains now belong to a campaign (see the Campaigns
+           section above). Section hidden to remove duplicate workflow. -->
+      <section class="admin-section admin-section--collapsible admin-section--collapsed hidden" id="partner-strains-section" data-deprecated="true">
         <button type="button" class="admin-section__toggle" aria-expanded="false">
-          <h2>✦ Partner Strains</h2>
+          <h2>✦ Partner Strains (legacy)</h2>
           <span class="admin-section__chevron">▾</span>
         </button>
         <div class="admin-section__body">
-          <p class="admin-hint">Partner strains appear as the 4th slot in Better Matches with a gold border. Only one active partner shows at a time.</p>
+          <p class="admin-hint">Partner strains are now managed inside a campaign (see the Campaigns section above). This section is preserved for emergency rollback only.</p>
 
           <!-- Create / Edit Form -->
           <div class="partner-form" id="partner-form">
@@ -413,9 +672,59 @@
         </div>
       </section>
 
-      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="sponsor-settings-section">
+      <!-- Advertisers (collapsed by default — most work happens in Campaigns) -->
+      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="advertisers-section">
         <button type="button" class="admin-section__toggle" aria-expanded="false">
-          <h2>⭐ Sponsor Settings</h2>
+          <h2>🏢 Advertisers</h2>
+          <span class="admin-section__chevron">▾</span>
+        </button>
+        <div class="admin-section__body">
+          <p class="admin-hint">The businesses paying for sponsorships. Each advertiser can have multiple campaigns over time.</p>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:0.75rem;">
+            <button type="button" id="btn-new-advertiser" class="admin-btn admin-btn--primary admin-btn--small">+ New Advertiser</button>
+          </div>
+          <div id="advertisers-list" class="advertisers-list"></div>
+        </div>
+      </section>
+
+      <!-- Dispensaries (collapsed by default) -->
+      <section class="admin-section admin-section--collapsible admin-section--collapsed" id="dispensaries-section">
+        <button type="button" class="admin-section__toggle" aria-expanded="false">
+          <h2>📍 Dispensaries</h2>
+          <span class="admin-section__chevron">▾</span>
+        </button>
+        <div class="admin-section__body">
+          <p class="admin-hint">Dispensary locations referenced by partner strains and strain availability badges.</p>
+
+          <div class="admin-form__row" style="align-items:flex-end;">
+            <div class="admin-form__group">
+              <label for="dispensary-slug">Slug</label>
+              <input type="text" id="dispensary-slug" placeholder="cookies-hayward" />
+              <p class="admin-hint">Used as the doc ID. Lowercase, hyphens only.</p>
+            </div>
+            <div class="admin-form__group">
+              <label for="dispensary-name">Display Name</label>
+              <input type="text" id="dispensary-name" placeholder="Cookies Hayward" />
+            </div>
+            <div class="admin-form__group">
+              <label for="dispensary-city">City</label>
+              <input type="text" id="dispensary-city" placeholder="Hayward" />
+            </div>
+            <div class="admin-form__group" style="flex:0 0 auto;">
+              <button type="button" id="btn-save-dispensary" class="admin-btn admin-btn--primary">Save Dispensary</button>
+            </div>
+          </div>
+
+          <div id="dispensaries-list" class="dispensaries-list" style="margin-top:1rem;"></div>
+        </div>
+      </section>
+
+      <section class="admin-section admin-section--collapsible admin-section--collapsed hidden" id="sponsor-settings-section" data-deprecated="true">
+        <!-- DEPRECATED: superseded by the Campaigns section above. Hidden in
+             Phase 1; kept here so existing event bindings don't throw, and
+             so we can re-enable temporarily if migration goes sideways. -->
+        <button type="button" class="admin-section__toggle" aria-expanded="false">
+          <h2>⭐ Sponsor Settings (legacy)</h2>
           <span class="admin-section__chevron">▾</span>
         </button>
         <div class="admin-section__body">
