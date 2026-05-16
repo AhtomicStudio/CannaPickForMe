@@ -192,7 +192,7 @@ function roundRect(ctx, x, y, w, h, r) {
 
 // ── Main render ────────────────────────────────────────────────────────────
 
-export async function renderShareCard({ strainName, strainType, matchScore, sessionAnswers, strainId }) {
+export async function renderShareCard({ strainName, strainType, matchScore, sessionAnswers, strainId, archetype }) {
   const W = 600, H = 960;
   const canvas = document.createElement('canvas');
   canvas.width = W; canvas.height = H;
@@ -251,25 +251,59 @@ export async function renderShareCard({ strainName, strainType, matchScore, sess
   ctx.beginPath(); ctx.moveTo(60, 490); ctx.lineTo(W-60, 490); ctx.stroke();
   ctx.globalAlpha = 1;
 
-  // ── "The universe chose" label ─────────────────────────────────────────
+  // ── Archetype identity ─────────────────────────────────────────────────
+  const archetypeName     = archetype?.name     || '';
+  const archetypeSubtitle = archetype?.subtitle || '';
+
   ctx.fillStyle = 'rgba(255,255,255,0.45)';
-  ctx.font = '400 15px "Outfit", system-ui, sans-serif';
+  ctx.font = '600 12px "Outfit", system-ui, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('YOUR PERFECT MATCH', W/2, 525);
+  ctx.letterSpacing = '0.12em';
+  ctx.fillText('YOU ARE', W/2, 516);
+  ctx.letterSpacing = '0';
+
+  // Archetype name — scale font to fit
+  const archFontSize = archetypeName.length > 22 ? 28 : archetypeName.length > 16 ? 32 : 36;
+  ctx.fillStyle = '#ffffff';
+  ctx.shadowColor = pal.outline;
+  ctx.shadowBlur = 16;
+  ctx.font = `800 ${archFontSize}px "Space Grotesk", system-ui, sans-serif`;
+  ctx.fillText(archetypeName, W/2, 554);
+  ctx.shadowBlur = 0;
+
+  // Subtitle
+  ctx.fillStyle = 'rgba(255,255,255,0.50)';
+  ctx.font = 'italic 400 14px "Outfit", system-ui, sans-serif';
+  ctx.fillText(archetypeSubtitle, W/2, 578);
+
+  // Thin separator
+  const sep = ctx.createLinearGradient(80, 0, W-80, 0);
+  sep.addColorStop(0, 'transparent');
+  sep.addColorStop(0.5, 'rgba(255,255,255,0.15)');
+  sep.addColorStop(1, 'transparent');
+  ctx.strokeStyle = sep;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(80, 598); ctx.lineTo(W-80, 598); ctx.stroke();
+
+  // ── "Your match" label ─────────────────────────────────────────────────
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.font = '400 13px "Outfit", system-ui, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('YOUR PERFECT MATCH', W/2, 622);
 
   // ── Strain name ────────────────────────────────────────────────────────
   ctx.fillStyle = '#ffffff';
   ctx.shadowColor = pal.outline;
   ctx.shadowBlur = 20;
-  const nameFontSize = strainName.length > 16 ? 42 : 52;
+  const nameFontSize = strainName.length > 16 ? 36 : 44;
   ctx.font = `800 ${nameFontSize}px "Space Grotesk", system-ui, sans-serif`;
   ctx.textAlign = 'center';
-  ctx.fillText(strainName, W/2, 580);
+  ctx.fillText(strainName, W/2, 662);
   ctx.shadowBlur = 0;
 
   // ── Type pill ──────────────────────────────────────────────────────────
   const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
-  const pillW = 110, pillH = 32, pillX = W/2 - pillW/2, pillY = 598;
+  const pillW = 110, pillH = 32, pillX = W/2 - pillW/2, pillY = 678;
   roundRect(ctx, pillX, pillY, pillW, pillH, 16);
   ctx.fillStyle = pal.bg;
   ctx.fill();
@@ -283,15 +317,15 @@ export async function renderShareCard({ strainName, strainType, matchScore, sess
 
   // ── Match score ────────────────────────────────────────────────────────
   ctx.fillStyle = pal.label;
-  ctx.font = `800 64px "Space Grotesk", system-ui, sans-serif`;
+  ctx.font = `800 56px "Space Grotesk", system-ui, sans-serif`;
   ctx.textAlign = 'center';
   ctx.shadowColor = pal.glow;
   ctx.shadowBlur = 24;
-  ctx.fillText(`${matchScore}%`, W/2, 710);
+  ctx.fillText(`${matchScore}%`, W/2, 776);
   ctx.shadowBlur = 0;
   ctx.fillStyle = 'rgba(255,255,255,0.5)';
-  ctx.font = '500 16px "Outfit", system-ui, sans-serif';
-  ctx.fillText('MATCH', W/2, 732);
+  ctx.font = '500 14px "Outfit", system-ui, sans-serif';
+  ctx.fillText('MATCH', W/2, 796);
 
   // ── Vibe tags from session answers ────────────────────────────────────
   const tags = [
@@ -302,15 +336,9 @@ export async function renderShareCard({ strainName, strainType, matchScore, sess
 
   if (tags.length) {
     ctx.font = '500 13px "Outfit", system-ui, sans-serif';
-    let tagX = W/2 - (tags.join('  ·  ').length * 3.5);
     ctx.fillStyle = 'rgba(255,255,255,0.40)';
-    ctx.fillText(tags.join('  ·  '), W/2, 760);
+    ctx.fillText(tags.join('  ·  '), W/2, 822);
   }
-
-  // ── CTA line ───────────────────────────────────────────────────────────
-  ctx.fillStyle = 'rgba(255,255,255,0.30)';
-  ctx.font = '400 14px "Outfit", system-ui, sans-serif';
-  ctx.fillText('Find your perfect strain at cannapickforme.com', W/2, 800);
 
   // ── QR code + URL ──────────────────────────────────────────────────────
   const deepLink = strainId

@@ -33,6 +33,7 @@ import {
 } from './services/userService.js';
 import { loadSavedTheme } from './services/themeService.js';
 import { shareResult } from './shareCard.js';
+import { generateArchetype } from './archetypes.js';
 import { initProfile, setProfileBackHandler, renderProfileScreen } from './profile.js';
 import {
   getDispensaryMap, getDispensaryNameSync,
@@ -1115,6 +1116,13 @@ async function renderResult(result) {
   });
   scheduleSync();
 
+  // ── Archetype ───────────────────────────────────────────────────────────
+  const archetype = generateArchetype(sessionAnswers);
+  const archetypeNameEl     = document.getElementById('result-archetype-name');
+  const archetypeSubtitleEl = document.getElementById('result-archetype-subtitle');
+  if (archetypeNameEl)     archetypeNameEl.textContent     = archetype.name;
+  if (archetypeSubtitleEl) archetypeSubtitleEl.textContent = archetype.subtitle;
+
   document.getElementById('result-strain-name').textContent = pickedStrain.name;
 
   const typeEl = document.getElementById('result-strain-type');
@@ -1197,6 +1205,7 @@ async function renderResult(result) {
     strainId:   pickedStrain.id,
     matchScore,
     sessionAnswers: { ...sessionAnswers },
+    archetype,
   };
 }
 
@@ -1294,7 +1303,8 @@ function initResult() {
     } catch {
       // fallback: plain text share
       try {
-        const text = `🌿 CannaPickForMe picked ${lastShareData.strainName} for me! ${lastShareData.matchScore}% match — cannapickforme.com`;
+        const archetypeName = lastShareData.archetype?.name || 'a CannaPickForMe type';
+        const text = `🌿 I'm ${archetypeName} — ${lastShareData.strainName} is my ${lastShareData.matchScore}% match. Find yours at cannapickforme.com`;
         await navigator.clipboard.writeText(text);
         btn.innerHTML = '✓ Copied to clipboard!';
         setTimeout(() => { btn.innerHTML = original; btn.disabled = false; }, 2000);
