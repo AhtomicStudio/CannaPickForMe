@@ -70,13 +70,13 @@ import { track } from '@vercel/analytics';
 
 import { ACHIEVEMENTS, ACHIEVEMENTS_BY_ID, checkAchievements } from './achievements.js';
 import { getPrestigeMultipliers, canPrestige, previewPrestige, doPrestige } from './prestige.js';
-import { makeWildEncounter, makeBossEncounter, nextAvailableBoss, BOSSES, makePlayerCombatant } from './encounters.js';
+import { makeWildEncounter } from './encounters.js';
 import { sfx } from './sfx.js';
 import { emit, on } from './eventBus.js';
 
 // ── Tab modules ──────────────────────────────────────────────
 import { renderGardenTab, wireGardenTab } from './tabs/tabGarden.js';
-import { renderBattleTab, wireBattleTab } from './tabs/tabBattle.js';
+import { renderBattleTab, wireBattleTab, startBattle } from './tabs/tabBattle.js';
 import { renderShopTab,   wireShopTab   } from './tabs/tabShop.js';
 import { renderQuestsTab, wireQuestsTab } from './tabs/tabQuests.js';
 import { renderVersusTab, wireVersusTab } from './tabs/tabVersus.js';
@@ -507,6 +507,7 @@ function makeTabContext() {
     setShopSection:   (s) => { _shopSection = s; },
     buyUpgrade,
     applyXP,
+    giveBuds,
     registerStreak,
   };
 }
@@ -595,107 +596,6 @@ function claimAndPlantOffspring() {
   debouncedSave();
 }
 
-
-// ── BATTLE TAB ────────────────────────────────────────────────
-function renderBattleTab_legacy() {
-  if (_battleSession) return renderBattleArena();
-  const lvl = getLevel(_gameState.xp);
-  const nextBoss = nextAvailableBoss(_gameState);
-  const winsTotal = _gameState.wins || 0;
-
-  return `
-    <section class="tab-pane battle-tab">
-      <div class="card">
-        <div class="card-title">Wild Encounters</div>
-        <div class="dim small">Brawl with random Cannabuds in your level range. Quick fights, light rewards.</div>
-        <button class="btn-juicy big" id="btn-find-fight">⚡ Find a Fight</button>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Boss Arena</div>
-        ${nextBoss ? `
-          <div class="boss-card">
-            <div class="boss-card__title">${nextBoss.name}</div>
-            <div class="boss-card__flavor dim small">${nextBoss.flavor}</div>
-            <div class="dim small">Type: ${nextBoss.type} · Required Lv. ${nextBoss.minPlayerLevel}</div>
-            <button class="btn-juicy big danger" id="btn-fight-boss" ${lvl < nextBoss.minPlayerLevel ? 'disabled':''}>
-              ${lvl < nextBoss.minPlayerLevel ? `🔒 Reach Lv.${nextBoss.minPlayerLevel}` : `⚔️ Challenge ${nextBoss.name}`}
-            </button>
-          </div>` : `<div class="dim">All current bosses defeated. New ones unlock as you level.</div>`}
-      </div>
-
-      <div class="card">
-        <div class="card-title">Record</div>
-        <div class="dim">🏆 ${winsTotal} W / ${_gameState.losses || 0} L</div>
-        <div class="dim small">Bosses defeated: ${(_gameState.battle?.bossesDefeated?.length) || 0} / ${BOSSES.length}</div>
-      </div>
-    </section>
-  `;
-}
-
-function wireBattleTab_legacy(body) {
-  if (_battleSession) return wireBattleArena(body);
-  body.querySelector('#btn-find-fight')?.addEventListener('click', () => {
-    sfx.encounter();
-    startBattle(makeWildEncounter(getLevel(_gameState.xp)), { kind: 'wild' });
-  });
-  body.querySelector('#btn-fight-boss')?.addEventListener('click', () => {
-    const boss = nextAvailableBoss(_gameState);
-    if (!boss) return;
-    sfx.encounter();
-    startBattle(makeBossEncounter(boss, getLevel(_gameState.xp)), { kind: 'boss', bossId: boss.id });
-  });
-}
-
-function startBattle(encounter, meta) {
-  // Lazy-import the battle UI
-  import('./battleScreen.js').then(mod => {
-    _battleSession = { encounter, meta };
-    refreshActiveTab(true);
-    mod.mountBattle({
-      container: _container.querySelector('#game-tab-body'),
-      gameState: _gameState,
-      encounter,
-      meta,
-      onResolve: (result) => onBattleResolved(result, meta),
-    });
-  });
-}
-
-function renderBattleArena() {
-  // Placeholder while battleScreen takes over the body.
-  return `<section class="tab-pane"><div class="dim">Loading arena…</div></section>`;
-}
-function wireBattleArena() { /* battleScreen owns interactions */ }
-
-function onBattleResolved(result, meta) {
-  // result: { won, encounter, expEarned, budsEarned, seedsEarned }
-  try { track('battle_finished', { won: !!result.won, kind: meta?.kind || 'wild', bossId: meta?.bossId || null }); } catch (_) {}
-  if (result.won) {
-    _gameState.wins = (_gameState.wins || 0) + 1;
-    if (meta.kind === 'boss' && meta.bossId) {
-      if (!_gameState.battle) _gameState.battle = { currentArenaTier: 1, bossesDefeated: [] };
-      if (!_gameState.battle.bossesDefeated) _gameState.battle.bossesDefeated = [];
-      const arr = _gameState.battle.bossesDefeated;
-      if (!arr.includes(meta.bossId)) arr.push(meta.bossId);
-    }
-    applyXP(result.expEarned, '⚔️', 'battle', /*silent=*/ true);
-    giveBuds(result.budsEarned, 'battle');
-    if (result.seedsEarned) {
-      _gameState.seeds = (_gameState.seeds || 0) + result.seedsEarned;
-      toast(`🌱 +${result.seedsEarned} Seeds`, 'gold');
-    }
-    sfx.victory();
-    reportQuestProgress(_gameState, 'win_battle', 1);
-  } else {
-    _gameState.losses = (_gameState.losses || 0) + 1;
-    sfx.defeat();
-  }
-  _battleSession = null;
-  checkAchievements(_gameState);
-  debouncedSave();
-  refreshActiveTab(true);
-}
 
 // ── SHOP TAB ──────────────────────────────────────────────────
 let _shopSection = 'care';   // 'care' | 'cosmetics' | 'themes'
@@ -1559,7 +1459,7 @@ function maybeRollEncounter() {
     _gameState.flags.forceEncounter = false;
     sfx.encounter();
     toast('💣 Smoke bomb triggered an encounter!');
-    startBattle(makeWildEncounter(getLevel(_gameState.xp)), { kind: 'wild' });
+    startBattle(makeWildEncounter(getLevel(_gameState.xp)), { kind: 'wild' }, makeTabContext());
   }
 }
 
