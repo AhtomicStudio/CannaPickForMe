@@ -30,6 +30,12 @@ export default defineConfig({
         main:  resolve(__dirname, 'index.html'),
         admin: resolve(__dirname, 'admin.html'),
       },
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/firebase')) return 'chunk-firebase';
+          if (id.includes('/src/game/') || id.includes('/src/animations/')) return 'chunk-game';
+        },
+      },
     },
   },
 });
