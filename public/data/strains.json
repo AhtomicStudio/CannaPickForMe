@@ -1,0 +1,4831 @@
+[
+  {
+    "id": "blue-dream",
+    "name": "Blue Dream",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Berry",
+      "Sweet",
+      "Blueberry"
+    ],
+    "description": "A legendary sativa-dominant hybrid known for full-body relaxation with gentle cerebral invigoration.",
+    "rating": 4.5,
+    "genetics": "Blueberry × Haze"
+  },
+  {
+    "id": "og-kush",
+    "name": "OG Kush",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Woody"
+    ],
+    "description": "The backbone of West Coast cannabis varieties. Delivers heavy euphoria mixed with strong body relaxation.",
+    "rating": 4.4,
+    "genetics": "Chemdawg × Lemon Thai × Hindu Kush",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "girl-scout-cookies",
+    "name": "Girl Scout Cookies",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Pungent"
+    ],
+    "description": "A potent hybrid with OG Kush and Durban Poison lineage. Known for full-body relaxation and cerebral euphoria.",
+    "rating": 4.6,
+    "genetics": "OG Kush × Durban Poison",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "sour-diesel",
+    "name": "Sour Diesel",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Diesel",
+      "Pungent",
+      "Earthy"
+    ],
+    "description": "A fast-acting sativa named for its pungent fuel-like aroma. Delivers dreamy cerebral effects.",
+    "rating": 4.3,
+    "genetics": "Chemdawg × Super Skunk",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "granddaddy-purple",
+    "name": "Granddaddy Purple",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Grape",
+      "Berry",
+      "Sweet"
+    ],
+    "description": "A famous indica cross of Purple Urkle and Big Bud. Known for complex grape and berry aroma and deep body relaxation.",
+    "rating": 4.5,
+    "genetics": "Purple Urkle × Big Bud"
+  },
+  {
+    "id": "jack-herer",
+    "name": "Jack Herer",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Woody"
+    ],
+    "description": "Named after the cannabis activist. A sativa-dominant strain known for its clear-headed, creative buzz.",
+    "rating": 4.4,
+    "genetics": "Haze × (Northern Lights #5 × Shiva Skunk)",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "gelato",
+    "name": "Gelato",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Citrus",
+      "Berry"
+    ],
+    "description": "A sweet, dessert-like hybrid from Cookie Fam Genetics. Delivers powerful yet balanced effects.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Sunset Sherbet × Thin Mint GSC"
+  },
+  {
+    "id": "northern-lights",
+    "name": "Northern Lights",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Sleepy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Pine"
+    ],
+    "description": "One of the most famous indicas of all time. Produces dreamy euphoria and deep body relaxation.",
+    "rating": 4.5,
+    "genetics": "Afghani × Thai"
+  },
+  {
+    "id": "white-widow",
+    "name": "White Widow",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Earthy",
+      "Woody",
+      "Pungent"
+    ],
+    "description": "A balanced hybrid first bred in the Netherlands. Known for its white crystal resin buds and burst of energy.",
+    "rating": 4.3,
+    "genetics": "Brazilian Sativa × South Indian Indica"
+  },
+  {
+    "id": "wedding-cake",
+    "name": "Wedding Cake",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Vanilla",
+      "Earthy"
+    ],
+    "description": "Also known as Pink Cookies. A rich, tangy hybrid with relaxing and euphoric effects.",
+    "rating": 4.5,
+    "genetics": "Triangle Kush × Animal Mints",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "gorilla-glue",
+    "name": "Gorilla Glue #4",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Sleepy"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Pungent"
+    ],
+    "description": "A potent hybrid known for its heavy-handed euphoria and relaxation. Glues you to the couch.",
+    "rating": 4.5,
+    "genetics": "Chem's Sister × Sour Dubb × Chocolate Diesel"
+  },
+  {
+    "id": "pineapple-express",
+    "name": "Pineapple Express",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Tropical",
+      "Pineapple",
+      "Citrus"
+    ],
+    "description": "A sativa-dominant hybrid combining Trainwreck and Hawaiian. Delivers long-lasting energetic buzz.",
+    "rating": 4.3,
+    "genetics": "Trainwreck × Hawaiian"
+  },
+  {
+    "id": "purple-haze",
+    "name": "Purple Haze",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Creative",
+      "Energetic",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Earthy",
+      "Berry",
+      "Sweet"
+    ],
+    "description": "A classic sativa that delivers dreamy, blissful euphoria and creative stimulation. Inspired by Jimi Hendrix.",
+    "rating": 4.2,
+    "genetics": "Purple Thai × Haze"
+  },
+  {
+    "id": "bubba-kush",
+    "name": "Bubba Kush",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Hungry",
+      "Euphoric"
+    ],
+    "flavors": [
+      "Coffee",
+      "Earthy",
+      "Sweet"
+    ],
+    "description": "A heavy indica known for its tranquilizing effects. Perfect for a slow, comfortable evening.",
+    "rating": 4.3,
+    "genetics": "OG Kush × Afghani",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "green-crack",
+    "name": "Green Crack",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Focused"
+    ],
+    "flavors": [
+      "Citrus",
+      "Sweet",
+      "Mango"
+    ],
+    "description": "A sharp energy and focus provider. Great for daytime use with a tangy, fruity flavor.",
+    "rating": 4.3,
+    "genetics": "Skunk #1 × Unknown Indica"
+  },
+  {
+    "id": "ak-47",
+    "name": "AK-47",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Relaxed",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pungent",
+      "Woody"
+    ],
+    "description": "Despite its aggressive name, this sativa-dominant hybrid delivers a steady, long-lasting mellow buzz.",
+    "rating": 4.2,
+    "genetics": "Colombian × Mexican × Thai × Afghani"
+  },
+  {
+    "id": "strawberry-cough",
+    "name": "Strawberry Cough",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Strawberry",
+      "Sweet",
+      "Berry"
+    ],
+    "description": "Known for its sweet strawberry smell and potent sativa effects. Great for managing social anxiety.",
+    "rating": 4.2,
+    "genetics": "Strawberry Field × Haze",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "zkittlez",
+    "name": "Zkittlez",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Focused"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Grape"
+    ],
+    "description": "An award-winning indica with a fruity candy-like flavor profile. Delivers calming and happy effects.",
+    "rating": 4.5,
+    "genetics": "Grape Ape × Grapefruit"
+  },
+  {
+    "id": "runtz",
+    "name": "Runtz",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Tropical",
+      "Citrus"
+    ],
+    "description": "A rare evenly balanced hybrid of Zkittlez and Gelato. Known for its incredibly fruity flavor and long-lasting high.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Zkittlez × Gelato"
+  },
+  {
+    "id": "mimosa",
+    "name": "Mimosa",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Focused"
+    ],
+    "flavors": [
+      "Citrus",
+      "Sweet",
+      "Tropical"
+    ],
+    "description": "A sativa-leaning hybrid known for its rising cerebral effects and energizing buzz. Great morning strain.",
+    "rating": 4.4,
+    "genetics": "Clementine × Purple Punch"
+  },
+  {
+    "id": "do-si-dos",
+    "name": "Do-Si-Dos",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Pungent"
+    ],
+    "description": "A potent indica cross of Girl Scout Cookies and Face Off OG. Heavy-hitting relaxation.",
+    "rating": 4.4,
+    "genetics": "Girl Scout Cookies × Face Off OG"
+  },
+  {
+    "id": "mac",
+    "name": "MAC (Miracle Alien Cookies)",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Citrus",
+      "Diesel",
+      "Earthy"
+    ],
+    "description": "A balanced, creamy hybrid cross of Alien Cookies x Starfighter x Columbian. Complex flavor and uplifting effects.",
+    "rating": 4.5,
+    "genetics": "Alien Cookies × (Colombian × Starfighter)"
+  },
+  {
+    "id": "trainwreck",
+    "name": "Trainwreck",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Pine",
+      "Earthy",
+      "Lemon"
+    ],
+    "description": "A potent sativa-dominant hybrid with sharp mind-bending effects. Hits hard and fast like a freight train.",
+    "rating": 4.2,
+    "genetics": "Mexican × Thai × Afghani"
+  },
+  {
+    "id": "skywalker-og",
+    "name": "Skywalker OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Pungent"
+    ],
+    "description": "A heavy indica cross of Skywalker and OG Kush. Delivers powerful full-body relaxation and lazy euphoria.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Skywalker × OG Kush"
+  },
+  {
+    "id": "durban-poison",
+    "name": "Durban Poison",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Uplifted",
+      "Happy",
+      "Focused",
+      "Creative"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Pine"
+    ],
+    "description": "A pure South African sativa. Known for its sweet smell and energetic, uplifting effects.",
+    "rating": 4.3,
+    "genetics": null,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "lemon-haze",
+    "name": "Lemon Haze",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Energetic",
+      "Uplifted",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Lemon",
+      "Citrus",
+      "Sweet"
+    ],
+    "description": "A sativa-dominant cross of Lemon Skunk and Silver Haze with a zesty lemon smell and taste.",
+    "rating": 4.2,
+    "genetics": "Lemon Skunk × Silver Haze"
+  },
+  {
+    "id": "cherry-pie",
+    "name": "Cherry Pie",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Berry",
+      "Sweet",
+      "Cherry"
+    ],
+    "description": "A hybrid of Granddaddy Purple and Durban Poison. Known for its sweet and sour cherry pie aroma.",
+    "rating": 4.3,
+    "genetics": "Granddaddy Purple × Durban Poison",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "purple-punch",
+    "name": "Purple Punch",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Grape",
+      "Sweet",
+      "Berry"
+    ],
+    "description": "A sedating cross of Larry OG and Granddaddy Purple. Hits you with grape candy and blueberry muffins one-two punch.",
+    "rating": 4.5,
+    "genetics": "Larry OG × Granddaddy Purple",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "cereal-milk",
+    "name": "Cereal Milk",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Vanilla",
+      "Creamy"
+    ],
+    "description": "A rare evenly balanced hybrid known for its sweet creamy flavor reminiscent of the milk left after cereal.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Snowman × Y Life"
+  },
+  {
+    "id": "ice-cream-cake",
+    "name": "Ice Cream Cake",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Vanilla",
+      "Creamy"
+    ],
+    "description": "A heavy indica cross of Wedding Cake and Gelato #33. Sedating effects with delicious dessert flavors.",
+    "rating": 4.5,
+    "genetics": "Wedding Cake × Gelato 33"
+  },
+  {
+    "id": "super-lemon-haze",
+    "name": "Super Lemon Haze",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Energetic",
+      "Uplifted",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Lemon",
+      "Citrus",
+      "Sweet"
+    ],
+    "description": "A two-time Cannabis Cup winner. A kief-caked sativa with energetic, lively effects and a lemony aroma.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Lemon Skunk × Super Silver Haze"
+  },
+  {
+    "id": "gsc-thin-mint",
+    "name": "GSC Thin Mint",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Minty",
+      "Earthy"
+    ],
+    "description": "A Girl Scout Cookies phenotype with a mint chocolate finish. Balanced euphoria and body relaxation.",
+    "rating": 4.4,
+    "genetics": "OG Kush × Durban Poison"
+  },
+  {
+    "id": "banana-kush",
+    "name": "Banana Kush",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Sleepy"
+    ],
+    "flavors": [
+      "Sweet",
+      "Banana",
+      "Tropical"
+    ],
+    "description": "A heavy indica with a smooth banana flavor. Creates mellow happiness and lazy tranquility.",
+    "rating": 4.3,
+    "genetics": "Ghost OG × Skunk Haze"
+  },
+  {
+    "id": "biscotti",
+    "name": "Biscotti",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Tingly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Diesel"
+    ],
+    "description": "A rare indica cross of Gelato #25 with Sour Florida OG. Cookie-like flavor with potent relaxation.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Gelato 25 × Girl Scout Cookies × South Florida OG"
+  },
+  {
+    "id": "sunset-sherbet",
+    "name": "Sunset Sherbet",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Citrus"
+    ],
+    "description": "An indica-leaning hybrid descended from Girl Scout Cookies. Full-body relaxation with a clear-headed high.",
+    "rating": 4.4,
+    "genetics": "Girl Scout Cookies × Pink Panties"
+  },
+  {
+    "id": "blue-cheese",
+    "name": "Blue Cheese",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Sleepy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Cheese",
+      "Blueberry",
+      "Earthy"
+    ],
+    "description": "A cross of Blueberry and UK Cheese. Known for its unique savory-sweet flavor and slow, relaxing effects.",
+    "rating": 4.1,
+    "genetics": "Blueberry × U.K. Cheese"
+  },
+  {
+    "id": "tangie",
+    "name": "Tangie",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Citrus",
+      "Orange",
+      "Sweet"
+    ],
+    "description": "A sativa remake of the 1995 Tangerine Dream. Delivers citrusy creative euphoria.",
+    "rating": 4.3,
+    "genetics": "California Orange × Skunk-1"
+  },
+  {
+    "id": "amnesia-haze",
+    "name": "Amnesia Haze",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Earthy",
+      "Lemon",
+      "Citrus"
+    ],
+    "description": "A powerful sativa with Jamaican and South Asian landrace genetics. Intense cerebral buzz.",
+    "rating": 4.2,
+    "genetics": "Afghani Hawaiian × Laos × Jamaica"
+  },
+  {
+    "id": "wedding-crasher",
+    "name": "Wedding Crasher",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Talkative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Vanilla",
+      "Berry"
+    ],
+    "description": "A sociable hybrid of Wedding Cake and Purple Punch. Great for conversations and gatherings.",
+    "rating": 4.3,
+    "genetics": "Wedding Cake × Purple Punch",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "maui-wowie",
+    "name": "Maui Wowie",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Tropical",
+      "Citrus",
+      "Pineapple"
+    ],
+    "description": "A classic Hawaiian sativa. Light stress-relieving effects and tropical flavors transport you to the islands.",
+    "rating": 4.2,
+    "genetics": null
+  },
+  {
+    "id": "king-louis",
+    "name": "King Louis XIII",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Woody"
+    ],
+    "description": "A heavy OG Kush phenotype named after the French king. Royally potent sedation.",
+    "rating": 4.3,
+    "genetics": "OG Kush × LA Confidential",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "forbidden-fruit",
+    "name": "Forbidden Fruit",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Sleepy",
+      "Euphoric",
+      "Tingly"
+    ],
+    "flavors": [
+      "Tropical",
+      "Cherry",
+      "Citrus"
+    ],
+    "description": "A cross of Cherry Pie and Tangie. Exotic fruit flavors with deeply relaxing physical effects.",
+    "rating": 4.3,
+    "genetics": "Cherry Pie × Tangie"
+  },
+  {
+    "id": "platinum-og",
+    "name": "Platinum OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Pungent"
+    ],
+    "description": "A heavy-hitting indica descended from OG Kush and Purps. Known for its intense physical effects.",
+    "rating": 4.3,
+    "genetics": "Master Kush × OG Kush × Afghani"
+  },
+  {
+    "id": "headband",
+    "name": "Headband",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Earthy",
+      "Lemon",
+      "Diesel"
+    ],
+    "description": "Named for the slight pressure around the crown of your head. A cross of OG Kush and Sour Diesel.",
+    "rating": 4.2,
+    "genetics": "OG Kush × Sour Diesel"
+  },
+  {
+    "id": "larry-og",
+    "name": "Larry OG",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Focused"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Woody"
+    ],
+    "description": "An OG Kush phenotype with balanced effects. Clear-headed and good for daytime use.",
+    "rating": 4.2,
+    "genetics": "OG Kush × SFV OG"
+  },
+  {
+    "id": "candy-kush",
+    "name": "Candy Kush",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Flowery",
+      "Earthy"
+    ],
+    "description": "A sweet-tasting hybrid with gentle, comfortable effects. Like candy for your mind and body.",
+    "rating": 4.1,
+    "genetics": "OG Kush × Trainwreck"
+  },
+  {
+    "id": "critical-mass",
+    "name": "Critical Mass",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Sleepy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Citrus"
+    ],
+    "description": "A heavy indica known for massive buds and deeply relaxing effects. Great for pain and insomnia.",
+    "rating": 4.1,
+    "genetics": "Afghani × Skunk #1"
+  },
+  {
+    "id": "la-confidential",
+    "name": "LA Confidential",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Woody"
+    ],
+    "description": "An award-winning pure indica from Los Angeles. Smooth, fast-acting sedation and psychedelic effects.",
+    "rating": 4.2,
+    "genetics": "OG LA Affie × Afghani"
+  },
+  {
+    "id": "super-silver-haze",
+    "name": "Super Silver Haze",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Citrus",
+      "Earthy",
+      "Pungent"
+    ],
+    "description": "A three-time Cannabis Cup winner. Energetic and long-lasting body buzz with creative stimulation.",
+    "rating": 4.3,
+    "genetics": "Skunk × Northern Lights × Haze"
+  },
+  {
+    "id": "bruce-banner",
+    "name": "Bruce Banner #3",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Sweet"
+    ],
+    "description": "Named after the Hulk's alter ego. One of the strongest strains available with a creative, euphoric rush.",
+    "rating": 4.4,
+    "genetics": "OG Kush × Strawberry Diesel"
+  },
+  {
+    "id": "apple-fritter",
+    "name": "Apple Fritter",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Tingly",
+      "Giggly"
+    ],
+    "flavors": [
+      "Apple",
+      "Sweet",
+      "Earthy"
+    ],
+    "description": "A potent hybrid from Sour Apple and Animal Cookies. Delivers heavy relaxation with a cheesy apple pastry flavor.",
+    "rating": 4.5,
+    "genetics": "Sour Apple × Animal Cookies"
+  },
+  {
+    "id": "london-pound-cake",
+    "name": "London Pound Cake",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Hungry",
+      "Euphoric"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Citrus"
+    ],
+    "description": "A heavy Cookies Fam indica with a nutty, berry flavor. Known for potent body sedation.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "gary-payton",
+    "name": "Gary Payton",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Talkative"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Sweet"
+    ],
+    "description": "Named after the NBA legend. A complex hybrid with euphoric and talkative effects.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "The Y × Snowman"
+  },
+  {
+    "id": "jealousy",
+    "name": "Jealousy",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Tingly",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Diesel"
+    ],
+    "description": "A gelato x Sherbet cross bred by Seed Junky Genetics. Balanced effects and complex flavors.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Gelato 41 × Sherbet"
+  },
+  {
+    "id": "slurricane",
+    "name": "Slurricane",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Grape"
+    ],
+    "description": "A potent indica cross of Do-Si-Dos and Purple Punch. Heavy syrupy sweetness with knockout relaxation.",
+    "rating": 4.5,
+    "genetics": "Do-Si-Dos × Purple Punch"
+  },
+  {
+    "id": "lava-cake",
+    "name": "Lava Cake",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Tingly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Chocolate",
+      "Minty"
+    ],
+    "description": "A potent indica cross of Thin Mint GSC and Grape Pie. Rich, dessert-like flavors with deep sedation.",
+    "rating": 4.4,
+    "genetics": "Thin Mint GSC × Grape Pie"
+  },
+  {
+    "id": "white-runtz",
+    "name": "White Runtz",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Fruity",
+      "Citrus"
+    ],
+    "description": "A rare phenotype of Runtz. Covered in trichomes with sweet candy flavors and potent balanced effects.",
+    "rating": 4.6,
+    "genetics": "Gelato × Zkittlez"
+  },
+  {
+    "id": "dosidos",
+    "name": "Dosidos",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Pungent"
+    ],
+    "description": "A cross of GSC and Face Off OG. Sedating effects with a sweet, earthy flavor.",
+    "rating": 4.4,
+    "genetics": "Girl Scout Cookies × Face Off OG"
+  },
+  {
+    "id": "kush-mints",
+    "name": "Kush Mints",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Tingly",
+      "Creative"
+    ],
+    "flavors": [
+      "Minty",
+      "Earthy",
+      "Sweet"
+    ],
+    "description": "A cross of Animal Mints and Bubba Kush. Minty flavor with balanced, relaxing effects.",
+    "rating": 4.5,
+    "genetics": "Animal Mints × Bubba Kush"
+  },
+  {
+    "id": "gmo-cookies",
+    "name": "GMO Cookies",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Hungry",
+      "Euphoric"
+    ],
+    "flavors": [
+      "Earthy",
+      "Diesel",
+      "Pungent"
+    ],
+    "description": "Also known as Garlic Cookies. A potent indica with unique garlic, mushroom, and onion flavors.",
+    "rating": 4.4,
+    "genetics": "Chemdawg × Girl Scout Cookies",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "gorilla-cookies",
+    "name": "Gorilla Cookies",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Diesel"
+    ],
+    "description": "A cross of GG4 and Thin Mint GSC. Potent hybrid with dessert flavors and balanced effects.",
+    "rating": 4.4,
+    "genetics": "Gorilla Glue #4 × Thin Mint GSC"
+  },
+  {
+    "id": "mac-1",
+    "name": "MAC 1",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Citrus",
+      "Diesel",
+      "Floral"
+    ],
+    "description": "A cap cut of the original MAC strain. Known for rare, exotic effects and creative stimulation.",
+    "rating": 4.6,
+    "genetics": "Alien Cookies × (Colombian × Starfighter)"
+  },
+  {
+    "id": "tropicana-cookies",
+    "name": "Tropicana Cookies",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Citrus",
+      "Orange",
+      "Sweet"
+    ],
+    "description": "A sativa-dominant cross of Girl Scout Cookies and Tangie. Bright citrus flavor with uplifting energy.",
+    "rating": 4.4,
+    "genetics": "Girl Scout Cookies × Tangie"
+  },
+  {
+    "id": "orange-cookies",
+    "name": "Orange Cookies",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Uplifted",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Orange",
+      "Citrus",
+      "Sweet"
+    ],
+    "description": "A cross of Orange Juice and GSC. Sweet orange flavor with balanced, happy effects.",
+    "rating": 4.2,
+    "genetics": "Orange Juice × Girl Scout Cookies"
+  },
+  {
+    "id": "mango-kush",
+    "name": "Mango Kush",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Sleepy"
+    ],
+    "flavors": [
+      "Mango",
+      "Sweet",
+      "Tropical"
+    ],
+    "description": "A delicious indica with genuine mango taste and banana undertones. Gentle, fuzzy euphoria.",
+    "rating": 4.2,
+    "genetics": "Mango × Hindu Kush"
+  },
+  {
+    "id": "peanut-butter-breath",
+    "name": "Peanut Butter Breath",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Nutty",
+      "Sweet"
+    ],
+    "description": "A cross of Do-Si-Dos and Mendo Breath. Unique nutty, herbal flavor with sedating effects.",
+    "rating": 4.4,
+    "genetics": "Do-Si-Dos × Mendo Breath",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "strawberry-banana",
+    "name": "Strawberry Banana",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Strawberry",
+      "Sweet",
+      "Berry"
+    ],
+    "description": "A 70/30 indica-dominant hybrid with incredible fruity flavor. Peaceful and happy effects.",
+    "rating": 4.4,
+    "genetics": "Banana Kush × Bubble Gum"
+  },
+  {
+    "id": "tahoe-og",
+    "name": "Tahoe OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Lemon",
+      "Pine"
+    ],
+    "description": "A heavy OG Kush phenotype bred near Lake Tahoe. One of the most sedating OGs available.",
+    "rating": 4.3,
+    "genetics": null
+  },
+  {
+    "id": "grape-ape",
+    "name": "Grape Ape",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Grape",
+      "Berry",
+      "Sweet"
+    ],
+    "description": "A predominantly indica strain with a distinct grape-like smell. Provides carefree relaxation.",
+    "rating": 4.2,
+    "genetics": "Mendocino Purps × Skunk × Afghani"
+  },
+  {
+    "id": "alien-og",
+    "name": "Alien OG",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Sleepy"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Lemon"
+    ],
+    "description": "A cross of Tahoe OG and Alien Kush. Initially cerebral before transitioning to heavy-body relaxation.",
+    "rating": 4.3,
+    "genetics": "Tahoe OG × Alien Kush",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "lemon-cherry-gelato",
+    "name": "Lemon Cherry Gelato",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Lemon",
+      "Cherry",
+      "Sweet"
+    ],
+    "description": "A rare hybrid of Sunset Sherbert and GSC. Dessert-like flavor with mood-lifting, creative effects.",
+    "rating": 4.6,
+    "genetics": null,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "zaza",
+    "name": "ZaZa",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Tingly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Pungent"
+    ],
+    "description": "A potent exotic indica. Known for premium quality and deeply relaxing, sedative effects.",
+    "rating": 4.4,
+    "genetics": null
+  },
+  {
+    "id": "cherry-gelato",
+    "name": "Cherry Gelato",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Cherry",
+      "Sweet",
+      "Berry"
+    ],
+    "description": "A delicious cross of GSC and Sunset Sherbet. Fruity cherry flavor with balanced happy effects.",
+    "rating": 4.4,
+    "genetics": "Cherry Pie × Gelato"
+  },
+  {
+    "id": "papaya",
+    "name": "Papaya",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Sleepy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Tropical",
+      "Sweet",
+      "Mango"
+    ],
+    "description": "A heavy indica with tropical papaya flavors. Strong sedation and munchies.",
+    "rating": 4.2,
+    "genetics": "Citral #13 × Ice #2",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "motorbreath",
+    "name": "Motorbreath",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Hungry",
+      "Euphoric"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Pungent"
+    ],
+    "description": "A pungent, gassy indica cross of Chemdog and SFV OG Kush. Heavy diesel flavor with potent sedation.",
+    "rating": 4.3,
+    "genetics": "Chemdawg × SFV OG"
+  },
+  {
+    "id": "hawaiian",
+    "name": "Hawaiian",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Tropical",
+      "Sweet",
+      "Citrus"
+    ],
+    "description": "A classic tropical sativa. Light and breezy effects perfect for daytime adventures.",
+    "rating": 4.1,
+    "genetics": null
+  },
+  {
+    "id": "laughing-buddha",
+    "name": "Laughing Buddha",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Giggly"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Spicy"
+    ],
+    "description": "A Cannabis Cup winning sativa. Named for its tendency to induce uncontrollable laughter and joy.",
+    "rating": 4.2,
+    "genetics": "Thai × Jamaican"
+  },
+  {
+    "id": "khalifa-kush",
+    "name": "Khalifa Kush",
+    "type": "indica",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Focused"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Lemon"
+    ],
+    "description": "Developed in collaboration with Wiz Khalifa. An OG Kush derivative with focused, creative effects.",
+    "rating": 4.3,
+    "genetics": null
+  },
+  {
+    "id": "animal-cookies",
+    "name": "Animal Cookies",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Pungent"
+    ],
+    "description": "A heavy indica cross of GSC and Fire OG. Strong sedation with a sweet, sour flavor.",
+    "rating": 4.3,
+    "genetics": "Girl Scout Cookies × Fire OG"
+  },
+  {
+    "id": "glue-gelato",
+    "name": "Glue Gelato",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Sleepy"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Diesel"
+    ],
+    "description": "A potent cross of GG4 and Gelato. Couch-locking relaxation with sweet flavors.",
+    "rating": 4.4,
+    "genetics": "Gorilla Glue × Gelato"
+  },
+  {
+    "id": "obama-runtz",
+    "name": "Obama Runtz",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Giggly",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Fruity",
+      "Berry"
+    ],
+    "description": "A rare hybrid cross of Afghani and Runtz. Sweet fruity flavor with giggly, social effects.",
+    "rating": 4.5,
+    "genetics": "Runtz × Afghani × OG Kush"
+  },
+  {
+    "id": "pink-runtz",
+    "name": "Pink Runtz",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Candy",
+      "Berry"
+    ],
+    "description": "A phenotype of Runtz with pink-hued buds. Candy-sweet flavor with euphoric, social effects.",
+    "rating": 4.5,
+    "genetics": "Zkittlez × Gelato"
+  },
+  {
+    "id": "gushers",
+    "name": "Gushers",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Tingly",
+      "Sleepy"
+    ],
+    "flavors": [
+      "Sweet",
+      "Tropical",
+      "Fruity"
+    ],
+    "description": "A cross of Gelato #41 and Triangle Kush. Named after the candy for its fruity, gushing flavor.",
+    "rating": 4.4,
+    "genetics": "Gelato 41 × Triangle Kush"
+  },
+  {
+    "id": "fire-og",
+    "name": "Fire OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Lemon",
+      "Woody"
+    ],
+    "description": "Considered one of the strongest OG Kush strains. Powerful full-body relaxation and sedation.",
+    "rating": 4.3,
+    "genetics": null
+  },
+  {
+    "id": "super-boof",
+    "name": "Super Boof",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Energetic"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Cherry"
+    ],
+    "description": "A sativa-leaning hybrid of Black Cherry Punch and Tropicana Cookies. Creative energy with fruity flavor.",
+    "rating": 4.4,
+    "genetics": "Black Cherry Punch × Tropicana Cookies",
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "gas-face",
+    "name": "Gas Face",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Tingly",
+      "Creative"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Pungent"
+    ],
+    "description": "A potent hybrid known for its gassy terpene profile and balanced cerebral effects.",
+    "rating": 4.3,
+    "genetics": "Face Mints × (Biscotti × Sherb Bx)"
+  },
+  {
+    "id": "limoncello",
+    "name": "Limoncello",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Focused"
+    ],
+    "flavors": [
+      "Lemon",
+      "Citrus",
+      "Sweet"
+    ],
+    "description": "A bright sativa named after the Italian liqueur. Zesty lemon flavor with focused, clear-headed energy.",
+    "rating": 4.3,
+    "genetics": "Original Lemonade × Cherry Pie"
+  },
+  {
+    "id": "la-kush-cake",
+    "name": "LA Kush Cake",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Vanilla",
+      "Earthy"
+    ],
+    "description": "A potent cross of Kush Mints and Wedding Cake. Dessert flavors with heavy body sedation.",
+    "rating": 4.4,
+    "genetics": "Wedding Cake × Kush Mints"
+  },
+  {
+    "id": "guava",
+    "name": "Guava",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Talkative"
+    ],
+    "flavors": [
+      "Tropical",
+      "Sweet",
+      "Citrus"
+    ],
+    "description": "An exotic sativa with tropical guava flavors. Social and energizing effects.",
+    "rating": 4.3,
+    "genetics": null
+  },
+  {
+    "id": "white-cherry-gelato",
+    "name": "White Cherry Gelato",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Cherry",
+      "Sweet",
+      "Creamy"
+    ],
+    "description": "A cross of White Cherry and Gelato 33. Creamy cherry flavor with balanced hybrid effects.",
+    "rating": 4.5,
+    "genetics": null
+  },
+  {
+    "id": "grease-monkey",
+    "name": "Grease Monkey",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Diesel"
+    ],
+    "description": "A cross of GG4 and Cookies and Cream. Heavy relaxation with a sweet, vanilla-diesel flavor.",
+    "rating": 4.3,
+    "genetics": "Gorilla Glue #4 × Cookies & Cream"
+  },
+  {
+    "id": "member-berry",
+    "name": "Member Berry",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Uplifted",
+      "Euphoric",
+      "Focused"
+    ],
+    "flavors": [
+      "Berry",
+      "Sweet",
+      "Citrus"
+    ],
+    "description": "A balanced hybrid with sweet berry flavor. Provides clear-headed focus with gentle relaxation.",
+    "rating": 4.2,
+    "genetics": "Skunkberry × Mandarin Sunset"
+  },
+  {
+    "id": "black-cherry-punch",
+    "name": "Black Cherry Punch",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Tingly"
+    ],
+    "flavors": [
+      "Cherry",
+      "Berry",
+      "Sweet"
+    ],
+    "description": "A cross of Black Cherry Pie and Purple Punch. Deep cherry flavor with heavy body sedation.",
+    "rating": 4.3,
+    "genetics": "Purple Punch × Black Cherry Pie"
+  },
+  {
+    "id": "dolato",
+    "name": "Dolato",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Earthy"
+    ],
+    "description": "A cross of Do-Si-Dos and Gelato #41. Deeply relaxing indica with complex berry and lavender notes.",
+    "rating": 4.4,
+    "genetics": "Do-Si-Dos × Gelato 41"
+  },
+  {
+    "id": "zookies",
+    "name": "Zookies",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Diesel"
+    ],
+    "description": "A hybrid cross of Animal Cookies and Gorilla Glue #4. Cookie-gas flavor with creative relaxation.",
+    "rating": 4.3,
+    "genetics": "Animal Cookies × Gorilla Glue #4"
+  },
+  {
+    "id": "champagne-cake",
+    "name": "Champagne Cake",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Relaxed",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Vanilla",
+      "Fruity"
+    ],
+    "description": "A celebratory hybrid with champagne-like effervescence. Bubbly, social effects.",
+    "rating": 4.3,
+    "genetics": "Wedding Cake × Champagne Kush"
+  },
+  {
+    "id": "space-cake",
+    "name": "Space Cake",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Tingly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Vanilla",
+      "Earthy"
+    ],
+    "description": "A potent indica cross of GSC and Snow Lotus. Out-of-this-world relaxation with dessert flavors.",
+    "rating": 4.2,
+    "genetics": "Girl Scout Cookies × Snow Lotus"
+  },
+  {
+    "id": "fatso",
+    "name": "Fatso",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Hungry",
+      "Happy",
+      "Euphoric"
+    ],
+    "flavors": [
+      "Earthy",
+      "Diesel",
+      "Pungent"
+    ],
+    "description": "A heavy indica cross of Legends OG and GMO. Potent sedation and intense munchies.",
+    "rating": 4.3,
+    "genetics": "GMO Cookies × Legend OG"
+  },
+  {
+    "id": "pancakes",
+    "name": "Pancakes",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Vanilla"
+    ],
+    "description": "A Cookies Fam indica with a breakfast-inspired flavor. Heavy sedation and comfort food cravings.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "London Pound Cake × Kush Mints"
+  },
+  {
+    "id": "gelonade",
+    "name": "Gelonade",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Lemon",
+      "Citrus",
+      "Sweet"
+    ],
+    "description": "A sativa-dominant cross of Lemon Tree and Gelato 41. Bright citrus flavor with clear-headed energy.",
+    "rating": 4.5,
+    "genetics": "Lemon Tree × Gelato 41"
+  },
+  {
+    "id": "grandpa-larry",
+    "name": "Grandpa Larry",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Woody"
+    ],
+    "description": "A potent OG Kush descendant. Old-school indica relaxation that puts you right to sleep.",
+    "rating": 4.2,
+    "genetics": "Larry OG × Granddaddy Purple"
+  },
+  {
+    "id": "georgia-pie",
+    "name": "Georgia Pie",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Uplifted",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Peach",
+      "Berry"
+    ],
+    "description": "A Cookies Fam hybrid with genuine peach pie flavor. Balanced effects perfect for social settings.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Gelatti × Kush Mints"
+  },
+  {
+    "id": "snow-cap",
+    "name": "Snow Cap",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Citrus",
+      "Lemon",
+      "Minty"
+    ],
+    "description": "A potent sativa with frosty, trichome-covered buds. Delivers clean, focused energy and menthol freshness.",
+    "rating": 4.2,
+    "genetics": null
+  },
+  {
+    "id": "blackberry-caviar",
+    "name": "Blackberry Caviar",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Sleepy",
+      "Euphoric",
+      "Tingly"
+    ],
+    "flavors": [
+      "Berry",
+      "Grape",
+      "Sweet"
+    ],
+    "description": "An indica-dominant Caviar Collection strain from Ridgeline Farms x Cookies. Grape Gas x Lantz cross delivering velvety body relaxation with a rich blackberry cobbler flavor.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Grape Gas × Lantz"
+  },
+  {
+    "id": "blueberry-caviar",
+    "name": "Blueberry Caviar",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Creative",
+      "Energetic"
+    ],
+    "flavors": [
+      "Blueberry",
+      "Sweet",
+      "Citrus"
+    ],
+    "description": "The sativa-leaning sister of Blackberry Caviar from the Cookies Caviar Collection. Grape Gas x Lantz delivering bright, cerebral energy with blueberry cream flavors.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Grape Gas × Lantz"
+  },
+  {
+    "id": "cereal-a-la-mode",
+    "name": "Cereal A La Mode",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Tingly",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Vanilla",
+      "Creamy"
+    ],
+    "description": "A Cookies x Powerzzzup balanced hybrid crossing Cereal Milk and Georgia Pie. Dessert-forward with sweet cereal and vanilla ice cream flavors and potent tingly euphoria.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Cereal Milk × Georgia Pie"
+  },
+  {
+    "id": "cheetah-piss",
+    "name": "Cheetah Piss",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Focused",
+      "Talkative"
+    ],
+    "flavors": [
+      "Citrus",
+      "Diesel",
+      "Sweet"
+    ],
+    "description": "A Cookies hybrid crossing Lemonnade, Gelato 42, and London Pound Cake. Known for uplifting, clear-headed energy and a citrusy, gas-forward flavor.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Lemonnade × Gelato 42 × London Poundcake 97"
+  },
+  {
+    "id": "cinnamon-milk",
+    "name": "Cinnamon Milk",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Uplifted",
+      "Tingly"
+    ],
+    "flavors": [
+      "Spicy",
+      "Sweet",
+      "Creamy"
+    ],
+    "description": "A Cookies x Powerzzzup hybrid crossing Cereal A La Mode and Sherb Z #1. Warm cinnamon-sugar cream flavor with balanced euphoria and body relaxation.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "hollywood",
+    "name": "Hollywood",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Citrus"
+    ],
+    "description": "A Cookies indica-leaning hybrid crossing Lemon Cherry Gelato and Runtz. Candy-gas flavor with uplifting euphoria that melts into soothing relaxation.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Lemon Cherry Gelato × Runtz"
+  },
+  {
+    "id": "london-pound-cake-75",
+    "name": "London Pound Cake #75",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Sleepy"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Earthy"
+    ],
+    "description": "The prized #75 phenotype of London Pound Cake by Cookies Fam. Sunset Sherbert x Nip OG delivering creamy berry flavors with a euphoric onset that fades into deep relaxation.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "triple-scoop",
+    "name": "Triple Scoop",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Grape"
+    ],
+    "description": "A Cookies indica-leaning hybrid crossing Super Silver Haze, Grape LA, and Sorbet. Rich ice cream flavor with euphoric mood elevation and grounding body relaxation.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Super Silver Haze × Grape Ape × Gelato"
+  },
+  {
+    "id": "apples-and-bananas",
+    "name": "Apples and Bananas",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Relaxed",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Fruity",
+      "Earthy"
+    ],
+    "description": "A Cookies x Compound Genetics hybrid crossing Blue Power and Gelatti. Sweet apple and fruit-forward flavor with uplifting euphoria that transitions into smooth body relaxation.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "(Platinum Cookies × Granddaddy Purple) × Blue Power × Gelatti"
+  },
+  {
+    "id": "collins-ave",
+    "name": "Collins Ave",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Uplifted",
+      "Tingly"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Minty"
+    ],
+    "description": "A Cookies hybrid crossing Kush Mints 11 and GTI. Delivers a euphoric cerebral lift with a soothing full-body relaxation and minty, herbal flavor.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Kush Mints × GTI"
+  },
+  {
+    "id": "the-soap",
+    "name": "The Soap",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Focused",
+      "Energetic",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Citrus"
+    ],
+    "description": "A Cookies sativa-dominant hybrid crossing Animal Mints and Kush Mints. Potent, clear-headed focus with mood-boosting energy and a clean, gassy flavor.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Animal Mints × Kush Mints"
+  },
+  {
+    "id": "sticky-buns",
+    "name": "Sticky Buns",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Creative",
+      "Euphoric",
+      "Relaxed",
+      "Energetic"
+    ],
+    "flavors": [
+      "Sweet",
+      "Earthy",
+      "Vanilla"
+    ],
+    "description": "A Cookies hybrid crossing Kush Mints and Gelatti. Rush of cerebral creativity and energy that gradually shifts into deep physical relaxation with a sweet pastry flavor.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Kush Mints × Gelatti"
+  },
+  {
+    "id": "sweet-tea",
+    "name": "Sweet Tea",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Focused",
+      "Uplifted",
+      "Happy",
+      "Euphoric"
+    ],
+    "flavors": [
+      "Sweet",
+      "Citrus",
+      "Earthy"
+    ],
+    "description": "A Cookies sativa-dominant hybrid crossing California Orange, Alcatraz OG, and Space Queen. Energizing, focused head high with sweet citrus tea flavors — ideal for daytime productivity.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Cali-O × Alcatraz OG × Space Queen"
+  },
+  {
+    "id": "pruno",
+    "name": "Pruno",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Tingly"
+    ],
+    "flavors": [
+      "Grape",
+      "Sweet",
+      "Spicy"
+    ],
+    "description": "A Cookies x Grandiflora indica-dominant hybrid from complex Blue Soufle lineage. Fermented grape and herbal tea aroma with a signature relaxing body high.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "sweet-and-sour",
+    "name": "Sweet & Sour",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Focused",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Citrus",
+      "Diesel",
+      "Sweet"
+    ],
+    "description": "A Cookies hybrid crossing AJ Sour Diesel and Fish Scale. Old-school sour funk meets modern potency with balanced cerebral clarity and a calming body high.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "long-island",
+    "name": "Long Island",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Tropical",
+      "Citrus"
+    ],
+    "description": "A smooth, balanced Cookies hybrid with a tropical sweetness. Delivers easy-going euphoria perfect for social sessions.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "pomegranate-shake",
+    "name": "Pomegranate Shake",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Hungry"
+    ],
+    "flavors": [
+      "Berry",
+      "Sweet",
+      "Fruity"
+    ],
+    "description": "Cookies indica-leaning shake from their Pomegranate genetics. Sweet berry notes and full-body relaxation at an accessible price point.",
+    "rating": 4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "ridgeline-lantz",
+    "name": "Ridgeline Lantz",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Creative",
+      "Uplifted",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Floral"
+    ],
+    "description": "A Cookies original with a complex earthy-floral terpene profile. Balanced effects deliver creativity and calm in equal measure.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Green Lantern × Ridgeline Runtz"
+  },
+  {
+    "id": "tequila-sunrise",
+    "name": "Tequila Sunrise",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Energetic",
+      "Uplifted",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Citrus",
+      "Tropical",
+      "Sweet"
+    ],
+    "description": "A bright sativa-leaning Cookies strain named for its energizing sunrise vibe. Citrusy and tropical with an uplifting cerebral buzz.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "atomic-apple",
+    "name": "Atomic Apple",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Euphoric",
+      "Happy",
+      "Uplifted",
+      "Sleepy"
+    ],
+    "flavors": [
+      "Apple",
+      "Sour",
+      "Earthy"
+    ],
+    "description": "Alien Labs indica-dominant powerhouse. Sharp green apple tartness gives way to full-body relaxation and heavy euphoria. ETW x Sour Apple lineage.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Triangle Mints × Apple Fritter"
+  },
+  {
+    "id": "baklava",
+    "name": "Baklava",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Nutty",
+      "Earthy"
+    ],
+    "description": "Alien Labs indulgent Kosher Kush x Gelato #41 cross. Rich nutty-sweet flavor with deeply relaxing, couch-lock euphoria.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Kosher Kush × Gelato 41"
+  },
+  {
+    "id": "kryptidz",
+    "name": "Kryptidz",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Sweet"
+    ],
+    "description": "An Alien Labs mystery hybrid with a layered terpene profile. Delivers balanced euphoria with creative energy that settles into relaxation.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "xj-13",
+    "name": "XJ-13",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Citrus",
+      "Pine",
+      "Earthy"
+    ],
+    "description": "A beloved Jack Herer x G13 Haze cross carried by Alien Labs. Bright, clear-headed euphoria with piney citrus flavor.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Jack Herer × G13 Haze"
+  },
+  {
+    "id": "chrome",
+    "name": "Chrome",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Pungent"
+    ],
+    "description": "Connected Cannabis fuel-forward hybrid. Pungent diesel aroma with a euphoric, mood-lifting high.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "gelato-41",
+    "name": "Gelato 41",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Creamy",
+      "Citrus"
+    ],
+    "description": "Connected premium Gelato #41 phenotype — one of the most sought-after Gelato cuts. Incredibly smooth, sweet and creamy with balanced euphoric effects.",
+    "rating": 4.7,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Sunset Sherbet × Thin Mint GSC"
+  },
+  {
+    "id": "super-mango-haze",
+    "name": "Super Mango Haze",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Energetic",
+      "Uplifted",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Mango",
+      "Tropical",
+      "Citrus"
+    ],
+    "description": "Cannabiotix tropical sativa with rich mango and citrus terpenes. Delivers clear-headed energy and a mood-boosting, creative buzz.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "honey-dew",
+    "name": "Honey Dew",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Uplifted",
+      "Giggly",
+      "Euphoric"
+    ],
+    "flavors": [
+      "Sweet",
+      "Melon",
+      "Tropical"
+    ],
+    "description": "Doja Pak sweet, juicy hybrid with honeydew melon aromatics. Easygoing and social with a gentle full-body warmth.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "orange-zkittlez",
+    "name": "Orange Zkittlez",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Orange",
+      "Citrus",
+      "Sweet"
+    ],
+    "description": "Doja Pak vibrant Orange x Zkittlez cross. Bursts with candy-citrus flavor and delivers an uplifting, sociable euphoria.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Zkittlez × Agent Orange"
+  },
+  {
+    "id": "kaleidoscope",
+    "name": "Kaleidoscope",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Creative",
+      "Uplifted",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Sweet",
+      "Fruity",
+      "Floral"
+    ],
+    "description": "A colorful Nameless Genetics hybrid with a complex fruity-floral terpene profile. Inspires creativity and a warm euphoric lift.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "lemon-fruz",
+    "name": "Lemon Fruz",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Creative",
+      "Energetic"
+    ],
+    "flavors": [
+      "Lemon",
+      "Citrus",
+      "Sweet"
+    ],
+    "description": "Seed Junky Genetics zesty sativa-leaning hybrid. Bright lemon and citrus forward with a mood-elevating cerebral effect.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "permanent-fumes",
+    "name": "Permanent Fumes",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Euphoric",
+      "Happy",
+      "Sleepy",
+      "Tingly"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Pungent"
+    ],
+    "description": "Seed Junky pungent fuel-heavy indica hybrid. Deep body relaxation meets heavy euphoria in this gas-forward strain.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "flaming-cherries",
+    "name": "Flaming Cherries",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Energetic"
+    ],
+    "flavors": [
+      "Cherry",
+      "Sweet",
+      "Fruity"
+    ],
+    "description": "Super Dope eye-catching cherry-forward hybrid. Bursting with sweet cherry flavor and a bright, uplifting buzz.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "mega-z-red",
+    "name": "Mega Z Red",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Grape"
+    ],
+    "description": "Super Dope potent Zkittlez-influenced hybrid with a big sweet berry profile and a relaxing yet giggly social high.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "coconut-milk",
+    "name": "Coconut Milk",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Tropical",
+      "Creamy"
+    ],
+    "description": "CAM smooth tropical hybrid. Coconut-cream aromatics and a balanced effect that eases tension while keeping the mind clear.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "scotties-cake",
+    "name": "Scottie's Cake",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Hungry"
+    ],
+    "flavors": [
+      "Sweet",
+      "Vanilla",
+      "Earthy"
+    ],
+    "description": "CAM dessert-forward indica hybrid. Vanilla cake flavor meets deep relaxation and a heavy, appetite-inducing euphoria.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "baby-joker",
+    "name": "Baby Joker",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Sweet",
+      "Fruity",
+      "Earthy"
+    ],
+    "description": "Fields Family Farmz playful hybrid with complex fruity-earthy flavor and balanced effects that inspire creativity without sedation.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "rainbow-beltz",
+    "name": "Rainbow Beltz",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Fruity"
+    ],
+    "description": "Fields Family Farmz candy-sweet hybrid. Bright multi-fruit flavor evokes rainbow candy with an uplifting, social euphoria.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Zkittlez × Moonbow"
+  },
+  {
+    "id": "zkittlez-pie",
+    "name": "Zkittlez Pie",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Sleepy"
+    ],
+    "flavors": [
+      "Sweet",
+      "Fruity",
+      "Berry"
+    ],
+    "description": "Fields Family Farmz mash-up of Zkittlez candy sweetness and pie-crust warmth. Heavy indica lean with a fruity-sweet profile and sedating finish.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Zkittlez × Georgia Pie"
+  },
+  {
+    "id": "nimbus-plum",
+    "name": "Nimbus Plum",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Tingly"
+    ],
+    "flavors": [
+      "Plum",
+      "Berry",
+      "Grape"
+    ],
+    "description": "Nimbus grape-plum indica with a deeply relaxing body effect and rich dark fruit aroma.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "sherbnado",
+    "name": "Sherbnado",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Citrus",
+      "Berry"
+    ],
+    "description": "Nimbus Sherbet-influenced hybrid. Candy-sweet with citrus zest and a warm, sociable euphoria that slowly unwinds into relaxation.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "tropic-thunder",
+    "name": "Tropic Thunder",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Energetic",
+      "Uplifted",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Tropical",
+      "Citrus",
+      "Sweet"
+    ],
+    "description": "Nimbus energetic tropical hybrid. Bright pineapple-citrus flavor with a motivating, uplifting buzz.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "zuava",
+    "name": "Zuava",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Creative",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Tropical",
+      "Guava",
+      "Sweet"
+    ],
+    "description": "Nimbus guava-forward hybrid with a tropical sweetness and a smooth, balanced high that uplifts the mood.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "astroid-belts",
+    "name": "Astroid Belts",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Energetic"
+    ],
+    "flavors": [
+      "Sweet",
+      "Candy",
+      "Fruity"
+    ],
+    "description": "Skypack candy-forward hybrid. Fun and euphoric with a creative, energizing buzz.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "nerdz",
+    "name": "Nerdz",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Giggly",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Candy"
+    ],
+    "description": "Skypack Nerdz-inspired hybrid with a candy-sweet berry profile. Delivers a giggly, uplifting euphoria.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Grape Ape × Strawberry Cough"
+  },
+  {
+    "id": "space-mintz",
+    "name": "Space Mintz",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Mint",
+      "Sweet",
+      "Earthy"
+    ],
+    "description": "Skypack minty-fresh hybrid. Cool peppermint flavor with a balanced euphoric effect that relaxes without sedating.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Space Cake × Kush Mints"
+  },
+  {
+    "id": "delirium",
+    "name": "Delirium",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Energetic",
+      "Creative"
+    ],
+    "flavors": [
+      "Earthy",
+      "Floral",
+      "Sweet"
+    ],
+    "description": "Humboldt Growers Network free-spirited sativa-leaning hybrid. Earthy and floral with a heady, energizing euphoria.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "gushmints",
+    "name": "Gushmints",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Tingly"
+    ],
+    "flavors": [
+      "Mint",
+      "Earthy",
+      "Fruity"
+    ],
+    "description": "Humboldt Growers Network Gushers x Kush Mints cross. A minty, fruity hybrid with a smooth, balanced body and mind effect.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Kush Mints × (F1 Durb × Gushers)"
+  },
+  {
+    "id": "melted-strawberries",
+    "name": "Melted Strawberries",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Strawberry",
+      "Sweet",
+      "Berry"
+    ],
+    "description": "Humboldt Growers Network fruit-forward hybrid. Fresh strawberry sweetness with a warm, melting body relaxation and happy uplift.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "GMO × Strawberry Guava"
+  },
+  {
+    "id": "stadanko",
+    "name": "Stadanko",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Pungent"
+    ],
+    "description": "Humboldt Growers Network earthy, pungent hybrid. Classic Northern California character with a grounding, balanced euphoria.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "zlurpees",
+    "name": "Zlurpees",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Citrus"
+    ],
+    "description": "Humboldt Growers Network candy-sweet hybrid inspired by frozen drinks. Bright berry-citrus flavor with a happy, easy-going high.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "palo-cedro",
+    "name": "Palo Cedro",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Citrus"
+    ],
+    "description": "A Golden State California-grown hybrid named after the Northern California city. Pine and citrus terps with a balanced, mood-lifting effect.",
+    "rating": 4.2,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "swaggy-kush",
+    "name": "Swaggy Kush",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pungent",
+      "Pine"
+    ],
+    "description": "Big Daves Buds heavy-hitting indica with classic OG Kush character. Earthy and pungent with deep body relaxation.",
+    "rating": 4.2,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "banga",
+    "name": "Banga",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Energetic"
+    ],
+    "flavors": [
+      "Sweet",
+      "Fruity",
+      "Citrus"
+    ],
+    "description": "BLEM vibrant hybrid with an uplifting, energetic profile and a bright fruity-sweet flavor.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "melon-mimosa",
+    "name": "Melon Mimosa",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Energetic",
+      "Uplifted",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Melon",
+      "Citrus",
+      "Sweet"
+    ],
+    "description": "BuzzNug refreshing sativa-leaning hybrid. Melon and citrus flavor reminiscent of a morning mimosa with an energetic, mood-boosting high.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Watermelon Zkittlez × Mimosa"
+  },
+  {
+    "id": "hawaiian-snow",
+    "name": "Hawaiian Snow",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Energetic",
+      "Uplifted",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Tropical",
+      "Citrus",
+      "Sweet"
+    ],
+    "description": "Dime Bag tropical pure sativa. Long-lasting energetic euphoria with a sweet, tropical citrus flavor. Great for daytime adventures.",
+    "rating": 4.2,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Hawaiian Haze × Purple Haze × Neville's Haze"
+  },
+  {
+    "id": "motorberry",
+    "name": "Motorberry",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Tingly"
+    ],
+    "flavors": [
+      "Berry",
+      "Diesel",
+      "Earthy"
+    ],
+    "description": "Hi brand Motor Breath x berry cross. Fuel-forward base mellowed by sweet berry notes with a relaxing euphoria.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "sour-mochi",
+    "name": "Sour Mochi",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Creative",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Sour",
+      "Sweet",
+      "Earthy"
+    ],
+    "description": "Hi brand Sour Diesel x Mochi cross. Sour and sweet with an uplifting cerebral onset that settles into relaxation.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Sour Diesel × Mochi"
+  },
+  {
+    "id": "pink-lemon-tropaya",
+    "name": "Pink Lemon x Tropaya",
+    "type": "sativa",
+    "effects": [
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Creative",
+      "Energetic"
+    ],
+    "flavors": [
+      "Lemon",
+      "Tropical",
+      "Sweet"
+    ],
+    "description": "Micro Greenz fresh cross of Pink Lemon and Tropaya genetics. Bright lemon-tropical terpenes with a sativa-leaning uplift.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Pink Lemonade × Tropaya"
+  },
+  {
+    "id": "all-gas-no-brakes",
+    "name": "All Gas No Brakes",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Focused"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Citrus"
+    ],
+    "description": "Oakfruitland high-octane sativa-leaning hybrid. Pure gas terps with a fast-acting, focused energy that does not quit.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "oakstradam-og",
+    "name": "Oakstradam OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Sleepy",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Pungent"
+    ],
+    "description": "Originals tribute to Oakland cannabis heritage. Classic OG character with a heavy indica lean and earthy-pine terpenes.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "blue-andes",
+    "name": "Blue Andes",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Berry",
+      "Earthy",
+      "Sweet"
+    ],
+    "description": "Roll Up Andes-inspired hybrid with a cool blue berry terpene profile and a balanced, pleasant euphoria.",
+    "rating": 4.2,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "z41",
+    "name": "Z41",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Sweet",
+      "Fruity",
+      "Berry"
+    ],
+    "description": "Roll Up sweet Zkittlez-based hybrid. Candy-sweet with grape and berry notes delivering a happy and sociable euphoria.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": "Zkittlez × Gelato 41"
+  },
+  {
+    "id": "mars-og",
+    "name": "Mars OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Hungry"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Pungent"
+    ],
+    "description": "The Cure Company heavy indica named for the red planet. Classic OG flavor with powerful sedative effects — ideal for late-night use.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "blueberry-poptarts",
+    "name": "Blueberry Poptarts",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Giggly"
+    ],
+    "flavors": [
+      "Blueberry",
+      "Sweet",
+      "Berry"
+    ],
+    "description": "We Grow dessert hybrid with a nostalgic blueberry pastry profile. Sweet and comforting with a happy, relaxed euphoria.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ],
+    "genetics": null
+  },
+  {
+    "id": "06-og",
+    "name": "06 OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Hungry",
+      "Euphoric"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "OG"
+    ],
+    "description": "A potent OG Kush phenotype with deep earthy tones and heavy sedating effects.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "24k",
+    "name": "24K",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Citrus",
+      "Earthy"
+    ],
+    "description": "24K Gold — a smooth hybrid known for its gilded, uplifting buzz and sweet finish.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "black-orchid",
+    "name": "Black Orchid",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Euphoric",
+      "Happy",
+      "Body High"
+    ],
+    "flavors": [
+      "Floral",
+      "Sweet",
+      "Earthy"
+    ],
+    "description": "A dark, floral indica with a heavy body effect and luxurious berry notes.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "blackberry-kush",
+    "name": "Blackberry Kush",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Pain Relief"
+    ],
+    "flavors": [
+      "Berry",
+      "Sweet",
+      "Earthy"
+    ],
+    "description": "A potent indica cross of Blackberry and OG Kush delivering rich berry flavor and full-body relief.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "blue-cookies",
+    "name": "Blue Cookies",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Berry",
+      "Vanilla"
+    ],
+    "description": "A cross of Girl Scout Cookies and Blueberry bringing a sweet, cerebral hybrid experience.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "blueberry-haze",
+    "name": "Blueberry Haze",
+    "type": "sativa",
+    "effects": [
+      "Uplifted",
+      "Happy",
+      "Creative",
+      "Energetic",
+      "Euphoric"
+    ],
+    "flavors": [
+      "Blueberry",
+      "Sweet",
+      "Haze"
+    ],
+    "description": "A vibrant sativa combining Blueberry sweetness with the clear-headed Haze energy.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "brain-wash",
+    "name": "Brain Wash",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Euphoric",
+      "Happy",
+      "Focused",
+      "Creative"
+    ],
+    "flavors": [
+      "Earthy",
+      "Pine",
+      "Citrus"
+    ],
+    "description": "A potent hybrid that clears the mental slate with a deeply calming euphoria.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "cobra-chi",
+    "name": "Cobra Chi",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Tropical",
+      "Sweet",
+      "Citrus"
+    ],
+    "description": "An exotic hybrid cultivar with tropical sweetness and well-balanced effects.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "cream-og",
+    "name": "Cream OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Happy",
+      "Euphoric",
+      "Body High"
+    ],
+    "flavors": [
+      "Creamy",
+      "Sweet",
+      "OG"
+    ],
+    "description": "A creamy indica-leaning OG with rich vanilla tones and heavy relaxing effects.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "dark-web",
+    "name": "Dark Web",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Euphoric",
+      "Focused",
+      "Happy",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Chemical"
+    ],
+    "description": "A mysterious hybrid known for its complex fuel-forward profile and intense cerebral buzz.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "frostbite",
+    "name": "Frostbite",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Euphoric",
+      "Happy",
+      "Sleepy",
+      "Calm"
+    ],
+    "flavors": [
+      "Cool",
+      "Minty",
+      "Sweet"
+    ],
+    "description": "A frosty hybrid with minty cool notes and a deeply relaxing full-body effect.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "fruit-juice",
+    "name": "Fruit Juice",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Happy",
+      "Uplifted",
+      "Creative",
+      "Euphoric"
+    ],
+    "flavors": [
+      "Tropical",
+      "Fruity",
+      "Sweet"
+    ],
+    "description": "A burst of tropical sativa energy with vibrant fruit notes and an uplifting mood.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "gelatti",
+    "name": "Gelatti",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Creamy",
+      "Citrus"
+    ],
+    "description": "Gelato × Biscotti — a creamy, dessert hybrid with smooth euphoric effects.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "ghost-og",
+    "name": "Ghost OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Euphoric",
+      "Happy",
+      "Sleepy",
+      "Pain Relief"
+    ],
+    "flavors": [
+      "Citrus",
+      "OG",
+      "Earthy"
+    ],
+    "description": "A legendary OG cut with intense citrus and pine aromas and a powerfully sedating body effect.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "horchata",
+    "name": "Horchata",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Happy",
+      "Euphoric",
+      "Creative",
+      "Focused"
+    ],
+    "flavors": [
+      "Creamy",
+      "Spice",
+      "Sweet"
+    ],
+    "description": "Mochi Gelato × Jet Fuel Gelato — a smooth, creamy hybrid inspired by the classic drink.",
+    "rating": 4.7,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "gush-mintz",
+    "name": "Gush Mintz",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Mint",
+      "Sweet",
+      "Fruity"
+    ],
+    "description": "Gushers × Kush Mints — a candy-sweet hybrid with a cool minty finish.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "headbanger",
+    "name": "Headbanger",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Euphoric",
+      "Focused",
+      "Happy",
+      "Creative"
+    ],
+    "flavors": [
+      "Diesel",
+      "Sour",
+      "Earthy"
+    ],
+    "description": "Sour Diesel × Biker Kush — a fuel-forward sativa for those who want to turn it up.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "mule-fuel",
+    "name": "Mule Fuel",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Euphoric",
+      "Happy",
+      "Body High"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Pungent"
+    ],
+    "description": "Do-Si-Dos × GMO — a heavy-hitting indica with fuel and earth notes and knockout body effects.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "nightshade",
+    "name": "Nightshade",
+    "type": "indica",
+    "effects": [
+      "Sleepy",
+      "Relaxed",
+      "Euphoric",
+      "Happy",
+      "Calm"
+    ],
+    "flavors": [
+      "Earthy",
+      "Floral",
+      "Berry"
+    ],
+    "description": "A deeply sedating indica for end-of-day use, named for its evening blooming characteristics.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "original-glue",
+    "name": "Original Glue",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Euphoric",
+      "Happy",
+      "Sleepy",
+      "Hungry"
+    ],
+    "flavors": [
+      "Diesel",
+      "Earthy",
+      "Pungent"
+    ],
+    "description": "The original GG4 formula — a heavy hybrid that glues you to the couch with pungent diesel.",
+    "rating": 4.7,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "permanent-marker",
+    "name": "Permanent Marker",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Focused"
+    ],
+    "flavors": [
+      "Sweet",
+      "Floral",
+      "Citrus"
+    ],
+    "description": "Biscotti × Jealousy × Sherbert — a top-shelf hybrid with complex sweet florals.",
+    "rating": 4.8,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "sfv-og",
+    "name": "SFV OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Euphoric",
+      "Happy",
+      "Sleepy",
+      "Body High"
+    ],
+    "flavors": [
+      "Pine",
+      "Earthy",
+      "OG"
+    ],
+    "description": "San Fernando Valley OG — a classic West Coast indica with pine and lemon OG character.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "strawnana",
+    "name": "Strawnana",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Strawberry",
+      "Banana",
+      "Sweet"
+    ],
+    "description": "Strawberry Banana — a potent, fruity hybrid with a sweet dessert profile and relaxing effects.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "sugar-cane",
+    "name": "Sugar Cane",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Happy",
+      "Uplifted",
+      "Euphoric",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Tropical",
+      "Sugary"
+    ],
+    "description": "A sweet tropical sativa with an uplifting, motivating high and candy-like flavor.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "gaslato",
+    "name": "Gaslato",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Gas",
+      "Sweet",
+      "Creamy"
+    ],
+    "description": "A gassy Gelato cross that balances fuel-forward diesel with sweet creamy notes.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "gascotti",
+    "name": "Gascotti",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Focused",
+      "Creative"
+    ],
+    "flavors": [
+      "Gas",
+      "Sweet",
+      "Earthy"
+    ],
+    "description": "Gas × Biscotti — a fuel and dessert hybrid with potent balanced effects.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "jack-z",
+    "name": "Jack Z",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Euphoric",
+      "Happy",
+      "Creative",
+      "Focused"
+    ],
+    "flavors": [
+      "Citrus",
+      "Earthy",
+      "Spice"
+    ],
+    "description": "A Jack Herer lineage cross with Zkittlez adding candy sweetness to a classic sativa buzz.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "pebble-beach",
+    "name": "Pebble Beach",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Euphoric",
+      "Happy",
+      "Creative",
+      "Calm"
+    ],
+    "flavors": [
+      "Sweet",
+      "Creamy",
+      "Berry"
+    ],
+    "description": "A smooth, beach-vibes hybrid with creamy dessert flavors and an easygoing high.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "wave-runner",
+    "name": "Wave Runner",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Happy",
+      "Relaxed",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Tropical",
+      "Fruity",
+      "Sweet"
+    ],
+    "description": "Ride the wave — a tropical hybrid with smooth effects and a fruity, refreshing profile.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "wavvyland",
+    "name": "Wavvyland",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Tropical",
+      "Citrus"
+    ],
+    "description": "A Cookies cultivar with wavy tropical sweetness and a laid-back hybrid high.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "zelium",
+    "name": "Zelium",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Focused"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Gas"
+    ],
+    "description": "A heavy-hitting hybrid with complex earthy and gassy notes.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "lemon-diesel",
+    "name": "Lemon Diesel",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Uplifted",
+      "Happy",
+      "Focused",
+      "Creative"
+    ],
+    "flavors": [
+      "Lemon",
+      "Diesel",
+      "Citrus"
+    ],
+    "description": "A bright, fuel-forward sativa with sharp lemon and diesel notes and a clear-headed buzz.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "lemon-freeze-pop",
+    "name": "Lemon Freeze Pop",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Relaxed",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Lemon",
+      "Cool",
+      "Sweet"
+    ],
+    "description": "A frozen treat hybrid — bright lemon candy with a cool, refreshing finish.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "pink-lemonade",
+    "name": "Pink Lemonade",
+    "type": "hybrid",
+    "effects": [
+      "Uplifted",
+      "Happy",
+      "Euphoric",
+      "Creative",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Lemon",
+      "Berry",
+      "Sweet"
+    ],
+    "description": "A berry-lemonade hybrid with a refreshing, mood-lifting effect.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "thai-og",
+    "name": "Thai OG",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Euphoric",
+      "Creative",
+      "Happy",
+      "Focused"
+    ],
+    "flavors": [
+      "Spice",
+      "Citrus",
+      "Earthy"
+    ],
+    "description": "Old-school Thai genetics blended with OG for a cultural sativa with cerebral energy.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "zowahh",
+    "name": "Zowahh",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Fruity",
+      "Gas"
+    ],
+    "description": "A potent Cookies-family hybrid with sweet fruity gas and balanced euphoric effects.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "smacks",
+    "name": "Smacks",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Happy",
+      "Relaxed",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Sweet",
+      "Fruity",
+      "Candy"
+    ],
+    "description": "A candy-sweet hybrid that smacks with a burst of flavor and uplifting effects.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "uforeoz",
+    "name": "UFOreoz",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Focused"
+    ],
+    "flavors": [
+      "Cookie",
+      "Sweet",
+      "Earthy"
+    ],
+    "description": "An out-of-this-world Oreo-family hybrid with sweet creamy notes and balanced effects.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "yellow-diamonds",
+    "name": "Yellow Diamonds",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Happy",
+      "Uplifted",
+      "Creative",
+      "Relaxed"
+    ],
+    "flavors": [
+      "Lemon",
+      "Sweet",
+      "Citrus"
+    ],
+    "description": "A sparkling, gem-quality hybrid with bright citrus notes and an uplifting high.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "sweetiez",
+    "name": "Sweetiez",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Candy",
+      "Fruity"
+    ],
+    "description": "A sugary-sweet hybrid built for good vibes and mellow euphoria.",
+    "rating": 4.3,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "space-face",
+    "name": "Space Face",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Gas",
+      "Earthy"
+    ],
+    "description": "A heady hybrid that rockets you into orbit with a gassy sweet profile.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "trop-cherry",
+    "name": "Trop Cherry",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Euphoric",
+      "Uplifted",
+      "Relaxed",
+      "Creative"
+    ],
+    "flavors": [
+      "Cherry",
+      "Tropical",
+      "Sweet"
+    ],
+    "description": "Tropical Cherry — a bright, fruit-forward hybrid with cherry candy sweetness.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "z-animal",
+    "name": "Z Animal #10",
+    "type": "hybrid",
+    "effects": [
+      "Relaxed",
+      "Euphoric",
+      "Happy",
+      "Sleepy",
+      "Body High"
+    ],
+    "flavors": [
+      "Earthy",
+      "Sweet",
+      "Gas"
+    ],
+    "description": "Zkittlez × Animal Cookies — a heavy hybrid with sweet candy and earthy body effects.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "zion-og",
+    "name": "Zion OG",
+    "type": "indica",
+    "effects": [
+      "Relaxed",
+      "Sleepy",
+      "Euphoric",
+      "Happy",
+      "Body High"
+    ],
+    "flavors": [
+      "OG",
+      "Earthy",
+      "Pine"
+    ],
+    "description": "A classic West Coast OG indica with deep pine and earth notes and heavy sedation.",
+    "rating": 4.4,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "watermelon-z",
+    "name": "Watermelon Z",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Watermelon",
+      "Sweet",
+      "Fruity"
+    ],
+    "description": "Watermelon Zkittlez — a juicy, fruity hybrid with summer vibes and a smooth high.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "lcg",
+    "name": "LCG",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Lemon",
+      "Cherry",
+      "Sweet"
+    ],
+    "description": "Lemon Cherry Gelato in its purest expression — bright citrus meets creamy berry.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "lcg-x-z",
+    "name": "LCG x Z",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Happy",
+      "Relaxed",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Lemon",
+      "Cherry",
+      "Candy"
+    ],
+    "description": "Lemon Cherry Gelato × Zkittlez — a candy-bright hybrid stacked with fruity complexity.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "pandoras-box",
+    "name": "Pandora's Box",
+    "type": "sativa",
+    "effects": [
+      "Energetic",
+      "Euphoric",
+      "Creative",
+      "Focused",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Citrus",
+      "Pine"
+    ],
+    "description": "Jack the Ripper × Space Queen — a potent sativa that opens up creative euphoria.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "gelato-33",
+    "name": "Gelato 33",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Sweet",
+      "Citrus",
+      "Creamy"
+    ],
+    "description": "Larry Bird — the most celebrated Gelato cut, known for its smooth, euphoric balanced high.",
+    "rating": 4.8,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "strawberry-guava",
+    "name": "Strawberry Guava",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Strawberry",
+      "Guava",
+      "Tropical"
+    ],
+    "description": "A tropical hybrid combining strawberry sweetness with exotic guava for a fruit punch effect.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "xxx-runtz",
+    "name": "XXX Runtz",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Creative",
+      "Uplifted"
+    ],
+    "flavors": [
+      "Candy",
+      "Sweet",
+      "Fruity"
+    ],
+    "description": "An extreme Runtz variation with amplified candy sweetness and potent balanced effects.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "lcg-biscotti",
+    "name": "LCG x Biscotti",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Focused",
+      "Creative"
+    ],
+    "flavors": [
+      "Lemon",
+      "Cherry",
+      "Cookie"
+    ],
+    "description": "Lemon Cherry Gelato × Biscotti — a dessert hybrid stacking citrus and cookie notes.",
+    "rating": 4.6,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "rainbow-runtz",
+    "name": "Rainbow Runtz",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Happy",
+      "Relaxed",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Candy",
+      "Rainbow",
+      "Sweet"
+    ],
+    "description": "A colorful Runtz phenotype bursting with candy flavor and a euphoric, social high.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "tropical-zkittlez",
+    "name": "Tropical Zkittlez",
+    "type": "hybrid",
+    "effects": [
+      "Happy",
+      "Relaxed",
+      "Euphoric",
+      "Uplifted",
+      "Creative"
+    ],
+    "flavors": [
+      "Tropical",
+      "Candy",
+      "Citrus"
+    ],
+    "description": "A tropical take on Zkittlez with a fruit punch flavor and laid-back hybrid effects.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  },
+  {
+    "id": "super-runtz-gm",
+    "name": "Super Runtz x GM",
+    "type": "hybrid",
+    "effects": [
+      "Euphoric",
+      "Relaxed",
+      "Happy",
+      "Uplifted",
+      "Body High"
+    ],
+    "flavors": [
+      "Gas",
+      "Candy",
+      "Sweet"
+    ],
+    "description": "Super Runtz × GMO — candy sweetness collides with gassy pungency for a potent ride.",
+    "rating": 4.5,
+    "dispensaries": [
+      "cookies-hayward"
+    ]
+  }
+]
