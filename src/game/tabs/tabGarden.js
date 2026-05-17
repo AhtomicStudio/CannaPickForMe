@@ -1,4 +1,4 @@
-import { getMonsterType } from '../monsters.js';
+import { getMonsterType, getVariant } from '../monsters.js';
 import { getLevel, getStats, getCurrentEvolution } from '../gameEngine.js';
 import { renderSprite, renderHat } from '../pixelArt.js';
 import { NEEDS, PACING } from '../economyConfig.js';
@@ -10,7 +10,6 @@ import {
 import { reportQuestProgress } from '../quests.js';
 import { describeTrait } from '../traits.js';
 import { getEquipped } from '../cosmetics.js';
-import { getVariant } from '../monsters.js';
 import {
   PLOT_IDS, PLOT_LABELS,
   getActivePlotId, switchToPlot, unlockNextPlot, plantBudInEmptyPlot,
