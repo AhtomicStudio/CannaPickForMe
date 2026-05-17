@@ -84,6 +84,13 @@ import { makeWildEncounter, makeBossEncounter, nextAvailableBoss, BOSSES, makePl
 import { sfx } from './sfx.js';
 import { emit, on } from './eventBus.js';
 
+// ── Tab modules ──────────────────────────────────────────────
+import { renderGardenTab, wireGardenTab } from './tabs/tabGarden.js';
+import { renderBattleTab, wireBattleTab } from './tabs/tabBattle.js';
+import { renderShopTab,   wireShopTab   } from './tabs/tabShop.js';
+import { renderQuestsTab, wireQuestsTab } from './tabs/tabQuests.js';
+import { renderVersusTab, wireVersusTab } from './tabs/tabVersus.js';
+
 // ── Module state ──────────────────────────────────────────────
 let _gameState = null;
 let _uid = null;
@@ -495,6 +502,30 @@ function switchTab(name) {
   refreshActiveTab(/*animate=*/true);
 }
 
+function makeTabContext() {
+  return {
+    gameState:        _gameState,
+    uid:              _uid,
+    container:        _container,
+    onSave:           debouncedSave,
+    onRefresh:        (animate) => refreshActiveTab(animate),
+    onTopbar:         syncTopbar,
+    onShell:          renderShell,
+    onSwitchTab:      switchTab,
+    toast,
+    formatN,
+    getTapReactor:    () => _tapReactor,
+    setTapReactor:    (r) => { _tapReactor = r; },
+    getVersusSession: () => _versusSession,
+    setVersusSession: (v) => { _versusSession = v; },
+    getBattleSession: () => _battleSession,
+    setBattleSession: (s) => { _battleSession = s; },
+    getShopSection:   () => _shopSection,
+    setShopSection:   (s) => { _shopSection = s; },
+    buyUpgrade,
+  };
+}
+
 function refreshActiveTab(animate = false) {
   if (!_container) return;
   // Never re-render the tab body while a versus session owns it.
@@ -506,13 +537,13 @@ function refreshActiveTab(animate = false) {
   // Tear down per-tab listeners by re-rendering
   if (_tapReactor) { _tapReactor.destroy(); _tapReactor = null; }
   if (animate) body.classList.remove('fade-in'), void body.offsetWidth, body.classList.add('fade-in');
-
+  const ctx = makeTabContext();
   switch (_activeTab) {
-    case 'garden': body.innerHTML = renderGardenTab(); wireGardenTab(body); break;
-    case 'battle': body.innerHTML = renderBattleTab(); wireBattleTab(body); break;
-    case 'shop':   body.innerHTML = renderShopTab();   wireShopTab(body);   break;
-    case 'quests': body.innerHTML = renderQuestsTab(); wireQuestsTab(body); break;
-    case 'versus': body.innerHTML = renderVersusTab(); wireVersusTab(body); break;
+    case 'garden': body.innerHTML = renderGardenTab(ctx); wireGardenTab(body, ctx); break;
+    case 'battle': body.innerHTML = renderBattleTab(ctx); wireBattleTab(body, ctx); break;
+    case 'shop':   body.innerHTML = renderShopTab(ctx);   wireShopTab(body, ctx);   break;
+    case 'quests': body.innerHTML = renderQuestsTab(ctx); wireQuestsTab(body, ctx); break;
+    case 'versus': body.innerHTML = renderVersusTab(ctx); wireVersusTab(body, ctx); break;
   }
   syncTopbar();
 }
@@ -534,7 +565,7 @@ function syncTopbar() {
 }
 
 // ── GARDEN TAB ────────────────────────────────────────────────
-function renderGardenTab() {
+function renderGardenTab_legacy() {
   const monType   = getMonsterType(_gameState.monsterType);
   const lvl       = getLevel(_gameState.xp);
   const evolution = getCurrentEvolution(monType.evolutions, lvl);
@@ -688,7 +719,7 @@ function renderGardenTab() {
   `;
 }
 
-function wireGardenTab(body) {
+function wireGardenTab_legacy(body) {
   const monType   = getMonsterType(_gameState.monsterType);
   const lvl       = getLevel(_gameState.xp);
   const evolution = getCurrentEvolution(monType.evolutions, lvl);
@@ -1043,7 +1074,7 @@ function useItemFromInventory(id) {
 }
 
 // ── BATTLE TAB ────────────────────────────────────────────────
-function renderBattleTab() {
+function renderBattleTab_legacy() {
   if (_battleSession) return renderBattleArena();
   const lvl = getLevel(_gameState.xp);
   const nextBoss = nextAvailableBoss(_gameState);
@@ -1079,7 +1110,7 @@ function renderBattleTab() {
   `;
 }
 
-function wireBattleTab(body) {
+function wireBattleTab_legacy(body) {
   if (_battleSession) return wireBattleArena(body);
   body.querySelector('#btn-find-fight')?.addEventListener('click', () => {
     sfx.encounter();
@@ -1146,7 +1177,7 @@ function onBattleResolved(result, meta) {
 // ── SHOP TAB ──────────────────────────────────────────────────
 let _shopSection = 'care';   // 'care' | 'cosmetics' | 'themes'
 
-function renderShopTab() {
+function renderShopTab_legacy() {
   return `
     <section class="tab-pane shop-tab">
       <div class="card shop-currency-banner">
@@ -1331,7 +1362,7 @@ function renderGardenUpgradeBlock(slot) {
   `;
 }
 
-function wireShopTab(body) {
+function wireShopTab_legacy(body) {
   // Sub-tab switching
   body.querySelectorAll('[data-shop-tab]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1466,7 +1497,7 @@ function buyUpgrade(slot) {
 }
 
 // ── QUESTS TAB ────────────────────────────────────────────────
-function renderQuestsTab() {
+function renderQuestsTab_legacy() {
   ensureDaily(_gameState);
   const dailies = _gameState.quests.daily || [];
   const totalAch = ACHIEVEMENTS.length;
@@ -1689,7 +1720,7 @@ function formatDateShort(ts) {
   return `${d.getMonth()+1}/${d.getDate()}`;
 }
 
-function wireQuestsTab(body) {
+function wireQuestsTab_legacy(body) {
   // Quest help tooltips
   body.querySelectorAll('[data-quest-info]').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -1794,7 +1825,7 @@ function wireQuestsTab(body) {
 }
 
 // ── VERSUS TAB (local hot-seat scaffold) ──────────────────────
-function renderVersusTab() {
+function renderVersusTab_legacy() {
   return `
     <section class="tab-pane versus-tab">
       <div class="card">
@@ -1841,7 +1872,7 @@ function renderVersusTab() {
   `;
 }
 
-function wireVersusTab(body) {
+function wireVersusTab_legacy(body) {
   // Guard: marks a versus session active so refreshActiveTab / switchTab
   // won't overwrite the container while a live session is running.
   function enterVersus(tabBody) {
@@ -1864,8 +1895,8 @@ function wireVersusTab(body) {
       _container.querySelectorAll('.game-tab').forEach(btn => {
         btn.classList.toggle('game-tab--active', btn.dataset.tab === 'versus');
       });
-      b.innerHTML = renderVersusTab();
-      wireVersusTab(b);
+      b.innerHTML = renderVersusTab_legacy();
+      wireVersusTab_legacy(b);
     }
     syncTopbar();
   }
@@ -1900,8 +1931,8 @@ function wireVersusTab(body) {
     // Clear _versusSession HERE, when the user explicitly dismisses the error.
     b.querySelector('#vs-err-back')?.addEventListener('click', () => {
       _versusSession = null;
-      b.innerHTML = renderVersusTab();
-      wireVersusTab(b);
+      b.innerHTML = renderVersusTab_legacy();
+      wireVersusTab_legacy(b);
     });
   }
 
