@@ -696,6 +696,16 @@
     </section>
 
     <script type="module" src="/src/main.js"></script>
+    <!-- Service Worker — cache-first for JS/CSS/data, offline fallback for HTML -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch((err) => {
+            console.warn('SW registration failed:', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
 
