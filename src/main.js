@@ -12,7 +12,6 @@ import { showToast } from './services/toastService.js';
 import { openModal, closeModal, closeTopModal, showConfirm } from './services/modalService.js';
 import { initRouter } from './router.js';
 import { inject, track } from '@vercel/analytics';
-import strainsData from './data/strains.json';
 import questionsData from './data/questions.json';
 import { matchStrains } from './engine/matcher.js';
 import { getNextQuote } from './data/quotes.js';
@@ -42,6 +41,23 @@ import {
   getActiveSponsoredEntries, getActivePartnerStrains, getActiveAdsForPlacement,
   recordImpression, recordClick,
 } from './services/sponsorshipService.js';
+
+// === STRAINS DATA ===
+let strainsData = null;
+let strainsReady = false;
+
+async function loadStrains() {
+  try {
+    const res = await fetch('/data/strains.json');
+    if (!res.ok) throw new Error(`strains fetch failed: ${res.status}`);
+    strainsData = await res.json();
+  } catch (err) {
+    console.error('Failed to load strains:', err);
+    strainsData = [];
+  }
+  strainsReady = true;
+  updateStashUI();
+}
 
 // === CONSTANTS ===
 const ALL_EFFECTS = ['Relaxed','Happy','Euphoric','Creative','Uplifted','Energetic','Focused','Talkative','Giggly','Sleepy','Hungry','Tingly'];
@@ -183,7 +199,7 @@ export function showScreen(id) {
 // === HELPERS ===
 function getAllStrains() {
   const customs = getCustomStrains();
-  return applyDelta([...strainsData, ...customs], strainDelta);
+  return applyDelta([...(strainsData ?? []), ...customs], strainDelta);
 }
 
 async function initStrainDelta() {
@@ -225,7 +241,7 @@ function updateStashUI() {
 
   if (countEl) countEl.textContent = count;
   if (tabCountEl) tabCountEl.textContent = count;
-  if (pickBtn) pickBtn.disabled = count < 2;
+  if (pickBtn) pickBtn.disabled = !strainsReady || count < 2;
   if (hint) {
     hint.textContent = count < 2
       ? `Add at least ${2 - count} more strain${2 - count > 1 ? 's' : ''} to your stash to get started!`
@@ -1746,6 +1762,7 @@ function initModalEscape() {
 
 // === BOOT ===
 async function init() {
+  loadStrains(); // start fetch immediately — no await, button stays disabled until ready
   loadSavedTheme();
   inject();
   // Pre-paint as signed-in if we have a remembered email — kills the flash of
