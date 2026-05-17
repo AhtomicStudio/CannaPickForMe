@@ -39,10 +39,10 @@ import {
 // === FIREBASE / USER SERVICE (lazy) ===
 // userService statically imports firebase.js — lazy-loading this keeps the
 // entire Firebase SDK out of the critical-path bundle.
-let _userSvc = null;
-async function getUserService() {
-  if (!_userSvc) _userSvc = await import('./services/userService.js');
-  return _userSvc;
+let _userSvcPromise = null;
+function getUserService() {
+  if (!_userSvcPromise) _userSvcPromise = import('./services/userService.js');
+  return _userSvcPromise;
 }
 
 // Mirrors userService.currentUser so callers in main.js don't need async access.
