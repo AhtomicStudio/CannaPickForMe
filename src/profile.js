@@ -1,6 +1,5 @@
 import { getSessionHistory, clearSessionHistory, getTheme } from './storage/store.js';
 import { THEMES, saveThemePreference, isThemeUnlocked, isPremiumTheme } from './services/themeService.js';
-import { deleteAccount } from './services/userService.js';
 import { showConfirm } from './services/modalService.js';
 import { showToast } from './services/toastService.js';
 
@@ -291,6 +290,7 @@ function renderSettingsTab() {
     });
     if (!confirmed) return;
     try {
+      const { deleteAccount } = await import('./services/userService.js');
       await deleteAccount();
       _onBack();
     } catch (err) {
