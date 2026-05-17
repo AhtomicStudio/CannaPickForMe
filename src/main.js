@@ -24,12 +24,6 @@ import {
   isAgeVerified, setAgeVerified, applyOverrides,
   addSessionEntry,
 } from './storage/store.js';
-import {
-  getCurrentUser, signInWithGoogle,
-  scheduleSync, loadAndResolveProfile, signOutUser, deleteAccount, initAuth,
-  sendSignInLink, handleSignInLink, completeSignInWithEmail, NEEDS_EMAIL_CONFIRMATION,
-  requestSignInCode, verifySignInCode,
-} from './services/userService.js';
 import { loadSavedTheme } from './services/themeService.js';
 import { shareResult } from './shareCard.js';
 import { generateArchetype } from './archetypes.js';
@@ -41,6 +35,24 @@ import {
   getActiveSponsoredEntries, getActivePartnerStrains, getActiveAdsForPlacement,
   recordImpression, recordClick,
 } from './services/sponsorshipService.js';
+
+// === FIREBASE / USER SERVICE (lazy) ===
+// userService statically imports firebase.js — lazy-loading this keeps the
+// entire Firebase SDK out of the critical-path bundle.
+let _userSvc = null;
+async function getUserService() {
+  if (!_userSvc) _userSvc = await import('./services/userService.js');
+  return _userSvc;
+}
+
+// Mirrors userService.currentUser so callers in main.js don't need async access.
+// Set/cleared by the initAuth callbacks in init().
+let currentUser = null;
+
+// Fire-and-forget sync — replaces direct scheduleSync() calls.
+function triggerSync() {
+  getUserService().then(({ scheduleSync }) => scheduleSync()).catch(() => {});
+}
 
 // === STRAINS DATA ===
 let strainsData = null;
@@ -351,7 +363,7 @@ function initHome() {
   // (and the surrounding wrapper) trigger the same flow. Users were
   // missing the click target when they tapped only the text.
   function handleProfileClick() {
-    const user = getCurrentUser();
+    const user = currentUser;
     if (!user) {
       setAccountState('signedout');
       openModal('account-modal');
@@ -392,7 +404,7 @@ function initHome() {
     });
     if (confirmed) {
       clearStash();
-      scheduleSync();
+      triggerSync();
       updateStashUI();
       showToast('Stash cleared.', 'success');
     }
@@ -400,7 +412,7 @@ function initHome() {
 
   // CannaGotchi button
   document.getElementById('btn-cannagotchi').addEventListener('click', async () => {
-    const user = getCurrentUser();
+    const user = currentUser;
     if (!user) {
       setAccountState('signedout');
       openModal('account-modal');
@@ -680,7 +692,7 @@ function renderBrowseList() {
         track('stash_add', { strain: id });
         reactToEvent('stash-add');
       }
-      scheduleSync();
+      triggerSync();
       renderBrowseList();
       updateStashUI();
     });
@@ -740,7 +752,7 @@ function renderMyStashList() {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       removeFromStash(btn.dataset.id);
-      scheduleSync();
+      triggerSync();
       renderMyStashList();
       updateStashUI();
     });
@@ -818,7 +830,7 @@ function initCustomForm() {
     });
 
     addToStash(strain.id);
-    scheduleSync();
+    triggerSync();
     reactToEvent('stash-add');
     closeModal('custom-modal');
     document.getElementById('custom-strain-form').reset();
@@ -855,7 +867,7 @@ function openOverrideModal(strainId) {
       return;
     }
     setEffectOverride(strainId, selected);
-    scheduleSync();
+    triggerSync();
     closeModal('override-modal');
     renderBrowseList();
   };
@@ -863,7 +875,7 @@ function openOverrideModal(strainId) {
   // Reset
   document.getElementById('override-reset').onclick = () => {
     clearEffectOverride(strainId);
-    scheduleSync();
+    triggerSync();
     closeModal('override-modal');
     renderBrowseList();
   };
@@ -1012,7 +1024,7 @@ function startResult() {
 
     // Award the user's Cannabud for completing a pick session.
     // Lazy-imported so the game module only loads when needed.
-    const user = getCurrentUser();
+    const user = currentUser;
     if (user) {
       import('./game/gameScreen.js').then(mod => {
         try { mod.grantSessionXP?.(result?.strain || null, user.uid); }
@@ -1130,7 +1142,7 @@ async function renderResult(result) {
     vibe:       sessionAnswers.vibe       ?? null,
     matchScore: matchScore,
   });
-  scheduleSync();
+  triggerSync();
 
   // ── Archetype ───────────────────────────────────────────────────────────
   const archetype = generateArchetype(sessionAnswers);
@@ -1420,11 +1432,11 @@ function setAccountState(state) {
 async function requestCodeAndShowEntry(email, errorEl) {
   errorEl?.classList.add('hidden');
   try {
+    const { requestSignInCode } = await getUserService();
     await requestSignInCode(email);
     document.getElementById('account-code-email').textContent = email;
     document.getElementById('account-code-input').value = '';
     setAccountState('code');
-    // Focus input after state transition so the user can immediately type
     setTimeout(() => document.getElementById('account-code-input')?.focus(), 50);
   } catch (err) {
     const msg = err?.message || 'Could not send the code. Please try again.';
@@ -1464,7 +1476,7 @@ function initAccountModal() {
 
   // Open modal on log in / sign up link click
   function openAccountModal() {
-    const user = getCurrentUser();
+    const user = currentUser;
     setAccountState(user ? 'signedin' : 'signedout');
     if (user) {
       document.getElementById('account-user-email').textContent = user.email;
@@ -1485,6 +1497,7 @@ function initAccountModal() {
     btn.disabled = true;
     btn.textContent = 'Signing in…';
     try {
+      const { signInWithGoogle } = await getUserService();
       await signInWithGoogle();
       closeModal('account-modal');
     } catch (err) {
@@ -1511,6 +1524,7 @@ function initAccountModal() {
     errEl.classList.add('hidden');
     btn.disabled = true; btn.textContent = 'Sending…';
     try {
+      const { sendSignInLink } = await getUserService();
       await sendSignInLink(email);
       document.getElementById('account-linksent-email').textContent = email;
       setAccountState('linksent');
@@ -1552,6 +1566,7 @@ function initAccountModal() {
     btn.disabled = true;
     btn.textContent = 'Verifying…';
     try {
+      const { verifySignInCode } = await getUserService();
       await verifySignInCode(code);
       closeModal('account-modal');
     } catch (err) {
@@ -1586,6 +1601,7 @@ function initAccountModal() {
     if (!email) return;
     errEl.classList.add('hidden');
     try {
+      const { completeSignInWithEmail } = await getUserService();
       await completeSignInWithEmail(email);
       closeModal('account-modal');
     } catch (err) {
@@ -1597,6 +1613,7 @@ function initAccountModal() {
 
   // Sign out
   document.getElementById('account-signout-btn').addEventListener('click', async () => {
+    const { signOutUser } = await getUserService();
     await signOutUser();
     closeModal('account-modal');
   });
@@ -1613,6 +1630,7 @@ function initAccountModal() {
     });
     if (!confirmed) return;
     try {
+      const { deleteAccount } = await getUserService();
       await deleteAccount();
       closeModal('account-modal');
       showToast('Account deleted. Your local data is still on this device.', 'success');
@@ -1629,53 +1647,11 @@ function initAccountModal() {
   // Profile screen sign-out button
   const profileSignoutBtn = document.getElementById('profile-signout-btn');
   profileSignoutBtn.addEventListener('click', async () => {
+    const { signOutUser } = await getUserService();
     await signOutUser();
     showScreen('home');
   });
 
-  // Auth state listener — updates cloud icon and resolves conflicts on sign-in
-  const resultCta = document.getElementById('result-signup-cta');
-
-  initAuth(
-    async (user) => {
-      authLinks.classList.add('hidden');
-      if (resultCta) resultCta.classList.add('hidden');
-      profileSignoutBtn.classList.remove('hidden');
-      updateProfileAvatar(user);
-      closeModal('account-modal');
-      // Unlock CannaGotchi button
-      const gotchiBtn = document.getElementById('btn-cannagotchi');
-      if (gotchiBtn) { gotchiBtn.disabled = false; gotchiBtn.classList.remove('btn--game-locked'); gotchiBtn.classList.add('btn--game-unlocked'); }
-      try {
-        await loadAndResolveProfile(showConflictModal);
-      } catch (err) {
-        console.error('loadAndResolveProfile error:', err);
-      }
-      try {
-        const { syncSettingsFromFirestore } = await import('./services/userService.js');
-        await syncSettingsFromFirestore(user.uid);
-      } catch (err) {
-        console.warn('Settings sync failed:', err);
-      }
-      // Init persistent companion
-      try { await initCompanion(user.uid); } catch (e) { console.warn('companion init failed', e); }
-      // Refresh UI — cloud data may have replaced local
-      renderBrowseList();
-      renderMyStashList();
-      updateStashUI();
-    },
-    () => {
-      authLinks.classList.remove('hidden');
-      if (resultCta) resultCta.classList.remove('hidden');
-      profileSignoutBtn.classList.add('hidden');
-      updateProfileAvatar(null);
-      // Lock CannaGotchi button
-      const gotchiBtn = document.getElementById('btn-cannagotchi');
-      if (gotchiBtn) { gotchiBtn.disabled = true; gotchiBtn.classList.add('btn--game-locked'); gotchiBtn.classList.remove('btn--game-unlocked'); }
-      // Destroy companion
-      destroyCompanion();
-    }
-  );
 }
 
 // === PROFILE AVATAR ===
@@ -1787,18 +1763,63 @@ async function init() {
   initModalEscape();
   initRouter();
 
+  // Load Firebase / userService after synchronous UI setup — keeps it off
+  // the critical path. handleSignInLink needs it to detect magic-link URLs.
+  const userSvc = await getUserService();
+
   // Handle magic link return — must run after initAccountModal sets up the modal
   try {
-    const result = await handleSignInLink();
-    if (result === NEEDS_EMAIL_CONFIRMATION) {
-      // Opened on a different device — ask for email to complete sign-in
+    const result = await userSvc.handleSignInLink();
+    if (result === userSvc.NEEDS_EMAIL_CONFIRMATION) {
       setAccountState('confirmemail');
       openModal('account-modal');
     }
-    // true = signed in successfully, false = no link in URL — both silent
   } catch (err) {
     console.warn('handleSignInLink error:', err);
   }
+
+  // Auth state observer — updates avatar and syncs profile on sign-in.
+  const authLinks = document.getElementById('auth-links');
+  const resultCta = document.getElementById('result-signup-cta');
+  const profileSignoutBtn = document.getElementById('profile-signout-btn');
+
+  userSvc.initAuth(
+    async (user) => {
+      currentUser = user;
+      authLinks.classList.add('hidden');
+      if (resultCta) resultCta.classList.add('hidden');
+      profileSignoutBtn.classList.remove('hidden');
+      updateProfileAvatar(user);
+      closeModal('account-modal');
+      const gotchiBtn = document.getElementById('btn-cannagotchi');
+      if (gotchiBtn) { gotchiBtn.disabled = false; gotchiBtn.classList.remove('btn--game-locked'); gotchiBtn.classList.add('btn--game-unlocked'); }
+      try {
+        await userSvc.loadAndResolveProfile(showConflictModal);
+      } catch (err) {
+        console.error('loadAndResolveProfile error:', err);
+      }
+      try {
+        const { syncSettingsFromFirestore } = await getUserService();
+        await syncSettingsFromFirestore(user.uid);
+      } catch (err) {
+        console.warn('Settings sync failed:', err);
+      }
+      try { await initCompanion(user.uid); } catch (e) { console.warn('companion init failed', e); }
+      renderBrowseList();
+      renderMyStashList();
+      updateStashUI();
+    },
+    () => {
+      currentUser = null;
+      authLinks.classList.remove('hidden');
+      if (resultCta) resultCta.classList.remove('hidden');
+      profileSignoutBtn.classList.add('hidden');
+      updateProfileAvatar(null);
+      const gotchiBtn = document.getElementById('btn-cannagotchi');
+      if (gotchiBtn) { gotchiBtn.disabled = true; gotchiBtn.classList.add('btn--game-locked'); gotchiBtn.classList.remove('btn--game-unlocked'); }
+      destroyCompanion();
+    }
+  );
 }
 
 document.addEventListener('DOMContentLoaded', init);
