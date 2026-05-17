@@ -22,29 +22,27 @@
 
 import { getMonsterType, MONSTER_TYPES } from './monsters.js';
 import {
-  getLevel, getLevelProgress, getStats, calcIdleXP,
+  getLevel, getLevelProgress, calcIdleXP,
   getCurrentEvolution, checkEvolution, xpForLevel,
 } from './gameEngine.js';
 import { getAvailableMoves } from './moves.js';
-import { renderSprite, renderHat } from './pixelArt.js';
+import { renderSprite } from './pixelArt.js';
 import {
   loadGameState, saveGameState, createInitialGameState, refreshLevelCache,
 } from '../services/gameService.js';
 import { renderOnboarding } from './onboardingScreen.js';
-import { createTapReactor } from './companion.js';
 
 import { NEEDS, XP, PACING, CURRENCY, PRESTIGE } from './economyConfig.js';
-import { applyDecay, restoreNeed, pet, moodSummary, mostNeedy, NEED_META, NEED_KEYS } from './needs.js';
+import { applyDecay, moodSummary, NEED_KEYS } from './needs.js';
 import {
   ITEMS, GARDEN_UPGRADES, getEquippedTier, getGardenBonuses,
-  consumeItem, addItem, shopList,
+  addItem, shopList,
 } from './inventory.js';
 import { ensureDaily, reportQuestProgress, claimQuest } from './quests.js';
-import { getTrait, describeTrait } from './traits.js';
 import { MOVES_BY_TYPE } from './moves.js';
 import {
   HATS, FRAMES, AURAS, COSMETICS_BY_ID, COSMETIC_SLOTS,
-  listCosmeticsForSlot, buyCosmetic, equipCosmetic, getEquipped,
+  listCosmeticsForSlot, buyCosmetic, equipCosmetic,
   syncAchievementCosmetics,
 } from './cosmetics.js';
 import { THEMES, isThemeUnlocked, isPremiumTheme, unlockTheme, syncUnlockedThemesFromGame, applyTheme } from '../services/themeService.js';
@@ -67,17 +65,9 @@ import {
 } from './evolutionPaths.js';
 import { getTodaysEvent } from './worldEvents.js';
 import { harvestTick, msUntilNextTrichome, TRICHOME_COSMETICS } from './trichomes.js';
-import { tutorialSeen, startTutorial, resetTutorial } from './tutorial.js';
+import { tutorialSeen, startTutorial } from './tutorial.js';
 import { track } from '@vercel/analytics';
-import { runMiniGame, RESULT_MULTIPLIERS } from './miniGames.js';
 
-const MINIGAME_PREF_KEY = 'cpfm_cg_minigames_enabled';
-// Defaults to ON — players opt OUT if they want zero-friction taps.
-function miniGamesEnabled() {
-  const v = localStorage.getItem(MINIGAME_PREF_KEY);
-  return v === null ? true : v === 'true';
-}
-function setMiniGamesEnabled(on) { localStorage.setItem(MINIGAME_PREF_KEY, String(!!on)); }
 import { ACHIEVEMENTS, ACHIEVEMENTS_BY_ID, checkAchievements } from './achievements.js';
 import { getPrestigeMultipliers, canPrestige, previewPrestige, doPrestige } from './prestige.js';
 import { makeWildEncounter, makeBossEncounter, nextAvailableBoss, BOSSES, makePlayerCombatant } from './encounters.js';
@@ -104,8 +94,7 @@ let _busListeners = [];
 let _battleSession = null; // populated when in a battle
 let _versusSession = null; // populated when in a hot-seat duel
 
-// ── Cooldowns / streak ────────────────────────────────────────
-const _cd = { feed: 0, water: 0, clean: 0, pet: 0 };
+// ── Streak ────────────────────────────────────────────────────
 let _streakCount = 0;
 let _streakTimer = null;
 
@@ -409,12 +398,6 @@ function combinedBudMult() {
   const eventBud = ev.mods?.budMult ?? 1;
   return g.budMult * p.budMult * eventBud;
 }
-function combinedStatMult() {
-  const m = moodSummary(_gameState.needs);
-  const p = getPrestigeMultipliers(_gameState);
-  return m.statMult * p.statMult;
-}
-
 // ── Shell + tab system ────────────────────────────────────────
 function renderShell() {
   if (!_gameState || !_container) return;
@@ -523,6 +506,8 @@ function makeTabContext() {
     getShopSection:   () => _shopSection,
     setShopSection:   (s) => { _shopSection = s; },
     buyUpgrade,
+    applyXP,
+    registerStreak,
   };
 }
 
@@ -564,244 +549,6 @@ function syncTopbar() {
   if (tri)  tri.textContent  = formatN(_gameState.trichomes || 0);
 }
 
-// ── GARDEN TAB ────────────────────────────────────────────────
-function renderGardenTab_legacy() {
-  const monType   = getMonsterType(_gameState.monsterType);
-  const lvl       = getLevel(_gameState.xp);
-  const evolution = getCurrentEvolution(monType.evolutions, lvl);
-  const stats     = getStats(monType.baseStats, lvl);
-  const mood      = moodSummary(_gameState.needs);
-  const lowest    = mostNeedy(_gameState.needs);
-  const prestigeMul = getPrestigeMultipliers(_gameState);
-
-  const needsHTML = NEED_KEYS.map(k => {
-    const meta = NEED_META[k];
-    const v = _gameState.needs[k] ?? 100;
-    const pct = Math.max(0, Math.min(100, v));
-    const lowGlow = v < NEEDS.THRESHOLD_BAD ? ' need-row--low' : v < NEEDS.THRESHOLD_OK ? ' need-row--mid' : '';
-    return `
-      <div class="need-row${lowGlow}">
-        <span class="need-row__icon" title="${meta.label}">${meta.emoji}</span>
-        <div class="need-row__bar"><div class="need-row__fill" style="width:${pct}%;background:${meta.color}"></div></div>
-        <span class="need-row__val">${Math.round(pct)}</span>
-      </div>`;
-  }).join('');
-
-  const moodMultStr = mood.statMult >= 1
-    ? `+${Math.round((mood.statMult-1)*100)}% stats`
-    : `${Math.round((mood.statMult-1)*100)}% stats`;
-  const moodXpStr   = mood.xpMult >= 1
-    ? `+${Math.round((mood.xpMult-1)*100)}% XP`
-    : `${Math.round((mood.xpMult-1)*100)}% XP`;
-
-  const hat   = getEquipped(_gameState, 'hat');
-  const frame = getEquipped(_gameState, 'frame');
-  const aura  = getEquipped(_gameState, 'aura');
-  const frameClass = frame?.cssClass || '';
-  const auraClass  = aura?.cssClass  || '';
-
-  // Garden upgrades — paint into the background so the player SEES their setup
-  const potTier   = getEquippedTier(_gameState.garden, 'pot');
-  const soilTier  = getEquippedTier(_gameState.garden, 'soil');
-
-  return `
-    <section class="tab-pane">
-      ${renderPlotPicker()}
-
-      <div class="garden-viewport ${frameClass} ${auraClass}"
-           data-pot="${potTier.id}" data-soil="${soilTier.id}"
-           role="button" tabindex="0" aria-label="Pet ${_gameState.monsterName}">
-        <div class="garden-pot-layer"></div>
-        <div class="garden-soil-layer"></div>
-        <div class="game-viewport__scanlines"></div>
-        <div class="aura-layer"></div>
-        <div class="cg-stress" id="garden-stress">💢</div>
-        <div class="cg-bubble hidden" id="garden-bubble"></div>
-        <div class="game-monster" id="garden-sprite"></div>
-        <div class="garden-viewport__caption">
-          <span>${mood.emoji} ${mood.label}</span>
-          <span class="dim">${moodMultStr} · ${moodXpStr}</span>
-        </div>
-      </div>
-
-      <div class="needs-card">
-        <div class="card-title">Needs</div>
-        ${needsHTML}
-        ${lowest.value < NEEDS.THRESHOLD_OK ? `
-          <div class="needs-hint">${NEED_META[lowest.key].emoji} ${_gameState.monsterName} could really use some ${NEED_META[lowest.key].label.toLowerCase()}.</div>` : ''}
-      </div>
-
-      <div class="action-row">
-        <button class="btn-juicy" id="act-water">💧 Water<span class="dim small">+${NEEDS.RESTORE_TAP_WATER}</span></button>
-        <button class="btn-juicy" id="act-feed">🌿 Feed<span class="dim small">+${NEEDS.RESTORE_TAP_FEED}</span></button>
-        <button class="btn-juicy" id="act-clean">✨ Clean<span class="dim small">+10</span></button>
-        <button class="btn-juicy" id="act-pet">🤚 Pet<span class="dim small">+6 😊</span></button>
-      </div>
-
-      <label class="minigame-toggle">
-        <input type="checkbox" id="minigame-toggle" ${miniGamesEnabled() ? 'checked' : ''} />
-        <span>🎮 Skill mini-games on care actions <span class="dim small">(Perfect = 1.5× restore)</span></span>
-      </label>
-
-      <button class="btn-juicy compact" id="btn-replay-tutorial" style="margin-top:0.4rem">📖 Replay tutorial</button>
-
-      <div class="stats-card">
-        <div class="card-title">Stats <span class="dim small">x${combinedStatMult().toFixed(2)}</span></div>
-        ${statBar('HP',  Math.floor(stats.hp  * combinedStatMult()), monType.color)}
-        ${statBar('ATK', Math.floor(stats.atk * combinedStatMult()), '#f87171')}
-        ${statBar('DEF', Math.floor(stats.def * combinedStatMult()), '#38bdf8')}
-        ${statBar('SPD', Math.floor(stats.spd * combinedStatMult()), '#fbbf24')}
-      </div>
-
-      ${_gameState.trait ? `
-        <div class="card trait-card">
-          <div class="card-title">Trait</div>
-          <div class="trait-line">${describeTrait(_gameState.trait)}</div>
-        </div>` : ''}
-
-      <div class="garden-card">
-        <div class="card-title">Garden Setup <span class="dim small">tap to upgrade</span></div>
-        ${['pot','soil'].map(slot => {
-          const cfg = GARDEN_UPGRADES[slot];
-          const tier = getEquippedTier(_gameState.garden, slot);
-          const idx = cfg.tiers.findIndex(t => t.id === tier.id);
-          const next = cfg.tiers[idx + 1];
-          const canAfford = next ? (_gameState.buds || 0) >= next.cost : false;
-          const decayPct = tier.decayMult < 1 ? Math.round((1-tier.decayMult)*100) : 0;
-          const xpPct    = tier.xpMult   > 1 ? Math.round((tier.xpMult-1)*100)     : 0;
-          const budPct   = tier.budMult  > 1 ? Math.round((tier.budMult-1)*100)    : 0;
-          return `
-            <div class="garden-slot-row">
-              <div class="garden-slot-row__head">
-                <span class="garden-slot-row__emoji">${cfg.emoji}</span>
-                <div class="garden-slot-row__info">
-                  <div class="garden-slot-row__label">${cfg.label} <span class="dim small">(${idx+1}/${cfg.tiers.length})</span></div>
-                  <div class="garden-slot-row__name">${tier.name}</div>
-                </div>
-              </div>
-              <div class="garden-slot-row__bonuses">
-                ${decayPct ? `<span class="bonus-pill">⏳ -${decayPct}% decay</span>` : ''}
-                ${xpPct    ? `<span class="bonus-pill">⚡ +${xpPct}% XP</span>`     : ''}
-                ${budPct   ? `<span class="bonus-pill">🪙 +${budPct}% Buds</span>`  : ''}
-              </div>
-              ${next ? `
-                <button class="btn-juicy compact" data-garden-upgrade="${slot}" ${canAfford ? '' : 'disabled'}>
-                  → ${next.name} <span class="dim small">🪙 ${formatN(next.cost)}</span>
-                </button>` : `<div class="dim small" style="text-align:center">⭐ MAX</div>`}
-            </div>`;
-        }).join('')}
-      </div>
-
-      <div class="prestige-strip">
-        <div class="dim small">Prestige Lv.${_gameState.prestige?.count || 0} · ${(prestigeMul.xpMult*100-100).toFixed(0)}% XP boost</div>
-      </div>
-
-      <div class="inventory-card">
-        <div class="card-title">Inventory</div>
-        ${(() => {
-          const owned = Object.entries(_gameState.inventory || {}).filter(([_,n]) => n>0);
-          if (owned.length === 0) {
-            return `<div class="inventory-empty">📦 No items yet — visit the <b>Shop</b> tab to stock up.</div>`;
-          }
-          return `<div class="inventory-grid">
-            ${owned.map(([id, n]) => {
-              const it = ITEMS[id]; if (!it) return '';
-              return `<button class="inv-item" data-item="${id}" title="${it.desc}">
-                <span class="inv-item__emoji">${it.emoji}</span>
-                <span class="inv-item__name">${it.name}</span>
-                <span class="inv-item__count">×${n}</span>
-              </button>`;
-            }).join('')}
-          </div>`;
-        })()}
-      </div>
-    </section>
-  `;
-}
-
-function wireGardenTab_legacy(body) {
-  const monType   = getMonsterType(_gameState.monsterType);
-  const lvl       = getLevel(_gameState.xp);
-  const evolution = getCurrentEvolution(monType.evolutions, lvl);
-
-  const spriteEl = body.querySelector('#garden-sprite');
-  const variant = getVariant(_gameState.monsterType, _gameState.monsterVariant || 'classic');
-  const path    = getPath(_gameState.monsterType, _gameState.evolutionPath);
-  const remap   = combinedPaletteRemap(variant?.paletteRemap, path?.paletteOverlay);
-  renderSprite(spriteEl, evolution.sprite, 7, { paletteRemap: remap });
-  // Equipped hat — pixel-art overlay anchored to the top of the bud sprite
-  const hatEq = getEquipped(_gameState, 'hat');
-  if (hatEq && hatEq.id !== 'hat_none') {
-    renderHat(spriteEl, hatEq.id, 7);
-  }
-  const idleAnim = idleAnimFor(evolution.sprite);
-  spriteEl.className = 'game-monster ' + idleAnim;
-
-  const viewport = body.querySelector('.garden-viewport');
-  _tapReactor = createTapReactor({
-    wrapper: viewport,
-    sprite:  spriteEl,
-    bubble:  body.querySelector('#garden-bubble'),
-    stress:  body.querySelector('#garden-stress'),
-    idleAnim, idleTimer: false,
-  });
-  viewport.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); _tapReactor?.handleTap(); }
-  });
-
-  body.querySelector('#act-water').addEventListener('click', (e) => doCare(e, 'water'));
-  body.querySelector('#act-feed').addEventListener('click',  (e) => doCare(e, 'feed'));
-  body.querySelector('#act-clean').addEventListener('click', (e) => doCare(e, 'clean'));
-  body.querySelector('#act-pet').addEventListener('click',   (e) => doCare(e, 'pet'));
-
-  body.querySelectorAll('.inv-item').forEach(btn => {
-    btn.addEventListener('click', () => useItemFromInventory(btn.dataset.item));
-  });
-
-  body.querySelector('#minigame-toggle')?.addEventListener('change', (e) => {
-    setMiniGamesEnabled(e.target.checked);
-    sfx.tap();
-    toast(e.target.checked ? '🎮 Mini-games ON' : '🎮 Mini-games OFF', 'gold');
-  });
-
-  body.querySelector('#btn-replay-tutorial')?.addEventListener('click', () => {
-    resetTutorial();
-    sfx.tap();
-    startTutorial();
-  });
-
-  // Inline garden upgrades on the Garden tab
-  body.querySelectorAll('[data-garden-upgrade]').forEach(btn => {
-    btn.addEventListener('click', () => buyUpgrade(btn.dataset.gardenUpgrade));
-  });
-
-  // Plot picker
-  body.querySelectorAll('[data-plot]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const pid = btn.dataset.plot;
-      const action = btn.dataset.action;
-      if (action === 'switch') handlePlotSwitch(pid);
-      else if (action === 'plant') handlePlotPlant(pid);
-      else if (action === 'unlock') handlePlotUnlock(pid);
-    });
-  });
-}
-
-function handlePlotSwitch(plotId) {
-  if (plotId === getActivePlotId(_gameState)) return;
-  const r = switchToPlot(_gameState, plotId);
-  if (!r.ok) { sfx.error(); toast('Cannot switch to that plot.', 'red'); return; }
-  // Re-init derived state for the newly active bud
-  refreshLevelCache(_gameState);
-  applyDecay(_gameState.needs);
-  sfx.tap();
-  toast(`🪴 Switched to ${PLOT_LABELS[plotId]}`, 'gold');
-  renderShell();           // re-render topbar with new bud
-  switchTab('garden');     // re-render Garden tab
-  // Refresh the floating companion to mirror the new bud + variant
-  import('./companion.js').then(m => m.initCompanion(_uid)).catch(() => {});
-  debouncedSave();
-}
 
 function claimAndPlantOffspring() {
   if (!isOffspringReady(_gameState)) return;
@@ -848,230 +595,6 @@ function claimAndPlantOffspring() {
   debouncedSave();
 }
 
-function handlePlotUnlock(plotId) {
-  const r = unlockNextPlot(_gameState);
-  if (!r.ok) {
-    sfx.error();
-    if (r.reason === 'broke') toast(`Need ${r.cost} 🌱 Seeds`, 'red');
-    else if (r.reason === 'maxed') toast('All plots already unlocked', 'red');
-    return;
-  }
-  sfx.buy();
-  try { track('plot_unlocked', { plotId: r.plotId, cost: r.cost }); } catch (_) {}
-  toast(`🌱 ${PLOT_LABELS[r.plotId]} unlocked! Plant a Cannabud now.`, 'gold', 3200);
-  refreshActiveTab();
-  syncTopbar();
-  debouncedSave();
-}
-
-function handlePlotPlant(plotId) {
-  // Show an in-place onboarding overlay reusing the existing flow
-  const overlay = document.createElement('div');
-  overlay.className = 'plot-plant-overlay';
-  overlay.innerHTML = `
-    <div class="plot-plant-card">
-      <button class="plot-plant-close" id="plot-plant-close" aria-label="Cancel">✕</button>
-      <div id="plot-plant-onboard"></div>
-    </div>`;
-  _container.appendChild(overlay);
-
-  overlay.querySelector('#plot-plant-close').addEventListener('click', () => overlay.remove());
-
-  // Lazy-import onboarding so we don't load it until needed
-  import('./onboardingScreen.js').then(({ renderOnboarding }) => {
-    renderOnboarding(overlay.querySelector('#plot-plant-onboard'), (choice) => {
-      const ok = plantBudInEmptyPlot(_gameState, plotId, choice);
-      if (!ok) { sfx.error(); overlay.remove(); return; }
-      sfx.evolution();
-      toast(`🌱 Planted ${choice.monsterName} in ${PLOT_LABELS[plotId]}!`, 'gold', 3200);
-      refreshLevelCache(_gameState);
-      overlay.remove();
-      renderShell();
-      switchTab('garden');
-      // Re-init companion for the new active bud
-      import('./companion.js').then(m => m.initCompanion(_uid)).catch(() => {});
-      debouncedSave();
-    });
-  });
-}
-
-function doCare(e, kind) {
-  const now = Date.now();
-  if (now - _cd[kind] < PACING.ACTION_COOLDOWN_MS) {
-    sfx.error(); shakeButton(e.currentTarget); return;
-  }
-  _cd[kind] = now;
-  if (!_gameState.lifetime) _gameState.lifetime = {};
-  _gameState.lifetime.totalActions = (_gameState.lifetime.totalActions || 0) + 1;
-
-  if (miniGamesEnabled()) {
-    runMiniGame(kind, _container).then(result => {
-      const mult = RESULT_MULTIPLIERS[result] ?? 1;
-      applyCareResolution(kind, mult, result);
-    });
-    return;
-  }
-  applyCareResolution(kind, 1, null);
-}
-
-function applyCareResolution(kind, mult, miniResult) {
-  switch (kind) {
-    case 'water': {
-      const amt = Math.round(NEEDS.RESTORE_TAP_WATER * mult);
-      restoreNeed(_gameState.needs, 'hydration', amt);
-      sfx.water(); reactToCare('game-anim--sip'); spawnCareEffect('water');
-      reportQuestProgress(_gameState, 'action_water', 1);
-      applyXP(Math.max(1, Math.round(2 * mult)), '💧', 'water');
-      break;
-    }
-    case 'feed': {
-      const amt = Math.round(NEEDS.RESTORE_TAP_FEED * mult);
-      restoreNeed(_gameState.needs, 'nutrition', amt);
-      sfx.feed(); reactToCare('game-anim--munch'); spawnCareEffect('feed');
-      reportQuestProgress(_gameState, 'action_feed', 1);
-      applyXP(Math.max(1, Math.round(2 * mult)), '🌿', 'feed');
-      break;
-    }
-    case 'clean': {
-      const amt = Math.round(10 * mult);
-      restoreNeed(_gameState.needs, 'cleanliness', amt);
-      sfx.tap(); reactToCare('cg-react--happy'); spawnCareEffect('clean');
-      applyXP(Math.max(1, Math.round(1 * mult)), '✨', 'clean');
-      break;
-    }
-    case 'pet': {
-      pet(_gameState.needs, Math.round(6 * mult));
-      sfx.pet(); reactToCare('cg-react--excited'); spawnCareEffect('pet');
-      reportQuestProgress(_gameState, 'action_pet', 1);
-      applyXP(Math.max(1, Math.round(1 * mult)), '🤚', 'pet');
-      break;
-    }
-  }
-  if (miniResult) {
-    if (miniResult === 'perfect') toast(`🌟 PERFECT! ${Math.round(mult * 100)}%`, 'gold');
-    else if (miniResult === 'ok') toast(`👍 OK · 100%`, '');
-    else                          toast(`Missed · 70%`, 'red');
-  }
-  registerStreak();
-  checkAchievements(_gameState);
-  refreshActiveTab(false);
-  debouncedSave();
-}
-
-// ── Plot Picker ───────────────────────────────────────────────
-function renderPlotPicker() {
-  const active = getActivePlotId(_gameState);
-  return `
-    <div class="plot-picker">
-      ${PLOT_IDS.map(pid => {
-        const meta = readPlotMeta(_gameState, pid);
-        const isActive = pid === active;
-        if (meta.state === 'locked') {
-          return `
-            <button class="plot-slot plot-slot--locked" data-plot="${pid}" data-action="unlock">
-              <div class="plot-slot__head">${PLOT_LABELS[pid]}</div>
-              <div class="plot-slot__body">🔒 Unlock</div>
-              <div class="plot-slot__cost">🌱 ${meta.cost}</div>
-            </button>`;
-        }
-        if (meta.state === 'empty') {
-          return `
-            <button class="plot-slot plot-slot--empty" data-plot="${pid}" data-action="plant">
-              <div class="plot-slot__head">${PLOT_LABELS[pid]}</div>
-              <div class="plot-slot__body">＋ Plant</div>
-              <div class="plot-slot__cost dim small">a Cannabud</div>
-            </button>`;
-        }
-        // Occupied
-        const variant = getVariant(meta.type, meta.variant);
-        const monType = getMonsterType(meta.type);
-        const lvl = getLevel(meta.xp);
-        return `
-          <button class="plot-slot ${isActive ? 'plot-slot--active' : ''}" data-plot="${pid}" data-action="switch">
-            <div class="plot-slot__head">${PLOT_LABELS[pid]}${isActive ? ' ✓' : ''}</div>
-            <div class="plot-slot__bud" style="color:${variant?.color || monType.color}">${monType.emoji} ${meta.name}</div>
-            <div class="plot-slot__cost dim small">Lv. ${lvl}</div>
-          </button>`;
-      }).join('')}
-    </div>
-  `;
-}
-
-function reactToCare(animClass) {
-  const el = _container?.querySelector('#garden-sprite');
-  if (!el) return;
-  const evo = getCurrentEvolution(getMonsterType(_gameState.monsterType).evolutions, getLevel(_gameState.xp));
-  const idle = idleAnimFor(evo.sprite);
-  el.className = 'game-monster ' + animClass;
-  setTimeout(() => { el.className = 'game-monster ' + idle; }, 1100);
-}
-
-/**
- * One-shot themed effect overlay above the cannabud — water can / feed leaves /
- * broom sweep / petting hand. Adds a positioned element to the viewport, plays
- * a CSS animation, removes itself.
- */
-function spawnCareEffect(kind) {
-  const viewport = _container?.querySelector('.garden-viewport');
-  if (!viewport) return;
-  let html = '';
-  switch (kind) {
-    case 'water':
-      html = `
-        <div class="care-fx care-fx--water">
-          <span class="care-fx__tool">🚿</span>
-          <span class="care-fx__drop care-fx__drop--1">💧</span>
-          <span class="care-fx__drop care-fx__drop--2">💧</span>
-          <span class="care-fx__drop care-fx__drop--3">💧</span>
-          <span class="care-fx__drop care-fx__drop--4">💧</span>
-        </div>`;
-      break;
-    case 'feed':
-      html = `
-        <div class="care-fx care-fx--feed">
-          <span class="care-fx__tool">🥬</span>
-          <span class="care-fx__bit care-fx__bit--1">🌿</span>
-          <span class="care-fx__bit care-fx__bit--2">🍃</span>
-          <span class="care-fx__bit care-fx__bit--3">🌿</span>
-        </div>`;
-      break;
-    case 'clean':
-      html = `
-        <div class="care-fx care-fx--clean">
-          <span class="care-fx__tool">🧹</span>
-          <span class="care-fx__sparkle care-fx__sparkle--1">✨</span>
-          <span class="care-fx__sparkle care-fx__sparkle--2">✨</span>
-          <span class="care-fx__sparkle care-fx__sparkle--3">✨</span>
-        </div>`;
-      break;
-    case 'pet':
-      html = `
-        <div class="care-fx care-fx--pet">
-          <span class="care-fx__tool">🤚</span>
-          <span class="care-fx__heart care-fx__heart--1">💚</span>
-          <span class="care-fx__heart care-fx__heart--2">💚</span>
-        </div>`;
-      break;
-    default:
-      return;
-  }
-  const el = document.createElement('div');
-  el.innerHTML = html;
-  const node = el.firstElementChild;
-  viewport.appendChild(node);
-  setTimeout(() => node.remove(), 1300);
-}
-
-function useItemFromInventory(id) {
-  const result = consumeItem(_gameState, id);
-  if (!result) { sfx.error(); return; }
-  sfx.buy();
-  reportQuestProgress(_gameState, 'use_item', 1);
-  toast(`${result.item.emoji} ${result.desc}`);
-  checkAchievements(_gameState);
-  refreshActiveTab(false);
-  debouncedSave();
-}
 
 // ── BATTLE TAB ────────────────────────────────────────────────
 function renderBattleTab_legacy() {
@@ -2054,24 +1577,6 @@ function registerStreak() {
 }
 
 // ── UI primitives ─────────────────────────────────────────────
-function statBar(label, value, color) {
-  const pct = Math.min(100, (value / 200) * 100);
-  return `
-    <div class="game-stat-row">
-      <span class="game-stat-row__label">${label}</span>
-      <div class="game-stat-row__bar"><div class="game-stat-row__fill" style="width:${pct}%;background:${color}"></div></div>
-      <span class="game-stat-row__val">${value}</span>
-    </div>`;
-}
-
-function idleAnimFor(spriteName) {
-  if (spriteName.includes('ancient')) return 'game-anim--ancient';
-  if (spriteName.includes('bloom'))   return 'game-anim--bloom';
-  if (spriteName.includes('sapling')) return 'game-anim--sapling';
-  if (spriteName.includes('sprout'))  return 'game-anim--sprout';
-  return 'game-anim--seed';
-}
-
 function showFloater(text, variant = '') {
   const viewport = _container?.querySelector('#game-tab-body');
   if (!viewport) return;
@@ -2088,11 +1593,6 @@ function toast(text, variant = '', life = 2200) {
   t.textContent = text;
   _container.appendChild(t);
   setTimeout(() => { t.classList.add('game-toast--out'); setTimeout(() => t.remove(), 400); }, life);
-}
-
-function shakeButton(btn) {
-  btn.classList.add('game-btn-shake');
-  setTimeout(() => btn.classList.remove('game-btn-shake'), 400);
 }
 
 function showPathChoiceModal() {
