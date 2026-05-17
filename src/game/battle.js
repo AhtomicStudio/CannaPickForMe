@@ -348,30 +348,107 @@ function checkKO(state, events) {
   }
 }
 
-// ── Simple AI ─────────────────────────────────────────────────────────
+// ── Three-tier AI difficulty ─────────────────────────────────────────
 //
-// Heuristic: heal if low; buff once per battle if available; otherwise
-// pick the move with best expected damage, with light randomness so
-// fights don't feel scripted.
+// Scales opponent intelligence based on player level:
+//   Basic (Lv1–15): original heuristic behaviour
+//   Intermediate (Lv16–30): higher heal threshold, reacts to player buffs
+//   Advanced (Lv31+): reads player's last move, uses debuffs, exploits weakness
+
+function getAITier(playerLevel) {
+  if (playerLevel >= 31) return 'advanced';
+  if (playerLevel >= 16) return 'intermediate';
+  return 'basic';
+}
+
 export function pickAIAction(state, side) {
   const me  = state[side];
   const foe = state[side === 'player' ? 'opponent' : 'player'];
   const moves = me.moves || [];
   if (moves.length === 0) return { kind: 'flee' };
 
-  // Heal if low and we have a heal move.
-  if (me.hp / me.hpMax < 0.35) {
-    const heal = moves.find(m => m.effect && m.effect.startsWith('heal_'));
-    if (heal && rng(state) < 0.7) return { kind: 'move', moveId: heal.id };
+  const playerLevel = state.player?.level || 1;
+  const tier = getAITier(playerLevel);
+
+  // ── Basic (Lv1–15): original behaviour ───────────────────────
+  if (tier === 'basic') {
+    if (me.hp / me.hpMax < 0.35) {
+      const heal = moves.find(m => m.effect && m.effect.startsWith('heal_'));
+      if (heal && rng(state) < 0.7) return { kind: 'move', moveId: heal.id };
+    }
+    if (me.buffMods.atk === 1 && me.buffMods.def === 1) {
+      const buff = moves.find(m => m.effect === 'atk_up' || m.effect === 'def_up');
+      if (buff && rng(state) < 0.35) return { kind: 'move', moveId: buff.id };
+    }
+    const dmgMoves = moves.filter(m => m.power > 0);
+    if (dmgMoves.length === 0) return { kind: 'move', moveId: moves[0].id };
+    const scored = dmgMoves.map(m => ({
+      m,
+      score: m.power * (me.atk / Math.max(1, foe.def)) * (0.85 + rng(state) * 0.30),
+    }));
+    scored.sort((a, b) => b.score - a.score);
+    return { kind: 'move', moveId: scored[0].m.id };
   }
 
-  // Buff if no buff active and we have one.
+  // ── Intermediate (Lv16–30): raised heal threshold, responds to player buffs ─
+  if (tier === 'intermediate') {
+    if (me.hp / me.hpMax < 0.50) {
+      const heal = moves.find(m => m.effect && m.effect.startsWith('heal_'));
+      if (heal && rng(state) < 0.7) return { kind: 'move', moveId: heal.id };
+    }
+    const playerBoostedAtk = foe.buffMods?.atk > 1;
+    if (playerBoostedAtk && me.buffMods.def === 1) {
+      const defBuff = moves.find(m => m.effect === 'def_up');
+      if (defBuff && rng(state) < 0.65) return { kind: 'move', moveId: defBuff.id };
+    }
+    if (me.buffMods.atk === 1 && me.buffMods.def === 1) {
+      const buff = moves.find(m => m.effect === 'atk_up' || m.effect === 'def_up');
+      if (buff && rng(state) < 0.35) return { kind: 'move', moveId: buff.id };
+    }
+    const dmgMoves = moves.filter(m => m.power > 0);
+    if (dmgMoves.length === 0) return { kind: 'move', moveId: moves[0].id };
+    const scored = dmgMoves.map(m => ({
+      m,
+      score: m.power * (me.atk / Math.max(1, foe.def)) * (0.85 + rng(state) * 0.30),
+    }));
+    scored.sort((a, b) => b.score - a.score);
+    const pick = scored.length > 1 && rng(state) < 0.20 ? scored[1] : scored[0];
+    return { kind: 'move', moveId: pick.m.id };
+  }
+
+  // ── Advanced (Lv31+): reads player's last move, debuffs, exploits weaknesses ─
+  if (me.hp / me.hpMax < 0.60) {
+    const heal = moves.find(m => m.effect && m.effect.startsWith('heal_'));
+    if (heal && rng(state) < 0.75) return { kind: 'move', moveId: heal.id };
+  }
+  const playerJustBuffed = state._lastFoeAction?.kind === 'move' &&
+    (state._lastFoeAction?.effect === 'atk_up' || state._lastFoeAction?.effect === 'def_up');
+  if (playerJustBuffed) {
+    const dmgMoves = moves.filter(m => m.power > 0);
+    if (dmgMoves.length > 0) {
+      const best = dmgMoves.reduce((a, b) =>
+        (b.power * (me.atk / Math.max(1, foe.def))) > (a.power * (me.atk / Math.max(1, foe.def))) ? b : a
+      );
+      return { kind: 'move', moveId: best.id };
+    }
+  }
+  const playerJustHealed = state._lastFoeAction?.kind === 'move' &&
+    state._lastFoeAction?.effect?.startsWith('heal_');
+  if (playerJustHealed) {
+    const dmgMoves = moves.filter(m => m.power > 0);
+    if (dmgMoves.length > 0) {
+      const best = dmgMoves.reduce((a, b) => b.power > a.power ? b : a);
+      return { kind: 'move', moveId: best.id };
+    }
+  }
+  if ((foe.hp / foe.hpMax) > 0.70) {
+    const debuff = moves.find(m => m.effect === 'atk_down' || m.effect === 'def_down' || m.effect === 'spd_down');
+    if (debuff && rng(state) < 0.50) return { kind: 'move', moveId: debuff.id };
+  }
   if (me.buffMods.atk === 1 && me.buffMods.def === 1) {
     const buff = moves.find(m => m.effect === 'atk_up' || m.effect === 'def_up');
-    if (buff && rng(state) < 0.35) return { kind: 'move', moveId: buff.id };
+    if (buff && rng(state) < 0.40) return { kind: 'move', moveId: buff.id };
   }
-
-  // Otherwise pick highest expected-damage move (tie-broken by RNG).
   const dmgMoves = moves.filter(m => m.power > 0);
   if (dmgMoves.length === 0) return { kind: 'move', moveId: moves[0].id };
   const scored = dmgMoves.map(m => ({
