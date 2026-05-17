@@ -1,7 +1,7 @@
 import {
   ACHIEVEMENTS, checkAchievements,
 } from '../achievements.js';
-import { ensureDaily, reportQuestProgress, claimQuest } from '../quests.js';
+import { ensureDaily, claimQuest } from '../quests.js';
 import {
   getPrestigeMultipliers, canPrestige, previewPrestige, doPrestige,
 } from '../prestige.js';
@@ -12,22 +12,17 @@ import {
 import { processLoginStreak, STREAK_REWARDS } from '../loginStreak.js';
 import {
   PLOT_IDS, PLOT_LABELS, plantBudInEmptyPlot, getActivePlotId, snapshotActiveTo,
+  plotIsEmpty,
 } from '../plots.js';
 import {
   canBreed, isBreeding, isOffspringReady, getBreedingProgress,
   collectLivingBuds, startBreeding, skipBreedingWithSeeds,
   claimOffspring, cancelBreeding,
 } from '../breeding.js';
-import { getMonsterType, MONSTER_TYPES } from '../monsters.js';
-import { getVariant } from '../monsters.js';
+import { MONSTER_TYPES, getVariant } from '../monsters.js';
 import { renderSprite } from '../pixelArt.js';
-import { getLevel } from '../gameEngine.js';
 import { sfx } from '../sfx.js';
 import { track } from '@vercel/analytics';
-import { refreshLevelCache } from '../../services/gameService.js';
-import {
-  plotIsEmpty,
-} from '../plots.js';
 
 function formatDateShort(ts) {
   if (!ts) return '';
