@@ -5045,3 +5045,35 @@ html.light-mode .app-bg__haze {
 .result__score {
   animation: scoreCountUp 0.8s var(--ease-bounce) 0.3s both;
 }
+
+/* ============================================================
+   MOBILE PERFORMANCE — reduce backdrop-filter GPU cost on
+   screens ≤ 768px (all phones). Halves blur values; removes
+   saturate() which has no visible effect at low opacity.
+   ============================================================ */
+@media (max-width: 768px) {
+  .stash__done-bar {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .stash-tip {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  .modal--confirm .modal__backdrop {
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+
+  .scales__name {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  .result__card {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
