@@ -3421,6 +3421,7 @@ a.partner-strain-card:hover {
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  contain: layout style;
 }
 
 /* Haze blobs */
@@ -3469,6 +3470,8 @@ a.partner-strain-card:hover {
   animation-delay: var(--delay, 0s);
   user-select: none;
   pointer-events: none;
+  will-change: transform;
+  contain: layout style;
 }
 
 @keyframes app-leaf-float {
