@@ -163,6 +163,25 @@ export function getEquipped(gameState, slot) {
   return id ? COSMETICS_BY_ID[id] : null;
 }
 
+/**
+ * Returns true if the given seasonal tag is currently active.
+ * Seasons:
+ *   halloween — Oct 1–31
+ *   december   — Dec 1–26
+ *   apr20      — Apr 15–21
+ */
+export function isSeasonalActive(seasonTag) {
+  const now = new Date();
+  const m = now.getMonth() + 1; // 1-based
+  const d = now.getDate();
+  switch (seasonTag) {
+    case 'halloween': return m === 10;
+    case 'december':  return m === 12 && d <= 26;
+    case 'apr20':     return m === 4 && d >= 15 && d <= 21;
+    default:          return false;
+  }
+}
+
 /** Auto-grant any achievement-locked cosmetics whose ach is now satisfied. */
 export function syncAchievementCosmetics(gameState) {
   const ach = gameState.achievements || {};

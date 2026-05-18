@@ -45,7 +45,7 @@ import { MOVES_BY_TYPE } from './moves.js';
 import {
   HATS, FRAMES, AURAS, COSMETICS_BY_ID, COSMETIC_SLOTS,
   listCosmeticsForSlot, buyCosmetic, equipCosmetic, getEquipped,
-  syncAchievementCosmetics,
+  syncAchievementCosmetics, isSeasonalActive,
 } from './cosmetics.js';
 import { THEMES, isThemeUnlocked, isPremiumTheme, unlockTheme, syncUnlockedThemesFromGame, applyTheme } from '../services/themeService.js';
 import { getVariant } from './monsters.js';
@@ -1225,7 +1225,12 @@ function renderShopCosmetics() {
 }
 
 function renderCosmeticGrid(slot) {
-  const list = listCosmeticsForSlot(slot, _gameState);
+  const allItems = listCosmeticsForSlot(slot, _gameState);
+  // Hide seasonal items that are out-of-season and not yet owned.
+  // Owned seasonal items remain visible so users can still equip them.
+  const list = allItems.filter(c =>
+    !c.isSeasonal || c.isOwned || isSeasonalActive(c.seasonal)
+  );
   return `
     <div class="cosmetic-grid">
       ${list.map(c => {
