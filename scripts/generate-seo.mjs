@@ -22,7 +22,7 @@ const OUT_DIR = join(ROOT, 'public', 'strain');
 // Load source data
 // ---------------------------------------------------------------------------
 const strains = JSON.parse(
-  await readFile(join(ROOT, 'src/data/strains.json'), 'utf8')
+  await readFile(join(ROOT, 'public/data/strains.json'), 'utf8')
 );
 
 // Pull DISPENSARY_NAMES out of src/main.js so we don't duplicate the mapping.

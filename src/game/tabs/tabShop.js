@@ -4,7 +4,7 @@ import {
 import { MOVES_BY_TYPE } from '../moves.js';
 import { getLevel } from '../gameEngine.js';
 import {
-  listCosmeticsForSlot, buyCosmetic, equipCosmetic,
+  listCosmeticsForSlot, buyCosmetic, equipCosmetic, isSeasonalActive,
 } from '../cosmetics.js';
 import {
   THEMES, isThemeUnlocked, isPremiumTheme, unlockTheme, applyTheme,
@@ -78,7 +78,8 @@ function renderMoveLibrary(ctx) {
 }
 
 function renderCosmeticGrid(slot, ctx) {
-  const list = listCosmeticsForSlot(slot, ctx.gameState);
+  const list = listCosmeticsForSlot(slot, ctx.gameState)
+    .filter(c => !c.isSeasonal || c.isOwned || isSeasonalActive(c.seasonal));
   return `
     <div class="cosmetic-grid">
       ${list.map(c => {

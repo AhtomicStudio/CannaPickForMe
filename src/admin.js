@@ -12,7 +12,7 @@ import { getAllAds, createAd, updateAd, deleteAd, uploadAdImage } from './servic
 import { getPageContent, savePageContent } from './services/pagesService.js';
 import { getInfoTopics, saveInfoTopic, deleteInfoTopic } from './services/infoService.js';
 import { auth } from './firebase.js';
-import { signInAnonymously } from 'firebase/auth';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 
 // Phase 1 sponsorship system — campaign-based inventory.
 import {
@@ -30,9 +30,7 @@ import {
 import { invalidateSponsorshipCache } from './services/sponsorshipService.js';
 import { runSponsorshipMigrationIfNeeded } from './services/sponsorshipMigration.js';
 
-// SHA-256 hash of the admin password
-const ADMIN_HASH = 'b6cba8b101e45c8b2eddd705efc782ef96d4e32b090a5db14ccdb77d1247426a';
-const SESSION_KEY = 'cpfm_admin_auth';
+const ADMIN_EMAIL = 'twotales89@gmail.com';
 
 // Dispensaries are now Firestore-backed (see dispensaryService.js).
 // The map is prefetched at dashboard init (showDashboard) and refreshed
@@ -46,43 +44,13 @@ function dispensaryLabel(slug) {
 const ALL_EFFECTS = ['Creative','Energetic','Euphoric','Focused','Giggly','Happy','Hungry','Relaxed','Sleepy','Talkative','Tingly','Uplifted'];
 const ALL_FLAVORS  = ['Apple','Banana','Berry','Blueberry','Candy','Cheese','Cherry','Chocolate','Citrus','Coffee','Creamy','Diesel','Earthy','Floral','Flowery','Fruity','Grape','Guava','Lemon','Mango','Melon','Mint','Minty','Nutty','Orange','Peach','Pine','Pineapple','Plum','Pungent','Sour','Spicy','Strawberry','Sweet','Tropical','Vanilla','Woody'];
 
-// === UTILITY: SHA-256 Hash ===
-async function sha256(text) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(text);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-}
-
 // === AUTH ===
-async function checkPassword(password) {
-  const hash = await sha256(password);
-  return hash === ADMIN_HASH;
-}
-
-function isAuthenticated() {
-  return sessionStorage.getItem(SESSION_KEY) === 'true';
-}
-
-function setAuthenticated() {
-  sessionStorage.setItem(SESSION_KEY, 'true');
-}
-
-async function ensureFirebaseAuth() {
-  if (auth.currentUser) return;
-  await signInAnonymously(auth);
-}
-
 async function authedSaveStrainDelta(delta) {
-  await ensureFirebaseAuth();
   return saveStrainDelta(delta);
 }
 
 function logout() {
-  sessionStorage.removeItem(SESSION_KEY);
-  location.reload();
+  signOut(auth).then(() => location.reload());
 }
 
 // === STATE ===
@@ -797,28 +765,25 @@ async function init() {
   // Login form — register before any awaits so it's always wired
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const pw = document.getElementById('admin-password').value;
-    const valid = await checkPassword(pw);
-
-    if (valid) {
-      setAuthenticated();
-      try { await ensureFirebaseAuth(); } catch (err) {
-        console.error('Firebase auth failed:', err);
-        alert('Authentication error. Please refresh and try again.');
-        return;
-      }
-      showDashboard();
-    } else {
+    const password = document.getElementById('admin-password').value;
+    try {
+      await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
+      // onAuthStateChanged fires and calls showDashboard()
+    } catch (err) {
       document.getElementById('login-error').classList.remove('hidden');
       document.getElementById('admin-password').value = '';
     }
   });
 
-  // Check existing session
-  if (isAuthenticated()) {
-    try { await ensureFirebaseAuth(); } catch (err) { console.warn('Session auth failed:', err); }
-    showDashboard();
-  }
+  // Check existing session via Firebase auth state
+  onAuthStateChanged(auth, (user) => {
+    if (user && user.email === ADMIN_EMAIL) {
+      showDashboard();
+    } else {
+      document.getElementById('login-gate').classList.remove('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+    }
+  });
 
   // Logout
   document.getElementById('btn-logout').addEventListener('click', logout);

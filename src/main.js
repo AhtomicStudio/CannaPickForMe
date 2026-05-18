@@ -189,6 +189,7 @@ let currentExcludeFilters = new Set();
 let currentSortAlpha = false;
 let currentSortAsc = true;
 let overrideStrainId = null;
+let _searchDebounceTimer = null;
 
 // === SCREEN NAVIGATION ===
 export function showScreen(id) {
@@ -458,7 +459,8 @@ function initStash() {
   // Search
   document.getElementById('strain-search').addEventListener('input', (e) => {
     currentSearchQuery = e.target.value.toLowerCase();
-    renderBrowseList();
+    clearTimeout(_searchDebounceTimer);
+    _searchDebounceTimer = setTimeout(() => renderBrowseList(), 180);
   });
 
   // Type filter chips
@@ -1073,7 +1075,7 @@ async function renderSponsoredStrain(allScores) {
   document.getElementById('sponsored-strain-name').textContent = strain.name;
   document.getElementById('sponsored-strain-type').textContent =
     strain.type.charAt(0).toUpperCase() + strain.type.slice(1);
-  document.getElementById('sponsored-match-score').textContent = `${best.score}% match`;
+  document.getElementById('sponsored-match-score').textContent = `${Math.min(100, best.score)}% match`;
 
   const dot = document.getElementById('sponsored-type-dot');
   dot.setAttribute('data-type', strain.type);
@@ -1167,7 +1169,7 @@ async function renderResult(result) {
     const progress = Math.min(elapsed / duration, 1);
     // Ease-out curve for the counting
     const eased = 1 - Math.pow(1 - progress, 3);
-    const current = Math.round(eased * matchScore);
+    const current = Math.min(100, Math.round(eased * matchScore));
     scoreEl.innerHTML = `${current}<span>% match</span>`;
     if (progress < 1) requestAnimationFrame(animateScore);
   }
@@ -1254,7 +1256,7 @@ function showBetterMatchesModal(matchesData, partner = null) {
         <div class="strain-card__info">
           <div class="strain-card__name bm-name-row">
             <span>${strain.name}</span>
-            <span class="bm-score-badge">${match.score}% match</span>
+            <span class="bm-score-badge">${Math.min(100, match.score)}% match</span>
           </div>
           <div class="strain-card__meta">${type} · ${effects}</div>
         </div>

@@ -142,7 +142,7 @@ export async function syncProfile() {
     updatedAt: ts,
   };
   try {
-    await setDoc(doc(db, 'users', uid), profile);
+    await setDoc(doc(db, 'users', uid), profile, { merge: true });
     setUpdatedAt(ts);
   } catch (err) {
     console.error('[userService] syncProfile failed:', err);
@@ -169,10 +169,15 @@ export async function loadAndResolveProfile(showConflictFn) {
     const cloud = snap.data();
     const localTs = getUpdatedAt();
 
-    if (cloud.updatedAt === localTs) return; // Already in sync — nothing to do
+    // Normalize cloud.updatedAt to a number; Firestore may return a Timestamp object
+    const cloudTs = (typeof cloud.updatedAt?.toMillis === 'function')
+      ? cloud.updatedAt.toMillis()
+      : Number(cloud.updatedAt ?? 0);
+
+    if (cloudTs === localTs) return; // Already in sync — nothing to do
 
     // Timestamps differ: ask the user which copy to keep
-    const winner = await showConflictFn(localTs, cloud.updatedAt || 0);
+    const winner = await showConflictFn(localTs, cloudTs);
     if (winner === 'local') {
       await syncProfile();
     } else {

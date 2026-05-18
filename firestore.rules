@@ -7,23 +7,23 @@ service cloud.firestore {
     // fields so impression/click tracking works without forcing a login.
     match /ads/{adId} {
       allow read: if true;
-      allow create, delete: if request.auth != null;
-      allow update: if request.auth != null
+      allow create, delete: if request.auth != null && request.auth.token.email == 'twotales89@gmail.com';
+      allow update: if (request.auth != null && request.auth.token.email == 'twotales89@gmail.com')
                     || request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['impressions', 'clicks', 'lastImpressionAt', 'lastClickAt']);
     }
 
-    // Strain delta — public reads, authenticated writes (admin signs in anonymously after password check)
+    // Strain delta — public reads, admin writes
     match /strains/{doc} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.email == 'twotales89@gmail.com';
     }
 
     // Dispensaries — public reads (user-facing partner cards display the
     // dispensary name), authenticated writes.
     match /dispensaries/{slug} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.email == 'twotales89@gmail.com';
     }
 
     // Campaigns — public reads (the user-facing aggregator needs to see
@@ -34,8 +34,8 @@ service cloud.firestore {
     // write ONLY the counter fields so impression/click tracking works.
     match /campaigns/{campaignId} {
       allow read: if true;
-      allow create, delete: if request.auth != null;
-      allow update: if request.auth != null
+      allow create, delete: if request.auth != null && request.auth.token.email == 'twotales89@gmail.com';
+      allow update: if (request.auth != null && request.auth.token.email == 'twotales89@gmail.com')
                     || request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['impressions', 'clicks', 'lastImpressionAt', 'lastClickAt']);
     }
@@ -43,12 +43,12 @@ service cloud.firestore {
     // Advertisers — admin-only. Contains PII (contact email/name) and
     // billing details. Never exposed to the user-facing app.
     match /advertisers/{advertiserId} {
-      allow read, write: if request.auth != null;
+      allow read, write: if request.auth != null && request.auth.token.email == 'twotales89@gmail.com';
     }
 
     // Migration sentinel — admin-only.
     match /system/{key} {
-      allow read, write: if request.auth != null;
+      allow read, write: if request.auth != null && request.auth.token.email == 'twotales89@gmail.com';
     }
 
     // User profiles — owner only, requires Firebase Auth
@@ -86,16 +86,22 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Dispensary menus — admin only (read + write). Used by the admin
+    // panel's menu sync feature. Not exposed in the user-facing app.
+    match /menus/{dispensaryId} {
+      allow read, write: if request.auth != null && request.auth.token.email == 'twotales89@gmail.com';
+    }
+
     // Pages (about, lore) — public reads, admin writes
     match /pages/{pageId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.email == 'twotales89@gmail.com';
     }
 
     // Info topics — public reads, admin writes
     match /info/{slug} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if request.auth != null && request.auth.token.email == 'twotales89@gmail.com';
     }
 
     // Deny everything else
