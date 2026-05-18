@@ -56,8 +56,8 @@ let _auth;
 try {
   _auth = initializeAuth(app, {
     persistence: [
-      indexedDBLocalPersistence,
       browserLocalPersistence,
+      indexedDBLocalPersistence,
       browserSessionPersistence,
       inMemoryPersistence,
     ],
