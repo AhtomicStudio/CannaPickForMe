@@ -5,7 +5,8 @@
 
 import './tokens.css';
 import './admin.css';
-import strainsData from './data/strains.json';
+// strains.json is served from /public and fetched at runtime (not bundled)
+let strainsData = [];
 import { getStrainDelta, saveStrainDelta, getMenuData, saveMenuData } from './services/strainService.js';
 import { getAllAds, createAd, updateAd, deleteAd, uploadAdImage } from './services/adService.js';
 import { getPageContent, savePageContent } from './services/pagesService.js';
@@ -380,6 +381,16 @@ async function showDashboard() {
   if (dismiss) dismiss.addEventListener('click', () => {
     document.getElementById('migration-banner')?.classList.add('hidden');
   });
+
+  // Load strains.json from public/ (moved out of the bundle in ae9318c)
+  try {
+    const res = await fetch('/data/strains.json');
+    if (!res.ok) throw new Error(`strains fetch failed: ${res.status}`);
+    strainsData = await res.json();
+  } catch (err) {
+    console.error('Admin: failed to load strains.json:', err);
+    strainsData = [];
+  }
 
   loadAdsList();
   initStrainManager();
