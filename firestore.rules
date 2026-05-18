@@ -86,6 +86,12 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Dispensary menus — admin only (read + write). Used by the admin
+    // panel's menu sync feature. Not exposed in the user-facing app.
+    match /menus/{dispensaryId} {
+      allow read, write: if request.auth != null && request.auth.token.email == 'twotales89@gmail.com';
+    }
+
     // Pages (about, lore) — public reads, admin writes
     match /pages/{pageId} {
       allow read: if true;
