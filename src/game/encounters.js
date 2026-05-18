@@ -73,7 +73,14 @@ export function makeWildEncounter(playerLevel) {
   const lvl   = Math.max(1, playerLevel + variance);
   const def   = getMonsterType(type);
   const name  = WILD_NAMES[type][Math.floor(rng() * WILD_NAMES[type].length)];
-  const stats = getStats(def.baseStats, lvl, def.statGrowth);
+  const rawStats = getStats(def.baseStats, lvl, def.statGrowth);
+  const statBonus = 1 + Math.min(Math.floor(playerLevel / 10), 5) * 0.05;
+  const stats = {
+    hp:  Math.round(rawStats.hp  * statBonus),
+    atk: Math.round(rawStats.atk * statBonus),
+    def: Math.round(rawStats.def * statBonus),
+    spd: Math.round(rawStats.spd * statBonus),
+  };
   const hue   = HUE_OPTIONS[Math.floor(rng() * HUE_OPTIONS.length)];
 
   // Random variant for visual variety
