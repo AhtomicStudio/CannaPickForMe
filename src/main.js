@@ -161,6 +161,7 @@ let currentExcludeFilters = new Set();
 let currentSortAlpha = false;
 let currentSortAsc = true;
 let overrideStrainId = null;
+let _searchDebounceTimer = null;
 
 // === SCREEN NAVIGATION ===
 export function showScreen(id) {
@@ -430,7 +431,8 @@ function initStash() {
   // Search
   document.getElementById('strain-search').addEventListener('input', (e) => {
     currentSearchQuery = e.target.value.toLowerCase();
-    renderBrowseList();
+    clearTimeout(_searchDebounceTimer);
+    _searchDebounceTimer = setTimeout(() => renderBrowseList(), 180);
   });
 
   // Type filter chips
