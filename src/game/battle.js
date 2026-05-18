@@ -119,6 +119,14 @@ export function submitRound(state, playerAction, opponentAction) {
   if (state.winner) return { state, events: [] };
   const events = [];
 
+  // Record the player's last action so the Advanced AI can read it next turn.
+  if (playerAction?.kind === 'move') {
+    const move = state.player.moves?.find(m => m.id === playerAction.moveId);
+    state._lastFoeAction = { kind: 'move', moveId: playerAction.moveId, effect: move?.effect ?? null };
+  } else {
+    state._lastFoeAction = playerAction ?? null;
+  }
+
   // Determine order — higher SPD first; ties broken by RNG.
   const pSpd = state.player.spd   * state.player.buffMods.spd;
   const oSpd = state.opponent.spd * state.opponent.buffMods.spd;
