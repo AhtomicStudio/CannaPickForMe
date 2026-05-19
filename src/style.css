@@ -1748,6 +1748,19 @@ body {
   flex-shrink: 0;
 }
 
+.bm-stash-btn {
+  margin-top: 6px;
+  font-size: 0.78rem;
+  padding: 3px 10px;
+  align-self: flex-start;
+}
+
+.btn--in-stash {
+  background: rgba(134, 239, 172, 0.12) !important;
+  color: #86efac !important;
+  border-color: rgba(134, 239, 172, 0.25) !important;
+}
+
 /* Partner Strain Card — slot 4 in Better Matches */
 .partner-strain-card {
   display: block;

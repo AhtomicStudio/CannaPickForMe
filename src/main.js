@@ -1259,6 +1259,9 @@ function showBetterMatchesModal(matchesData, partner = null) {
             <span class="bm-score-badge">${Math.min(100, match.score)}% match</span>
           </div>
           <div class="strain-card__meta">${type} · ${effects}</div>
+          <button class="btn-juicy compact bm-stash-btn${isInStash(strain.id) ? ' btn--in-stash' : ''}" data-strain-id="${strain.id}">
+            ${isInStash(strain.id) ? '✓ In Stash' : '＋ Stash'}
+          </button>
         </div>
         ${buildExpandBody(strain)}
       </div>` };
@@ -1293,6 +1296,24 @@ function showBetterMatchesModal(matchesData, partner = null) {
   const slots = organicCards.map(c => c.html);
   if (partnerCardHtml) slots.splice(3, 0, partnerCardHtml);
   list.innerHTML = slots.join('');
+
+  // Wire stash toggle buttons on organic strain cards.
+  list.querySelectorAll('.bm-stash-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // prevent expand/collapse from triggering
+      const id = btn.dataset.strainId;
+      if (isInStash(id)) {
+        removeFromStash(id);
+        btn.textContent = '＋ Stash';
+        btn.classList.remove('btn--in-stash');
+      } else {
+        addToStash(id);
+        btn.textContent = '✓ In Stash';
+        btn.classList.add('btn--in-stash');
+      }
+      updateStashUI();
+    });
+  });
 
   // Wire tap-to-expand on organic strain cards.
   list.querySelectorAll('.strain-card__info').forEach(info => {
