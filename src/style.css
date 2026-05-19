@@ -832,7 +832,6 @@ body {
   position: absolute;
   inset: 0;
   background: var(--bg-modal);
-  animation: fadeIn 0.2s;
 }
 
 @keyframes fadeIn {

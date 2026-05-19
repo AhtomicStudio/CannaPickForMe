@@ -1260,6 +1260,7 @@ function showBetterMatchesModal(matchesData, partner = null) {
           </div>
           <div class="strain-card__meta">${type} · ${effects}</div>
         </div>
+        ${buildExpandBody(strain)}
       </div>` };
   });
 
@@ -1292,6 +1293,16 @@ function showBetterMatchesModal(matchesData, partner = null) {
   const slots = organicCards.map(c => c.html);
   if (partnerCardHtml) slots.splice(3, 0, partnerCardHtml);
   list.innerHTML = slots.join('');
+
+  // Wire tap-to-expand on organic strain cards.
+  list.querySelectorAll('.strain-card__info').forEach(info => {
+    info.addEventListener('click', () => {
+      const card = info.closest('.strain-card');
+      const isExpanded = card.classList.contains('strain-card--expanded');
+      list.querySelectorAll('.strain-card--expanded').forEach(c => c.classList.remove('strain-card--expanded'));
+      if (!isExpanded) card.classList.add('strain-card--expanded');
+    });
+  });
 
   // Wire impression + click tracking on the partner card (if present).
   // The card lives inside #better-match-list which is rebuilt every time
