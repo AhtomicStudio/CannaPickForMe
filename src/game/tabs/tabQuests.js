@@ -5,7 +5,7 @@ import { ensureDaily, claimQuest } from '../quests.js';
 import {
   getPrestigeMultipliers, canPrestige, previewPrestige, doPrestige,
 } from '../prestige.js';
-import { PRESTIGE } from '../economyConfig.js';
+import { PRESTIGE, QUEST_REWARD } from '../economyConfig.js';
 import {
   checkTitles, getEquippedTitle, listEarnedTitles, equipTitle,
 } from '../titles.js';
@@ -239,7 +239,7 @@ export function renderQuestsTab(ctx) {
                 <div class="dim small">${q.progress}/${q.target} · ${q.howTo || ''}</div>
               </div>
               ${q.claimed ? `<span class="dim small">✅ Claimed</span>`
-                : done ? `<button class="btn-juicy compact" data-claim="${q.id}">Claim 🪙30 ⚡30</button>`
+                : done ? `<button class="btn-juicy compact" data-claim="${q.id}">Claim 🪙${QUEST_REWARD.BUDS_DAILY} ⚡${QUEST_REWARD.XP_DAILY}</button>`
                 : `<span class="dim small">…</span>`}
             </div>`;
         }).join('')}

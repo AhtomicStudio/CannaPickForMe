@@ -47,8 +47,10 @@ export function processLoginStreak(gameState) {
     newDay = diff === 1 ? Math.min(7, (streak.day || 0) + 1) : 1;
   }
 
-  // Day 7 cycles back to 1 the *next* day so the cycle keeps repeating
-  const reward = STREAK_REWARDS.find(r => r.day === newDay);
+  // Day 7 cycles back to 1 the *next* day so the cycle keeps repeating.
+  // Clone the template so applyReward can set hatId/label without mutating
+  // the shared STREAK_REWARDS constant (which would corrupt future renders).
+  const reward = { ...STREAK_REWARDS.find(r => r.day === newDay) };
   applyReward(gameState, reward);
 
   gameState.loginStreak = { day: newDay, lastDate: today };

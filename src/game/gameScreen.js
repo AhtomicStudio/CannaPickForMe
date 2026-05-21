@@ -168,6 +168,10 @@ export function destroyGameScreen() {
   _streakCount  = 0;
   _battleSession = null;
   _versusSession = null;
+  // Null these so any stale idle-tick closure that fires after destroy
+  // sees _gameState = null and returns early (guarded at top of tick).
+  _gameState = null;
+  _uid       = null;
 }
 
 /**
@@ -213,8 +217,17 @@ export async function grantSessionXP(strain, uidOverride) {
   try {
     const state = await loadGameState(uid);
     if (!state) return; // user hasn't onboarded their Cannabud yet
-    state.xp   = (state.xp   || 0) + XP.PICK_SESSION_REWARD;
-    state.buds = (state.buds || 0) + CURRENCY.BUDS_FROM_PICK;
+    // Apply the same multipliers as Path A so prestige/garden bonuses
+    // are respected even when the game screen is closed.
+    const ev      = getTodaysEvent();
+    const xpMult  = getPrestigeMultipliers(state).xpMult
+                  * getGardenBonuses(state.garden).xpMult
+                  * (ev.mods?.xpMult ?? 1);
+    const budMult = getPrestigeMultipliers(state).budMult
+                  * getGardenBonuses(state.garden).budMult
+                  * (ev.mods?.budMult ?? 1);
+    state.xp   = (state.xp   || 0) + Math.floor(XP.PICK_SESSION_REWARD * xpMult);
+    state.buds = (state.buds || 0) + Math.floor(CURRENCY.BUDS_FROM_PICK  * budMult);
     if (strain?.id) {
       if (!state.lifetime) state.lifetime = {};
       if (!state.lifetime.strainsDiscovered) state.lifetime.strainsDiscovered = [];
@@ -323,20 +336,31 @@ function startIdleTick() {
   _idleInterval = setInterval(() => {
     if (!_gameState) return;
 
-    // Decay needs based on real elapsed time + garden mult
-    const garden = getGardenBonuses(_gameState.garden);
-    // Slow decay further if garden upgrades are good
+    // Decay needs based on real elapsed time, then apply all decay modifiers
+    // (garden upgrades + today's world event) in one unified post-decay pass.
+    const garden   = getGardenBonuses(_gameState.garden);
+    const ev       = getTodaysEvent();
+    const evDecay  = ev.mods?.decayMult; // undefined | { all?: n, cleanliness?: n, … }
     const beforeDecay = { ..._gameState.needs };
     applyDecay(_gameState.needs);
-    // Apply garden decay multiplier (already accounted for via cached lastDecayTick)
-    // — we approximate by partially restoring needs back proportional to (1 - decayMult).
-    // This is a pragmatic shortcut so each tick still does the right thing.
-    if (garden.decayMult < 1) {
-      for (const k of NEED_KEYS) {
-        if (k === 'happiness') continue;
-        const drained = Math.max(0, (beforeDecay[k] ?? NEEDS.MAX) - (_gameState.needs[k] ?? 0));
-        const refund  = drained * (1 - garden.decayMult);
-        _gameState.needs[k] = Math.min(NEEDS.MAX, (_gameState.needs[k] ?? 0) + refund);
+    // Compute effective per-need multiplier and adjust what was drained.
+    //   mult < 1 → slower decay (refund)
+    //   mult > 1 → faster decay (extra drain)
+    for (const k of NEED_KEYS) {
+      if (k === 'happiness') continue;
+      const drained = Math.max(0, (beforeDecay[k] ?? NEEDS.MAX) - (_gameState.needs[k] ?? 0));
+      if (drained <= 0) continue;
+      // Garden mult is a scalar (e.g. 0.8 for good garden).
+      let effectiveMult = garden.decayMult ?? 1;
+      // World event mult can be an object keyed by need name or 'all'.
+      if (evDecay && typeof evDecay === 'object') {
+        const evMult = evDecay[k] ?? evDecay.all ?? 1;
+        effectiveMult *= evMult;
+      }
+      if (effectiveMult !== 1) {
+        // delta = extra drain (positive) or refund (negative) on top of raw decay
+        const delta = drained * (effectiveMult - 1);
+        _gameState.needs[k] = Math.min(NEEDS.MAX, Math.max(0, (_gameState.needs[k] ?? 0) - delta));
       }
     }
 
@@ -490,10 +514,19 @@ function renderShell() {
     </div>
   `;
 
-  _container.querySelector('#game-back').addEventListener('click', () => {
+  _container.querySelector('#game-back').addEventListener('click', async () => {
     sfx.click();
+    // Capture refs before destroyGameScreen nulls them (fix: state was being
+    // saved after destroy wiped _gameState/_uid, causing unawaited fire-and-forget
+    // on potentially-null values).
+    const stateToSave = _gameState;
+    const uidToSave   = _uid;
     destroyGameScreen();
-    saveGameState(_uid, _gameState);
+    try {
+      if (stateToSave && uidToSave) await saveGameState(uidToSave, stateToSave);
+    } catch (err) {
+      console.error('[cannagotchi] back-button save failed:', err);
+    }
     _onBack();
   });
   _container.querySelector('#game-mute').addEventListener('click', (e) => {
@@ -653,7 +686,9 @@ function registerStreak() {
     showFloater(`🔥 On a roll! +${XP.STREAK_BONUS} XP`, 'streak');
   }
   if (_streakCount >= XP.STREAK_THRESHOLD) {
-    _gameState.xp = (_gameState.xp || 0) + XP.STREAK_BONUS;
+    // Route through applyXP so level-up / evolution checks fire correctly.
+    // silent=true because the floater is already shown above.
+    applyXP(XP.STREAK_BONUS, '🔥', 'streak', /*silent=*/ true);
   }
 }
 

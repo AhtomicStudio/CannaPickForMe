@@ -238,6 +238,9 @@ function handlePlotSwitch(plotId, ctx) {
   applyDecay(ctx.gameState.needs);
   sfx.tap();
   ctx.toast(`🪴 Switched to ${PLOT_LABELS[plotId]}`, 'gold');
+  if (r.idleXpAwarded > 0) {
+    setTimeout(() => ctx.toast(`🌙 +${r.idleXpAwarded} XP earned while dormant`, 'gold', 3000), 800);
+  }
   ctx.onShell();           // re-render topbar with new bud
   ctx.onSwitchTab('garden');     // re-render Garden tab
   // Refresh the floating companion to mirror the new bud + variant

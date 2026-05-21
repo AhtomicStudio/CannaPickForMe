@@ -29,7 +29,7 @@ export function migrateGameState(partial = {}) {
     monsterVariant: partial.monsterVariant ?? 'classic',
     monsterName:    partial.monsterName    ?? 'Bud',
     createdAt:      partial.createdAt      ?? Date.now(),
-    trait:          partial.trait          ?? rollTrait(),
+    trait:          (partial.trait != null) ? partial.trait : rollTrait(),
     equippedMoves:  partial.equippedMoves  ?? null,
     cosmetics:      partial.cosmetics      ?? createInitialCosmetics(),
     unlockedThemes: partial.unlockedThemes ?? [],

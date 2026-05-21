@@ -28,6 +28,8 @@
 import { createInitialNeeds } from './needs.js';
 import { createInitialInventory, createInitialGarden } from './inventory.js';
 import { rollTrait } from './traits.js';
+import { calcIdleXP } from './gameEngine.js';
+import { XP } from './economyConfig.js';
 
 export const MAX_PLOTS = 3;
 export const PLOT_IDS = ['plot_1', 'plot_2', 'plot_3'];
@@ -103,13 +105,35 @@ export function switchToPlot(gs, plotId) {
 
   // Snapshot current → save it
   snapshotActiveTo(gs, cur);
+
+  // Award idle XP that accrued on the target plot while it sat dormant.
+  // Use the offline rate (same as collectIdleAndDailyBonuses) so the player
+  // is rewarded without double-counting the open-screen rate.
+  let idleXpAwarded = 0;
+  const targetSnap = gs.plots[plotId];
+  if (targetSnap?.lastTick) {
+    const now = Date.now();
+    idleXpAwarded = calcIdleXP(targetSnap.lastTick, now, {
+      ratePerMinute:  XP.IDLE_RATE_PER_MINUTE_BASE,
+      moodXpMult:     1,   // mood unknown while dormant — neutral
+      gardenXpMult:   1,
+      prestigeXpMult: 1,
+      doubleUntilMs:  0,
+    });
+    if (idleXpAwarded > 0) {
+      // Credit the XP into the snapshot before applying it to flat state
+      const updatedSnap = { ...targetSnap, xp: (targetSnap.xp || 0) + idleXpAwarded };
+      gs.plots[plotId] = updatedSnap;
+    }
+  }
+
   // Load target into flat fields
   applyPlotSnapshot(gs, gs.plots[plotId]);
   gs.activePlotId = plotId;
-  // Refresh "lastTick" so we don't double-count idle XP at the moment of swap
+  // Reset tick so we don't double-count on the next open-screen tick
   gs.lastTick = Date.now();
   gs._budTick = Date.now();
-  return { ok: true, switched: true };
+  return { ok: true, switched: true, idleXpAwarded };
 }
 
 /**
