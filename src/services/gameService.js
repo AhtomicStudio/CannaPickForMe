@@ -103,18 +103,16 @@ export function migrateGameState(partial = {}) {
   };
 }
 
-/** Load + migrate the user's game state. */
+/** Load + migrate the user's game state.
+ *  Returns null  → user has never created a Cannabud (safe to show onboarding).
+ *  Throws        → transient error (network, auth, etc.); caller should retry, NOT show onboarding.
+ */
 export async function loadGameState(uid) {
-  try {
-    const snap = await getDoc(doc(db, 'users', uid));
-    if (!snap.exists()) return null;
-    const data = snap.data().game;
-    if (!data) return null;
-    return migrateGameState(data);
-  } catch (err) {
-    console.error('[gameService] loadGameState failed:', err);
-    return null;
-  }
+  const snap = await getDoc(doc(db, 'users', uid));
+  if (!snap.exists()) return null;
+  const data = snap.data().game;
+  if (!data) return null;
+  return migrateGameState(data);
 }
 
 /** Save to Firestore (merged into user doc).

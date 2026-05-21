@@ -16,7 +16,7 @@
  */
 
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { initializeFirestore, getFirestore, persistentLocalCache } from 'firebase/firestore';
+import { initializeFirestore, getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import {
   initializeAuth, getAuth,
@@ -40,10 +40,14 @@ const firebaseConfig = {
 // Reuse the existing FirebaseApp if HMR already ran initializeApp.
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-// Firestore — try the persistent-cache init; fall back to getter on second runs.
+// Firestore — default memory-only cache (no IndexedDB).
+// Persistent IndexedDB cache was removed because iOS Safari's ITP clears
+// IndexedDB between sessions. Queued offline writes stored there would be
+// silently lost before reaching the server, causing game-state resets.
+// All reads/writes now go directly to the Firestore server when online.
 let _db;
 try {
-  _db = initializeFirestore(app, { localCache: persistentLocalCache() });
+  _db = initializeFirestore(app, {});
 } catch (_) {
   _db = getFirestore(app);
 }

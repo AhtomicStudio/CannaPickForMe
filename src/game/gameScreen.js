@@ -99,15 +99,37 @@ export async function initGameScreen(container, uid, onBack) {
   _container = container;
   _uid       = uid;
   _onBack    = onBack;
-  _gameState = await loadGameState(uid);
 
   // Analytics: cannagotchi opened
   try { track('cannagotchi_opened'); } catch (_) {}
 
+  // Attempt to load game state — wrap in try/catch so transient errors
+  // (network, auth not ready yet, Firestore permission hiccup) never fall
+  // through to onboarding. A null return means the user genuinely has no
+  // Cannabud yet; a thrown error means we should retry, not wipe their data.
+  let loadError = null;
+  try {
+    _gameState = await loadGameState(uid);
+  } catch (err) {
+    console.error('[cannagotchi] loadGameState error:', err);
+    loadError = err;
+  }
+
+  if (loadError) {
+    _renderLoadError(container, () => initGameScreen(container, uid, onBack), onBack);
+    return;
+  }
+
   if (!_gameState) {
     renderOnboarding(container, async (choice) => {
       _gameState = createInitialGameState(choice.monsterType, choice.monsterName, choice.monsterVariant);
-      await saveGameState(uid, _gameState);
+      try {
+        await saveGameState(uid, _gameState);
+      } catch (saveErr) {
+        console.error('[cannagotchi] initial saveGameState failed:', saveErr);
+        // Show a warning but still let the user play — autosave will retry.
+        // Do NOT abort bootIntoTabs; the user should not lose their session.
+      }
       try { track('cannabud_planted', { type: choice.monsterType, variant: choice.monsterVariant, plot: 'plot_1', firstTime: true }); } catch (_) {}
       try {
         const { initCompanion } = await import('./companion.js');
@@ -119,6 +141,20 @@ export async function initGameScreen(container, uid, onBack) {
     collectIdleAndDailyBonuses();
     bootIntoTabs();
   }
+}
+
+/** Render a friendly error screen when game state fails to load. */
+function _renderLoadError(container, onRetry, onBack) {
+  container.innerHTML = `
+    <div class="game-view" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;padding:2rem;text-align:center">
+      <div style="font-size:2.5rem">🌿</div>
+      <h2 class="game-retro-title" style="margin:0">Couldn't Load Your Cannabud</h2>
+      <p class="dim" style="max-width:300px;margin:0">There was a problem reaching the cloud. Your progress is safe — tap Retry to try again.</p>
+      <button id="game-load-retry" class="btn btn--primary btn--glow" style="margin-top:0.5rem">Retry</button>
+      <button id="game-load-back" class="btn-juicy compact" style="margin-top:0">← Go Back</button>
+    </div>`;
+  container.querySelector('#game-load-retry').addEventListener('click', onRetry);
+  container.querySelector('#game-load-back').addEventListener('click', onBack);
 }
 
 export function destroyGameScreen() {
