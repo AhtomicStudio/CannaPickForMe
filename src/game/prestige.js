@@ -38,12 +38,15 @@ export function doPrestige(gameState) {
   // Reward
   gameState.seeds = (gameState.seeds ?? 0) + preview.seedReward;
 
-  // Reset progression
+  // Reset progression — the bud starts fresh; battle record resets too so
+  // prestige count is the meaningful long-term stat rather than raw W/L.
   gameState.xp        = 0;
   gameState.lastTick  = Date.now();
   gameState.needs     = createInitialNeeds();
   gameState.inventory = createInitialInventory();
   gameState.garden    = createInitialGarden();
+  gameState.wins      = 0;
+  gameState.losses    = 0;
 
   // Battle progress carries over for variety, but bosses reset.
   if (gameState.battle) {

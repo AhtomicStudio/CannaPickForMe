@@ -47,6 +47,7 @@ export const PER_PLOT_FIELDS = [
   'wins', 'losses',
   'memories', 'titles',
   'tempBuffs', 'flags',
+  'trichomeLastClaimedAt',  // per-bud: each bud has its own Lv.50 harvest clock
 ];
 
 export function getActivePlotId(gs) { return gs?.activePlotId || 'plot_1'; }

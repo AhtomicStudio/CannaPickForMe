@@ -99,16 +99,23 @@ export function reportQuestProgress(gameState, kind, amount = 1) {
   return newlyCompleted;
 }
 
-/** Claim rewards on a completed daily quest. */
+/**
+ * Claim rewards on a completed daily quest.
+ *
+ * Returns the reward amounts WITHOUT applying them — the caller is responsible
+ * for applying XP via `applyXP()` (so level-ups / evolutions fire correctly)
+ * and Buds via `giveBuds()`. Seeds are still applied here since there's no
+ * special level-up logic needed for them.
+ */
 export function claimQuest(gameState, questId) {
   ensureDaily(gameState);
   const q = gameState.quests.daily.find(x => x.id === questId);
   if (!q || q.claimed || q.progress < q.target) return null;
   q.claimed = true;
-  gameState.buds = (gameState.buds ?? 0) + QUEST_REWARD.BUDS_DAILY;
-  gameState.xp   = (gameState.xp   ?? 0) + QUEST_REWARD.XP_DAILY;
+  // NOTE: XP and Buds are intentionally NOT applied here — the UI layer
+  // routes them through applyXP / giveBuds so level-up checks fire.
 
-  // Bonus seed for clearing all 3
+  // Bonus seed for clearing all 3 (seeds have no level-up hook, apply directly)
   const allClear = gameState.quests.daily.every(x => x.claimed);
   let bonus = null;
   if (allClear && !gameState.quests.bonusClaimed) {

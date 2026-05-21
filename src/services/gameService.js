@@ -44,6 +44,14 @@ export function migrateGameState(partial = {}) {
     plotsUnlocked:  partial.plotsUnlocked  ?? 1,
     plots:          partial.plots          ?? {},
 
+    // Must persist: stripped from Firestore if not listed here (causes daily
+    // bonus to re-fire every session and trichome clock to reset every load).
+    _lastDaily:              partial._lastDaily              ?? '',
+    trichomeLastClaimedAt:   partial.trichomeLastClaimedAt   ?? 0,
+
+    // Bred offspring waiting for an empty plot to be planted into.
+    pendingOffspring:        partial.pendingOffspring        ?? [],
+
     // Evolution path picked at Lv.30 (per active bud)
     evolutionPath:  partial.evolutionPath  ?? null,
     // Breeding lab state

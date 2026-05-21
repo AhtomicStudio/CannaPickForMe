@@ -34,6 +34,7 @@ import { renderOnboarding } from './onboardingScreen.js';
 
 import { NEEDS, XP, PACING, CURRENCY, PRESTIGE } from './economyConfig.js';
 import { applyDecay, moodSummary, NEED_KEYS } from './needs.js';
+import { getTrait } from './traits.js';
 import {
   GARDEN_UPGRADES, getEquippedTier, getGardenBonuses,
 } from './inventory.js';
@@ -316,7 +317,7 @@ function wireBusListeners() {
       _gameState.seeds = (_gameState.seeds||0) + CURRENCY.SEEDS_FROM_EVOLUTION;
       // Memory wall — keep last 30 entries
       if (!_gameState.memories) _gameState.memories = [];
-      _gameState.memories.unshift({ ts: Date.now(), kind: 'evolve', sprite: e.evolution.sprite, caption: `${_gameState.monsterName} became a ${e.evolution.name}!` });
+      _gameState.memories.unshift({ ts: Date.now(), kind: 'evolve', sprite: e.evolution.sprite, variant: _gameState.monsterVariant || 'classic', caption: `${_gameState.monsterName} became a ${e.evolution.name}!` });
       _gameState.memories = _gameState.memories.slice(0, 30);
       checkTitles(_gameState);
       // Lv.30 evolution → prompt for branch choice if not already picked
@@ -346,12 +347,14 @@ function startIdleTick() {
     // Compute effective per-need multiplier and adjust what was drained.
     //   mult < 1 → slower decay (refund)
     //   mult > 1 → faster decay (extra drain)
+    // Trait decay modifier: evergreen slows decay by 10%
+    const traitDecayMult = getTrait(_gameState.trait)?.mods?.decayMult ?? 1;
     for (const k of NEED_KEYS) {
       if (k === 'happiness') continue;
       const drained = Math.max(0, (beforeDecay[k] ?? NEEDS.MAX) - (_gameState.needs[k] ?? 0));
       if (drained <= 0) continue;
-      // Garden mult is a scalar (e.g. 0.8 for good garden).
-      let effectiveMult = garden.decayMult ?? 1;
+      // Garden mult × trait mult × world event mult
+      let effectiveMult = (garden.decayMult ?? 1) * traitDecayMult;
       // World event mult can be an object keyed by need name or 'all'.
       if (evDecay && typeof evDecay === 'object') {
         const evMult = evDecay[k] ?? evDecay.all ?? 1;
@@ -362,6 +365,15 @@ function startIdleTick() {
         const delta = drained * (effectiveMult - 1);
         _gameState.needs[k] = Math.min(NEEDS.MAX, Math.max(0, (_gameState.needs[k] ?? 0) - delta));
       }
+    }
+
+    // Track "thriving" status for quests and lifetime stats
+    const needKeys = NEED_KEYS.filter(k => k !== 'happiness');
+    const avgNeeds = needKeys.reduce((s, k) => s + (_gameState.needs[k] ?? NEEDS.MAX), 0) / needKeys.length;
+    if (avgNeeds >= NEEDS.THRESHOLD_HAPPY) {
+      reportQuestProgress(_gameState, 'thriving_tick', 1);
+      if (!_gameState.lifetime) _gameState.lifetime = {};
+      _gameState.lifetime.thrivingDays = (_gameState.lifetime.thrivingDays || 0) + 1;
     }
 
     // Idle XP since last tick
@@ -421,8 +433,29 @@ function collectIdleAndDailyBonuses() {
   };
   const xp = calcIdleXP(_gameState.lastTick, now, opts);
   if (xp > 0) {
+    const oldLvl = getLevel(_gameState.xp);
     _gameState.xp = (_gameState.xp || 0) + xp;
+    const newLvl = getLevel(_gameState.xp);
+    refreshLevelCache(_gameState);
     setTimeout(() => toast(`🌙 Welcome back! +${xp} XP while away`, 'gold'), 600);
+    // Fire level-up / evolution events after bus listeners are wired (bootIntoTabs).
+    // Short delay ensures the game shell and event listeners are ready.
+    if (newLvl > oldLvl) {
+      setTimeout(() => {
+        if (!_gameState) return;
+        emit('game:level-up', { from: oldLvl, to: newLvl });
+        const evoCheck = checkEvolution(
+          getMonsterType(_gameState.monsterType).evolutions, oldLvl, newLvl,
+        );
+        if (evoCheck.evolved) {
+          emit('game:evolved', evoCheck);
+          if (shouldPromptPathChoice(_gameState)) {
+            setTimeout(() => showPathChoiceModal(), 2000);
+          }
+        }
+        reportQuestProgress(_gameState, 'level_up', newLvl - oldLvl);
+      }, 1500);
+    }
   }
   _gameState.lastTick = now;
   _gameState._budTick = now;
@@ -445,7 +478,11 @@ function combinedXpMult() {
   const p = getPrestigeMultipliers(_gameState);
   const ev = getTodaysEvent();
   const eventXp = ev.mods?.xpMult ?? 1;
-  return m.xpMult * g.xpMult * p.xpMult * eventXp;
+  // Solar evolution path adds +20% XP from all sources
+  const pathXpBonus = _gameState.evolutionPath
+    ? 1 + (getPath(_gameState.monsterType, _gameState.evolutionPath)?.mods?.xpRateBonus ?? 0)
+    : 1;
+  return m.xpMult * g.xpMult * p.xpMult * eventXp * pathXpBonus;
 }
 function combinedBudMult() {
   const g = getGardenBonuses(_gameState.garden);
@@ -669,12 +706,27 @@ function debouncedSave() {
 
 function maybeRollEncounter() {
   if (_activeTab !== 'battle' || _battleSession) return;
+  const now = Date.now();
+
+  // Forced encounter from smoke bomb item — no cooldown check
   if (_gameState.flags?.forceEncounter) {
     _gameState.flags.forceEncounter = false;
+    if (!_gameState.flags) _gameState.flags = {};
+    _gameState.flags._lastEncounterAt = now;
     sfx.encounter();
     toast('💣 Smoke bomb triggered an encounter!');
     startBattle(makeWildEncounter(getLevel(_gameState.xp)), { kind: 'wild' }, makeTabContext());
+    return;
   }
+
+  // Random encounter — gated by cooldown (1 per minute max) and 18% per-tick chance
+  const lastAt = _gameState.flags?._lastEncounterAt || 0;
+  if (now - lastAt < PACING.ENCOUNTER_COOLDOWN_MS) return;
+  if (Math.random() >= PACING.ENCOUNTER_CHANCE_PER_TICK) return;
+  if (!_gameState.flags) _gameState.flags = {};
+  _gameState.flags._lastEncounterAt = now;
+  sfx.encounter();
+  startBattle(makeWildEncounter(getLevel(_gameState.xp)), { kind: 'wild' }, makeTabContext());
 }
 
 // ── Streak ────────────────────────────────────────────────────
@@ -754,6 +806,7 @@ function showPathChoiceModal() {
       _gameState.memories.unshift({
         ts: Date.now(), kind: 'path',
         sprite: evolution.sprite,
+        variant: _gameState.monsterVariant || 'classic',
         caption: `${_gameState.monsterName} chose the ${p.name}!`,
       });
       _gameState.memories = _gameState.memories.slice(0, 30);

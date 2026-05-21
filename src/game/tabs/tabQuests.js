@@ -145,7 +145,7 @@ function renderMemoriesCard(ctx) {
       <div class="memories-row">
         ${mems.slice(0, 8).map(m => `
           <div class="mem-card">
-            <div class="mem-card__sprite" data-sprite="${m.sprite || ''}"></div>
+            <div class="mem-card__sprite" data-sprite="${m.sprite || ''}" data-variant="${m.variant || ''}"></div>
             <div class="mem-card__caption">${m.caption || ''}</div>
             <div class="dim small">${formatDateShort(m.ts)}</div>
           </div>`).join('')}
@@ -305,11 +305,14 @@ export function wireQuestsTab(body, ctx) {
     });
   });
 
-  // Render any sprite placeholders in memories
+  // Render any sprite placeholders in memories.
+  // Use the variant stored with the memory entry (falls back to current variant
+  // for old entries that predate the variant field).
   body.querySelectorAll('.mem-card__sprite').forEach(el => {
     const name = el.dataset.sprite;
     if (name) {
-      const variant = getVariant(ctx.gameState.monsterType, ctx.gameState.monsterVariant || 'classic');
+      const varId   = el.dataset.variant || ctx.gameState.monsterVariant || 'classic';
+      const variant = getVariant(ctx.gameState.monsterType, varId);
       renderSprite(el, name, 4, { paletteRemap: variant?.paletteRemap });
     }
   });
@@ -376,6 +379,9 @@ export function wireQuestsTab(body, ctx) {
     btn.addEventListener('click', () => {
       const r = claimQuest(ctx.gameState, btn.dataset.claim);
       if (!r) { sfx.error(); return; }
+      // Route through canonical helpers so level-ups / evolutions fire correctly.
+      ctx.applyXP(r.xp,   '📜', 'quest');
+      ctx.giveBuds(r.buds, 'quest');
       sfx.questDone();
       ctx.toast(`+${r.buds}🪙 +${r.xp}⚡${r.bonusSeed ? ` +${r.bonusSeed}🌱 BONUS!` : ''}`, 'gold');
       checkAchievements(ctx.gameState);

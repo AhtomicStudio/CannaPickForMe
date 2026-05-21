@@ -40,8 +40,16 @@
 
 import { BATTLE } from './economyConfig.js';
 import { getTrait } from './traits.js';
+import { MOVES_BY_TYPE } from './moves.js';
 import { rollEnvironment, getEnvironment } from './environments.js';
 import { flavorLineFor } from './encounterFlavor.js';
+
+// Build a move-id → monster-type reverse map for accurate STAB calculation.
+// Parsing move IDs was brittle; this is authoritative and future-proof.
+const MOVE_TYPE_MAP = new Map();
+for (const [monType, moves] of Object.entries(MOVES_BY_TYPE)) {
+  for (const m of moves) MOVE_TYPE_MAP.set(m.id, monType);
+}
 
 // ── Mulberry32: tiny seeded RNG so battles are reproducible ────────────
 function makeRng(seed) {
@@ -69,6 +77,18 @@ function hydrateCombatant(c) {
   // call getStats with level + statGrowth). Trait modifiers apply on top.
   const trait = getTrait(c.trait);
   const m = trait?.mods || {};
+
+  // Resolve evolution-path mods for in-battle effects (critBonus, varianceBoost).
+  // Stat mods (hp/atk/def/spd) are already baked into baseStats by encounters.js,
+  // so we only need the combat-behaviour mods here.
+  let pathMods = {};
+  if (c.evolutionPath && typeof window !== 'undefined') {
+    try {
+      const path = window.__cgEvolutionPaths?.getPath(c.type, c.evolutionPath);
+      if (path) pathMods = path.mods || {};
+    } catch (_) {}
+  }
+
   const hpMax = Math.floor(c.baseStats.hp  * (m.hpMult  ?? 1));
   const atk   = Math.floor(c.baseStats.atk * (m.atkMult ?? 1));
   const def   = Math.floor(c.baseStats.def * (m.defMult ?? 1));
@@ -81,7 +101,8 @@ function hydrateCombatant(c) {
     buffs:    { atk: 0, def: 0, spd: 0 },
     buffMods: { atk: 1, def: 1, spd: 1 },
     statuses: { confused: 0 },
-    traitMods: m, // exposed so applyMove etc. can read crit/dodge/regen
+    traitMods: m,    // exposed so applyMove etc. can read crit/dodge/regen
+    pathMods,        // evolution-path combat mods (critBonus, varianceBoost)
   };
 }
 
@@ -220,11 +241,14 @@ function applyMove(state, side, move) {
   }
 
   // Variance — environments can clamp it (e.g. Basement = ±7% only).
-  const clamp = state.envMods?.varianceClamp ?? 0;
-  const lo = clamp ? (1 - clamp) : BATTLE.RAND_MIN;
-  const hi = clamp ? (1 + clamp) : BATTLE.RAND_MAX;
+  // Wild evolution path expands it (+0.05 each direction → ±20%).
+  const clamp    = state.envMods?.varianceClamp ?? 0;
+  const varBoost = !clamp ? (me.pathMods?.varianceBoost ?? 0) : 0;
+  const lo = clamp ? (1 - clamp) : (BATTLE.RAND_MIN - varBoost);
+  const hi = clamp ? (1 + clamp) : (BATTLE.RAND_MAX + varBoost);
   const variance = rand(state, lo, hi);
-  const critBonus = (me.traitMods?.critBonus ?? 0) + (state.envMods?.critBonus ?? 0);
+  // Crit bonus stacks: trait + evolution path + environment
+  const critBonus = (me.traitMods?.critBonus ?? 0) + (me.pathMods?.critBonus ?? 0) + (state.envMods?.critBonus ?? 0);
   const crit   = rng(state) < (BATTLE.CRIT_CHANCE_BASE + critBonus) ? BATTLE.CRIT_MULTIPLIER : 1.0;
   // Environment damage tilt for the attacker's strain type.
   const envTypeMult = state.envMods?.dmgMult?.[me.type] ?? 1.0;
@@ -244,11 +268,10 @@ function applyMove(state, side, move) {
 }
 
 function foeMoveOriginType(move) {
-  // Move ids contain hints — fall back: hybrid for unknown.
+  // Use the authoritative MOVE_TYPE_MAP (built from MOVES_BY_TYPE at module load).
+  // This is immune to ID-naming surprises and covers every move automatically.
   if (!move?.id) return 'hybrid';
-  if (move.id.startsWith('purple') || move.id === 'body_press' || move.id === 'couch_lock' || move.id === 'knockout') return 'indica';
-  if (move.id.startsWith('quick')  || move.id === 'brain_boost' || move.id === 'solar_beam'   || move.id === 'hyper_grow') return 'sativa';
-  return 'hybrid';
+  return MOVE_TYPE_MAP.get(move.id) ?? 'hybrid';
 }
 
 function applyEffect(state, side, effect, events) {
@@ -285,7 +308,7 @@ function applyEffect(state, side, effect, events) {
         state.log.push(`🧘 ${foe.name} resists the confusion!`);
         break;
       }
-      foe.statuses.confused = 3 + (foe.traitMods?.statusBonus ? 0 : 0); // duration is on the inflicter
+      foe.statuses.confused = 3 + (me.traitMods?.statusBonus ?? 0); // duration extended by inflicter's trait/path
       state.log.push(`💫 ${foe.name} got confused!`);
       events.push({ kind: 'status', side: side === 'player' ? 'opponent' : 'player', status: 'confused' });
       break;
