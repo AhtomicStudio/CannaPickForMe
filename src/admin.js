@@ -12,7 +12,7 @@ import { getAllAds, createAd, updateAd, deleteAd, uploadAdImage } from './servic
 import { getPageContent, savePageContent } from './services/pagesService.js';
 import { getInfoTopics, saveInfoTopic, deleteInfoTopic } from './services/infoService.js';
 import { auth } from './firebase.js';
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink, signOut, onAuthStateChanged } from 'firebase/auth';
 
 // Phase 1 sponsorship system — campaign-based inventory.
 import {
@@ -763,17 +763,33 @@ async function init() {
   initDragPreview();
 
   // Login form — register before any awaits so it's always wired
+  // Magic-link login: email a one-time sign-in link to the admin address.
+  const ACTION_CODE_SETTINGS = { url: `${location.origin}/admin`, handleCodeInApp: true };
   document.getElementById('login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const password = document.getElementById('admin-password').value;
+    const btn = document.getElementById('btn-admin-login');
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
     try {
-      await signInWithEmailAndPassword(auth, ADMIN_EMAIL, password);
-      // onAuthStateChanged fires and calls showDashboard()
+      await sendSignInLinkToEmail(auth, ADMIN_EMAIL, ACTION_CODE_SETTINGS);
+      document.getElementById('login-error')?.classList.add('hidden');
+      document.getElementById('login-sent')?.classList.remove('hidden');
     } catch (err) {
-      document.getElementById('login-error').classList.remove('hidden');
-      document.getElementById('admin-password').value = '';
+      const el = document.getElementById('login-error');
+      if (el) { el.textContent = `Couldn't send the link: ${err.message}`; el.classList.remove('hidden'); }
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '📧 Email me a sign-in link'; }
     }
   });
+
+  // If we arrived via the emailed magic link, complete sign-in.
+  if (isSignInWithEmailLink(auth, window.location.href)) {
+    signInWithEmailLink(auth, ADMIN_EMAIL, window.location.href)
+      .then(() => history.replaceState(null, '', `${location.origin}/admin`))
+      .catch((err) => {
+        const el = document.getElementById('login-error');
+        if (el) { el.textContent = `Sign-in link error: ${err.message}`; el.classList.remove('hidden'); }
+      });
+  }
 
   // Check existing session via Firebase auth state
   onAuthStateChanged(auth, (user) => {
@@ -1050,9 +1066,27 @@ function renderReviewQueue() {
   });
 }
 
+// Show a copyable sync error in the panel (instead of an alert you can't select).
+function showSyncError(message) {
+  const ta = document.getElementById('menu-sync-error-text');
+  if (ta) ta.value = message;
+  document.getElementById('menu-sync-error')?.classList.remove('hidden');
+}
+
 async function initMenuSync() {
   // Load existing menu state
   const existing = await getMenuData(SYNC_DISPENSARY_ID);
+
+  // Copy-to-clipboard for the sync error box
+  document.getElementById('btn-copy-sync-error')?.addEventListener('click', () => {
+    const ta = document.getElementById('menu-sync-error-text');
+    if (!ta) return;
+    ta.select();
+    if (navigator.clipboard) navigator.clipboard.writeText(ta.value).catch(() => {});
+    else { try { document.execCommand('copy'); } catch (_) {} }
+    const b = document.getElementById('btn-copy-sync-error');
+    if (b) { b.textContent = '✓ Copied'; setTimeout(() => { b.textContent = '📋 Copy'; }, 1500); }
+  });
   document.getElementById('menu-sync-last-synced').textContent =
     formatSyncTimestamp(existing.lastSynced);
 
@@ -1109,31 +1143,44 @@ async function initMenuSync() {
     btn.textContent = '⏳ Syncing...';
     btn.disabled = true;
     document.getElementById('menu-sync-result').classList.add('hidden');
+    document.getElementById('menu-sync-error')?.classList.add('hidden');
 
+    let syncUrl = '';
     try {
-      const res = await fetch(`/api/sync-menu?dispensary=${SYNC_DISPENSARY_ID}`);
+      // Use the dispensary's configured menu source (e.g. Cookies' Dovetail
+      // site) when set; fall back to the Dutchie slug. Mirrors the weekly refresh.
+      const dispMap = await getDispensaryMap();
+      const src = dispMap[SYNC_DISPENSARY_ID]?.menuSource;
+      syncUrl = src
+        ? `/api/sync-menu?source=${encodeURIComponent(JSON.stringify(src))}`
+        : `/api/sync-menu?dispensary=${SYNC_DISPENSARY_ID}`;
+      const res = await fetch(syncUrl);
       const text = await res.text();
       let data;
       try {
         data = JSON.parse(text);
       } catch {
-        alert(`Sync failed: server returned a non-JSON response (status ${res.status}).\n\n${text.slice(0, 400)}`);
+        showSyncError(
+          `Sync failed — server returned a NON-JSON response (HTTP ${res.status}).\n` +
+          `Most likely /api/sync-menu isn't running as a function: you're on "npm run dev" (Vite doesn't serve /api), or the latest code isn't deployed yet. The API only runs on the deployed Vercel site or via "vercel dev".\n\n` +
+          `URL: ${syncUrl}\n\nFirst 1200 chars of the response:\n${text.slice(0, 1200)}`
+        );
         return;
       }
 
       if (!res.ok) {
-        alert(`Sync failed: ${data.error || 'Unknown error'}\n\n${data.hint || ''}`);
+        showSyncError(`Sync failed (HTTP ${res.status}).\nURL: ${syncUrl}\n\n${data.error || 'Unknown error'}\n${data.hint || ''}`);
         return;
       }
 
       if (data.warning) {
         console.warn('Sync warning:', data.warning, data.rawCategories);
-        alert(`Sync warning: ${data.warning}\nRaw categories found: ${(data.rawCategories || []).join(', ')}`);
+        showSyncError(`Sync warning (HTTP ${res.status}).\nURL: ${syncUrl}\n\n${data.warning}\nRaw categories found: ${(data.rawCategories || []).join(', ')}`);
       }
 
       showSyncResult(data, existing.strainIds || []);
     } catch (err) {
-      alert(`Sync error: ${err.message}`);
+      showSyncError(`Sync error: ${(err && err.message) || err}\nURL: ${syncUrl}`);
     } finally {
       btn.textContent = '🔄 Sync Now';
       btn.disabled = false;
@@ -1693,6 +1740,7 @@ async function refreshCampaignList() {
       if (action === 'resume')  return quickStatusChange(c, CAMPAIGN_STATUS.LIVE);
       if (action === 'end')     return quickStatusChange(c, CAMPAIGN_STATUS.ENDED);
       if (action === 'preview') return copyPreviewLink(c, btn);
+      if (action === 'report')  return openCampaignReport(c);
       if (action === 'clone')   return cloneCampaign(c);
     });
   });
@@ -1849,11 +1897,81 @@ function renderCampaignCard(c, advertiserNameById) {
       <div class="campaign-card__actions">
         ${actionButtons}
         <button class="admin-btn admin-btn--small" data-campaign-action="preview" data-campaign-id="${c.id}" title="Copy a shareable preview link to your clipboard">📋 Preview link</button>
+        <button class="admin-btn admin-btn--small" data-campaign-action="report" data-campaign-id="${c.id}" title="Open a printable partner report">📊 Report</button>
         <button class="admin-btn admin-btn--small" data-campaign-action="clone" data-campaign-id="${c.id}" title="Clone this campaign for next month">⎘ Clone</button>
         <button class="admin-btn admin-btn--small admin-btn--primary" data-campaign-action="edit" data-campaign-id="${c.id}">Manage</button>
       </div>
     </div>
   `;
+}
+
+// Opens a clean, printable 1-page partner report for a campaign in a new tab.
+// Uses only data already on the campaign (impressions/clicks tracked live), so
+// the numbers are real. "Taps" are placement-level click events; sponsored
+// placements never alter a user's honest match.
+function openCampaignReport(campaign) {
+  if (!campaign) return;
+  const advertiser = _advertisersCache.find(a => a.id === campaign.advertiserId);
+  const advertiserName = advertiser?.name || 'Advertiser';
+  const dispName = campaign.dispensaryId
+    ? (_dispensaryPairs.find(([k]) => k === campaign.dispensaryId)?.[1] || campaign.dispensaryId)
+    : null;
+  const impressions = campaign.impressions || 0;
+  const clicks = campaign.clicks || 0;
+  const tapRate = impressions > 0 ? `${((clicks / impressions) * 100).toFixed(1)}%` : '—';
+  const period = `${fmtDate(campaign.startsAt) || '—'} → ${fmtDate(campaign.endsAt) || 'ongoing'}`;
+  const plan = campaign.monthlyPriceCents
+    ? `$${Math.round(campaign.monthlyPriceCents / 100)}/mo`
+    : 'Founding (free)';
+
+  const allStrains = [...strainsData, ...((strainDelta && strainDelta.additions) || [])];
+  const strainName = (id) => allStrains.find(s => s.id === id)?.name || id;
+  const sponsored = campaign.inventory?.sponsoredStrainIds || [];
+  const partners = campaign.inventory?.partnerStrains || [];
+  const sponsoredRows = sponsored.length
+    ? sponsored.map(id => `<li>${esc(strainName(id))}</li>`).join('')
+    : '<li class="muted">None</li>';
+  const partnerRows = partners.length
+    ? partners.map(p => `<li>${esc(p.strainName || 'Partner strain')}${p.brandName ? ' — ' + esc(p.brandName) : ''}</li>`).join('')
+    : '<li class="muted">None</li>';
+
+  const html = `<!doctype html><html><head><meta charset="utf-8">
+  <title>CannaPickForMe — ${esc(advertiserName)} report</title>
+  <style>
+    body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#16241c;max-width:720px;margin:40px auto;padding:0 24px;}
+    h1{font-size:22px;margin:0 0 2px;} .sub{color:#5b6b62;margin:0 0 20px;}
+    .row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #e6efe9;}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0;}
+    .stat{border:1px solid #d9e6df;border-radius:10px;padding:14px;text-align:center;}
+    .stat .v{font-size:26px;font-weight:700;color:#2f8f4e;}
+    .stat .l{font-size:11px;color:#5b6b62;text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+    h2{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:#5b6b62;border-bottom:1px solid #e6efe9;padding-bottom:6px;margin-top:26px;}
+    ul{margin:8px 0;padding-left:18px;} .muted{color:#9aa8a0;list-style:none;margin-left:-18px;}
+    .foot{margin-top:30px;font-size:11px;color:#9aa8a0;border-top:1px solid #e6efe9;padding-top:12px;}
+    button{background:#2f8f4e;color:#fff;border:0;border-radius:8px;padding:10px 18px;font-weight:600;cursor:pointer;}
+    @media print{.noprint{display:none;}body{margin:0;}}
+  </style></head><body>
+    <div class="noprint" style="text-align:right;margin-bottom:16px;"><button onclick="window.print()">Print / Save PDF</button></div>
+    <h1>${esc(advertiserName)}</h1>
+    <p class="sub">CannaPickForMe partner report · ${esc(campaign.name || '')}</p>
+    <div class="row"><span>Reporting period</span><strong>${esc(period)}</strong></div>
+    <div class="row"><span>Status</span><strong>${esc(campaign.status || '')}</strong></div>
+    <div class="row"><span>Plan</span><strong>${esc(plan)}</strong></div>
+    ${dispName ? `<div class="row"><span>"Buy" links to</span><strong>📍 ${esc(dispName)}</strong></div>` : ''}
+    <div class="grid">
+      <div class="stat"><div class="v">${fmtNumber(impressions)}</div><div class="l">Impressions</div></div>
+      <div class="stat"><div class="v">${fmtNumber(clicks)}</div><div class="l">Taps</div></div>
+      <div class="stat"><div class="v">${tapRate}</div><div class="l">Tap rate</div></div>
+    </div>
+    <h2>Sponsored strains</h2><ul>${sponsoredRows}</ul>
+    <h2>Partner strains</h2><ul>${partnerRows}</ul>
+    <p class="foot">Figures are placement-level events recorded by CannaPickForMe, generated ${new Date().toLocaleDateString()}. Sponsored placements are clearly labeled in-app and never alter a user's honest strain match.</p>
+  </body></html>`;
+
+  const w = window.open('', '_blank');
+  if (!w) { alert('Please allow pop-ups to open the report.'); return; }
+  w.document.write(html);
+  w.document.close();
 }
 
 async function quickStatusChange(campaign, nextStatus) {
@@ -1885,6 +2003,13 @@ async function openCampaignEditor(campaign) {
   const advSel = document.getElementById('campaign-advertiser');
   advSel.innerHTML = '<option value="">— select —</option>' +
     _advertisersCache.map(a => `<option value="${a.id}" ${campaign?.advertiserId === a.id ? 'selected' : ''}>${esc(a.name)}</option>`).join('');
+
+  // Populate the sponsoring-dispensary dropdown (where Sponsored "Buy" links go).
+  const campDisp = document.getElementById('campaign-dispensary');
+  if (campDisp) {
+    campDisp.innerHTML = '<option value="">— strain\'s in-stock dispensary —</option>' +
+      _dispensaryPairs.map(([k, v]) => `<option value="${esc(k)}" ${campaign?.dispensaryId === k ? 'selected' : ''}>${esc(v)}</option>`).join('');
+  }
 
   // Populate partner-mini dispensary dropdown
   const pmDisp = document.getElementById('partner-mini-dispensary');
@@ -2078,6 +2203,7 @@ async function saveCampaignFromEditor() {
   const startsAtStr = document.getElementById('campaign-starts').value;
   const endsAtStr   = document.getElementById('campaign-ends').value;
   const status = document.getElementById('campaign-status').value;
+  const dispensaryId = document.getElementById('campaign-dispensary')?.value || null;
   const sponsoredStrainIds = getSelectedSponsoredIds();
 
   if (!advertiserId) { alert('Please pick an advertiser.'); return; }
@@ -2094,6 +2220,7 @@ async function saveCampaignFromEditor() {
       tier,
       monthlyPriceCents,
       status,
+      dispensaryId,
       startsAt: startsAtStr ? new Date(startsAtStr) : null,
       endsAt:   endsAtStr   ? new Date(endsAtStr)   : null,
       inventory: {
@@ -2250,13 +2377,24 @@ async function saveDispensaryFromForm() {
   const slug = document.getElementById('dispensary-slug').value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   const name = document.getElementById('dispensary-name').value.trim();
   const city = document.getElementById('dispensary-city').value.trim();
+  const menuUrl = document.getElementById('dispensary-menu-url').value.trim();
+  const dutchieSlug = document.getElementById('dispensary-dutchie-slug').value.trim().toLowerCase();
+  const menuSourceRaw = document.getElementById('dispensary-menu-source').value.trim();
+  let menuSource = null;
+  if (menuSourceRaw) {
+    try { menuSource = JSON.parse(menuSourceRaw); }
+    catch { alert('Menu source must be valid JSON (or left blank).'); return; }
+  }
   if (!slug || !name) { alert('Slug and name are required.'); return; }
 
   try {
-    await saveDispensary(slug, { name, city, active: true });
+    await saveDispensary(slug, { name, city, active: true, menuUrl, dutchieSlug, menuSource });
     document.getElementById('dispensary-slug').value = '';
     document.getElementById('dispensary-name').value = '';
     document.getElementById('dispensary-city').value = '';
+    document.getElementById('dispensary-menu-url').value = '';
+    document.getElementById('dispensary-dutchie-slug').value = '';
+    document.getElementById('dispensary-menu-source').value = '';
     invalidateDispensaryCache();
     const map = await getDispensaryMap();
     _dispensaryPairs = Object.entries(map).map(([slug, data]) => [slug, data.name || slug]);
@@ -2283,9 +2421,9 @@ async function refreshDispensaryList() {
     <div class="dispensary-row">
       <div>
         <div class="dispensary-row__name">${esc(d.name)}</div>
-        <div class="dispensary-row__slug">${esc(d.id)}${d.city ? ' · ' + esc(d.city) : ''}</div>
+        <div class="dispensary-row__slug">${esc(d.id)}${d.city ? ' · ' + esc(d.city) : ''}${d.menuUrl ? ' · 🔗 menu' : ' · no menu'}${d.dutchieSlug ? ' · ↻ auto' : ''}</div>
       </div>
-      <button class="admin-btn admin-btn--small" data-disp-action="rename" data-disp-id="${esc(d.id)}">Rename</button>
+      <button class="admin-btn admin-btn--small" data-disp-action="edit" data-disp-id="${esc(d.id)}">Edit</button>
       <button class="admin-btn admin-btn--small admin-btn--danger" data-disp-action="delete" data-disp-id="${esc(d.id)}">✕</button>
     </div>`).join('');
 
@@ -2293,15 +2431,17 @@ async function refreshDispensaryList() {
     btn.addEventListener('click', async () => {
       const id = btn.dataset.dispId;
       const action = btn.dataset.dispAction;
-      if (action === 'rename') {
-        const newName = prompt('New display name:', _dispensaryPairs.find(([s]) => s === id)?.[1] || id);
-        if (!newName) return;
-        await saveDispensary(id, { name: newName });
-        invalidateDispensaryCache();
+      if (action === 'edit') {
         const map = await getDispensaryMap();
-        _dispensaryPairs = Object.entries(map).map(([slug, data]) => [slug, data.name || slug]);
-        _dispensaryPairs.sort((a, b) => a[1].localeCompare(b[1]));
-        await refreshDispensaryList();
+        const d = map[id] || {};
+        document.getElementById('dispensary-slug').value = id;
+        document.getElementById('dispensary-name').value = d.name || '';
+        document.getElementById('dispensary-city').value = d.city || '';
+        document.getElementById('dispensary-menu-url').value = d.menuUrl || '';
+        document.getElementById('dispensary-dutchie-slug').value = d.dutchieSlug || '';
+        document.getElementById('dispensary-menu-source').value = d.menuSource ? JSON.stringify(d.menuSource, null, 2) : '';
+        document.getElementById('dispensary-name').focus();
+        document.getElementById('dispensary-slug').scrollIntoView({ behavior: 'smooth', block: 'center' });
       } else if (action === 'delete') {
         if (!confirm(`Delete "${id}"? Existing references will fall back to the raw slug.`)) return;
         await deleteDispensary(id);

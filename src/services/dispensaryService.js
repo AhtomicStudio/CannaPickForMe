@@ -6,11 +6,13 @@
  * the admin can edit without a deploy.
  *
  * Schema: /dispensaries/{slug}
- *   - name:       display name shown on partner cards
- *   - city:       free-text city (optional)
- *   - active:     boolean — soft-delete flag
- *   - createdAt:  serverTimestamp
- *   - updatedAt:  serverTimestamp
+ *   - name:        display name shown on partner cards
+ *   - city:        free-text city (optional)
+ *   - active:      boolean — soft-delete flag
+ *   - menuUrl:     public link to the dispensary's online menu (the "buy" target)
+ *   - dutchieSlug: Dutchie dispensary slug used by the weekly menu auto-refresh
+ *   - createdAt:   serverTimestamp
+ *   - updatedAt:   serverTimestamp
  *
  * Reads are public (the user-facing app needs the display name when
  * rendering a partner strain card). Writes require admin auth.
@@ -86,6 +88,16 @@ export function getDispensaryNameSync(slug) {
 }
 
 /**
+ * Synchronous lookup of a dispensary's public menu URL (the "buy" target).
+ * Returns null if the cache isn't populated or the dispensary has no menuUrl,
+ * so callers can cleanly decide whether to render a click-out.
+ */
+export function getDispensaryMenuUrlSync(slug) {
+  if (!slug || !_cache) return null;
+  return _cache[slug]?.menuUrl || null;
+}
+
+/**
  * Fetch all dispensaries as an array (admin dashboard use).
  */
 export async function listDispensaries() {
@@ -98,17 +110,27 @@ export async function listDispensaries() {
  * existing data shape (partnerStrain.dispensaryId = "cookies-hayward")
  * survives the migration unchanged.
  */
-export async function saveDispensary(slug, { name, city = '', active = true }) {
-  if (!slug || !name) throw new Error('saveDispensary requires slug and name');
+export async function saveDispensary(slug, { name, city, active, menuUrl, dutchieSlug, menuSource } = {}) {
+  if (!slug) throw new Error('saveDispensary requires a slug');
   const ref = doc(db, COLLECTION, slug);
   const existing = await getDoc(ref);
-  await setDoc(ref, {
-    name: String(name).trim(),
-    city: String(city).trim(),
-    active: !!active,
-    createdAt: existing.exists() ? (existing.data().createdAt || serverTimestamp()) : serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  }, { merge: true });
+  if (!existing.exists() && !name) {
+    throw new Error('saveDispensary requires a name when creating a new dispensary');
+  }
+
+  // Only write the fields that were actually provided, so a partial update
+  // (e.g. a rename) never blanks out menuUrl / dutchieSlug / city. merge:true
+  // preserves everything we don't explicitly set here.
+  const payload = { updatedAt: serverTimestamp() };
+  if (name        !== undefined) payload.name        = String(name).trim();
+  if (city        !== undefined) payload.city        = String(city).trim();
+  if (active      !== undefined) payload.active      = !!active;
+  if (menuUrl     !== undefined) payload.menuUrl     = String(menuUrl).trim();
+  if (dutchieSlug !== undefined) payload.dutchieSlug = String(dutchieSlug).trim();
+  if (menuSource  !== undefined) payload.menuSource  = menuSource || null;
+  if (!existing.exists()) payload.createdAt = serverTimestamp();
+
+  await setDoc(ref, payload, { merge: true });
   invalidateDispensaryCache();
 }
 

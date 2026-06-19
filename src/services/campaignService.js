@@ -113,6 +113,7 @@ export async function createCampaign({
   tier = CAMPAIGN_TIER.BRONZE,
   monthlyPriceCents = null,
   status = CAMPAIGN_STATUS.DRAFT,
+  dispensaryId = null,
   startsAt = null,
   endsAt = null,
   inventory = {},
@@ -127,6 +128,7 @@ export async function createCampaign({
     tier,
     monthlyPriceCents: monthlyPriceCents ?? defaults.monthlyPriceCents,
     status,
+    dispensaryId: dispensaryId || null,
     startsAt: startsAt ? Timestamp.fromDate(toDate(startsAt)) : null,
     endsAt:   endsAt   ? Timestamp.fromDate(toDate(endsAt))   : null,
     inventory: {

@@ -29,8 +29,9 @@ import { shareResult } from './shareCard.js';
 import { generateArchetype } from './archetypes.js';
 import { initProfile, setProfileBackHandler, renderProfileScreen } from './profile.js';
 import {
-  getDispensaryMap, getDispensaryNameSync,
+  getDispensaryMap, getDispensaryNameSync, getDispensaryMenuUrlSync,
 } from './services/dispensaryService.js';
+import { filterByTags } from './engine/tagFilter.mjs';
 import {
   getActiveSponsoredEntries, getActivePartnerStrains, getActiveAdsForPlacement,
   recordImpression, recordClick,
@@ -143,7 +144,13 @@ function buildExpandBody(strain) {
 
   const dispensaryHTML = dispensaries.length > 0
     ? `<div class="strain-card__expand-dispensaries">
-        ${dispensaries.map(d => `<span class="strain-pill--dispensary">📍 ${dispensaryLabel(d)}</span>`).join('')}
+        ${dispensaries.map(d => {
+          const url = getDispensaryMenuUrlSync(d);
+          const label = dispensaryLabel(d);
+          return url
+            ? `<a class="strain-pill--dispensary strain-pill--dispensary-link" href="${url}" target="_blank" rel="noopener nofollow" data-dispensary="${d}" data-strain="${strain.id}">📍 ${label} ↗</a>`
+            : `<span class="strain-pill--dispensary">📍 ${label}</span>`;
+        }).join('')}
       </div>`
     : '';
 
@@ -176,6 +183,23 @@ function buildExpandBody(strain) {
   `;
 }
 
+// Track dispensary "buy" click-outs as Vercel Analytics custom events. These
+// links are pure navigation to a partner's menu — they never influence the
+// recommendation; tracking exists only for partner reporting.
+document.addEventListener('click', (e) => {
+  const link = e.target.closest ? e.target.closest('a[data-dispensary]') : null;
+  if (!link) return;
+  try {
+    track('dispensary_click', {
+      dispensary: link.getAttribute('data-dispensary') || '',
+      strain: link.getAttribute('data-strain') || '',
+      placement: link.id === 'result-buy-cta' ? 'result'
+        : link.id === 'sponsored-buy-link' ? 'sponsored'
+        : 'strain-card',
+    });
+  } catch (_) { /* analytics is best-effort; never block the click */ }
+});
+
 // === STATE ===
 let currentScreen = 'age-gate';
 let sessionAnswers = {};
@@ -183,9 +207,9 @@ let currentQuestionIndex = 0;
 let lastShareData = null; // set after each result render
 let currentSearchQuery = '';
 let currentFilter = 'all';
-let currentEffectFilters = new Set();
-let currentFlavorFilters = new Set();
-let currentExcludeFilters = new Set();
+// Tri-state tag filters: each tag is neutral (absent), 'in' (include) or 'ex' (exclude).
+const effectStates = new Map();
+const flavorStates = new Map();
 let currentSortAlpha = false;
 let currentSortAsc = true;
 let overrideStrainId = null;
@@ -485,6 +509,70 @@ function initStash() {
   });
 }
 
+// ── Tri-state tag filters (manga-reader style): tap a chip to include (＋),
+// tap again to exclude (－), tap again to clear. Replaces the old separate
+// include/exclude multiselects for Effects and Flavors.
+const _triStateRebuild = {}; // optionsId -> rebuild fn, so "Clear" can reset visuals
+
+function updateTriStateBadge(badgeId, stateMap) {
+  const badge = document.getElementById(badgeId);
+  if (!badge) return;
+  badge.textContent = stateMap.size;
+  badge.classList.toggle('hidden', stateMap.size === 0);
+}
+
+function renderTriStateOptions(optionsId, items, stateMap, query = '') {
+  const el = document.getElementById(optionsId);
+  if (!el) return;
+  const q = query.trim().toLowerCase();
+  const list = q ? items.filter(i => i.toLowerCase().includes(q)) : items;
+  el.innerHTML = list.map(item => {
+    const state = stateMap.get(item) || 'neutral';
+    const mark = state === 'in' ? '＋' : state === 'ex' ? '－' : '';
+    return `<button type="button" class="ms-chip ms-chip--${state}" data-val="${item}" aria-pressed="${state !== 'neutral'}">`
+      + (mark ? `<span class="ms-chip__mark">${mark}</span>` : '') + `${item}</button>`;
+  }).join('');
+}
+
+function setupTriState({ btnId, panelId, searchId, optionsId, badgeId, wrapId, items, stateMap, onchange }) {
+  const btn = document.getElementById(btnId);
+  const panel = document.getElementById(panelId);
+  const searchInput = document.getElementById(searchId);
+  const optionsEl = document.getElementById(optionsId);
+  if (!btn || !panel || !optionsEl) return;
+
+  const rebuild = () => renderTriStateOptions(optionsId, items, stateMap, searchInput ? searchInput.value : '');
+  _triStateRebuild[optionsId] = rebuild;
+  rebuild();
+
+  // Cycle a chip's state: neutral -> include -> exclude -> neutral.
+  optionsEl.addEventListener('click', (e) => {
+    const chip = e.target.closest('.ms-chip');
+    if (!chip) return;
+    const val = chip.getAttribute('data-val');
+    const cur = stateMap.get(val) || 'neutral';
+    const next = cur === 'neutral' ? 'in' : cur === 'in' ? 'ex' : 'neutral';
+    if (next === 'neutral') stateMap.delete(val); else stateMap.set(val, next);
+    rebuild();
+    updateTriStateBadge(badgeId, stateMap);
+    onchange();
+  });
+
+  if (searchInput) searchInput.addEventListener('input', rebuild);
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = !panel.classList.contains('hidden');
+    document.querySelectorAll('.ms-panel').forEach(p => p.classList.add('hidden'));
+    if (!isOpen) { panel.classList.remove('hidden'); if (searchInput) searchInput.focus(); }
+  });
+
+  document.addEventListener('click', (e) => {
+    const wrap = document.getElementById(wrapId);
+    if (wrap && !wrap.contains(e.target)) panel.classList.add('hidden');
+  });
+}
+
 function setupMultiSelect({ btnId, panelId, searchId, optionsId, badgeId, wrapId, items, selectedSet, onchange }) {
   const btn = document.getElementById(btnId);
   const panel = document.getElementById(panelId);
@@ -538,23 +626,16 @@ function setupMultiSelect({ btnId, panelId, searchId, optionsId, badgeId, wrapId
 }
 
 function updateClearBtn() {
-  const active = currentEffectFilters.size > 0 || currentFlavorFilters.size > 0 || currentExcludeFilters.size > 0;
+  const active = effectStates.size > 0 || flavorStates.size > 0;
   document.getElementById('btn-clear-filters')?.classList.toggle('hidden', !active);
 }
 
 function clearAllFilters() {
-  currentEffectFilters.clear();
-  currentFlavorFilters.clear();
-  currentExcludeFilters.clear();
-  document.querySelectorAll('.ms-panel-options input[type="checkbox"]').forEach(cb => {
-    cb.checked = false;
-    cb.closest('.ms-option')?.classList.remove('checked');
-  });
-  ['ms-effect-badge', 'ms-flavor-badge', 'ms-exclude-badge'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.textContent = '0'; el.classList.add('hidden'); }
-  });
-  document.getElementById('ms-exclude-btn')?.classList.remove('ms-has-selection');
+  effectStates.clear();
+  flavorStates.clear();
+  Object.values(_triStateRebuild).forEach(fn => fn());
+  updateTriStateBadge('ms-effect-badge', effectStates);
+  updateTriStateBadge('ms-flavor-badge', flavorStates);
   updateClearBtn();
   renderBrowseList();
 }
@@ -577,29 +658,18 @@ function initMultiSelects() {
   const effects = [...new Set(all.flatMap(s => s.effects || []))].sort();
   const flavors = [...new Set(all.flatMap(s => s.flavors || []))].sort();
 
-  setupMultiSelect({
+  setupTriState({
     wrapId: 'ms-effect', btnId: 'ms-effect-btn', panelId: 'ms-effect-panel',
     searchId: 'ms-effect-search', optionsId: 'ms-effect-options', badgeId: 'ms-effect-badge',
-    items: effects, selectedSet: currentEffectFilters,
+    items: effects, stateMap: effectStates,
     onchange: () => { updateClearBtn(); renderBrowseList(); },
   });
 
-  setupMultiSelect({
+  setupTriState({
     wrapId: 'ms-flavor', btnId: 'ms-flavor-btn', panelId: 'ms-flavor-panel',
     searchId: 'ms-flavor-search', optionsId: 'ms-flavor-options', badgeId: 'ms-flavor-badge',
-    items: flavors, selectedSet: currentFlavorFilters,
+    items: flavors, stateMap: flavorStates,
     onchange: () => { updateClearBtn(); renderBrowseList(); },
-  });
-
-  setupMultiSelect({
-    wrapId: 'ms-exclude', btnId: 'ms-exclude-btn', panelId: 'ms-exclude-panel',
-    searchId: 'ms-exclude-search', optionsId: 'ms-exclude-options', badgeId: 'ms-exclude-badge',
-    items: effects, selectedSet: currentExcludeFilters,
-    onchange: () => {
-      document.getElementById('ms-exclude-btn')?.classList.toggle('ms-has-selection', currentExcludeFilters.size > 0);
-      updateClearBtn();
-      renderBrowseList();
-    },
   });
 
   document.getElementById('btn-clear-filters')?.addEventListener('click', clearAllFilters);
@@ -624,15 +694,7 @@ function renderBrowseList() {
   if (currentFilter !== 'all') {
     strains = strains.filter(s => s.type === currentFilter);
   }
-  if (currentEffectFilters.size > 0) {
-    strains = strains.filter(s => [...currentEffectFilters].some(e => (s.effects || []).includes(e)));
-  }
-  if (currentFlavorFilters.size > 0) {
-    strains = strains.filter(s => [...currentFlavorFilters].some(f => (s.flavors || []).includes(f)));
-  }
-  if (currentExcludeFilters.size > 0) {
-    strains = strains.filter(s => ![...currentExcludeFilters].some(e => (s.effects || []).includes(e)));
-  }
+  strains = filterByTags(strains, effectStates, flavorStates);
   if (currentSearchQuery) {
     strains = strains.filter(s =>
       s.name.toLowerCase().includes(currentSearchQuery) ||
@@ -1080,6 +1142,38 @@ async function renderSponsoredStrain(allScores) {
   const dot = document.getElementById('sponsored-type-dot');
   dot.setAttribute('data-type', strain.type);
 
+  // Sponsored cards stay honest — the match score is real and never altered by
+  // payment. If the sponsored strain is in stock at a partner dispensary with a
+  // menu URL, surface a tracked "Buy" link to it (clicks bump the campaign).
+  const buyLink = document.getElementById('sponsored-buy-link');
+  if (buyLink) {
+    let url = null, dispSlug = null;
+    // Prefer the sponsoring advertiser's dispensary (attribution); otherwise
+    // fall back to wherever the strain is in stock.
+    if (best.dispensaryId) {
+      const u = getDispensaryMenuUrlSync(best.dispensaryId);
+      if (u) { url = u; dispSlug = best.dispensaryId; }
+    }
+    if (!url) {
+      const disps = getStrainDispensaries(strain.id) || [];
+      for (const d of disps) {
+        const u = getDispensaryMenuUrlSync(d);
+        if (u) { url = u; dispSlug = d; break; }
+      }
+    }
+    if (url) {
+      buyLink.href = url;
+      buyLink.setAttribute('data-dispensary', dispSlug);
+      buyLink.setAttribute('data-strain', strain.id);
+      buyLink.onclick = () => recordClick('sponsored', { campaignId: best.campaignId });
+      buyLink.classList.remove('hidden');
+    } else {
+      buyLink.removeAttribute('data-dispensary');
+      buyLink.onclick = null;
+      buyLink.classList.add('hidden');
+    }
+  }
+
   card.classList.remove('hidden');
 
   // Bump the campaign impression counter. Fire-and-forget; if the write
@@ -1110,7 +1204,29 @@ function showResultFromHistory(strain, session) {
   const reasonEl = document.getElementById('result-reasoning');
   if (reasonEl) reasonEl.textContent = strain.description || '';
 
+  renderBuyCta(strain);
+
   showScreen('session');
+}
+
+// Show a tracked "Buy at <dispensary>" CTA on the result when the picked strain
+// is in stock at a partner dispensary that has a menu URL. Entirely separate
+// from the honest match — it never changes the pick, only links out to buy.
+function renderBuyCta(pickedStrain) {
+  const cta = document.getElementById('result-buy-cta');
+  if (!cta) return;
+  let slug = null, url = null;
+  const disps = getStrainDispensaries(pickedStrain.id) || [];
+  for (const d of disps) {
+    const u = getDispensaryMenuUrlSync(d);
+    if (u) { slug = d; url = u; break; }
+  }
+  if (!url) { cta.classList.add('hidden'); return; }
+  cta.href = url;
+  cta.setAttribute('data-dispensary', slug);
+  cta.setAttribute('data-strain', pickedStrain.id);
+  cta.textContent = `📍 In stock at ${getDispensaryNameSync(slug)} — Buy ↗`;
+  cta.classList.remove('hidden');
 }
 
 async function renderResult(result) {
@@ -1227,6 +1343,7 @@ async function renderResult(result) {
     }
   }
 
+  renderBuyCta(pickedStrain);
   renderSponsoredStrain(result.allScores);
 
   lastShareData = {

@@ -182,6 +182,7 @@
               <button class="ms-btn filter-chip" type="button" id="ms-effect-btn">Effect <span class="ms-badge hidden" id="ms-effect-badge">0</span></button>
               <div class="ms-panel hidden" id="ms-effect-panel">
                 <div class="ms-panel-search"><input type="text" placeholder="Search effects…" id="ms-effect-search" /></div>
+                <p class="ms-panel-hint">Tap to <b class="ms-hint-in">include ＋</b>, again to <b class="ms-hint-ex">exclude －</b>, again to clear.</p>
                 <div class="ms-panel-options" id="ms-effect-options"></div>
               </div>
             </div>
@@ -189,14 +190,8 @@
               <button class="ms-btn filter-chip" type="button" id="ms-flavor-btn">Flavor <span class="ms-badge hidden" id="ms-flavor-badge">0</span></button>
               <div class="ms-panel hidden" id="ms-flavor-panel">
                 <div class="ms-panel-search"><input type="text" placeholder="Search flavors…" id="ms-flavor-search" /></div>
+                <p class="ms-panel-hint">Tap to <b class="ms-hint-in">include ＋</b>, again to <b class="ms-hint-ex">exclude －</b>, again to clear.</p>
                 <div class="ms-panel-options" id="ms-flavor-options"></div>
-              </div>
-            </div>
-            <div class="ms-wrap" id="ms-exclude">
-              <button class="ms-btn filter-chip filter-chip--exclude" type="button" id="ms-exclude-btn">Ignore <span class="ms-badge hidden" id="ms-exclude-badge">0</span></button>
-              <div class="ms-panel hidden" id="ms-exclude-panel">
-                <div class="ms-panel-search"><input type="text" placeholder="Exclude effect…" id="ms-exclude-search" /></div>
-                <div class="ms-panel-options" id="ms-exclude-options"></div>
               </div>
             </div>
             <button class="filter-chip filter-chip--clear hidden" id="btn-clear-filters">✕ Clear</button>
@@ -346,6 +341,7 @@
           <p id="result-reasoning" class="result__reasoning"></p>
           <div id="result-effects" class="result__effects"></div>
         </div>
+        <a id="result-buy-cta" class="result-buy-cta hidden" href="#" target="_blank" rel="noopener nofollow"></a>
         <div id="better-match-container" class="better-match-container hidden">
           <button id="btn-better-match" class="btn btn--secondary btn--subtle">✨ See strains beyond your stash</button>
         </div>
@@ -365,6 +361,7 @@
             </div>
             <div id="sponsored-match-score" class="sponsored-strain-card__score"></div>
           </div>
+          <a id="sponsored-buy-link" class="sponsored-strain-card__buy hidden" href="#" target="_blank" rel="noopener nofollow">Buy ↗</a>
         </div>
         <!-- Ad Slot: Result -->
         <div id="ad-slot-result" class="ad-slot ad-slot--result"></div>

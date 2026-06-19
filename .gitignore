@@ -31,4 +31,9 @@ dist-ssr
 
 .vercel
 *.rar
+*.tmp
 sprites.html
+
+# AntiGravity / Claude Workspaces
+.claude/
+

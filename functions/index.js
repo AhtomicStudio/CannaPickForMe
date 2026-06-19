@@ -25,6 +25,7 @@
  */
 
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { onSchedule } = require('firebase-functions/v2/scheduler');
 const { setGlobalOptions } = require('firebase-functions/v2');
 const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
@@ -262,5 +263,88 @@ exports.verifySignInCode = onCall(
 
     const customToken = await getAuth().createCustomToken(userRecord.uid);
     return { token: customToken };
+  }
+);
+
+// ── refreshDispensaryMenus (weekly) ──────────────────────────────────────────
+/**
+ * Weekly refresh of every active dispensary's in-stock flower list.
+ *
+ * For each /dispensaries/{id} doc that has a `dutchieSlug`, we call the app's
+ * own /api/sync-menu endpoint (the single source of truth for the Dutchie
+ * fetch + strain matching) and persist the result to /menus/{id} — the exact
+ * shape the user-facing app already reads via getMenuData(). Adding a new
+ * dispensary is therefore zero-code: create its dispensary doc with a
+ * dutchieSlug and it gets picked up on the next run.
+ *
+ * Runs Mondays 09:00 America/Los_Angeles. Weekly sits comfortably in the
+ * Blaze free allowances (Cloud Scheduler includes 3 free jobs); it makes one
+ * HTTP call per dispensary.
+ */
+const APP_URL = process.env.APP_URL || 'https://cannapickforme.com';
+
+exports.refreshDispensaryMenus = onSchedule(
+  {
+    schedule: 'every monday 09:00',
+    timeZone: 'America/Los_Angeles',
+    timeoutSeconds: 300,
+    memory: '256MiB',
+  },
+  async () => {
+    const db = getFirestore();
+    const snap = await db.collection('dispensaries').get();
+
+    const targets = snap.docs
+      .map((d) => ({ id: d.id, ...d.data() }))
+      .filter((d) => d.active !== false && (d.menuSource || d.dutchieSlug));
+
+    if (targets.length === 0) {
+      console.log('refreshDispensaryMenus: no dispensaries have a dutchieSlug; nothing to do.');
+      return;
+    }
+
+    const results = [];
+    for (const disp of targets) {
+      try {
+        const url = disp.menuSource
+          ? `${APP_URL}/api/sync-menu?source=${encodeURIComponent(JSON.stringify(disp.menuSource))}`
+          : `${APP_URL}/api/sync-menu?dispensary=${encodeURIComponent(disp.dutchieSlug)}`;
+        const res = await fetch(url, { headers: { Accept: 'application/json' } });
+        if (!res.ok) {
+          console.warn(`refreshDispensaryMenus: ${disp.id} — sync-menu HTTP ${res.status}`);
+          results.push({ id: disp.id, ok: false, status: res.status });
+          continue;
+        }
+
+        const body = await res.json();
+        const strainIds = Array.isArray(body.matched) ? body.matched.map((m) => m.id).filter(Boolean) : [];
+        const unknowns = Array.isArray(body.unmatched) ? body.unmatched.map((u) => u.name).filter(Boolean) : [];
+
+        // Don't wipe a known-good menu if the fetch came back empty (usually a
+        // transient Dutchie hiccup). Only overwrite when we actually matched.
+        if (strainIds.length === 0) {
+          console.warn(`refreshDispensaryMenus: ${disp.id} — 0 matched strains; preserving last good menu.`);
+          results.push({ id: disp.id, ok: false, matched: 0 });
+          continue;
+        }
+
+        await db.collection('menus').doc(disp.id).set(
+          {
+            strainIds,
+            unknowns,
+            lastSynced: FieldValue.serverTimestamp(),
+            source: 'auto-weekly',
+          },
+          { merge: true }
+        );
+
+        results.push({ id: disp.id, ok: true, matched: strainIds.length, unknown: unknowns.length });
+      } catch (err) {
+        console.error(`refreshDispensaryMenus: ${disp.id} failed:`, err);
+        results.push({ id: disp.id, ok: false, error: String((err && err.message) || err) });
+      }
+    }
+
+    console.log('refreshDispensaryMenus summary:', JSON.stringify(results));
   }
 );

@@ -18,10 +18,11 @@
         <h1>Admin Dashboard</h1>
         <p class="admin-login__sub">CannaPickForMe Ad Manager</p>
         <form id="login-form" class="admin-login__form">
-          <input type="password" id="admin-password" placeholder="Enter admin password" autocomplete="off" />
-          <button type="submit" class="admin-btn admin-btn--primary">Unlock 🔓</button>
+          <p class="admin-login__sub" style="margin-bottom:0.75rem;">Sign in with a one-time link sent to the admin email.</p>
+          <button type="submit" id="btn-admin-login" class="admin-btn admin-btn--primary">📧 Email me a sign-in link</button>
         </form>
-        <p id="login-error" class="admin-login__error hidden">Incorrect password.</p>
+        <p id="login-sent" class="admin-login__sub hidden" style="margin-top:0.75rem;color:#4ADE80;">✅ Check your email and tap the link to sign in.</p>
+        <p id="login-error" class="admin-login__error hidden">Couldn't send the link.</p>
       </div>
     </div>
 
@@ -92,6 +93,11 @@
               <label for="campaign-advertiser">Advertiser *</label>
               <select id="campaign-advertiser" required></select>
               <p class="admin-hint"><a href="#" id="campaign-new-advertiser-link">+ New advertiser</a></p>
+            </div>
+            <div class="admin-form__group">
+              <label for="campaign-dispensary">Sponsored "Buy" goes to</label>
+              <select id="campaign-dispensary"></select>
+              <p class="admin-hint">The advertiser's dispensary menu. Leave on default to use wherever the strain is in stock.</p>
             </div>
             <div class="admin-form__group">
               <label for="campaign-name">Campaign Name *</label>
@@ -547,6 +553,15 @@
               <button class="admin-btn admin-btn--primary" id="btn-sync-menu">🔄 Sync Now</button>
             </div>
 
+            <!-- Copyable error box (shown on sync failure) -->
+            <div id="menu-sync-error" class="hidden" style="margin-top:0.75rem;border:1px solid #f87171;border-radius:8px;padding:10px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                <strong style="color:#f87171;">⚠️ Sync error (copy &amp; paste this)</strong>
+                <button type="button" id="btn-copy-sync-error" class="admin-btn admin-btn--small">📋 Copy</button>
+              </div>
+              <textarea id="menu-sync-error-text" readonly rows="7" style="width:100%;font-family:monospace;font-size:0.78rem;margin-top:6px;"></textarea>
+            </div>
+
             <!-- Manual import -->
             <div class="menu-sync__manual">
               <p class="menu-sync__manual-label">Manual Import — paste strain names, one per line:</p>
@@ -709,6 +724,21 @@
             <div class="admin-form__group">
               <label for="dispensary-city">City</label>
               <input type="text" id="dispensary-city" placeholder="Hayward" />
+            </div>
+            <div class="admin-form__group">
+              <label for="dispensary-menu-url">Menu URL</label>
+              <input type="text" id="dispensary-menu-url" placeholder="https://dutchie.com/embedded-menu/cookies-hayward" />
+              <p class="admin-hint">Where the "Buy" button sends users.</p>
+            </div>
+            <div class="admin-form__group">
+              <label for="dispensary-dutchie-slug">Dutchie Slug</label>
+              <input type="text" id="dispensary-dutchie-slug" placeholder="cookies-hayward" />
+              <p class="admin-hint">Powers the weekly menu auto-refresh.</p>
+            </div>
+            <div class="admin-form__group" style="flex:1 1 100%;">
+              <label for="dispensary-menu-source">Menu source (advanced, JSON)</label>
+              <textarea id="dispensary-menu-source" rows="3" style="width:100%;font-family:monospace;font-size:0.8rem;" placeholder='{"provider":"dovetail","baseUrl":"https://cookiesdispensary.com","retailer":"hayward","categories":["premium-flower","flower"]}'></textarea>
+              <p class="admin-hint">For non-Dutchie menus (e.g. Cookies' Dovetail site). Overrides Dutchie Slug. Leave blank to use the slug.</p>
             </div>
             <div class="admin-form__group" style="flex:0 0 auto;">
               <button type="button" id="btn-save-dispensary" class="admin-btn admin-btn--primary">Save Dispensary</button>

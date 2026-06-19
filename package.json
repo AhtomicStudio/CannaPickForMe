@@ -1,5 +1,5 @@
 {
-  "name": "sandbox",
+  "name": "cannapickforme",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -8,7 +8,8 @@
     "generate:seo": "node scripts/generate-seo.mjs",
     "prebuild": "node scripts/generate-seo.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --import ./test/_register.mjs --test"
   },
   "devDependencies": {
     "vite": "^8.0.1"

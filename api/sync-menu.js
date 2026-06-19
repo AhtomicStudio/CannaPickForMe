@@ -19,38 +19,16 @@
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { fetchDovetail } from './_menuAdapters.mjs';
+import { normaliseName, isFlower, findKnowledgeMatch } from './_menuMatch.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const strainsData = JSON.parse(
   readFileSync(join(__dirname, '../src/data/strains.json'), 'utf8')
 );
 
-// ─── Flower category detection ───────────────────────────────────────────────
-
-const FLOWER_KEYWORDS = ['flower', 'bud', 'buds', 'nug', 'nugs', 'loose flower'];
-
-function isFlower(category = '') {
-  return FLOWER_KEYWORDS.some(k => category.toLowerCase().includes(k));
-}
-
-// ─── Strain name normalisation & matching ────────────────────────────────────
-
-function normaliseName(name = '') {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function findKnowledgeMatch(productName) {
-  const norm = normaliseName(productName);
-  // Exact match first
-  const exact = strainsData.find(s => normaliseName(s.name) === norm);
-  if (exact) return exact;
-  // Contains match — product name includes a known strain name
-  return strainsData.find(s => norm.includes(normaliseName(s.name))) ?? null;
-}
+// Flower detection + strain-name matching are shared with the weekly refresh
+// and unit tests — see ./_menuMatch.mjs (imported above).
 
 // ─── THC extraction helpers ───────────────────────────────────────────────────
 
@@ -166,6 +144,31 @@ function normaliseProduct(raw) {
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
 
+  // Config-driven menu source (e.g. Dovetail/WordPress sites like Cookies).
+  // Back-compat: ?dispensary=<slug> still uses the Dutchie-direct path below.
+  let menuSource = null;
+  if (req.query.source) {
+    try { menuSource = JSON.parse(req.query.source); } catch { /* ignore malformed source */ }
+  }
+  if (menuSource && menuSource.provider === 'dovetail') {
+    let products = [];
+    try {
+      products = await fetchDovetail(menuSource);
+    } catch (err) {
+      return res.status(502).json({ error: `Dovetail fetch failed: ${String((err && err.message) || err)}` });
+    }
+    const matched = [], unmatched = [], seen = new Set();
+    for (const p of products) {
+      const key = normaliseName(p.name);
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      const known = findKnowledgeMatch(p.name, strainsData);
+      if (known) matched.push({ id: known.id, name: known.name, type: known.type, thc: p.thc ?? null });
+      else unmatched.push({ name: p.name, brand: p.brand ?? null, thc: p.thc ?? null });
+    }
+    return res.status(200).json({ matched, unmatched, fetchedAt: new Date().toISOString(), source: 'dovetail' });
+  }
+
   const { dispensary } = req.query;
 
   if (!dispensary) {
@@ -225,7 +228,7 @@ export default async function handler(req, res) {
     if (seen.has(key)) continue;
     seen.add(key);
 
-    const knownStrain = findKnowledgeMatch(product.name);
+    const knownStrain = findKnowledgeMatch(product.name, strainsData);
 
     if (knownStrain) {
       matched.push({

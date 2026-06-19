@@ -100,7 +100,7 @@ export async function getActiveSponsoredEntries() {
   const out = [];
   for (const c of campaigns) {
     const list = c.inventory?.sponsoredStrainIds || [];
-    for (const id of list) out.push({ strainId: id, campaignId: c.id });
+    for (const id of list) out.push({ strainId: id, campaignId: c.id, dispensaryId: c.dispensaryId || null });
   }
   return out;
 }

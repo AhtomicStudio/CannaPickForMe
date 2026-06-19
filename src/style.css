@@ -5089,3 +5089,543 @@ html.light-mode .app-bg__haze {
     -webkit-backdrop-filter: blur(8px);
   }
 }
+
+
+/* ===================================================================
+   ANIMATION POLISH LAYER (ported from lab/polish.css)
+   Reworked picker scenes: shared reveal card, ambient motes, house palette.
+   =================================================================== */
+/* ===================================================================
+   Animation Lab — POLISH layer (batch 1: scales, 8-ball, crystal)
+   All classes are pol- prefixed and additive, so the Original render
+   is never affected. These chunks port into src/style.css later.
+   =================================================================== */
+
+/* ---- shared: strain-name swirl (the "choosing among all strains" effect) */
+.pol-swirl {
+  position: absolute; inset: 0; overflow: hidden; z-index: 0;
+  display: flex; align-items: center; justify-content: center; pointer-events: none;
+  -webkit-mask: linear-gradient(transparent, #000 28%, #000 72%, transparent);
+          mask: linear-gradient(transparent, #000 28%, #000 72%, transparent);
+}
+.pol-swirl--round { border-radius: 50%; }
+.pol-swirl-track {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  animation: pol-swirl-scroll var(--swirl-dur, 1.6s) linear infinite;
+  will-change: transform;
+}
+.pol-swirl-name {
+  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.3px; white-space: nowrap;
+  color: rgba(220, 232, 245, 0.55); text-shadow: 0 1px 4px rgba(0,0,0,0.6); filter: blur(0.3px);
+}
+@keyframes pol-swirl-scroll { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+.pol-swirl--out { animation: pol-fade-out 0.4s ease forwards; }
+@keyframes pol-fade-out { to { opacity: 0; } }
+@keyframes pol-fade-in  { to { opacity: 1; } }
+
+/* ---- scales: ambient secondary motion while weighing + large-N counter */
+.pol-scales-bob { animation: pol-scales-bob 2.6s ease-in-out infinite; }
+@keyframes pol-scales-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+.pol-scales-aura {
+  position: absolute; top: -6px; left: 50%; width: 150px; height: 150px;
+  transform: translateX(-50%); border-radius: 50%; pointer-events: none; z-index: 0;
+  background: radial-gradient(circle, rgba(251,191,36,0.16), transparent 68%);
+  animation: pol-aura-pulse 1.9s ease-in-out infinite;
+}
+@keyframes pol-aura-pulse {
+  0%,100% { opacity: 0.25; transform: translateX(-50%) scale(0.9); }
+  50%     { opacity: 0.6;  transform: translateX(-50%) scale(1.12); }
+}
+.pol-aura--off { animation: none; opacity: 0; transition: opacity 0.5s ease; }
+.pol-motes { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.pol-mote {
+  position: absolute; bottom: 8%; width: 4px; height: 4px; border-radius: 50%;
+  opacity: 0; animation: pol-mote-rise linear forwards; will-change: transform, opacity;
+}
+@keyframes pol-mote-rise {
+  0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+  18%  { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-150px) scale(1); }
+}
+.pol-scales-counter {
+  margin-top: 12px; font-size: 0.72rem; font-weight: 500; color: #9fb4c6; text-align: center;
+  opacity: 0; animation: pol-fade-in 0.5s ease 0.4s forwards;
+}
+
+/* ---- crystal: floating bob above the base */
+.pol-bob { animation: pol-bob 3.4s ease-in-out infinite; }
+@keyframes pol-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+/* ---- 8-ball: dramatic continuous Pokeball wobble (big swings + hop + squash) */
+.anim-ball.pol-ball--rock {
+  animation: pol-pokeball 1.45s ease-in-out infinite !important;
+  transform-origin: 50% 88%;
+}
+@keyframes pol-pokeball {
+  0%   { transform: rotate(0deg)   translateX(0)    scale(1, 1); }
+  7%   { transform: rotate(-24deg) translateX(-7px) scale(0.97, 1.05); }   /* big lurch left, stretch */
+  15%  { transform: rotate(21deg)  translateX(6px)  scale(0.98, 1.03); }   /* swing right */
+  23%  { transform: rotate(-15deg) translateX(-3px); }
+  29%  { transform: rotate(12deg)  scale(1.06, 0.94); }                    /* land, squash */
+  35%  { transform: rotate(-7deg); }
+  41%  { transform: rotate(3deg); }
+  47%  { transform: rotate(0deg)   translateY(-9px) scale(0.95, 1.07); }   /* hop up, stretch */
+  55%  { transform: rotate(9deg)   translateY(0)    scale(1.07, 0.93); }   /* land, squash */
+  63%  { transform: rotate(-19deg) translateX(-5px); }                     /* another big lurch */
+  71%  { transform: rotate(15deg)  translateX(4px); }
+  79%  { transform: rotate(-9deg); }
+  87%  { transform: rotate(5deg)   scale(1.04, 0.96); }
+  100% { transform: rotate(0deg)   scale(1, 1); }
+}
+
+/* ---- slots: anchor the lever to the machine; stop ALL motion after the result */
+.pol-slots-scene { position: relative; justify-content: center; }
+.pol-slots-lever-rig { position: absolute; left: 50%; margin-left: 60px; top: 40px; width: 7px; z-index: 2; }
+.pol-slots-lever-bolt {
+  position: absolute; left: -4px; top: -5px; width: 15px; height: 15px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #9fb0c0, #3a4452);
+  box-shadow: 0 0 0 2px #1b2330, 0 2px 5px rgba(0,0,0,0.6); z-index: 4;
+}
+.anim-slots-lever.pol-slots-lever {
+  position: relative !important; animation: none !important;
+  transform-origin: 50% -3px; transition: transform 0.22s var(--ease-snap);
+}
+.anim-slots-lever.pol-slots-lever--cheer { animation: pol-slots-cheer 0.4s ease-in-out 3 !important; }
+@keyframes pol-slots-cheer { 0%,100% { transform: rotate(-7deg); } 50% { transform: rotate(9deg); } }
+.pol-slots-machine--win {
+  border-color: var(--green-glow) !important;
+  box-shadow: 0 0 30px rgba(74,222,128,0.5), 0 0 64px rgba(192,132,252,0.3), inset 0 1px 0 rgba(255,255,255,0.08) !important;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+/* ---- wheel: premium graphics (gradients live in-SVG; here we polish labels + pointer) */
+.anim-wheel-label.pol-wheel-label {
+  fill: #ffffff; font-size: 9px; font-weight: 800; letter-spacing: 0.2px;
+  paint-order: stroke; stroke: rgba(0,0,0,0.6); stroke-width: 2px;
+}
+.pol-wheel-pointer { top: 2px !important; line-height: 0; filter: drop-shadow(0 3px 4px rgba(0,0,0,0.55)); }
+
+/* ---- crystal: whole, legible name + mystical reveal burst */
+.anim-crystal-name.pol-crystal-name {
+  max-width: 98px; white-space: normal; word-break: break-word; line-height: 1.18;
+  letter-spacing: 0.2px; font-weight: 800;
+  animation: pol-crystal-name-in 0.55s var(--ease-snap) both;
+}
+@keyframes pol-crystal-name-in {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  60%  { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+.pol-ring {
+  position: absolute; left: 50%; top: 44%; width: 44px; height: 44px; margin: -22px 0 0 -22px;
+  border-radius: 50%; border: 2px solid rgba(192,132,252,0.7); opacity: 0; pointer-events: none; z-index: 1;
+  animation: pol-ring-expand 0.9s var(--ease-out) forwards;
+}
+@keyframes pol-ring-expand { 0% { opacity: 0.85; transform: scale(0.3); } 100% { opacity: 0; transform: scale(2.7); } }
+.pol-mist-puff {
+  position: absolute; left: 50%; top: 44%; width: 130px; height: 130px; margin: -65px 0 0 -65px;
+  border-radius: 50%; opacity: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(circle, rgba(192,132,252,0.4), rgba(120,80,255,0.14) 50%, transparent 70%);
+  animation: pol-puff 1.15s ease-out forwards;
+}
+@keyframes pol-puff { 0% { opacity: 0; transform: scale(0.4); } 30% { opacity: 0.9; } 100% { opacity: 0; transform: scale(1.9); } }
+
+/* ===================== BATCH 3a: BOX + TAROT reworks ===================== */
+
+/* ---- BOX: cards fly in & fill, shake, smoke, winner floats out ---- */
+.pol-box-scene { position: relative; width: 100%; min-height: 290px; display: flex; align-items: center; justify-content: center; }
+.pol-box { position: relative; width: 158px; height: 120px; }
+.pol-box--enter { animation: pol-box-drop 0.6s var(--ease-snap) both; }
+@keyframes pol-box-drop { from { transform: translateY(-60px) scale(0.9); opacity: 0; } to { transform: none; opacity: 1; } }
+.pol-box-back { position: absolute; left: 8px; right: 8px; top: 18px; bottom: 0;
+  background: linear-gradient(#41301c, #271c10); border: 2px solid #5a4128; border-radius: 6px 6px 8px 8px; }
+.pol-box-cards { position: absolute; left: 10px; right: 10px; top: 8px; bottom: 2px; overflow: hidden; border-radius: 6px; z-index: 2; }
+.pol-box-front { position: absolute; left: 0; right: 0; bottom: -2px; height: 66px; z-index: 5;
+  background: linear-gradient(#5a4128, #3a2a18); border: 2px solid #6b5132; border-radius: 4px 4px 8px 8px;
+  box-shadow: inset 0 8px 12px rgba(0,0,0,0.45), 0 6px 14px rgba(0,0,0,0.5); }
+.pol-box-front::after { content: ''; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  width: 42px; height: 7px; border-radius: 4px; background: rgba(0,0,0,0.35); }
+.pol-box-lid { position: absolute; top: 14px; width: 78px; height: 15px; z-index: 6;
+  background: linear-gradient(#6b5132, #4a3622); border: 2px solid #6b5132; }
+.pol-box-lid--l { left: 1px; transform-origin: right center; transform: rotate(-58deg); border-radius: 4px 0 0 4px; }
+.pol-box-lid--r { right: 1px; transform-origin: left center; transform: rotate(58deg); border-radius: 0 4px 4px 0; }
+.pol-box-card { position: absolute; left: calc(50% - 24px); top: 0; width: 48px; height: 62px; border-radius: 5px;
+  background: linear-gradient(140deg, #fdfaf0, #e3dcc8); border: 1px solid #b8ad90; box-shadow: 0 3px 7px rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.4rem; font-weight: 700;
+  color: #3a2a18; padding: 2px; line-height: 1.1; opacity: 0; will-change: transform, opacity; }
+.pol-box-smoke { position: absolute; left: 0; right: 0; top: 4px; height: 30px; z-index: 4; pointer-events: none; }
+.pol-box-puff { position: absolute; bottom: 0; width: 40px; height: 40px; border-radius: 50%; opacity: 0;
+  background: radial-gradient(circle, rgba(192,132,252,0.92), rgba(150,90,240,0.5) 48%, transparent 72%);
+  filter: blur(1px); }
+.pol-box-puff--go { animation: pol-box-puff 1.4s ease-out forwards; }
+@keyframes pol-box-puff { 0% { opacity: 0; transform: translateY(0) scale(0.4); } 22% { opacity: 1; } 100% { opacity: 0; transform: translateY(-104px) scale(3); } }
+.pol-box-smoke { height: 40px !important; }
+.pol-box-winner { position: absolute; z-index: 20; left: 50%; top: 50%; margin-left: -36px; margin-top: -48px;
+  width: 72px; height: 96px; border-radius: 8px; background: linear-gradient(140deg, #fff8e1, #ffe9a8);
+  border: 2px solid var(--gold-glow); box-shadow: 0 0 22px rgba(251,191,36,0.7), 0 8px 20px rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px;
+  font-size: 0.58rem; font-weight: 800; color: #3a2a18; opacity: 0; transform: translateY(20px) scale(0.6); }
+.pol-box-winner--up { animation: pol-box-winner 0.8s var(--ease-snap) forwards; }
+@keyframes pol-box-winner { 0% { opacity: 0; transform: translateY(20px) scale(0.6); } 40% { opacity: 1; } 100% { opacity: 1; transform: translateY(-72px) scale(1); } }
+.pol-box-counter { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font-size: 0.66rem; color: #c9b896; opacity: 0; animation: pol-fade-in 0.5s ease 0.6s forwards; }
+
+/* ---- TAROT: shuffle deck, pull one card, flip to reveal ---- */
+.pol-tarot-scene { position: relative; width: 100%; min-height: 260px; display: flex; align-items: center; justify-content: center; perspective: 900px; }
+.pol-tarot-deck { position: relative; width: 72px; height: 106px; transform-style: preserve-3d; }
+.pol-tarot-cardback {
+  background: repeating-linear-gradient(45deg, rgba(192,132,252,0.25) 0 6px, rgba(124,58,237,0.28) 6px 12px), linear-gradient(135deg, #2a1b4a, #160d2c);
+  border: 2px solid rgba(192,132,252,0.6); box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 0 12px rgba(192,132,252,0.2); }
+.pol-tarot-card { position: absolute; inset: 0; border-radius: 8px; backface-visibility: hidden; }
+.pol-tarot-card--enter { animation: pol-tarot-enter 0.5s var(--ease-snap) both; }
+@keyframes pol-tarot-enter { from { transform: translateY(-50px) scale(0.8); opacity: 0; } to { opacity: 1; } }
+.pol-tarot-pull { position: absolute; inset: 0; border-radius: 8px; transform-style: preserve-3d; transition: transform 0.7s var(--ease-snap); z-index: 10; }
+.pol-tarot-back, .pol-tarot-face { position: absolute; inset: 0; border-radius: 8px; backface-visibility: hidden;
+  display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px; }
+.pol-tarot-back { color: rgba(251,191,36,0.85); font-size: 1.3rem; }
+.pol-tarot-face { background: linear-gradient(150deg, #fff8e8, #ffe6c0); border: 2px solid var(--gold-glow);
+  transform: rotateY(180deg); color: #3a2a18; font-size: 0.58rem; font-weight: 800; line-height: 1.15;
+  box-shadow: inset 0 0 16px rgba(251,191,36,0.35); }
+.pol-tarot-pull--pulled { transform: translateY(-28px) scale(1.35) rotateY(180deg); }
+.pol-tarot-glow { position: absolute; width: 160px; height: 160px; border-radius: 50%; left: 50%; top: 50%;
+  transform: translate(-50%,-50%); background: radial-gradient(circle, rgba(192,132,252,0.28), transparent 65%);
+  opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
+.pol-tarot-glow--on { opacity: 1; }
+.pol-tarot-label { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(6px);
+  font-size: 0.6rem; font-weight: 800; color: var(--gold-glow); text-shadow: 0 0 8px rgba(251,191,36,0.7);
+  background: rgba(10,14,23,0.8); border: 1px solid var(--gold-glow); border-radius: 20px; padding: 3px 12px;
+  opacity: 0; transition: opacity 0.4s ease, transform 0.4s var(--ease-snap); }
+.pol-tarot-label--show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+
+/* ---- slots: fixed-height reel cells so reels LAND on a real match ---- */
+.anim-slots-reel-inner.pol-slots-reel-inner { animation: none !important; gap: 0 !important; }
+.anim-slots-reel-inner.pol-slots-reel-inner span { display: block; height: 18px; line-height: 18px; font-size: 1rem; }
+
+/* ===================== TAROT v2: five-card hand ===================== */
+.pol-th-scene { position: relative; width: 100%; min-height: 290px; display: flex; align-items: center; justify-content: center; perspective: 1000px; }
+.pol-th { position: relative; width: 80px; height: 108px; transform-style: preserve-3d; }
+.pol-th-card { position: absolute; left: 4px; top: 2px; width: 72px; height: 104px; border-radius: 8px;
+  transform-origin: 50% 50%; backface-visibility: hidden; will-change: transform;
+  display: flex; align-items: center; justify-content: center; }
+.pol-th-backface {
+  background: repeating-linear-gradient(45deg, rgba(192,132,252,0.25) 0 6px, rgba(124,58,237,0.3) 6px 12px), linear-gradient(135deg, #2a1b4a, #160d2c);
+  border: 2px solid rgba(192,132,252,0.6); box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 0 12px rgba(192,132,252,0.2);
+  color: rgba(251,191,36,0.85); font-size: 1.4rem;
+}
+.pol-th-flip { transform-style: preserve-3d; backface-visibility: visible; }
+.pol-th-back2, .pol-th-face2 { position: absolute; inset: 0; border-radius: 8px; backface-visibility: hidden;
+  display: flex; align-items: center; justify-content: center; text-align: center; padding: 6px; }
+.pol-th-face2 { transform: rotateY(180deg); background: linear-gradient(150deg, #fff8e8, #ffe6c0); border: 2px solid var(--gold-glow);
+  color: #3a2a18; font-size: 0.62rem; font-weight: 800; line-height: 1.15; box-shadow: inset 0 0 16px rgba(251,191,36,0.35); }
+.pol-th-glow { position: absolute; width: 190px; height: 190px; border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  background: radial-gradient(circle, rgba(192,132,252,0.3), transparent 65%); opacity: 0; transition: opacity 0.5s ease; pointer-events: none; }
+.pol-th-glow--on { opacity: 1; }
+.pol-th-label { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(6px);
+  font-size: 0.62rem; font-weight: 800; color: var(--gold-glow); text-shadow: 0 0 8px rgba(251,191,36,0.7);
+  background: rgba(10,14,23,0.85); border: 1px solid var(--gold-glow); border-radius: 20px; padding: 3px 12px;
+  opacity: 0; transition: opacity 0.4s ease, transform 0.4s var(--ease-snap); }
+.pol-th-label--show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* slots: top-align the strip (default centers it, which broke the landing math) */
+.anim-slots-reel.pol-slots-reel { align-items: flex-start !important; }
+
+/* ===================== BATCH 3b: CLAW MACHINE + GRINDER ===================== */
+
+/* ---- CLAW MACHINE (replaces Bee) ---- */
+.pol-claw-scene { position: relative; width: 100%; min-height: 300px; display: flex; align-items: center; justify-content: center; }
+.pol-claw-cab { position: relative; width: 180px; height: 230px; }
+.pol-claw-cab--enter { animation: pol-box-drop 0.6s var(--ease-snap) both; }
+.pol-claw-glass { position: absolute; top: 38px; left: 6px; right: 6px; bottom: 0; border: 2px solid #4a3f7a; border-top: none;
+  border-radius: 0 0 12px 12px; background: linear-gradient(180deg, rgba(120,140,255,0.08), rgba(20,20,45,0.55)); overflow: hidden; z-index: 1; }
+.pol-claw-top { position: absolute; top: 0; left: 0; right: 0; height: 38px; background: linear-gradient(#2a2350, #1c1838);
+  border: 2px solid #4a3f7a; border-radius: 12px 12px 0 0; z-index: 4; }
+.pol-claw-rail { position: absolute; top: 30px; left: 12px; right: 12px; height: 4px; background: linear-gradient(#8a7fce, #5a4f9e); border-radius: 2px; z-index: 5; }
+.pol-claw-capsule { position: absolute; width: 30px; height: 20px; border-radius: 10px;
+  box-shadow: inset -3px -3px 5px rgba(0,0,0,0.25), inset 2px 2px 4px rgba(255,255,255,0.5); }
+.pol-claw-rig { position: absolute; top: 30px; left: 0; width: 34px; z-index: 7; }
+.pol-claw-cord { position: absolute; top: 0; left: 16px; width: 2px; height: 8px; background: #8a7fce; }
+.pol-claw-claw { position: absolute; top: 0; left: 0; width: 34px; height: 24px; }
+.pol-claw-hub { position: absolute; top: -2px; left: 50%; transform: translateX(-50%); width: 18px; height: 8px; background: linear-gradient(#8a7fce, #5a4f9e); border-radius: 4px; }
+.pol-claw-prong { position: absolute; top: 4px; width: 6px; height: 22px; background: linear-gradient(#b9aeea, #6b5fae); border-radius: 3px 3px 4px 4px; transform-origin: top center; transition: transform 0.2s var(--ease-snap); }
+.pol-claw-prong--l { left: 6px; transform: rotate(20deg); }
+.pol-claw-prong--r { right: 6px; transform: rotate(-20deg); }
+.pol-claw--closed .pol-claw-prong--l { transform: rotate(5deg); }
+.pol-claw--closed .pol-claw-prong--r { transform: rotate(-5deg); }
+.pol-claw-held { position: absolute; top: 20px; left: 2px; width: 30px; height: 20px; border-radius: 10px; opacity: 0;
+  box-shadow: inset -3px -3px 5px rgba(0,0,0,0.25), inset 2px 2px 4px rgba(255,255,255,0.5); }
+.pol-claw-prize { position: absolute; top: 46px; left: 50%; transform: translateX(-50%) translateY(10px); white-space: nowrap;
+  font-size: 0.6rem; font-weight: 800; color: var(--green-glow); background: rgba(10,14,23,0.88); border: 1px solid var(--green-glow);
+  border-radius: 20px; padding: 4px 12px; opacity: 0; z-index: 9; transition: opacity 0.4s ease, transform 0.4s var(--ease-snap); }
+.pol-claw-prize--show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.pol-claw-counter { position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; color: #9a90c6; z-index: 8; }
+
+/* ---- GRINDER (replaces Ember) — top-view ---- */
+.pol-grind { position: relative; width: 150px; height: 150px; }
+
+/* ===================== BATCH 3b v2: CLAW spice + DISPENSARY JAR ===================== */
+
+/* ---- claw v2 overrides + arcade dressing ---- */
+.pol-claw-cab { height: 240px; box-shadow: 0 0 26px rgba(150,90,240,0.35); }
+.pol-claw-glass { top: 40px; bottom: 38px; }
+.pol-claw-rig { top: 36px; }
+.pol-claw-rail { top: 36px; }
+.pol-claw-marquee { position: absolute; top: 0; left: 0; right: 0; height: 34px; z-index: 4;
+  background: linear-gradient(#3a1d6e, #241046); border: 2px solid #6b3fae; border-radius: 12px 12px 0 0;
+  display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: inset 0 0 14px rgba(150,90,240,0.4); }
+.pol-claw-sign { font-size: 0.62rem; font-weight: 900; letter-spacing: 1.2px; color: #fff;
+  text-shadow: 0 0 6px var(--purple-glow), 0 0 12px var(--green-glow); }
+.pol-claw-bulbs { position: absolute; top: 2px; left: 4px; right: 4px; display: flex; justify-content: space-between; }
+.pol-claw-bulb { width: 5px; height: 5px; border-radius: 50%; background: var(--gold-glow); box-shadow: 0 0 5px var(--gold-glow);
+  animation: pol-claw-bulb 0.9s steps(1) infinite; }
+@keyframes pol-claw-bulb { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0.2; } }
+.pol-claw-held { width: 32px; height: 28px; border-radius: 16px 16px 13px 13px; opacity: 0;
+  background: radial-gradient(circle at 38% 28%, #9bffb8, #2f9e44 72%); box-shadow: 0 0 12px rgba(74,222,128,0.6);
+  display: flex; align-items: center; justify-content: center; font-size: 0.82rem; }
+.pol-claw-deck { position: absolute; bottom: 0; left: 0; right: 0; height: 38px; background: linear-gradient(#2a2350, #1c1838);
+  border: 2px solid #4a3f7a; border-top: none; border-radius: 0 0 12px 12px; z-index: 6; }
+.pol-claw-joy { position: absolute; bottom: 8px; right: 16px; width: 6px; height: 16px; background: linear-gradient(#999, #555);
+  border-radius: 3px; z-index: 8; transform-origin: bottom center; animation: pol-claw-joy 2.4s ease-in-out infinite; }
+.pol-claw-joy::after { content: ''; position: absolute; top: -7px; left: 50%; transform: translateX(-50%); width: 13px; height: 13px;
+  border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ff9a9a, #dc2626); box-shadow: 0 0 6px rgba(248,113,113,0.6); }
+@keyframes pol-claw-joy { 0%,100% { transform: rotate(0); } 30% { transform: rotate(-14deg); } 60% { transform: rotate(10deg); } }
+.pol-claw-coin { position: absolute; bottom: 22px; left: 16px; width: 16px; height: 4px; background: #0a0a14; border: 1px solid #6b5fae; border-radius: 2px; z-index: 8; }
+.pol-claw-chute { position: absolute; bottom: 4px; left: 12px; width: 34px; height: 14px; background: linear-gradient(#05050c, #14122a);
+  border: 2px solid #4a3f7a; border-radius: 4px; z-index: 8; box-shadow: inset 0 3px 6px rgba(0,0,0,0.6); }
+
+/* ---- DISPENSARY JAR (replaces grinder) ---- */
+.pol-jar { position: relative; width: 132px; height: 178px; }
+
+/* ===================== BATCH 3b v3: JAR fun + CLAW ambiance ===================== */
+
+/* ---- jar v2: bouncy, explosive, re-run-worthy ---- */
+
+/* ---- claw v2.1: background ambiance + linework + detail ---- */
+.pol-claw-bg { position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(55% 46% at 50% 40%, rgba(150,90,240,0.22), transparent 72%); }
+.pol-claw-floor { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); width: 240px; height: 34px; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(150,90,240,0.35), transparent 70%); filter: blur(4px); }
+.pol-claw-amote { position: absolute; width: 4px; height: 4px; border-radius: 50%; z-index: 0; pointer-events: none;
+  background: rgba(192,132,252,0.55); box-shadow: 0 0 6px rgba(192,132,252,0.6); animation: pol-claw-amote 6s ease-in-out infinite; }
+@keyframes pol-claw-amote { 0%,100% { transform: translateY(0); opacity: 0.15; } 50% { transform: translateY(-28px); opacity: 0.7; } }
+.pol-claw-glass-back { position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(64,52,116,0.42), rgba(18,16,38,0.62)),
+    repeating-linear-gradient(90deg, transparent 0 17px, rgba(150,120,220,0.06) 17px 18px); }
+.pol-claw-glass-reflect { position: absolute; top: 0; bottom: 0; left: -25%; width: 36%; z-index: 3; pointer-events: none;
+  background: linear-gradient(115deg, transparent 42%, rgba(255,255,255,0.10) 50%, transparent 58%); }
+.pol-claw-trolley { position: absolute; top: -6px; left: 9px; width: 16px; height: 9px; border-radius: 3px;
+  background: linear-gradient(#c3b8f0, #5a4f9e); box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+.pol-claw-cord { background: linear-gradient(90deg, #6b5fae, #b9aeea, #6b5fae); width: 2.5px !important; }
+.pol-claw-capsule { box-shadow: inset -3px -3px 5px rgba(0,0,0,0.25), inset 2px 2px 4px rgba(255,255,255,0.55), 0 2px 3px rgba(0,0,0,0.45); }
+.pol-claw-prong { background: linear-gradient(#c8bdf2, #5a4f9e); }
+
+/* ===================== SWORD IN THE STONE (bong) ===================== */
+
+/* ===================== LIGHTNING STRIKE ===================== */
+.pol-st-scene { position: relative; width: 100%; min-height: 300px; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: 14px;
+  background: radial-gradient(130% 110% at 50% 0%, #202a44, #0a0e17 70%); }
+.pol-st-flash { position: absolute; inset: 0; background: #e8efff; opacity: 0; z-index: 6; pointer-events: none; }
+.pol-st-flash--go { animation: pol-st-flash 0.35s ease-out; }
+@keyframes pol-st-flash { 0% { opacity: 0; } 12% { opacity: 0.9; } 100% { opacity: 0; } }
+.pol-st-bolt { position: absolute; top: 0; z-index: 4; opacity: 0; filter: drop-shadow(0 0 5px #aaccff) drop-shadow(0 0 10px #6f9fff); }
+.pol-st-bolt--go { animation: pol-st-bolt 0.45s steps(1) forwards; }
+@keyframes pol-st-bolt { 0% { opacity: 1; } 35% { opacity: 1; } 45% { opacity: 0; } 60% { opacity: 1; } 100% { opacity: 0; } }
+.pol-st-bolt--big { filter: drop-shadow(0 0 10px #cfe0ff) drop-shadow(0 0 22px #8fb4ff); }
+.pol-st-charge { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; z-index: 3; opacity: 0;
+  background: radial-gradient(circle, rgba(180,210,255,0.9), rgba(110,160,255,0.4) 50%, transparent 72%); }
+.pol-st-charge--on { animation: pol-st-charge 0.6s ease-in forwards; }
+@keyframes pol-st-charge { 0% { opacity: 0; transform: scale(0.4); } 100% { opacity: 1; transform: scale(2.4); } }
+.pol-st-smoke { position: absolute; border-radius: 50%; z-index: 5; opacity: 0; filter: blur(1px);
+  background: radial-gradient(circle, rgba(86,96,116,0.95), rgba(40,46,60,0.6) 55%, transparent 74%); }
+.pol-st-smoke--go { animation: pol-st-smoke 1.7s ease-out forwards; }
+@keyframes pol-st-smoke { 0% { opacity: 0; transform: scale(0.2); } 22% { opacity: 0.95; } 68% { opacity: 0.9; } 100% { opacity: 0; transform: scale(1.9); } }
+.pol-st-name { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%) scale(0.8); z-index: 7; text-align: center; white-space: nowrap;
+  font-size: 0.82rem; font-weight: 900; color: #fff; text-shadow: 0 0 12px var(--green-glow), 0 0 22px rgba(74,222,128,0.6); opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s var(--ease-snap); }
+.pol-st-name--show { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+
+/* ===================== LIGHTNING v2 (cinematic) ===================== */
+.pol-st-scene { background: radial-gradient(140% 120% at 50% -12%, #2a3a5e 0%, #131b30 46%, #060912 82%) !important; }
+.pol-st-vignette { position: absolute; inset: 0; z-index: 6; pointer-events: none; box-shadow: inset 0 0 80px 22px rgba(0,0,0,0.7); }
+.pol-st-cloud { position: absolute; top: -28px; border-radius: 50%; z-index: 1; pointer-events: none; filter: blur(7px);
+  background: radial-gradient(circle, rgba(32,40,64,0.92), rgba(20,26,44,0.42) 60%, transparent 76%); }
+.pol-st-cloud--drift { animation: pol-st-cloud 9s ease-in-out infinite alternate; }
+@keyframes pol-st-cloud { from { transform: translateX(-12px); } to { transform: translateX(12px); } }
+.pol-st-rain { position: absolute; width: 1.5px; height: 18px; z-index: 2; pointer-events: none;
+  background: linear-gradient(rgba(180,200,255,0), rgba(180,200,255,0.35)); animation: pol-st-rain linear infinite; }
+@keyframes pol-st-rain { 0% { transform: translateY(-30px) translateX(0); opacity: 0; } 10% { opacity: 0.5; } 100% { transform: translateY(330px) translateX(-30px); opacity: 0; } }
+.pol-st-flash { background: radial-gradient(circle at 50% 42%, #eef3ff, #b9cdf2) !important; }
+.pol-st-flash--soft { animation: pol-st-flash-soft 0.32s ease-out; }
+@keyframes pol-st-flash-soft { 0% { opacity: 0; } 14% { opacity: 0.42; } 100% { opacity: 0; } }
+.pol-st-bloom { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; z-index: 5; opacity: 0; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(150,190,255,0.6) 35%, transparent 70%); }
+.pol-st-bloom--go { animation: pol-st-bloom 0.7s ease-out forwards; }
+@keyframes pol-st-bloom { 0% { opacity: 0; transform: scale(0.2); } 18% { opacity: 1; } 100% { opacity: 0; transform: scale(2.7); } }
+.pol-st-ring { position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px; border-radius: 50%; z-index: 5; opacity: 0; pointer-events: none;
+  border: 2.5px solid rgba(185,208,255,0.85); box-shadow: 0 0 16px rgba(150,190,255,0.7); }
+.pol-st-ring--go { animation: pol-st-ring 0.85s cubic-bezier(0.15,0.6,0.2,1) forwards; }
+@keyframes pol-st-ring { 0% { opacity: 0.9; transform: scale(0.3); } 100% { opacity: 0; transform: scale(3.6); } }
+.pol-st-ember { position: absolute; width: 3px; height: 3px; border-radius: 50%; z-index: 6; pointer-events: none; background: #cfe6ff; box-shadow: 0 0 6px #9fc4ff; }
+@keyframes pol-st-ember { 0% { opacity: 1; transform: translate(0,0) scale(1); } 100% { opacity: 0; transform: translate(var(--ex), calc(var(--ey) + 52px)) scale(0.4); } }
+.pol-st-smoke { background: radial-gradient(circle, rgba(72,84,110,0.95), rgba(34,42,62,0.55) 55%, transparent 76%) !important; }
+.pol-st-name { font-size: 0.86rem !important; }
+.pol-st-name-sub { position: absolute; left: 50%; top: calc(50% + 20px); transform: translateX(-50%); z-index: 7;
+  font-size: 0.5rem; letter-spacing: 2.5px; color: rgba(185,208,255,0.85); text-transform: uppercase; opacity: 0; transition: opacity 0.5s ease 0.2s; }
+.pol-st-name-sub--show { opacity: 1; }
+
+/* ===================== LIGHTNING v3: purple + fireball + wispy smoke ===================== */
+.pol-st-flash { background: radial-gradient(circle at 50% 42%, #f3ecff, #c2a6f0) !important; }
+.pol-st-flash--soft { animation: pol-st-flash-soft 0.32s ease-out; }
+.pol-st-charge { background: radial-gradient(circle, rgba(226,198,255,0.92), rgba(168,85,247,0.45) 50%, transparent 72%) !important; }
+.pol-st-ring { border-color: rgba(214,172,255,0.9) !important; box-shadow: 0 0 18px rgba(192,132,252,0.78) !important; }
+.pol-st-ember { background: #f0d8ff !important; box-shadow: 0 0 6px #d24bd2 !important; }
+.pol-st-bolt { filter: drop-shadow(0 0 5px #c9a8ff) drop-shadow(0 0 12px #a855f7) !important; }
+.pol-st-bolt--big { filter: drop-shadow(0 0 12px #e8d0ff) drop-shadow(0 0 26px #b06bff) !important; }
+
+/* fireball core of the explosion */
+.pol-st-fireball { position: absolute; left: 50%; top: 50%; width: 96px; height: 96px; margin: -48px 0 0 -48px; border-radius: 50%; z-index: 5; opacity: 0; pointer-events: none; filter: blur(1px);
+  background: radial-gradient(circle, #ffffff 0%, #ffe9a8 18%, #ff9d4d 40%, #d24bd2 64%, rgba(140,50,180,0.32) 80%, transparent 90%); }
+.pol-st-fireball--go { animation: pol-st-fireball 0.85s ease-out forwards; }
+@keyframes pol-st-fireball { 0% { opacity: 0; transform: scale(0.2); } 14% { opacity: 1; transform: scale(1.08); } 34% { transform: scale(0.9); } 60% { opacity: 0.8; transform: scale(1.25); } 100% { opacity: 0; transform: scale(1.7); } }
+.pol-st-smolder { position: absolute; left: 50%; top: 50%; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%; z-index: 4; opacity: 0; pointer-events: none;
+  background: radial-gradient(circle, rgba(210,75,210,0.5), rgba(140,50,180,0.2) 50%, transparent 72%); }
+.pol-st-smolder--go { animation: pol-st-smolder 1.6s ease-out forwards; }
+@keyframes pol-st-smolder { 0% { opacity: 0; } 20% { opacity: 0.85; } 100% { opacity: 0; transform: scale(1.4); } }
+
+/* organic, varied smoke (replaces the copy-paste circles) */
+.pol-st-puff { position: absolute; z-index: 5; opacity: 0; pointer-events: none; will-change: transform, opacity; }
+.pol-st-puff--go { animation: pol-st-puff var(--dur, 1.8s) ease-out forwards; }
+@keyframes pol-st-puff {
+  0%   { opacity: 0; transform: translate(0,0) scale(0.2) rotate(var(--r,0deg)); }
+  20%  { opacity: var(--o, 0.9); }
+  70%  { opacity: calc(var(--o, 0.9) * 0.72); }
+  100% { opacity: 0; transform: translate(var(--dx,0px), var(--dy,-40px)) scale(1.9) rotate(calc(var(--r,0deg) + 50deg)); }
+}
+.pol-st-wisp { position: absolute; z-index: 5; opacity: 0; pointer-events: none; border-radius: 50%; filter: blur(4px);
+  background: linear-gradient(to top, rgba(124,92,176,0.55), rgba(96,70,140,0.18) 60%, transparent); }
+.pol-st-wisp--go { animation: pol-st-wisp 1.75s ease-out forwards; }
+@keyframes pol-st-wisp {
+  0%   { opacity: 0; transform: translateY(12px) scaleY(0.4); }
+  30%  { opacity: 0.8; }
+  100% { opacity: 0; transform: translateY(-132px) translateX(var(--wx,0px)) scaleY(1.5) rotate(var(--wr,0deg)); }
+}
+
+/* ===================== SHARED REVEAL CARD (cohesion) ===================== */
+.pol-reveal { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%) translateY(10px); z-index: 60; opacity: 0;
+  display: flex; align-items: center; gap: 8px; white-space: nowrap; pointer-events: none;
+  background: linear-gradient(135deg, rgba(12,16,26,0.94), rgba(22,16,36,0.94));
+  border: 1.5px solid var(--green-glow); border-radius: 24px; padding: 6px 15px 6px 11px;
+  box-shadow: 0 0 18px rgba(74,222,128,0.45), 0 6px 18px rgba(0,0,0,0.55);
+  transition: opacity 0.45s ease, transform 0.45s var(--ease-snap); }
+.pol-reveal--show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.pol-reveal--center { bottom: auto; top: 50%; transform: translate(-50%,-50%) scale(0.85); }
+.pol-reveal--center.pol-reveal--show { transform: translate(-50%,-50%) scale(1); }
+.pol-reveal--above { bottom: calc(100% + 8px); top: auto; }
+.pol-reveal--below { top: calc(100% + 8px); bottom: auto; }
+.pol-reveal--top-in { top: 8px; bottom: auto; }
+.pol-reveal--bottom-in { bottom: 8px; top: auto; }
+.pol-reveal-leaf { font-size: 0.95rem; line-height: 1; filter: drop-shadow(0 0 5px var(--gold-glow)); }
+.pol-reveal-text { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.06; }
+.pol-reveal-name { font-size: 0.72rem; font-weight: 800; color: #fff; letter-spacing: 0.2px; }
+.pol-reveal-sub { font-size: 0.4rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--green-glow); opacity: 0.88; }
+
+/* ===================== COHESION: ambient layer + cage polish + re-grade ===================== */
+
+/* shared faint ambient motes (one common atmosphere) */
+.pol-ambient { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.pol-ambient-mote { position: absolute; width: 3px; height: 3px; border-radius: 50%; opacity: 0;
+  background: currentColor; box-shadow: 0 0 6px currentColor; animation: pol-ambient-mote ease-in-out infinite; }
+@keyframes pol-ambient-mote { 0%,100% { opacity: 0; transform: translateY(6px) scale(0.5); } 50% { opacity: 0.42; transform: translateY(-18px) scale(1); } }
+
+/* lottery cage polish */
+.pol-cage-leaf { font-size: 1rem; line-height: 1; opacity: 0; transition: opacity 0.3s ease; }
+.anim-cage-winner-ball--glow .pol-cage-leaf { opacity: 1; }
+.pol-cage-frame--win { box-shadow: 0 0 26px rgba(74,222,128,0.45), 0 0 52px rgba(192,132,252,0.3) !important; transition: box-shadow 0.3s ease; }
+.pol-cage-counter { position: absolute; top: 4px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; color: #9a90c6; }
+
+/* accent re-grade — pull the crystal ball from blue toward house purple */
+.anim-crystal-ball {
+  background: radial-gradient(circle at 35% 28%, rgba(222,202,255,0.35) 0%, rgba(172,122,255,0.16) 25%, rgba(120,70,220,0.12) 55%, rgba(20,8,40,0.9) 100%) !important;
+  border-color: rgba(192,162,255,0.42) !important;
+  box-shadow: 0 0 40px rgba(150,90,255,0.5), 0 0 80px rgba(110,50,220,0.25), inset 0 0 40px rgba(150,90,255,0.15) !important;
+}
+
+/* ── Dispensary "Buy near you" click-out ─────────────────────────────────── */
+/* The in-stock dispensary pill becomes a tappable link to the partner menu.
+   Inherits the existing pill look; we just signal interactivity. */
+.strain-pill--dispensary-link {
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+.strain-pill--dispensary-link:hover {
+  filter: brightness(1.12);
+  box-shadow: 0 0 12px rgba(74,222,128,0.35);
+}
+.strain-pill--dispensary-link:active { transform: scale(0.97); }
+
+/* Result-screen primary "buy at <dispensary>" call-to-action. Distinct from
+   the honest match card above it; this is the in-stock purchase path. */
+.result-buy-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 14px auto 4px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  color: #0B0F0C;
+  background: linear-gradient(135deg, #4ADE80 0%, #3FAE5A 100%);
+  box-shadow: 0 0 22px rgba(74,222,128,0.45);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+}
+.result-buy-cta:hover { filter: brightness(1.06); box-shadow: 0 0 30px rgba(74,222,128,0.6); }
+.result-buy-cta:active { transform: scale(0.98); }
+.result-buy-cta.hidden { display: none; }
+
+/* Sponsored card "Buy" link — gold-tinted so it reads as sponsored, distinct
+   from the green honest-match CTA above. */
+.sponsored-strain-card__buy {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: #E6F0EA;
+  border: 1px solid rgba(201,162,39,0.55);
+  background: rgba(201,162,39,0.12);
+  transition: filter 0.14s ease, box-shadow 0.14s ease, transform 0.12s ease;
+}
+.sponsored-strain-card__buy:hover { filter: brightness(1.1); box-shadow: 0 0 14px rgba(201,162,39,0.4); }
+.sponsored-strain-card__buy:active { transform: scale(0.97); }
+.sponsored-strain-card__buy.hidden { display: none; }
+
+/* ── Tri-state filter chips (Effects / Flavors panels) ─────────────────────── */
+.ms-panel-hint { font-size: 0.72rem; color: var(--text-muted, #7E8B83); margin: 4px 2px 8px; }
+.ms-hint-in { color: #4ADE80; }
+.ms-hint-ex { color: #f87171; }
+.ms-panel-options { display: flex; flex-wrap: wrap; gap: 6px; max-height: 240px; overflow-y: auto; }
+.ms-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 11px; border-radius: 999px; cursor: pointer;
+  font-size: 0.8rem; line-height: 1; white-space: nowrap;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.16);
+  color: var(--text, #E6F0EA);
+  transition: background .12s ease, border-color .12s ease, color .12s ease, transform .1s ease;
+}
+.ms-chip:hover { border-color: rgba(255,255,255,0.32); }
+.ms-chip:active { transform: scale(0.96); }
+.ms-chip__mark { font-weight: 700; }
+.ms-chip--in { background: rgba(74,222,128,0.16); border-color: rgba(74,222,128,0.6); color: #d6ffe4; }
+.ms-chip--ex {
+  background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.6); color: #ffd9d9;
+  text-decoration: line-through; text-decoration-thickness: 1px;
+}

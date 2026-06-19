@@ -1,0 +1,42 @@
+name: CI
+
+# Runs on every push and PR: unit tests (engine + menu matching) and a full
+# build (SEO prebuild + Vite). This is the verification loop that can't run in
+# the Cowork sandbox (no package registry there) — GitHub's runners have full
+# npm access, so this is the source of truth for "does it build + pass tests".
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Unit tests (Node built-in runner)
+        run: npm test
+
+      - name: Build (SEO prebuild + Vite)
+        run: npm run build
+        env:
+          # Optional: add these as repo secrets (Settings → Secrets → Actions)
+          # for a deployable build. The build compiles fine without them — they
+          # just resolve to empty, which is OK for verification.
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+          VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
