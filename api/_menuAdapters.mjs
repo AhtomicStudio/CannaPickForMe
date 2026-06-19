@@ -37,6 +37,15 @@ export function buildDovetailUrl(source, page = 1) {
 
 /** Pull a THC % from a Dovetail product's potency list, if present. */
 function extractDovetailThc(r) {
+  if (r.potency_thc) {
+    if (Array.isArray(r.potency_thc.range) && r.potency_thc.range[0] != null) {
+      return r.potency_thc.range[0];
+    }
+    if (typeof r.potency_thc.formatted === 'string') {
+      const m = r.potency_thc.formatted.match(/[\d.]+/);
+      if (m) return parseFloat(m[0]);
+    }
+  }
   if (typeof r.thc === 'number') return r.thc;
   const pot = r.potency || r.cannabinoids || [];
   if (Array.isArray(pot)) {
