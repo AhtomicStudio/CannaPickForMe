@@ -37,3 +37,7 @@ sprites.html
 # AntiGravity / Claude Workspaces
 .claude/
 
+# Standalone Firebase CLI
+firebase.exe
+
+
