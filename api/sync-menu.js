@@ -24,7 +24,7 @@ import { normaliseName, isFlower, findKnowledgeMatch } from './_menuMatch.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const strainsData = JSON.parse(
-  readFileSync(join(__dirname, '../src/data/strains.json'), 'utf8')
+  readFileSync(join(__dirname, '../public/data/strains.json'), 'utf8')
 );
 
 // Flower detection + strain-name matching are shared with the weekly refresh
