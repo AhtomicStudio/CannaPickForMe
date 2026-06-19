@@ -34,7 +34,7 @@ export function normaliseName(name = '') {
  */
 const GROW_SUFFIX = new RegExp(
   '\\s*[-\\u2013\\u2014|/]\\s*' +
-  '(indoor|outdoor|greenhouse|green house|light ?dep(rivation)?|sun ?grown|mixed ?light|full ?sun|smalls?|popcorn|exotic|premium|top ?shelf)' +
+  '(indoor|outdoor|greenhouse|green house|light ?dep(rivation)?|sun ?grown|mixed ?light|full ?sun|smalls?|popcorn|exotics?|exotix|premium|top ?shelf|flower|buds?)' +
   '\\s*$',
   'i',
 );

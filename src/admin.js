@@ -1041,15 +1041,21 @@ function renderReviewQueue() {
 
   section.classList.remove('hidden');
   list.innerHTML = queue.map(s => `
-    <div class="admin-strain-row" data-id="${esc(s.id)}">
-      <span class="admin-strain-row__dot" data-type="${esc(s.type)}"></span>
-      <span class="admin-strain-row__name">${esc(s.name)}</span>
-      <div class="admin-strain-row__badges">
-        <span class="admin-tag" style="border-color:#f87171;color:#f87171">⚠️ Review</span>
-        ${s.thc ? `<span class="admin-tag">${s.thc}% THC</span>` : ''}
+    <div class="admin-strain-row admin-strain-row--review" data-id="${esc(s.id)}" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; padding: 8px; border: 1px solid var(--border-color, #eee); border-radius: 6px;">
+      <span class="admin-strain-row__dot" data-type="${esc(s.type)}" style="flex-shrink: 0;"></span>
+      <input type="text" class="admin-input review-name" value="${esc(s.name)}" style="flex: 2; min-width: 150px; height: 32px; padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px;" placeholder="Name" />
+      <select class="admin-input review-type" style="flex: 1; min-width: 90px; height: 32px; padding: 4px; border: 1px solid #ddd; border-radius: 4px;">
+        <option value="hybrid" ${s.type === 'hybrid' ? 'selected' : ''}>Hybrid</option>
+        <option value="sativa" ${s.type === 'sativa' ? 'selected' : ''}>Sativa</option>
+        <option value="indica" ${s.type === 'indica' ? 'selected' : ''}>Indica</option>
+      </select>
+      <div style="display: flex; align-items: center; gap: 4px; flex-shrink: 0;">
+        <input type="number" step="0.01" class="admin-input review-thc" value="${s.thc || ''}" style="width: 60px; height: 32px; text-align: right; padding: 4px; border: 1px solid #ddd; border-radius: 4px;" placeholder="THC" />
+        <span style="font-size: 0.75rem; color: var(--text-muted);">% THC</span>
       </div>
-      <div class="admin-strain-row__actions">
-        <button class="admin-btn admin-btn--small" data-action="review-edit" data-id="${esc(s.id)}">✏️ Edit</button>
+      <div class="admin-strain-row__actions" style="display: flex; gap: 4px; margin-left: auto; flex-shrink: 0;">
+        <button class="admin-btn admin-btn--small admin-btn--primary" data-action="review-save" data-id="${esc(s.id)}" style="height: 32px; padding: 0 10px;">✓ Save</button>
+        <button class="admin-btn admin-btn--small" data-action="review-edit" data-id="${esc(s.id)}" style="height: 32px; padding: 0 10px;">✏️ Full Edit</button>
       </div>
     </div>
   `).join('');
@@ -1062,6 +1068,47 @@ function renderReviewQueue() {
       // Expand the form section if collapsed
       const body = document.getElementById('strain-form-section').querySelector('.admin-section__body');
       if (body) body.style.display = 'block';
+    });
+  });
+
+  list.querySelectorAll('[data-action="review-save"]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.dataset.id;
+      const row = btn.closest('.admin-strain-row');
+      const name = row.querySelector('.review-name').value.trim();
+      const type = row.querySelector('.review-type').value;
+      const thcVal = row.querySelector('.review-thc').value;
+      const thc = thcVal ? parseFloat(thcVal) : null;
+
+      if (!name) {
+        alert('Name is required.');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Saving...';
+
+      try {
+        const idx = strainDelta.additions.findIndex(s => s.id === id);
+        if (idx !== -1) {
+          strainDelta.additions[idx] = {
+            ...strainDelta.additions[idx],
+            name,
+            type,
+            thc,
+            needsReview: false, // Clear the review flag
+          };
+
+          await authedSaveStrainDelta(strainDelta);
+          renderStrainList();
+          renderReviewQueue();
+        }
+      } catch (err) {
+        console.error('Error saving inline review:', err);
+        alert('Failed to save inline edit. Check console.');
+        btn.disabled = false;
+        btn.textContent = '✓ Save';
+      }
     });
   });
 }

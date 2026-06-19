@@ -21,6 +21,8 @@
  * can be unit-tested without network (test/menu-adapters.test.mjs).
  */
 
+import { coreStrainName } from './_menuMatch.mjs';
+
 // ── Dovetail ──────────────────────────────────────────────────────────────────
 
 /** Build one page's products URL for a Dovetail source. Pure (testable). */
@@ -71,12 +73,27 @@ export function parseDovetailResults(json) {
     : [];
   return results
     .filter((r) => r && typeof r === 'object' && typeof r.name === 'string' && r.name.trim())
-    .map((r) => ({
-      name: r.name.trim(),
-      brand: (r.brand && typeof r.brand === 'object' ? r.brand.name : r.brand) || null,
-      category: r.category || null,
-      thc: extractDovetailThc(r),
-    }));
+    .map((r) => {
+      const brandName = (r.brand && typeof r.brand === 'object' ? r.brand.name : r.brand) || '';
+      let cleanName = r.name.trim();
+
+      // Strip brand prefix if name starts with brand + separator
+      if (brandName) {
+        const escapedBrand = String(brandName).replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        const brandRegex = new RegExp(`^${escapedBrand}\\s*[-–—|/]\\s*`, 'i');
+        cleanName = cleanName.replace(brandRegex, '');
+      }
+
+      // Strip trailing weights and grow suffixes
+      cleanName = coreStrainName(cleanName);
+
+      return {
+        name: cleanName,
+        brand: brandName || null,
+        category: r.category || null,
+        thc: extractDovetailThc(r),
+      };
+    });
 }
 
 /** Fetch all pages for a Dovetail source. Network (fetch injectable for tests). */

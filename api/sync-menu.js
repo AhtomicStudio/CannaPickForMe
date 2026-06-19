@@ -20,7 +20,7 @@ import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { fetchDovetail } from './_menuAdapters.mjs';
-import { normaliseName, isFlower, findKnowledgeMatch } from './_menuMatch.mjs';
+import { normaliseName, isFlower, findKnowledgeMatch, coreStrainName } from './_menuMatch.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const strainsData = JSON.parse(
@@ -123,8 +123,21 @@ async function tryGraphQL(slug) {
 // ─── Product normalisation ────────────────────────────────────────────────────
 
 function normaliseProduct(raw) {
-  // GraphQL puts the clean strain name in raw.strain.name
-  const strainName = raw.strain?.name || raw.name || '';
+  const brandObj = raw.brand || raw.Brand;
+  const brandName = (brandObj && typeof brandObj === 'object' ? brandObj.name : brandObj) || '';
+  let strainName = raw.strain?.name || raw.name || '';
+
+  if (brandName && strainName) {
+    const escapedBrand = String(brandName).replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const brandRegex = new RegExp(`^${escapedBrand}\\s*[-–—|/]\\s*`, 'i');
+    strainName = String(strainName).replace(brandRegex, '');
+  }
+
+  // GraphQL's strainName is already clean, but if it came from raw.name, run coreStrainName
+  if (!raw.strain?.name) {
+    strainName = coreStrainName(strainName);
+  }
+
   const category   = raw.category || raw.Category || '';
   // Dutchie REST uses "Indica" / "Hybrid" / "Sativa" on the product itself
   const type       = (raw.type || raw.Type || 'hybrid').toLowerCase();
