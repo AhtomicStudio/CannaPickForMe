@@ -5,7 +5,7 @@
     "generatedAt": "2026-06-21",
     "appliesField": "terpenes (additive, fill-if-absent — does NOT touch effects or Head/Body High tags)",
     "howToApply": "node scripts/apply-enrichment.mjs            (dry-run)\nnode scripts/apply-enrichment.mjs --write    (apply)\nthen review `git diff` and rebuild.",
-    "notes": "Terpenes listed dominant-first. 'Original Glue' shares Gorilla Glue #4's genetics/profile. 'Do-Si-Dos' and 'Dosidos' normalise to the same key, so only one of that duplicate pair will receive terpenes via the script."
+    "notes": "Terpenes listed dominant-first. 'Original Glue' shares Gorilla Glue #4's genetics/profile. The former 'Dosidos' duplicate was merged into 'Do-Si-Dos'."
   },
   "proposals": [
     { "name": "Blue Dream", "source": "nimble-terpene", "needsReview": true, "propose": { "terpenes": [ { "name": "Myrcene" }, { "name": "Pinene" }, { "name": "Caryophyllene" } ] } },
@@ -25,7 +25,6 @@
     { "name": "Gorilla Glue #4", "source": "nimble-terpene", "needsReview": true, "propose": { "terpenes": [ { "name": "Caryophyllene" }, { "name": "Myrcene" }, { "name": "Limonene" } ] } },
     { "name": "Original Glue", "source": "nimble-terpene", "needsReview": true, "propose": { "terpenes": [ { "name": "Caryophyllene" }, { "name": "Myrcene" }, { "name": "Limonene" } ] } },
     { "name": "Do-Si-Dos", "source": "nimble-terpene", "needsReview": true, "propose": { "terpenes": [ { "name": "Limonene" }, { "name": "Caryophyllene" }, { "name": "Linalool" } ] } },
-    { "name": "Dosidos", "source": "nimble-terpene", "needsReview": true, "propose": { "terpenes": [ { "name": "Limonene" }, { "name": "Caryophyllene" }, { "name": "Linalool" } ] } },
     { "name": "Bubba Kush", "source": "nimble-terpene", "needsReview": true, "propose": { "terpenes": [ { "name": "Caryophyllene" }, { "name": "Limonene" }, { "name": "Myrcene" } ] } },
     { "name": "White Widow", "source": "nimble-terpene", "needsReview": true, "propose": { "terpenes": [ { "name": "Myrcene" }, { "name": "Caryophyllene" }, { "name": "Pinene" } ] } },
     { "name": "Purple Haze", "source": "nimble-terpene", "needsReview": true, "propose": { "terpenes": [ { "name": "Myrcene" }, { "name": "Caryophyllene" }, { "name": "Limonene" } ] } },

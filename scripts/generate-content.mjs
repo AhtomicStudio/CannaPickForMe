@@ -191,7 +191,7 @@ ${jsonLd.map((j) => `<script type="application/ld+json">${j}</script>`).join('\n
       <a href="/" class="brand">Canna<span class="glow">Pick</span>ForMe 🌿</a>
       <a href="/" style="color:var(--muted);font-size:.9rem;">Try the matcher →</a>
     </header>
-    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/lore">The Lore</a> <span>/</span> <span>${escape(title)}</span></nav>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> <span>/</span> <a href="/lore">The Lore</a> <span>/</span> <span>${escape(title.replace(/\s*\|\s*CannaPickForMe$/, ''))}</span></nav>
     ${body}
     <div class="cta">
       <h2>Not sure what to grab tonight?</h2>

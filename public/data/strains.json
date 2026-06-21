@@ -849,6 +849,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Linalool"
       }
     ]
   },
@@ -1947,50 +1963,6 @@
     "description": "A rare phenotype of Runtz. Covered in trichomes with sweet candy flavors and potent balanced effects.",
     "rating": 4.6,
     "genetics": "Gelato × Zkittlez"
-  },
-  {
-    "id": "dosidos",
-    "name": "Dosidos",
-    "type": "indica",
-    "effects": [
-      "Relaxed",
-      "Happy",
-      "Euphoric",
-      "Sleepy",
-      "Uplifted",
-      "Body High"
-    ],
-    "flavors": [
-      "Earthy",
-      "Sweet",
-      "Pungent"
-    ],
-    "description": "A cross of GSC and Face Off OG. Sedating effects with a sweet, earthy flavor.",
-    "rating": 4.4,
-    "genetics": "Girl Scout Cookies × Face Off OG",
-    "dataSources": [
-      {
-        "field": "effects",
-        "source": "heuristic-highs",
-        "fetchedAt": "2026-06-20"
-      },
-      {
-        "field": "terpenes",
-        "source": "nimble-terpene",
-        "fetchedAt": "2026-06-21"
-      }
-    ],
-    "terpenes": [
-      {
-        "name": "Limonene"
-      },
-      {
-        "name": "Caryophyllene"
-      },
-      {
-        "name": "Linalool"
-      }
-    ]
   },
   {
     "id": "kush-mints",

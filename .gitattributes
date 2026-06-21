@@ -1,0 +1,17 @@
+# Normalize line endings so Windows edits stop producing whole-file phantom diffs.
+# Text files are stored with LF in the repo and checked out per-platform.
+* text=auto eol=lf
+
+# Binary assets — never normalize.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.pdf  binary
+*.xlsx binary
+*.xls  binary
+*.rar  binary
+*.zip  binary
+*.exe  binary

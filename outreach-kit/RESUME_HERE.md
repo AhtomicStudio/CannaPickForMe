@@ -1,5 +1,7 @@
 # Resume Notes — Dispensary Outreach Kit
 
+> ⚠️ **Historical snapshot (April 25, 2026).** Much of the "not done yet" list below has since shipped — terpene data, the SEO content engine, sponsored-strain publishing, the strain matcher/filter work, and the Cookies Hayward kit (`outreach-kit/cookies-hayward/`). Kept for the pricing reference and history; don't treat the "next steps" as current.
+
 **Status as of bedtime, April 25, 2026:** Outreach kit is complete and shipped. SEO foundation (222 strain pages, sitemap, robots.txt) was completed earlier in the same session.
 
 ## What's done

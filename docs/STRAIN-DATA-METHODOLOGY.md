@@ -274,11 +274,11 @@ strains before importing anything.
 
 ## 11. Phased rollout (recommended order)
 
-1. **Schema** ✓ — optional `lineage`/`terpenes`/`thc`/`cbd`/`dataSources` + CI guard.
+1. **Schema** ✓ — optional `genetics`/`terpenes`/`thc`/`cbd`/`dataSources` + CI guard.
 2. **Layer 1 (Kushy)** ✓ — `scripts/enrich-strains.mjs` → `data-review/` proposals.
 3. **Layer 2 (menu)** ✓ — adapter captures terpenes/THC/effects; sync returns `enrichment[]`.
 4. **Consolidation** ✓ — `scripts/apply-enrichment.mjs` merges reviewed proposals → strains.json.
-5. **Tag Head/Body High** from enriched data + add matcher weights. *(next)*
+5. **Tag Head/Body High** ✓ — selective tagging via `scripts/tag-highs.mjs` (threshold-gated, not blanket).
 6. **Render** ✓ — genetics line + terpene chips on cards + SEO pages.
 7. **Layer 3** ✓ — `scripts/draft-research.mjs` (prompt pack + sanitizing ingest).
 

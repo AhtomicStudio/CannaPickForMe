@@ -61,7 +61,7 @@ async function loadAboutContent() {
   if (sign) {
     sign.innerHTML = `
       <div class="sign__leaf-row">🌿 🍃 🌿</div>
-      <h1 class="sign__title">About Me</h1>
+      <h2 class="sign__title">About Me</h2>
       <div class="sign__divider"></div>
       <p class="sign__body sign__body--content" id="about-text"></p>
     `;
