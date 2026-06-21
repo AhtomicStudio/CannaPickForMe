@@ -1,19 +1,19 @@
 {
   "mood": {
     "chill": {
-      "effects": { "Relaxed": 3, "Happy": 2, "Euphoric": 1, "Sleepy": 1 },
+      "effects": { "Relaxed": 3, "Happy": 2, "Euphoric": 1, "Sleepy": 1, "Body High": 2 },
       "typeBonus": { "indica": 1.2, "hybrid": 1.0, "sativa": 0.8 }
     },
     "social": {
-      "effects": { "Talkative": 3, "Happy": 2, "Uplifted": 2, "Giggly": 2, "Euphoric": 1 },
+      "effects": { "Talkative": 3, "Happy": 2, "Uplifted": 2, "Giggly": 2, "Euphoric": 1, "Head High": 1 },
       "typeBonus": { "indica": 0.8, "hybrid": 1.0, "sativa": 1.2 }
     },
     "creative": {
-      "effects": { "Creative": 3, "Euphoric": 2, "Focused": 2, "Uplifted": 1 },
+      "effects": { "Creative": 3, "Euphoric": 2, "Focused": 2, "Uplifted": 1, "Head High": 2 },
       "typeBonus": { "indica": 0.7, "hybrid": 1.0, "sativa": 1.3 }
     },
     "energetic": {
-      "effects": { "Energetic": 3, "Uplifted": 2, "Happy": 2, "Focused": 1 },
+      "effects": { "Energetic": 3, "Uplifted": 2, "Happy": 2, "Focused": 1, "Head High": 2 },
       "typeBonus": { "indica": 0.6, "hybrid": 1.0, "sativa": 1.4 }
     },
     "introspective": {
@@ -27,11 +27,11 @@
   },
   "goal": {
     "relax": {
-      "effects": { "Relaxed": 3, "Happy": 1, "Euphoric": 1, "Sleepy": 2 },
+      "effects": { "Relaxed": 3, "Happy": 1, "Euphoric": 1, "Sleepy": 2, "Body High": 2 },
       "typeBonus": { "indica": 1.3, "hybrid": 1.0, "sativa": 0.7 }
     },
     "productive": {
-      "effects": { "Focused": 3, "Energetic": 2, "Uplifted": 2, "Creative": 1 },
+      "effects": { "Focused": 3, "Energetic": 2, "Uplifted": 2, "Creative": 1, "Head High": 2 },
       "typeBonus": { "indica": 0.5, "hybrid": 1.0, "sativa": 1.4 }
     },
     "fun": {
@@ -39,11 +39,11 @@
       "typeBonus": { "indica": 0.8, "hybrid": 1.2, "sativa": 1.0 }
     },
     "sleep": {
-      "effects": { "Sleepy": 4, "Relaxed": 3, "Hungry": 1 },
+      "effects": { "Sleepy": 4, "Relaxed": 3, "Hungry": 1, "Body High": 2 },
       "typeBonus": { "indica": 1.5, "hybrid": 0.9, "sativa": 0.4 }
     },
     "ease-discomfort": {
-      "effects": { "Relaxed": 3, "Tingly": 3, "Sleepy": 1, "Happy": 1 },
+      "effects": { "Relaxed": 3, "Tingly": 3, "Body High": 3, "Sleepy": 1, "Happy": 1 },
       "typeBonus": { "indica": 1.4, "hybrid": 0.9, "sativa": 0.5 }
     },
     "appetite": {
@@ -63,12 +63,12 @@
       "note": "Balanced experience"
     },
     "high": {
-      "effects": { "Euphoric": 2, "Tingly": 1 },
+      "effects": { "Euphoric": 2, "Tingly": 1, "Body High": 1 },
       "scoreMultiplier": 1.2,
       "note": "Seeks potent strains"
     },
     "max": {
-      "effects": { "Euphoric": 3, "Tingly": 2, "Uplifted": 1 },
+      "effects": { "Euphoric": 3, "Tingly": 2, "Uplifted": 1, "Body High": 2 },
       "scoreMultiplier": 1.5,
       "note": "Seeks maximum potency"
     }
@@ -83,15 +83,15 @@
       "typeBonus": { "indica": 0.7, "hybrid": 1.1, "sativa": 1.2 }
     },
     "movie": {
-      "effects": { "Relaxed": 2, "Happy": 2, "Euphoric": 1, "Sleepy": 1, "Hungry": 1 },
+      "effects": { "Relaxed": 2, "Happy": 2, "Euphoric": 1, "Sleepy": 1, "Hungry": 1, "Body High": 2 },
       "typeBonus": { "indica": 1.3, "hybrid": 1.0, "sativa": 0.7 }
     },
     "adventure": {
-      "effects": { "Energetic": 3, "Uplifted": 2, "Happy": 2, "Creative": 1 },
+      "effects": { "Energetic": 3, "Uplifted": 2, "Happy": 2, "Creative": 1, "Head High": 2 },
       "typeBonus": { "indica": 0.5, "hybrid": 1.0, "sativa": 1.5 }
     },
     "gaming": {
-      "effects": { "Focused": 2, "Creative": 2, "Energetic": 2, "Happy": 1 },
+      "effects": { "Focused": 2, "Creative": 2, "Energetic": 2, "Happy": 1, "Head High": 1 },
       "typeBonus": { "indica": 0.7, "hybrid": 1.1, "sativa": 1.3 }
     },
     "datenight": {

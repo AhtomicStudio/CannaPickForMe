@@ -1,0 +1,2116 @@
+{
+  "generatedAt": "2026-06-20T06:38:05.978Z",
+  "source": "heuristic-highs",
+  "stats": {
+    "total": 222,
+    "proposed": 210,
+    "bodyOnly": 71,
+    "headOnly": 139,
+    "both": 0,
+    "neither": 12,
+    "alreadyBody": 12,
+    "alreadyHead": 0
+  },
+  "proposals": [
+    {
+      "name": "Blue Dream",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "OG Kush",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Girl Scout Cookies",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Sour Diesel",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Granddaddy Purple",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Jack Herer",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gelato",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Northern Lights",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "White Widow",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Wedding Cake",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gorilla Glue #4",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Pineapple Express",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Purple Haze",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Bubba Kush",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Green Crack",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "AK-47",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Strawberry Cough",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Zkittlez",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Runtz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Mimosa",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Do-Si-Dos",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "MAC (Miracle Alien Cookies)",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Trainwreck",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Skywalker OG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Durban Poison",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Lemon Haze",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Cherry Pie",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Purple Punch",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Cereal Milk",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Ice Cream Cake",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Super Lemon Haze",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "GSC Thin Mint",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Banana Kush",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Biscotti",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Sunset Sherbet",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Blue Cheese",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Tangie",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Amnesia Haze",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Wedding Crasher",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Maui Wowie",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "King Louis XIII",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Forbidden Fruit",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Platinum OG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Headband",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Larry OG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Candy Kush",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Critical Mass",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "LA Confidential",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Super Silver Haze",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Bruce Banner #3",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Apple Fritter",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "London Pound Cake",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gary Payton",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Jealousy",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Slurricane",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Lava Cake",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "White Runtz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Dosidos",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Kush Mints",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "GMO Cookies",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gorilla Cookies",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "MAC 1",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Tropicana Cookies",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Orange Cookies",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Mango Kush",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Peanut Butter Breath",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Strawberry Banana",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Tahoe OG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Grape Ape",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Alien OG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Lemon Cherry Gelato",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "ZaZa",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Cherry Gelato",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Papaya",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Motorbreath",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Hawaiian",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Laughing Buddha",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Khalifa Kush",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Animal Cookies",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Glue Gelato",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Obama Runtz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Pink Runtz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gushers",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Fire OG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Super Boof",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gas Face",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Limoncello",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "LA Kush Cake",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Guava",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "White Cherry Gelato",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Grease Monkey",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Member Berry",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Black Cherry Punch",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Dolato",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Zookies",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Champagne Cake",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Space Cake",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Fatso",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Pancakes",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gelonade",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Grandpa Larry",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Georgia Pie",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Snow Cap",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Blackberry Caviar",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Blueberry Caviar",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Cereal A La Mode",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Cheetah Piss",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Cinnamon Milk",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Hollywood",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "London Pound Cake #75",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Triple Scoop",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Apples and Bananas",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Collins Ave",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "The Soap",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Sticky Buns",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Sweet Tea",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Pruno",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Sweet & Sour",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Long Island",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Pomegranate Shake",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Ridgeline Lantz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Tequila Sunrise",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Atomic Apple",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Baklava",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Kryptidz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "XJ-13",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Chrome",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gelato 41",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Super Mango Haze",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Honey Dew",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Orange Zkittlez",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Kaleidoscope",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Lemon Fruz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Permanent Fumes",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Flaming Cherries",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Mega Z Red",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Coconut Milk",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Scottie's Cake",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Baby Joker",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Rainbow Beltz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Zkittlez Pie",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Nimbus Plum",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Sherbnado",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Tropic Thunder",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Zuava",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Astroid Belts",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Nerdz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Space Mintz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Delirium",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gushmints",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Melted Strawberries",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Stadanko",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Zlurpees",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Palo Cedro",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Swaggy Kush",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Banga",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Melon Mimosa",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Hawaiian Snow",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Motorberry",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Sour Mochi",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Pink Lemon x Tropaya",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "All Gas No Brakes",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Oakstradam OG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Blue Andes",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Z41",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Mars OG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Blueberry Poptarts",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "06 OG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "24K",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Blue Cookies",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Blueberry Haze",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Brain Wash",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Cobra Chi",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Dark Web",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Fruit Juice",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gelatti",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Horchata",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gush Mintz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Headbanger",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Original Glue",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Body High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Permanent Marker",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Strawnana",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Sugar Cane",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gaslato",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gascotti",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Jack Z",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Wave Runner",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Wavvyland",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Zelium",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Lemon Diesel",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Lemon Freeze Pop",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Pink Lemonade",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Thai OG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Zowahh",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Smacks",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "UFOreoz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Yellow Diamonds",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Sweetiez",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Space Face",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Trop Cherry",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Watermelon Z",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "LCG",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "LCG x Z",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Pandora's Box",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Gelato 33",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Strawberry Guava",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "XXX Runtz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "LCG x Biscotti",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Rainbow Runtz",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    },
+    {
+      "name": "Tropical Zkittlez",
+      "source": "heuristic-highs",
+      "propose": {
+        "effectsSuggested": [
+          "Head High"
+        ]
+      },
+      "needsReview": true
+    }
+  ]
+}

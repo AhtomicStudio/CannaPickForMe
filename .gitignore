@@ -37,7 +37,10 @@ sprites.html
 # AntiGravity / Claude Workspaces
 .claude/
 
-# Standalone Firebase CLI
-firebase.exe
+# Standalone Firebase CLI binaries — never commit (they exceed GitHub's 100MB limit)
+*.exe
+
+# Strain enrichment (Layer 1) — cached source dataset, not committed
+scripts/.cache/
 
 

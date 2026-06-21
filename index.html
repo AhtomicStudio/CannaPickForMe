@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="CannaPickForMe — Let the universe decide what you smoke. Add your strains, answer 4 questions, and get the perfect pick." />
+    <meta name="description" content="Your perfect strain, matched to your mood, not the hype. Answer 4 quick questions and get a personalized pick from a library of 200+ cannabis strains." />
     <meta name="theme-color" content="#0a0e17" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -42,6 +42,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <!-- Crawlable fallback for no-JS clients + search engines (the app is a SPA). -->
+    <noscript>
+      <div style="max-width:760px;margin:0 auto;padding:2rem 1.25rem;color:#e5e7eb;font-family:system-ui,sans-serif;line-height:1.6;">
+        <h1>CannaPickForMe — Find Your Perfect Cannabis Strain</h1>
+        <p>A free cannabis strain matcher for adults 21+. Answer four quick questions about your mood, vibe, and intensity, and get a personalized recommendation from a library of 200+ strains — matched to how you actually want to feel, not the hype.</p>
+        <p>Browse our strain collections:</p>
+        <ul>
+          <li><a href="/lore/best-indica-strains">Best Indica Strains</a></li>
+          <li><a href="/lore/best-sativa-strains">Best Sativa Strains</a></li>
+          <li><a href="/lore/best-hybrid-strains">Best Hybrid Strains</a></li>
+          <li><a href="/lore/best-body-high-strains">Best Body High Strains</a></li>
+          <li><a href="/lore/best-head-high-strains">Best Head High Strains</a></li>
+          <li><a href="/lore/best-sleepy-strains">Best Strains for Sleep</a></li>
+        </ul>
+        <p>New here? Read <a href="/lore/head-high-vs-body-high">Head High vs Body High</a>, or explore <a href="/lore">The Lore</a>.</p>
+        <p><strong>For adults 21+ only. Educational, not medical advice.</strong></p>
+      </div>
+    </noscript>
     <!-- Persistent ambient background — haze + floating leaves across all screens -->
     <div id="app-bg" aria-hidden="true">
       <div class="app-bg__haze app-bg__haze--1"></div>
@@ -68,7 +86,7 @@
         <div class="age-gate__logo">
           <span class="age-gate__icon">🌿</span>
           <h1 class="age-gate__title">Canna<span class="text-glow">Pick</span>ForMe</h1>
-          <p class="age-gate__subtitle">Let the universe decide.</p>
+          <p class="age-gate__subtitle">Matched to your mood, not the hype.</p>
         </div>
         <div class="age-gate__question">
           <p>Are you 21 years of age or older?</p>
@@ -181,16 +199,14 @@
             <div class="ms-wrap" id="ms-effect">
               <button class="ms-btn filter-chip" type="button" id="ms-effect-btn">Effect <span class="ms-badge hidden" id="ms-effect-badge">0</span></button>
               <div class="ms-panel hidden" id="ms-effect-panel">
-                <div class="ms-panel-search"><input type="text" placeholder="Search effects…" id="ms-effect-search" /></div>
-                <p class="ms-panel-hint">Tap to <b class="ms-hint-in">include ＋</b>, again to <b class="ms-hint-ex">exclude －</b>, again to clear.</p>
+                <p class="ms-panel-hint">Click to: <span class="ms-hint-in">Include ✓</span> · <span class="ms-hint-ex">Exclude ✕</span> · Neutral</p>
                 <div class="ms-panel-options" id="ms-effect-options"></div>
               </div>
             </div>
             <div class="ms-wrap" id="ms-flavor">
               <button class="ms-btn filter-chip" type="button" id="ms-flavor-btn">Flavor <span class="ms-badge hidden" id="ms-flavor-badge">0</span></button>
               <div class="ms-panel hidden" id="ms-flavor-panel">
-                <div class="ms-panel-search"><input type="text" placeholder="Search flavors…" id="ms-flavor-search" /></div>
-                <p class="ms-panel-hint">Tap to <b class="ms-hint-in">include ＋</b>, again to <b class="ms-hint-ex">exclude －</b>, again to clear.</p>
+                <p class="ms-panel-hint">Click to: <span class="ms-hint-in">Include ✓</span> · <span class="ms-hint-ex">Exclude ✕</span> · Neutral</p>
                 <div class="ms-panel-options" id="ms-flavor-options"></div>
               </div>
             </div>
@@ -286,11 +302,22 @@
     <div id="better-match-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="better-match-title">
       <div class="modal__backdrop"></div>
       <div class="modal__content modal__content--scrollable">
-        <h3 id="better-match-title">Better Matches 🌿</h3>
-        <p class="modal__sub">These strains match your vibe better than your current stash.</p>
+        <h3 id="better-match-title">Other Top Matches 🌿</h3>
+        <p class="modal__sub">More strains that fit your vibe tonight.</p>
         <div id="better-match-list" class="strain-list better-match-list"></div>
         <div class="modal__actions modal__actions--footer">
           <button id="better-match-close" class="btn btn--primary btn--full">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Strain Detail Modal (tap a result/match strain to see the full card) -->
+    <div id="strain-detail-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="strain-detail-name">
+      <div class="modal__backdrop"></div>
+      <div class="modal__content modal__content--scrollable">
+        <div id="strain-detail-body"></div>
+        <div class="modal__actions modal__actions--footer">
+          <button id="strain-detail-back" class="btn btn--primary btn--full">← Back to result</button>
         </div>
       </div>
     </div>
@@ -340,10 +367,11 @@
           <div id="result-match-score" class="result__score"></div>
           <p id="result-reasoning" class="result__reasoning"></p>
           <div id="result-effects" class="result__effects"></div>
+          <button id="result-view-card" class="btn btn--ghost btn--pill" type="button" style="margin-top:0.85rem;">View full card →</button>
         </div>
         <a id="result-buy-cta" class="result-buy-cta hidden" href="#" target="_blank" rel="noopener nofollow"></a>
         <div id="better-match-container" class="better-match-container hidden">
-          <button id="btn-better-match" class="btn btn--secondary btn--subtle">✨ See strains beyond your stash</button>
+          <button id="btn-better-match" class="btn btn--secondary btn--subtle">✨ Show other top matches</button>
         </div>
         <div class="result__actions">
           <button id="btn-share" class="btn btn--ghost btn--pill">📤 Share</button>

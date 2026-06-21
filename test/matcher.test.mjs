@@ -54,10 +54,10 @@ test('effectOverrides take priority over base effects', () => {
   assert.ok(res.matchScore > 50, `overrides should drive a relax match, got ${res.matchScore}`);
 });
 
-test('a higher rating adds a small bonus', () => {
+test('rating does NOT influence the match score (no unsourced ratings)', () => {
   const plain = matchStrains([strain('a', 'hybrid', ['Relaxed', 'Happy'])], { mood: 'chill' }).matchScore;
   const rated = matchStrains([strain('b', 'hybrid', ['Relaxed', 'Happy'], { rating: 5 })], { mood: 'chill' }).matchScore;
-  assert.ok(rated >= plain, `rated ${rated} should be >= plain ${plain}`);
+  assert.equal(rated, plain, `rating must not change score: rated ${rated} vs plain ${plain}`);
 });
 
 test('allScores includes every stash strain, sorted descending', () => {

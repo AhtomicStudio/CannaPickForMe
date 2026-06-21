@@ -1343,8 +1343,11 @@ async function initInfoEditor() {
                 <input type="text" class="info-topic__teaser-input" value="${esc(topic.teaser || '')}" placeholder="e.g. The secret language of plants" />
               </div>
             </div>
-            <label style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;display:block;">Full Content</label>
-            <textarea placeholder="Write content for ${esc(topic.title)}..." rows="6">${esc(topic.content || '')}</textarea>
+            <label style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;display:block;">Header Image URL (optional)</label>
+            <input type="text" class="info-topic__image-input" value="${esc(topic.image || '')}" placeholder="https://… a hero photo for the post" style="margin-bottom:0.75rem;" />
+            <label style="font-size:0.78rem;color:var(--text-muted);margin-bottom:0.3rem;display:block;">Full Content — Markdown supported</label>
+            <p class="admin-info-hint" style="margin:0 0 0.4rem;font-size:0.72rem;line-height:1.5;">**bold** · [link text](https://…) · photos with ![caption](image-url) · bullet lists with - · link to strains like [Blue Dream](/strain/blue-dream)</p>
+            <textarea placeholder="Write content for ${esc(topic.title)}… (Markdown supported)" rows="8">${esc(topic.content || '')}</textarea>
             <div class="info-topic__actions">
               <button type="button" class="admin-btn admin-btn--ghost admin-btn--small info-topic__delete">🗑 Delete</button>
               <button type="button" class="admin-btn admin-btn--primary info-topic__save">Save</button>
@@ -1367,16 +1370,18 @@ async function initInfoEditor() {
         const content = topicEl.querySelector('textarea').value.trim();
         const icon    = topicEl.querySelector('.info-topic__icon-input')?.value.trim() || '';
         const teaser  = topicEl.querySelector('.info-topic__teaser-input')?.value.trim() || '';
+        const image   = topicEl.querySelector('.info-topic__image-input')?.value.trim() || '';
         const topic = topics.find(t => t.id === id);
         if (!topic) return;
 
         btn.textContent = 'Saving...';
         btn.disabled = true;
         try {
-          await saveInfoTopic(id, { ...topic, content, icon, teaser });
+          await saveInfoTopic(id, { ...topic, content, icon, teaser, image });
           topic.content = content;
           topic.icon    = icon;
           topic.teaser  = teaser;
+          topic.image   = image;
           btn.textContent = 'Saved ✓';
           setTimeout(() => { btn.textContent = 'Save'; btn.disabled = false; }, 2000);
         } catch (err) {

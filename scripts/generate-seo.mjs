@@ -54,18 +54,54 @@ const typeLabel = (t) => {
   return map[String(t).toLowerCase()] || titleCase(t);
 };
 
+// Genetics/lineage string (e.g. "Blueberry × Haze") — the canonical field.
+const lineageOf = (s) => s.genetics || '';
+
+// Bidirectional internal linking: a strain links UP to the content hubs that
+// feature it (keeps the SEO cluster tight). Hub slugs mirror scripts/generate-content.mjs.
+const HUB_LINKS = [
+  { tag: 'Body High', slug: 'best-body-high-strains', label: 'Best Body High Strains' },
+  { tag: 'Head High', slug: 'best-head-high-strains', label: 'Best Head High Strains' },
+  { tag: 'Sleepy', slug: 'best-sleepy-strains', label: 'Best Strains for Sleep' },
+  { tag: 'Energetic', slug: 'best-energizing-strains', label: 'Best Energizing Strains' },
+  { tag: 'Relaxed', slug: 'best-relaxing-strains', label: 'Best Relaxing Strains' },
+  { tag: 'Creative', slug: 'best-creative-strains', label: 'Best Strains for Creativity' },
+  { tag: 'Focused', slug: 'best-focus-strains', label: 'Best Strains for Focus' },
+];
+const TYPE_HUBS = {
+  indica: ['best-indica-strains', 'Best Indica Strains'],
+  sativa: ['best-sativa-strains', 'Best Sativa Strains'],
+  hybrid: ['best-hybrid-strains', 'Best Hybrid Strains'],
+};
+function guideLinksHtml(strain) {
+  const links = HUB_LINKS.filter((h) => (strain.effects || []).includes(h.tag)).slice(0, 3);
+  const typeHub = TYPE_HUBS[String(strain.type).toLowerCase()];
+  if (!links.length && !typeHub) return '';
+  return `<section class="card">
+      <h2>Related guides</h2>
+      <ul class="disp-list">
+        ${links.map((h) => `<li><a href="/lore/${h.slug}">${escape(h.label)} →</a></li>`).join('')}
+        ${typeHub ? `<li><a href="/lore/${typeHub[0]}">${escape(typeHub[1])} →</a></li>` : ''}
+        <li><a href="/lore">The Lore — guides &amp; collections →</a></li>
+      </ul>
+    </section>`;
+}
+
 // Build a short, search-friendly meta description.
 function buildMetaDescription(strain) {
   const type = typeLabel(strain.type);
   const top = (strain.effects || []).slice(0, 4).join(', ').toLowerCase();
   const flavors = (strain.flavors || []).slice(0, 3).join(', ').toLowerCase();
+  const terps = (strain.terpenes || []).map((t) => (t && t.name) || t).slice(0, 3).join(', ').toLowerCase();
   const pieces = [
     `${strain.name} is a ${type.toLowerCase()} strain`,
     top ? `known for ${top} effects` : null,
     flavors ? `with ${flavors} flavors` : null,
+    terps ? `and ${terps} terpenes` : null,
   ].filter(Boolean);
   let desc = `${pieces.join(', ')}.`;
-  if (strain.genetics) desc += ` Genetics: ${strain.genetics}.`;
+  const lin = lineageOf(strain);
+  if (lin) desc += ` Genetics: ${lin}.`;
   desc += ' Match it to your mood with the free CannaPickForMe strain matcher.';
   if (desc.length > 300) desc = desc.slice(0, 297) + '...';
   return desc;
@@ -101,7 +137,7 @@ function jsonLd(strain) {
     category: `Cannabis / ${typeLabel(strain.type)}`,
     image: OG_IMAGE,
     url: `${SITE_URL}/strain/${strain.id}`,
-    brand: { '@type': 'Brand', name: strain.genetics || 'Cannabis' },
+    brand: { '@type': 'Brand', name: lineageOf(strain) || 'Cannabis' },
     additionalProperty: [
       {
         '@type': 'PropertyValue',
@@ -118,16 +154,13 @@ function jsonLd(strain) {
         name: 'Flavor',
         value: f,
       })),
+      ...(strain.terpenes || []).map((t) => ({
+        '@type': 'PropertyValue',
+        name: 'Terpene',
+        value: (t && t.name) || t,
+      })),
     ],
   };
-  if (typeof strain.rating === 'number') {
-    data.aggregateRating = {
-      '@type': 'AggregateRating',
-      ratingValue: strain.rating,
-      bestRating: 5,
-      // We don't have real review counts; omit ratingCount to avoid lying to Google.
-    };
-  }
   return JSON.stringify(data);
 }
 
@@ -176,6 +209,9 @@ function strainPage(strain, related) {
     .join('');
   const flavorsHtml = (strain.flavors || [])
     .map((f) => `<span class="chip chip--alt">${escape(f)}</span>`)
+    .join('');
+  const terpenesHtml = (strain.terpenes || [])
+    .map((t) => `<span class="chip chip--terp">${escape((t && t.name) || t)}</span>`)
     .join('');
   const dispensariesHtml = dispensaries.length
     ? `<section class="card">
@@ -297,6 +333,7 @@ function strainPage(strain, related) {
     border: 1px solid rgba(74,222,128,0.2); font-size: 0.85rem;
   }
   .chip--alt { background: rgba(251,191,36,0.08); color: var(--accent-2); border-color: rgba(251,191,36,0.2); }
+  .chip--terp { background: rgba(34,211,238,0.08); color: #67e8f9; border-color: rgba(34,211,238,0.25); }
   .muted { color: var(--muted); margin: 0 0 0.5rem; font-size: 0.9rem; }
   .disp-list { padding-left: 1.1rem; margin: 0.25rem 0 0; }
   .disp-list li { margin: 0.25rem 0; }
@@ -346,8 +383,7 @@ function strainPage(strain, related) {
 
     <div class="meta-row">
       <span class="type-pill type-${escape(String(strain.type).toLowerCase())}">${escape(typeLabel(strain.type))}</span>
-      ${typeof strain.rating === 'number' ? `<span class="rating">★ ${strain.rating.toFixed(1)}</span>` : ''}
-      ${strain.genetics ? `<span>· ${escape(strain.genetics)}</span>` : ''}
+      ${lineageOf(strain) ? `<span>· ${escape(lineageOf(strain))}</span>` : ''}
     </div>
 
     ${strain.description ? `<p class="lead">${escape(strain.description)}</p>` : ''}
@@ -363,15 +399,23 @@ function strainPage(strain, related) {
       <div>${flavorsHtml}</div>
     </section>` : ''}
 
+    ${terpenesHtml ? `<section class="card">
+      <h2>Terpenes</h2>
+      <p class="muted">Aromatic compounds that shape ${escape(strain.name)}'s effects:</p>
+      <div>${terpenesHtml}</div>
+    </section>` : ''}
+
     <div class="cta">
       <h2>Is ${escape(strain.name)} right for tonight?</h2>
       <p>Answer 4 quick questions and we'll tell you whether it matches your mood.</p>
-      <a href="/">🔥 Match My Mood</a>
+      <a href="/?strain=${escape(strain.id)}">🔥 Match My Mood</a>
     </div>
 
     ${dispensariesHtml}
 
     ${relatedHtml}
+
+    ${guideLinksHtml(strain)}
 
     <footer>
       <p><strong>For adults 21+ only.</strong> Cannabis must be consumed in a legal space.</p>

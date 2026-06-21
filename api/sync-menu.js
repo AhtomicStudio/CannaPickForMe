@@ -19,7 +19,7 @@
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { fetchDovetail } from './_menuAdapters.mjs';
+import { fetchDovetail, buildMenuEnrichment } from './_menuAdapters.mjs';
 import { normaliseName, isFlower, findKnowledgeMatch, coreStrainName } from './_menuMatch.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -170,16 +170,23 @@ export default async function handler(req, res) {
     } catch (err) {
       return res.status(502).json({ error: `Dovetail fetch failed: ${String((err && err.message) || err)}` });
     }
-    const matched = [], unmatched = [], seen = new Set();
+    const matched = [], unmatched = [], enrichment = [], seen = new Set();
+    const enrichSource = `dovetail:${menuSource.retailer || ''}`;
     for (const p of products) {
       const key = normaliseName(p.name);
       if (!key || seen.has(key)) continue;
       seen.add(key);
       const known = findKnowledgeMatch(p.name, strainsData);
-      if (known) matched.push({ id: known.id, name: known.name, type: known.type, thc: p.thc ?? null });
-      else unmatched.push({ name: p.name, brand: p.brand ?? null, thc: p.thc ?? null });
+      if (known) {
+        matched.push({ id: known.id, name: known.name, type: known.type, thc: p.thc ?? null });
+        // Layer 2: capture any new terpenes / THC / effects this shelf product carries.
+        const enrich = buildMenuEnrichment(known, p, { source: enrichSource });
+        if (enrich) enrichment.push(enrich);
+      } else {
+        unmatched.push({ name: p.name, brand: p.brand ?? null, thc: p.thc ?? null });
+      }
     }
-    return res.status(200).json({ matched, unmatched, fetchedAt: new Date().toISOString(), source: 'dovetail' });
+    return res.status(200).json({ matched, unmatched, enrichment, fetchedAt: new Date().toISOString(), source: 'dovetail' });
   }
 
   const { dispensary } = req.query;

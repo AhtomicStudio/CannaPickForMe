@@ -1,0 +1,79 @@
+[
+  {
+    "slug": "best-body-high-strains",
+    "title": "Best Body High Strains",
+    "description": "Heavy, physical, melt-into-the-couch flower. These are the body-dominant strains in our library.",
+    "overline": "Strain Collection",
+    "type": "hub"
+  },
+  {
+    "slug": "best-head-high-strains",
+    "title": "Best Head High Strains",
+    "description": "Cerebral, uplifting, creative flower — the strains that live in your head, not your couch.",
+    "overline": "Strain Collection",
+    "type": "hub"
+  },
+  {
+    "slug": "best-sleepy-strains",
+    "title": "Best Strains for Sleep",
+    "description": "Sedating indicas and heavy hybrids for winding down — and actually staying down.",
+    "overline": "Strain Collection",
+    "type": "hub"
+  },
+  {
+    "slug": "best-energizing-strains",
+    "title": "Best Energizing Strains",
+    "description": "Daytime flower with a get-up-and-go lift — for chores, hikes, or just not melting into the couch.",
+    "overline": "Strain Collection",
+    "type": "hub"
+  },
+  {
+    "slug": "best-relaxing-strains",
+    "title": "Best Relaxing Strains",
+    "description": "Mellow, easygoing flower for decompressing after a long one.",
+    "overline": "Strain Collection",
+    "type": "hub"
+  },
+  {
+    "slug": "best-creative-strains",
+    "title": "Best Strains for Creativity",
+    "description": "Cerebral, free-associating flower for making music, art, or just thinking sideways.",
+    "overline": "Strain Collection",
+    "type": "hub"
+  },
+  {
+    "slug": "best-focus-strains",
+    "title": "Best Strains for Focus",
+    "description": "Clear-headed flower that helps you lock in instead of spacing out.",
+    "overline": "Strain Collection",
+    "type": "hub"
+  },
+  {
+    "slug": "best-indica-strains",
+    "title": "Best Indica Strains",
+    "description": "The heavy, relaxing, body-forward side of the menu.",
+    "overline": "Strain Collection",
+    "type": "hub"
+  },
+  {
+    "slug": "best-sativa-strains",
+    "title": "Best Sativa Strains",
+    "description": "The bright, energizing, head-forward side of the menu.",
+    "overline": "Strain Collection",
+    "type": "hub"
+  },
+  {
+    "slug": "best-hybrid-strains",
+    "title": "Best Hybrid Strains",
+    "description": "The best-of-both-worlds middle of the menu — balanced head and body.",
+    "overline": "Strain Collection",
+    "type": "hub"
+  },
+  {
+    "slug": "head-high-vs-body-high",
+    "title": "Head High vs Body High — What's the Difference?",
+    "description": "A head high lives in your dome; a body high sinks into the couch. Here's what actually drives the difference — and how to read a menu like you know.",
+    "overline": "Cannabis 101",
+    "type": "post"
+  }
+]

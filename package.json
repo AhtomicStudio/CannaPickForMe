@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "generate:seo": "node scripts/generate-seo.mjs",
-    "prebuild": "node scripts/generate-seo.mjs",
+    "generate:content": "node scripts/generate-content.mjs",
+    "prebuild": "node scripts/generate-seo.mjs && node scripts/generate-content.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --import ./test/_register.mjs --test"

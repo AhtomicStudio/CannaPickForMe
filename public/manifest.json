@@ -1,7 +1,7 @@
 {
   "name": "CannaPickForMe",
   "short_name": "CannaPickForMe",
-  "description": "Let the universe decide what you smoke. Add your strains, answer 4 questions, get the perfect pick.",
+  "description": "Your perfect strain, matched to your mood, not the hype. Answer 4 quick questions and get a personalized pick from 200+ cannabis strains.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0e17",

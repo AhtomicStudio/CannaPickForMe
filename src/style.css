@@ -2756,6 +2756,18 @@ a.partner-strain-card:hover {
   font-size: 0.75rem;
 }
 
+.strain-pill--terpene {
+  background: rgba(34, 211, 238, 0.12);
+  border: 1px solid rgba(34, 211, 238, 0.28);
+  color: #67e8f9;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+}
+
+.tag-clickable { cursor: pointer; }
+.tag-clickable:hover { filter: brightness(1.2); }
+
 .strain-pill--dispensary {
   display: inline-flex;
   align-items: center;
@@ -3992,12 +4004,14 @@ html.light-mode .app-bg__haze {
   position: absolute;
   top: calc(100% + 0.4rem);
   left: 0;
-  min-width: 200px;
-  max-height: 260px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
+  min-width: 220px;
+  max-height: 280px;
+  background: rgba(20, 27, 45, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   z-index: 200;
   display: flex;
   flex-direction: column;
@@ -5607,25 +5621,82 @@ html.light-mode .app-bg__haze {
 .sponsored-strain-card__buy:active { transform: scale(0.97); }
 .sponsored-strain-card__buy.hidden { display: none; }
 
-/* ── Tri-state filter chips (Effects / Flavors panels) ─────────────────────── */
-.ms-panel-hint { font-size: 0.72rem; color: var(--text-muted, #7E8B83); margin: 4px 2px 8px; }
-.ms-hint-in { color: #4ADE80; }
-.ms-hint-ex { color: #f87171; }
-.ms-panel-options { display: flex; flex-wrap: wrap; gap: 6px; max-height: 240px; overflow-y: auto; }
-.ms-chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 6px 11px; border-radius: 999px; cursor: pointer;
-  font-size: 0.8rem; line-height: 1; white-space: nowrap;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.16);
-  color: var(--text, #E6F0EA);
-  transition: background .12s ease, border-color .12s ease, color .12s ease, transform .1s ease;
+/* ── Tri-state filter checklist (Effects / Flavors panels) ─────────────────── */
+.ms-panel-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted, #7E8B83);
+  margin: 8px 12px 8px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid var(--border);
+  letter-spacing: 0.02em;
 }
-.ms-chip:hover { border-color: rgba(255,255,255,0.32); }
-.ms-chip:active { transform: scale(0.96); }
-.ms-chip__mark { font-weight: 700; }
-.ms-chip--in { background: rgba(74,222,128,0.16); border-color: rgba(74,222,128,0.6); color: #d6ffe4; }
-.ms-chip--ex {
-  background: rgba(248,113,113,0.15); border-color: rgba(248,113,113,0.6); color: #ffd9d9;
-  text-decoration: line-through; text-decoration-thickness: 1px;
+.ms-hint-in { color: var(--green-glow, #4ADE80); font-weight: 600; }
+.ms-hint-ex { color: var(--danger, #f87171); font-weight: 600; }
+.ms-panel-options {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 0 8px 8px;
+}
+.ms-option-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #cbd5e1);
+  font-family: var(--font-body, inherit);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-sm, 8px);
+  transition: background-color 0.12s ease, color 0.12s ease;
+  user-select: none;
+}
+.ms-option-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary, #f1f5f9);
+}
+.ms-custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.12s ease, border-color 0.12s ease, transform 0.1s ease;
+  color: transparent;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+.ms-option-row:active .ms-custom-checkbox {
+  transform: scale(0.9);
+}
+.ms-custom-checkbox--neutral {
+  background: transparent;
+}
+.ms-custom-checkbox--in {
+  background: var(--green-primary, #22c55e);
+  border-color: var(--green-primary, #22c55e);
+  color: #ffffff;
+}
+.ms-custom-checkbox--ex {
+  background: var(--danger, #ef4444);
+  border-color: var(--danger, #ef4444);
+  color: #ffffff;
+}
+.ms-option-row--in {
+  color: var(--text-primary, #f1f5f9);
+}
+.ms-option-row--ex {
+  color: var(--text-dim, #64748b);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
 }

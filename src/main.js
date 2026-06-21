@@ -73,7 +73,7 @@ async function loadStrains() {
 }
 
 // === CONSTANTS ===
-const ALL_EFFECTS = ['Relaxed','Happy','Euphoric','Creative','Uplifted','Energetic','Focused','Talkative','Giggly','Sleepy','Hungry','Tingly'];
+const ALL_EFFECTS = ['Relaxed','Happy','Euphoric','Creative','Uplifted','Energetic','Focused','Talkative','Giggly','Sleepy','Hungry','Tingly','Body High','Head High'];
 const ALL_FLAVORS = ['Earthy','Sweet','Berry','Citrus','Pine','Diesel','Pungent','Woody','Grape','Lemon','Mango','Tropical','Minty','Vanilla','Flowery','Spicy','Cherry','Blueberry','Strawberry','Orange','Pineapple','Coffee','Cheese','Creamy','Nutty','Apple','Banana','Chocolate','Candy','Fruity','Peach'];
 
 // Neon color palette for the random SMOKE text
@@ -135,11 +135,11 @@ function buildExpandBody(strain) {
     : `<span class="strain-card__genetics-unknown">🤫</span>`;
 
   const effectsHTML = effects
-    .map(e => `<span class="strain-pill--effect">${e}</span>`)
+    .map(e => `<span class="strain-pill--effect tag-clickable" data-effect-filter="${e}">${e}</span>`)
     .join('');
 
   const flavorsHTML = flavors
-    .map(f => `<span class="strain-pill--flavor">${f}</span>`)
+    .map(f => `<span class="strain-pill--flavor tag-clickable" data-flavor-filter="${f}">${f}</span>`)
     .join('');
 
   const dispensaryHTML = dispensaries.length > 0
@@ -161,6 +161,17 @@ function buildExpandBody(strain) {
       </div>`
     : '';
 
+  const terpenes = strain.terpenes || [];
+  const terpenesHTML = terpenes
+    .map(t => `<span class="strain-pill--terpene">${(t && t.name) || t}</span>`)
+    .join('');
+  const terpenesSection = terpenesHTML
+    ? `<div>
+        <p class="strain-card__expand-label">Terpenes</p>
+        <div class="strain-pill-row">${terpenesHTML}</div>
+      </div>`
+    : '';
+
   return `
     <div class="strain-card__expand">
       <div class="strain-card__expand-body">
@@ -177,6 +188,7 @@ function buildExpandBody(strain) {
           <div class="strain-pill-row">${effectsHTML}</div>
         </div>
         ${flavorsSection}
+        ${terpenesSection}
         ${dispensaryHTML}
       </div>
     </div>
@@ -204,6 +216,9 @@ document.addEventListener('click', (e) => {
 let currentScreen = 'age-gate';
 let sessionAnswers = {};
 let currentQuestionIndex = 0;
+// Set when arriving from a strain page (/?strain=<id>): runs the matcher over the
+// whole library and surfaces that strain's % match in the result.
+let focusStrainId = null;
 let lastShareData = null; // set after each result render
 let currentSearchQuery = '';
 let currentFilter = 'all';
@@ -278,10 +293,10 @@ function updateStashUI() {
 
   if (countEl) countEl.textContent = count;
   if (tabCountEl) tabCountEl.textContent = count;
-  if (pickBtn) pickBtn.disabled = !strainsReady || count < 2;
+  if (pickBtn) pickBtn.disabled = !strainsReady;
   if (hint) {
-    hint.textContent = count < 2
-      ? `Add at least ${2 - count} more strain${2 - count > 1 ? 's' : ''} to your stash to get started!`
+    hint.textContent = count === 0
+      ? `Tap Pick For Me to search the whole library — or add your own strains first. 🔥`
       : `You have ${count} strain${count > 1 ? 's' : ''} ready. Let's roll! 🔥`;
   }
   // Show/hide clear stash button
@@ -321,6 +336,7 @@ function initDisclaimer() {
     // Don't dismiss if clicking the details/summary
     if (e.target.closest('details')) return;
     showScreen('home');
+    startFocusSessionIfPending();
   });
 }
 
@@ -488,9 +504,9 @@ function initStash() {
   });
 
   // Type filter chips
-  document.querySelectorAll('.filter-chip').forEach(chip => {
+  document.querySelectorAll('.filter-chip[data-filter]').forEach(chip => {
     chip.addEventListener('click', () => {
-      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('filter-chip--active'));
+      document.querySelectorAll('.filter-chip[data-filter]').forEach(c => c.classList.remove('filter-chip--active'));
       chip.classList.add('filter-chip--active');
       currentFilter = chip.dataset.filter;
       renderBrowseList();
@@ -528,9 +544,13 @@ function renderTriStateOptions(optionsId, items, stateMap, query = '') {
   const list = q ? items.filter(i => i.toLowerCase().includes(q)) : items;
   el.innerHTML = list.map(item => {
     const state = stateMap.get(item) || 'neutral';
-    const mark = state === 'in' ? '＋' : state === 'ex' ? '－' : '';
-    return `<button type="button" class="ms-chip ms-chip--${state}" data-val="${item}" aria-pressed="${state !== 'neutral'}">`
-      + (mark ? `<span class="ms-chip__mark">${mark}</span>` : '') + `${item}</button>`;
+    const mark = state === 'in' ? '✓' : state === 'ex' ? '✕' : '';
+    return `
+      <button type="button" class="ms-option-row ms-option-row--${state}" data-val="${item}" aria-pressed="${state !== 'neutral'}">
+        <span class="ms-custom-checkbox ms-custom-checkbox--${state}">${mark}</span>
+        <span class="ms-option-label">${item}</span>
+      </button>
+    `;
   }).join('');
 }
 
@@ -545,11 +565,11 @@ function setupTriState({ btnId, panelId, searchId, optionsId, badgeId, wrapId, i
   _triStateRebuild[optionsId] = rebuild;
   rebuild();
 
-  // Cycle a chip's state: neutral -> include -> exclude -> neutral.
+  // Cycle an option's state: neutral -> include (in) -> exclude (ex) -> neutral.
   optionsEl.addEventListener('click', (e) => {
-    const chip = e.target.closest('.ms-chip');
-    if (!chip) return;
-    const val = chip.getAttribute('data-val');
+    const row = e.target.closest('.ms-option-row');
+    if (!row) return;
+    const val = row.getAttribute('data-val');
     const cur = stateMap.get(val) || 'neutral';
     const next = cur === 'neutral' ? 'in' : cur === 'in' ? 'ex' : 'neutral';
     if (next === 'neutral') stateMap.delete(val); else stateMap.set(val, next);
@@ -569,7 +589,10 @@ function setupTriState({ btnId, panelId, searchId, optionsId, badgeId, wrapId, i
 
   document.addEventListener('click', (e) => {
     const wrap = document.getElementById(wrapId);
-    if (wrap && !wrap.contains(e.target)) panel.classList.add('hidden');
+    // Only close if click is outside wrap AND the clicked element is still in the DOM
+    if (wrap && !wrap.contains(e.target) && e.target.isConnected) {
+      panel.classList.add('hidden');
+    }
   });
 }
 
@@ -640,6 +663,30 @@ function clearAllFilters() {
   renderBrowseList();
 }
 
+// Clickable effect/flavor tags → jump to the browse panel filtered by that tag.
+function filterByTag(kind, value) {
+  if (kind === 'effect') { effectStates.clear(); effectStates.set(value, 'in'); }
+  else if (kind === 'flavor') { flavorStates.clear(); flavorStates.set(value, 'in'); }
+  else return;
+  closeModal('strain-detail-modal');
+  closeModal('better-match-modal');
+  Object.values(_triStateRebuild).forEach(fn => fn());
+  updateTriStateBadge('ms-effect-badge', effectStates);
+  updateTriStateBadge('ms-flavor-badge', flavorStates);
+  updateClearBtn();
+  renderBrowseList();
+  showScreen('stash');
+  const panel = document.getElementById('browse-panel');
+  if (panel) requestAnimationFrame(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+}
+
+document.addEventListener('click', (e) => {
+  const tag = e.target.closest ? e.target.closest('[data-effect-filter],[data-flavor-filter]') : null;
+  if (!tag) return;
+  if (tag.dataset.effectFilter) filterByTag('effect', tag.dataset.effectFilter);
+  else if (tag.dataset.flavorFilter) filterByTag('flavor', tag.dataset.flavorFilter);
+});
+
 function updateSortIcon() {
   const icon = document.getElementById('sort-icon');
   const btn = document.getElementById('sort-strains-btn');
@@ -654,21 +701,17 @@ function updateSortIcon() {
 }
 
 function initMultiSelects() {
-  const all = getAllStrains();
-  const effects = [...new Set(all.flatMap(s => s.effects || []))].sort();
-  const flavors = [...new Set(all.flatMap(s => s.flavors || []))].sort();
-
   setupTriState({
     wrapId: 'ms-effect', btnId: 'ms-effect-btn', panelId: 'ms-effect-panel',
     searchId: 'ms-effect-search', optionsId: 'ms-effect-options', badgeId: 'ms-effect-badge',
-    items: effects, stateMap: effectStates,
+    items: ALL_EFFECTS, stateMap: effectStates,
     onchange: () => { updateClearBtn(); renderBrowseList(); },
   });
 
   setupTriState({
     wrapId: 'ms-flavor', btnId: 'ms-flavor-btn', panelId: 'ms-flavor-panel',
     searchId: 'ms-flavor-search', optionsId: 'ms-flavor-options', badgeId: 'ms-flavor-badge',
-    items: flavors, stateMap: flavorStates,
+    items: ALL_FLAVORS, stateMap: flavorStates,
     onchange: () => { updateClearBtn(); renderBrowseList(); },
   });
 
@@ -1031,12 +1074,33 @@ function initSession() {
 function startResult() {
   showScreen('result');
 
-  const stashStrains = getStashStrains();
+  // Pick For Me works even with an empty stash — fall back to the whole library.
+  // A strain-page deep link (?strain=) also forces the full library into contention.
+  let stashStrains = getStashStrains();
+  if (focusStrainId || stashStrains.length === 0) stashStrains = getAllStrains();
   const result = matchStrains(stashStrains, sessionAnswers);
 
   if (!result) {
     showScreen('home');
     return;
+  }
+
+  // Focus deep link (/?strain=): headline the strain they came from with ITS
+  // score — don't crown a surprise winner. The suggester below offers closer fits.
+  if (focusStrainId) {
+    const fs = result.allScores.find(s => s.strainId === focusStrainId);
+    const fStrain = getAllStrains().find(s => s.id === focusStrainId);
+    if (fs && fStrain) {
+      result.pickedStrain = fStrain;
+      result.matchScore = fs.score;
+      result.isPerfectMatch = fs.score >= 80;
+      result.reasoning = fs.score >= 80
+        ? `${fStrain.name} is a strong fit for your vibe tonight.`
+        : fs.score >= 50
+          ? `${fStrain.name} is a decent fit — but the closer matches below might hit better.`
+          : `${fStrain.name} isn't the closest fit tonight. The strains below match your answers more.`;
+    }
+    focusStrainId = null; // consume — back to normal Pick For Me afterwards
   }
 
   const WEIGH_DURATION = 5000;
@@ -1229,6 +1293,23 @@ function renderBuyCta(pickedStrain) {
   cta.classList.remove('hidden');
 }
 
+// Tap a strain (result headline or a match card) to see its full card in a
+// modal; Back returns to the result underneath without losing it.
+function showStrainDetail(strain) {
+  if (!strain) return;
+  const body = document.getElementById('strain-detail-body');
+  if (!body) return;
+  const tLabel = strain.type ? strain.type.charAt(0).toUpperCase() + strain.type.slice(1) : '';
+  body.innerHTML = `
+    <h3 id="strain-detail-name" class="result__strain-name" style="text-align:center;margin:0 0 0.25rem;">${strain.name}</h3>
+    <div class="result__strain-type" data-type="${strain.type}" style="text-align:center;margin-bottom:0.75rem;">${tLabel}</div>
+    ${buildExpandBody(strain)}
+  `;
+  const back = document.getElementById('strain-detail-back');
+  if (back) back.onclick = () => closeModal('strain-detail-modal');
+  openModal('strain-detail-modal');
+}
+
 async function renderResult(result) {
   const { pickedStrain, matchScore, isPerfectMatch, reasoning } = result;
 
@@ -1294,7 +1375,7 @@ async function renderResult(result) {
 
   const effectsEl = document.getElementById('result-effects');
   effectsEl.innerHTML = (pickedStrain.effectOverrides || pickedStrain.effects || []).map(e =>
-    `<span class="effect-tag">${e}</span>`
+    `<span class="effect-tag tag-clickable" data-effect-filter="${e}">${e}</span>`
   ).join('');
 
   // Random neon color for SMOKE text
@@ -1319,20 +1400,18 @@ async function renderResult(result) {
 
     let topGlobalStrains = [];
 
-    if (matchScore < 100) {
-      // Find strains not in stash
-      const globalAvailable = getAllStrains().filter(s => !isInStash(s.id));
-      const globalResult = matchStrains(globalAvailable, sessionAnswers);
-      
-      if (globalResult && globalResult.allScores) {
-        // If a partner is active, it occupies one slot in the modal (slot 4)
-        const maxOrganic = activePartner ? 4 : 5; // 4 organic + 1 partner = 5 max
-        // Find strains that have a strictly higher score than the current best stash match
-        topGlobalStrains = globalResult.allScores.filter(s => s.score > matchScore).slice(0, maxOrganic);
+    // "Show other top matches": the next-best strains beyond the headline. Works
+    // for the normal winner AND the focus deep-link (where it surfaces closer fits).
+    const globalAvailable = getAllStrains().filter(s => s.id !== pickedStrain.id);
+    const globalResult = matchStrains(globalAvailable, sessionAnswers);
 
-        if (topGlobalStrains.length > 0) {
-          betterMatchContainer.classList.remove('hidden');
-        }
+    if (globalResult && globalResult.allScores) {
+      // If a partner is active, it occupies one slot in the modal.
+      const maxOrganic = activePartner ? 4 : 5;
+      topGlobalStrains = globalResult.allScores.slice(0, maxOrganic);
+
+      if (topGlobalStrains.length > 0) {
+        betterMatchContainer.classList.remove('hidden');
       }
     }
 
@@ -1345,6 +1424,10 @@ async function renderResult(result) {
 
   renderBuyCta(pickedStrain);
   renderSponsoredStrain(result.allScores);
+
+  // Tap into the headline strain to see its full card (Back returns to the result).
+  const viewCardBtn = document.getElementById('result-view-card');
+  if (viewCardBtn) viewCardBtn.onclick = () => showStrainDetail(pickedStrain);
 
   lastShareData = {
     strainName: pickedStrain.name,
@@ -1888,7 +1971,20 @@ function initModalEscape() {
 }
 
 // === BOOT ===
+// Strain-page deep link: start a fresh matcher session (questions need no stash;
+// startResult forces the whole library into contention when focusStrainId is set).
+function startFocusSessionIfPending() {
+  if (!focusStrainId) return false;
+  localStorage.removeItem('cpfm.session.draft');
+  sessionAnswers = {};
+  currentQuestionIndex = 0;
+  renderQuestion();
+  showScreen('session');
+  return true;
+}
+
 async function init() {
+  focusStrainId = new URLSearchParams(window.location.search).get('strain') || null;
   loadStrains(); // start fetch immediately — no await, button stays disabled until ready
   loadSavedTheme();
   inject();
@@ -1913,6 +2009,10 @@ async function init() {
   initAccountModal();
   initModalEscape();
   initRouter();
+
+  // Strain-page deep link (/?strain=): if already age-verified, jump straight
+  // into the matcher; otherwise the disclaimer dismiss handles it post-gate.
+  if (isAgeVerified()) startFocusSessionIfPending();
 
   // Load Firebase / userService after synchronous UI setup — keeps it off
   // the critical path. handleSignInLink needs it to detect magic-link URLs.

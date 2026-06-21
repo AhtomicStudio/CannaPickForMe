@@ -86,6 +86,67 @@
   text-align: center;
 }
 
+/* ── STATIC PAGE CARDS (guides + collections from the content engine) ── */
+.lore-pages {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+.lore-page-card {
+  display: block;
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  text-decoration: none;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+.lore-page-card:hover {
+  background: rgba(168, 85, 247, 0.10);
+  border-color: rgba(168, 85, 247, 0.6);
+  transform: translateY(-2px);
+}
+.lore-page-card__kind {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--purple-glow, #c084fc);
+  margin-bottom: 0.4rem;
+}
+.lore-page-card__title {
+  display: block;
+  font-weight: 700;
+  font-size: 1.02rem;
+  line-height: 1.25;
+  margin-bottom: 0.3rem;
+  color: var(--text-primary, #f1f5f9);
+}
+.lore-page-card__desc {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--text-muted, #9ca3af);
+  line-height: 1.45;
+}
+/* Rich content inside admin topic cards: images + strain links */
+.topic-card__content img,
+.lore-post-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin: 0.75rem 0;
+}
+.topic-card__content a { color: var(--green-glow, #4ade80); font-weight: 600; }
+.topic-card__hero {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 0.85rem;
+}
+
 /* ── TOPIC CARDS ── */
 .topics-grid {
   width: 100%;

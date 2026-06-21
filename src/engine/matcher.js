@@ -73,11 +73,6 @@ function scoreStrain(strain, profile) {
   // Apply intensity multiplier
   score *= scoreMultiplier;
 
-  // Bonus for higher-rated strains (small, max +5)
-  if (strain.rating) {
-    score += (strain.rating / 5) * 5;
-  }
-
   // Clamp to 0-100
   return Math.min(100, Math.max(0, Math.round(score)));
 }

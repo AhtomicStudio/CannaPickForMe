@@ -74,7 +74,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Diesel",
@@ -86,6 +87,13 @@
     "genetics": "Chemdawg × Super Skunk",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -97,7 +105,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Grape",
@@ -106,7 +115,14 @@
     ],
     "description": "A famous indica cross of Purple Urkle and Big Bud. Known for complex grape and berry aroma and deep body relaxation.",
     "rating": 4.5,
-    "genetics": "Purple Urkle × Big Bud"
+    "genetics": "Purple Urkle × Big Bud",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "jack-herer",
@@ -117,7 +133,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Earthy",
@@ -129,6 +146,13 @@
     "genetics": "Haze × (Northern Lights #5 × Shiva Skunk)",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -163,7 +187,8 @@
       "Happy",
       "Sleepy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -172,7 +197,14 @@
     ],
     "description": "One of the most famous indicas of all time. Produces dreamy euphoria and deep body relaxation.",
     "rating": 4.5,
-    "genetics": "Afghani × Thai"
+    "genetics": "Afghani × Thai",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "white-widow",
@@ -183,7 +215,8 @@
       "Euphoric",
       "Uplifted",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Earthy",
@@ -192,7 +225,14 @@
     ],
     "description": "A balanced hybrid first bred in the Netherlands. Known for its white crystal resin buds and burst of energy.",
     "rating": 4.3,
-    "genetics": "Brazilian Sativa × South Indian Indica"
+    "genetics": "Brazilian Sativa × South Indian Indica",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "wedding-cake",
@@ -246,7 +286,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Tropical",
@@ -255,7 +296,14 @@
     ],
     "description": "A sativa-dominant hybrid combining Trainwreck and Hawaiian. Delivers long-lasting energetic buzz.",
     "rating": 4.3,
-    "genetics": "Trainwreck × Hawaiian"
+    "genetics": "Trainwreck × Hawaiian",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "purple-haze",
@@ -266,7 +314,8 @@
       "Euphoric",
       "Creative",
       "Energetic",
-      "Uplifted"
+      "Uplifted",
+      "Head High"
     ],
     "flavors": [
       "Earthy",
@@ -275,7 +324,14 @@
     ],
     "description": "A classic sativa that delivers dreamy, blissful euphoria and creative stimulation. Inspired by Jimi Hendrix.",
     "rating": 4.2,
-    "genetics": "Purple Thai × Haze"
+    "genetics": "Purple Thai × Haze",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "bubba-kush",
@@ -286,7 +342,8 @@
       "Sleepy",
       "Happy",
       "Hungry",
-      "Euphoric"
+      "Euphoric",
+      "Body High"
     ],
     "flavors": [
       "Coffee",
@@ -298,6 +355,13 @@
     "genetics": "OG Kush × Afghani",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -309,7 +373,8 @@
       "Happy",
       "Uplifted",
       "Euphoric",
-      "Focused"
+      "Focused",
+      "Head High"
     ],
     "flavors": [
       "Citrus",
@@ -318,7 +383,14 @@
     ],
     "description": "A sharp energy and focus provider. Great for daytime use with a tangy, fruity flavor.",
     "rating": 4.3,
-    "genetics": "Skunk #1 × Unknown Indica"
+    "genetics": "Skunk #1 × Unknown Indica",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "ak-47",
@@ -349,7 +421,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Strawberry",
@@ -361,6 +434,13 @@
     "genetics": "Strawberry Field × Haze",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -372,7 +452,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Focused"
+      "Focused",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -381,7 +462,14 @@
     ],
     "description": "An award-winning indica with a fruity candy-like flavor profile. Delivers calming and happy effects.",
     "rating": 4.5,
-    "genetics": "Grape Ape × Grapefruit"
+    "genetics": "Grape Ape × Grapefruit",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "runtz",
@@ -415,7 +503,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Focused"
+      "Focused",
+      "Head High"
     ],
     "flavors": [
       "Citrus",
@@ -424,7 +513,14 @@
     ],
     "description": "A sativa-leaning hybrid known for its rising cerebral effects and energizing buzz. Great morning strain.",
     "rating": 4.4,
-    "genetics": "Clementine × Purple Punch"
+    "genetics": "Clementine × Purple Punch",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "do-si-dos",
@@ -435,7 +531,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -444,7 +541,14 @@
     ],
     "description": "A potent indica cross of Girl Scout Cookies and Face Off OG. Heavy-hitting relaxation.",
     "rating": 4.4,
-    "genetics": "Girl Scout Cookies × Face Off OG"
+    "genetics": "Girl Scout Cookies × Face Off OG",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "mac",
@@ -475,7 +579,8 @@
       "Euphoric",
       "Uplifted",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Pine",
@@ -484,7 +589,14 @@
     ],
     "description": "A potent sativa-dominant hybrid with sharp mind-bending effects. Hits hard and fast like a freight train.",
     "rating": 4.2,
-    "genetics": "Mexican × Thai × Afghani"
+    "genetics": "Mexican × Thai × Afghani",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "skywalker-og",
@@ -495,7 +607,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -507,7 +620,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Skywalker × OG Kush"
+    "genetics": "Skywalker × OG Kush",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "durban-poison",
@@ -518,7 +638,8 @@
       "Uplifted",
       "Happy",
       "Focused",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Earthy",
@@ -530,6 +651,13 @@
     "genetics": null,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -541,7 +669,8 @@
       "Energetic",
       "Uplifted",
       "Euphoric",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Lemon",
@@ -550,7 +679,14 @@
     ],
     "description": "A sativa-dominant cross of Lemon Skunk and Silver Haze with a zesty lemon smell and taste.",
     "rating": 4.2,
-    "genetics": "Lemon Skunk × Silver Haze"
+    "genetics": "Lemon Skunk × Silver Haze",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "cherry-pie",
@@ -584,7 +720,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Grape",
@@ -596,6 +733,13 @@
     "genetics": "Larry OG × Granddaddy Purple",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -630,7 +774,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -639,7 +784,14 @@
     ],
     "description": "A heavy indica cross of Wedding Cake and Gelato #33. Sedating effects with delicious dessert flavors.",
     "rating": 4.5,
-    "genetics": "Wedding Cake × Gelato 33"
+    "genetics": "Wedding Cake × Gelato 33",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "super-lemon-haze",
@@ -650,7 +802,8 @@
       "Energetic",
       "Uplifted",
       "Euphoric",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Lemon",
@@ -662,7 +815,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Lemon Skunk × Super Silver Haze"
+    "genetics": "Lemon Skunk × Super Silver Haze",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "gsc-thin-mint",
@@ -693,7 +853,8 @@
       "Happy",
       "Euphoric",
       "Uplifted",
-      "Sleepy"
+      "Sleepy",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -702,7 +863,14 @@
     ],
     "description": "A heavy indica with a smooth banana flavor. Creates mellow happiness and lazy tranquility.",
     "rating": 4.3,
-    "genetics": "Ghost OG × Skunk Haze"
+    "genetics": "Ghost OG × Skunk Haze",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "biscotti",
@@ -713,7 +881,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Tingly"
+      "Tingly",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -725,7 +894,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Gelato 25 × Girl Scout Cookies × South Florida OG"
+    "genetics": "Gelato 25 × Girl Scout Cookies × South Florida OG",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "sunset-sherbet",
@@ -756,7 +932,8 @@
       "Happy",
       "Sleepy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Cheese",
@@ -765,7 +942,14 @@
     ],
     "description": "A cross of Blueberry and UK Cheese. Known for its unique savory-sweet flavor and slow, relaxing effects.",
     "rating": 4.1,
-    "genetics": "Blueberry × U.K. Cheese"
+    "genetics": "Blueberry × U.K. Cheese",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "tangie",
@@ -776,7 +960,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Citrus",
@@ -785,7 +970,14 @@
     ],
     "description": "A sativa remake of the 1995 Tangerine Dream. Delivers citrusy creative euphoria.",
     "rating": 4.3,
-    "genetics": "California Orange × Skunk-1"
+    "genetics": "California Orange × Skunk-1",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "amnesia-haze",
@@ -796,7 +988,8 @@
       "Euphoric",
       "Uplifted",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Earthy",
@@ -805,7 +998,14 @@
     ],
     "description": "A powerful sativa with Jamaican and South Asian landrace genetics. Intense cerebral buzz.",
     "rating": 4.2,
-    "genetics": "Afghani Hawaiian × Laos × Jamaica"
+    "genetics": "Afghani Hawaiian × Laos × Jamaica",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "wedding-crasher",
@@ -839,7 +1039,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Tropical",
@@ -848,7 +1049,14 @@
     ],
     "description": "A classic Hawaiian sativa. Light stress-relieving effects and tropical flavors transport you to the islands.",
     "rating": 4.2,
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "king-louis",
@@ -859,7 +1067,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -871,6 +1080,13 @@
     "genetics": "OG Kush × LA Confidential",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -882,7 +1098,8 @@
       "Happy",
       "Sleepy",
       "Euphoric",
-      "Tingly"
+      "Tingly",
+      "Body High"
     ],
     "flavors": [
       "Tropical",
@@ -891,7 +1108,14 @@
     ],
     "description": "A cross of Cherry Pie and Tangie. Exotic fruit flavors with deeply relaxing physical effects.",
     "rating": 4.3,
-    "genetics": "Cherry Pie × Tangie"
+    "genetics": "Cherry Pie × Tangie",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "platinum-og",
@@ -902,7 +1126,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -911,7 +1136,14 @@
     ],
     "description": "A heavy-hitting indica descended from OG Kush and Purps. Known for its intense physical effects.",
     "rating": 4.3,
-    "genetics": "Master Kush × OG Kush × Afghani"
+    "genetics": "Master Kush × OG Kush × Afghani",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "headband",
@@ -962,7 +1194,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -971,7 +1204,14 @@
     ],
     "description": "A sweet-tasting hybrid with gentle, comfortable effects. Like candy for your mind and body.",
     "rating": 4.1,
-    "genetics": "OG Kush × Trainwreck"
+    "genetics": "OG Kush × Trainwreck",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "critical-mass",
@@ -982,7 +1222,8 @@
       "Happy",
       "Sleepy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -991,7 +1232,14 @@
     ],
     "description": "A heavy indica known for massive buds and deeply relaxing effects. Great for pain and insomnia.",
     "rating": 4.1,
-    "genetics": "Afghani × Skunk #1"
+    "genetics": "Afghani × Skunk #1",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "la-confidential",
@@ -1002,7 +1250,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -1011,7 +1260,14 @@
     ],
     "description": "An award-winning pure indica from Los Angeles. Smooth, fast-acting sedation and psychedelic effects.",
     "rating": 4.2,
-    "genetics": "OG LA Affie × Afghani"
+    "genetics": "OG LA Affie × Afghani",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "super-silver-haze",
@@ -1022,7 +1278,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Citrus",
@@ -1031,7 +1288,14 @@
     ],
     "description": "A three-time Cannabis Cup winner. Energetic and long-lasting body buzz with creative stimulation.",
     "rating": 4.3,
-    "genetics": "Skunk × Northern Lights × Haze"
+    "genetics": "Skunk × Northern Lights × Haze",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "bruce-banner",
@@ -1042,7 +1306,8 @@
       "Euphoric",
       "Uplifted",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Diesel",
@@ -1051,7 +1316,14 @@
     ],
     "description": "Named after the Hulk's alter ego. One of the strongest strains available with a creative, euphoric rush.",
     "rating": 4.4,
-    "genetics": "OG Kush × Strawberry Diesel"
+    "genetics": "OG Kush × Strawberry Diesel",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "apple-fritter",
@@ -1082,7 +1354,8 @@
       "Sleepy",
       "Happy",
       "Hungry",
-      "Euphoric"
+      "Euphoric",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -1094,7 +1367,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "gary-payton",
@@ -1151,7 +1431,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -1160,7 +1441,14 @@
     ],
     "description": "A potent indica cross of Do-Si-Dos and Purple Punch. Heavy syrupy sweetness with knockout relaxation.",
     "rating": 4.5,
-    "genetics": "Do-Si-Dos × Purple Punch"
+    "genetics": "Do-Si-Dos × Purple Punch",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "lava-cake",
@@ -1171,7 +1459,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Tingly"
+      "Tingly",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -1180,7 +1469,14 @@
     ],
     "description": "A potent indica cross of Thin Mint GSC and Grape Pie. Rich, dessert-like flavors with deep sedation.",
     "rating": 4.4,
-    "genetics": "Thin Mint GSC × Grape Pie"
+    "genetics": "Thin Mint GSC × Grape Pie",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "white-runtz",
@@ -1211,7 +1507,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Uplifted"
+      "Uplifted",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -1220,7 +1517,14 @@
     ],
     "description": "A cross of GSC and Face Off OG. Sedating effects with a sweet, earthy flavor.",
     "rating": 4.4,
-    "genetics": "Girl Scout Cookies × Face Off OG"
+    "genetics": "Girl Scout Cookies × Face Off OG",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "kush-mints",
@@ -1251,7 +1555,8 @@
       "Sleepy",
       "Happy",
       "Hungry",
-      "Euphoric"
+      "Euphoric",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -1263,6 +1568,13 @@
     "genetics": "Chemdawg × Girl Scout Cookies",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -1314,7 +1626,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Citrus",
@@ -1323,7 +1636,14 @@
     ],
     "description": "A sativa-dominant cross of Girl Scout Cookies and Tangie. Bright citrus flavor with uplifting energy.",
     "rating": 4.4,
-    "genetics": "Girl Scout Cookies × Tangie"
+    "genetics": "Girl Scout Cookies × Tangie",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "orange-cookies",
@@ -1354,7 +1674,8 @@
       "Happy",
       "Euphoric",
       "Uplifted",
-      "Sleepy"
+      "Sleepy",
+      "Body High"
     ],
     "flavors": [
       "Mango",
@@ -1363,7 +1684,14 @@
     ],
     "description": "A delicious indica with genuine mango taste and banana undertones. Gentle, fuzzy euphoria.",
     "rating": 4.2,
-    "genetics": "Mango × Hindu Kush"
+    "genetics": "Mango × Hindu Kush",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "peanut-butter-breath",
@@ -1374,7 +1702,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -1386,6 +1715,13 @@
     "genetics": "Do-Si-Dos × Mendo Breath",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -1417,7 +1753,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -1426,7 +1763,14 @@
     ],
     "description": "A heavy OG Kush phenotype bred near Lake Tahoe. One of the most sedating OGs available.",
     "rating": 4.3,
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "grape-ape",
@@ -1437,7 +1781,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Grape",
@@ -1446,7 +1791,14 @@
     ],
     "description": "A predominantly indica strain with a distinct grape-like smell. Provides carefree relaxation.",
     "rating": 4.2,
-    "genetics": "Mendocino Purps × Skunk × Afghani"
+    "genetics": "Mendocino Purps × Skunk × Afghani",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "alien-og",
@@ -1503,7 +1855,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Tingly"
+      "Tingly",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -1512,7 +1865,14 @@
     ],
     "description": "A potent exotic indica. Known for premium quality and deeply relaxing, sedative effects.",
     "rating": 4.4,
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "cherry-gelato",
@@ -1543,7 +1903,8 @@
       "Happy",
       "Sleepy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Tropical",
@@ -1555,6 +1916,13 @@
     "genetics": "Citral #13 × Ice #2",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -1566,7 +1934,8 @@
       "Sleepy",
       "Happy",
       "Hungry",
-      "Euphoric"
+      "Euphoric",
+      "Body High"
     ],
     "flavors": [
       "Diesel",
@@ -1575,7 +1944,14 @@
     ],
     "description": "A pungent, gassy indica cross of Chemdog and SFV OG Kush. Heavy diesel flavor with potent sedation.",
     "rating": 4.3,
-    "genetics": "Chemdawg × SFV OG"
+    "genetics": "Chemdawg × SFV OG",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "hawaiian",
@@ -1586,7 +1962,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Tropical",
@@ -1595,7 +1972,14 @@
     ],
     "description": "A classic tropical sativa. Light and breezy effects perfect for daytime adventures.",
     "rating": 4.1,
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "laughing-buddha",
@@ -1606,7 +1990,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Giggly"
+      "Giggly",
+      "Head High"
     ],
     "flavors": [
       "Earthy",
@@ -1615,7 +2000,14 @@
     ],
     "description": "A Cannabis Cup winning sativa. Named for its tendency to induce uncontrollable laughter and joy.",
     "rating": 4.2,
-    "genetics": "Thai × Jamaican"
+    "genetics": "Thai × Jamaican",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "khalifa-kush",
@@ -1646,7 +2038,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -1655,7 +2048,14 @@
     ],
     "description": "A heavy indica cross of GSC and Fire OG. Strong sedation with a sweet, sour flavor.",
     "rating": 4.3,
-    "genetics": "Girl Scout Cookies × Fire OG"
+    "genetics": "Girl Scout Cookies × Fire OG",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "glue-gelato",
@@ -1726,7 +2126,8 @@
       "Happy",
       "Euphoric",
       "Tingly",
-      "Sleepy"
+      "Sleepy",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -1735,7 +2136,14 @@
     ],
     "description": "A cross of Gelato #41 and Triangle Kush. Named after the candy for its fruity, gushing flavor.",
     "rating": 4.4,
-    "genetics": "Gelato 41 × Triangle Kush"
+    "genetics": "Gelato 41 × Triangle Kush",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "fire-og",
@@ -1746,7 +2154,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -1755,7 +2164,14 @@
     ],
     "description": "Considered one of the strongest OG Kush strains. Powerful full-body relaxation and sedation.",
     "rating": 4.3,
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "super-boof",
@@ -1766,7 +2182,8 @@
       "Euphoric",
       "Uplifted",
       "Creative",
-      "Energetic"
+      "Energetic",
+      "Head High"
     ],
     "flavors": [
       "Sweet",
@@ -1778,6 +2195,13 @@
     "genetics": "Black Cherry Punch × Tropicana Cookies",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -1809,7 +2233,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Focused"
+      "Focused",
+      "Head High"
     ],
     "flavors": [
       "Lemon",
@@ -1818,7 +2243,14 @@
     ],
     "description": "A bright sativa named after the Italian liqueur. Zesty lemon flavor with focused, clear-headed energy.",
     "rating": 4.3,
-    "genetics": "Original Lemonade × Cherry Pie"
+    "genetics": "Original Lemonade × Cherry Pie",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "la-kush-cake",
@@ -1829,7 +2261,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -1838,7 +2271,14 @@
     ],
     "description": "A potent cross of Kush Mints and Wedding Cake. Dessert flavors with heavy body sedation.",
     "rating": 4.4,
-    "genetics": "Wedding Cake × Kush Mints"
+    "genetics": "Wedding Cake × Kush Mints",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "guava",
@@ -1849,7 +2289,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Talkative"
+      "Talkative",
+      "Head High"
     ],
     "flavors": [
       "Tropical",
@@ -1858,7 +2299,14 @@
     ],
     "description": "An exotic sativa with tropical guava flavors. Social and energizing effects.",
     "rating": 4.3,
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "white-cherry-gelato",
@@ -1889,7 +2337,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -1898,7 +2347,14 @@
     ],
     "description": "A cross of GG4 and Cookies and Cream. Heavy relaxation with a sweet, vanilla-diesel flavor.",
     "rating": 4.3,
-    "genetics": "Gorilla Glue #4 × Cookies & Cream"
+    "genetics": "Gorilla Glue #4 × Cookies & Cream",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "member-berry",
@@ -1929,7 +2385,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Tingly"
+      "Tingly",
+      "Body High"
     ],
     "flavors": [
       "Cherry",
@@ -1938,7 +2395,14 @@
     ],
     "description": "A cross of Black Cherry Pie and Purple Punch. Deep cherry flavor with heavy body sedation.",
     "rating": 4.3,
-    "genetics": "Purple Punch × Black Cherry Pie"
+    "genetics": "Purple Punch × Black Cherry Pie",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "dolato",
@@ -1949,7 +2413,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -1958,7 +2423,14 @@
     ],
     "description": "A cross of Do-Si-Dos and Gelato #41. Deeply relaxing indica with complex berry and lavender notes.",
     "rating": 4.4,
-    "genetics": "Do-Si-Dos × Gelato 41"
+    "genetics": "Do-Si-Dos × Gelato 41",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "zookies",
@@ -2009,7 +2481,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Tingly"
+      "Tingly",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -2018,7 +2491,14 @@
     ],
     "description": "A potent indica cross of GSC and Snow Lotus. Out-of-this-world relaxation with dessert flavors.",
     "rating": 4.2,
-    "genetics": "Girl Scout Cookies × Snow Lotus"
+    "genetics": "Girl Scout Cookies × Snow Lotus",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "fatso",
@@ -2029,7 +2509,8 @@
       "Sleepy",
       "Hungry",
       "Happy",
-      "Euphoric"
+      "Euphoric",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -2038,7 +2519,14 @@
     ],
     "description": "A heavy indica cross of Legends OG and GMO. Potent sedation and intense munchies.",
     "rating": 4.3,
-    "genetics": "GMO Cookies × Legend OG"
+    "genetics": "GMO Cookies × Legend OG",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "pancakes",
@@ -2049,7 +2537,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -2061,7 +2550,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "London Pound Cake × Kush Mints"
+    "genetics": "London Pound Cake × Kush Mints",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "gelonade",
@@ -2072,7 +2568,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Lemon",
@@ -2081,7 +2578,14 @@
     ],
     "description": "A sativa-dominant cross of Lemon Tree and Gelato 41. Bright citrus flavor with clear-headed energy.",
     "rating": 4.5,
-    "genetics": "Lemon Tree × Gelato 41"
+    "genetics": "Lemon Tree × Gelato 41",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "grandpa-larry",
@@ -2092,7 +2596,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -2101,7 +2606,14 @@
     ],
     "description": "A potent OG Kush descendant. Old-school indica relaxation that puts you right to sleep.",
     "rating": 4.2,
-    "genetics": "Larry OG × Granddaddy Purple"
+    "genetics": "Larry OG × Granddaddy Purple",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "georgia-pie",
@@ -2135,7 +2647,8 @@
       "Uplifted",
       "Euphoric",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Citrus",
@@ -2144,7 +2657,14 @@
     ],
     "description": "A potent sativa with frosty, trichome-covered buds. Delivers clean, focused energy and menthol freshness.",
     "rating": 4.2,
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "blackberry-caviar",
@@ -2155,7 +2675,8 @@
       "Happy",
       "Sleepy",
       "Euphoric",
-      "Tingly"
+      "Tingly",
+      "Body High"
     ],
     "flavors": [
       "Berry",
@@ -2167,7 +2688,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Grape Gas × Lantz"
+    "genetics": "Grape Gas × Lantz",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "blueberry-caviar",
@@ -2178,7 +2706,8 @@
       "Uplifted",
       "Euphoric",
       "Creative",
-      "Energetic"
+      "Energetic",
+      "Head High"
     ],
     "flavors": [
       "Blueberry",
@@ -2190,7 +2719,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Grape Gas × Lantz"
+    "genetics": "Grape Gas × Lantz",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "cereal-a-la-mode",
@@ -2224,7 +2760,8 @@
       "Uplifted",
       "Euphoric",
       "Focused",
-      "Talkative"
+      "Talkative",
+      "Head High"
     ],
     "flavors": [
       "Citrus",
@@ -2236,7 +2773,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Lemonnade × Gelato 42 × London Poundcake 97"
+    "genetics": "Lemonnade × Gelato 42 × London Poundcake 97",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "cinnamon-milk",
@@ -2293,7 +2837,8 @@
       "Happy",
       "Euphoric",
       "Uplifted",
-      "Sleepy"
+      "Sleepy",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -2305,7 +2850,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "triple-scoop",
@@ -2385,7 +2937,8 @@
       "Euphoric",
       "Focused",
       "Energetic",
-      "Uplifted"
+      "Uplifted",
+      "Head High"
     ],
     "flavors": [
       "Diesel",
@@ -2397,7 +2950,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Animal Mints × Kush Mints"
+    "genetics": "Animal Mints × Kush Mints",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "sticky-buns",
@@ -2431,7 +2991,8 @@
       "Focused",
       "Uplifted",
       "Happy",
-      "Euphoric"
+      "Euphoric",
+      "Head High"
     ],
     "flavors": [
       "Sweet",
@@ -2443,7 +3004,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Cali-O × Alcatraz OG × Space Queen"
+    "genetics": "Cali-O × Alcatraz OG × Space Queen",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "pruno",
@@ -2454,7 +3022,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Tingly"
+      "Tingly",
+      "Body High"
     ],
     "flavors": [
       "Grape",
@@ -2466,7 +3035,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "sweet-and-sour",
@@ -2523,7 +3099,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Berry",
@@ -2535,7 +3112,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "ridgeline-lantz",
@@ -2569,7 +3153,8 @@
       "Energetic",
       "Uplifted",
       "Euphoric",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Citrus",
@@ -2581,7 +3166,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "atomic-apple",
@@ -2592,7 +3184,8 @@
       "Euphoric",
       "Happy",
       "Uplifted",
-      "Sleepy"
+      "Sleepy",
+      "Body High"
     ],
     "flavors": [
       "Apple",
@@ -2604,7 +3197,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Triangle Mints × Apple Fritter"
+    "genetics": "Triangle Mints × Apple Fritter",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "baklava",
@@ -2615,7 +3215,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -2627,7 +3228,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Kosher Kush × Gelato 41"
+    "genetics": "Kosher Kush × Gelato 41",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "kryptidz",
@@ -2661,7 +3269,8 @@
       "Euphoric",
       "Uplifted",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Citrus",
@@ -2673,7 +3282,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Jack Herer × G13 Haze"
+    "genetics": "Jack Herer × G13 Haze",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "chrome",
@@ -2730,7 +3346,8 @@
       "Energetic",
       "Uplifted",
       "Euphoric",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Mango",
@@ -2742,7 +3359,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "honey-dew",
@@ -2822,7 +3446,8 @@
       "Uplifted",
       "Euphoric",
       "Creative",
-      "Energetic"
+      "Energetic",
+      "Head High"
     ],
     "flavors": [
       "Lemon",
@@ -2834,7 +3459,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "permanent-fumes",
@@ -2845,7 +3477,8 @@
       "Euphoric",
       "Happy",
       "Sleepy",
-      "Tingly"
+      "Tingly",
+      "Body High"
     ],
     "flavors": [
       "Diesel",
@@ -2857,7 +3490,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "flaming-cherries",
@@ -2868,7 +3508,8 @@
       "Euphoric",
       "Uplifted",
       "Creative",
-      "Energetic"
+      "Energetic",
+      "Head High"
     ],
     "flavors": [
       "Cherry",
@@ -2880,7 +3521,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "mega-z-red",
@@ -2937,7 +3585,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -2949,7 +3598,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "baby-joker",
@@ -2983,7 +3639,8 @@
       "Euphoric",
       "Uplifted",
       "Creative",
-      "Giggly"
+      "Giggly",
+      "Head High"
     ],
     "flavors": [
       "Sweet",
@@ -2995,7 +3652,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Zkittlez × Moonbow"
+    "genetics": "Zkittlez × Moonbow",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "zkittlez-pie",
@@ -3006,7 +3670,8 @@
       "Happy",
       "Euphoric",
       "Uplifted",
-      "Sleepy"
+      "Sleepy",
+      "Body High"
     ],
     "flavors": [
       "Sweet",
@@ -3018,7 +3683,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Zkittlez × Georgia Pie"
+    "genetics": "Zkittlez × Georgia Pie",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "nimbus-plum",
@@ -3029,7 +3701,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Tingly"
+      "Tingly",
+      "Body High"
     ],
     "flavors": [
       "Plum",
@@ -3041,7 +3714,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "sherbnado",
@@ -3075,7 +3755,8 @@
       "Energetic",
       "Uplifted",
       "Euphoric",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Tropical",
@@ -3087,7 +3768,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "zuava",
@@ -3121,7 +3809,8 @@
       "Euphoric",
       "Uplifted",
       "Creative",
-      "Energetic"
+      "Energetic",
+      "Head High"
     ],
     "flavors": [
       "Sweet",
@@ -3133,7 +3822,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "nerdz",
@@ -3144,7 +3840,8 @@
       "Euphoric",
       "Uplifted",
       "Giggly",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Sweet",
@@ -3156,7 +3853,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Grape Ape × Strawberry Cough"
+    "genetics": "Grape Ape × Strawberry Cough",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "space-mintz",
@@ -3190,7 +3894,8 @@
       "Euphoric",
       "Uplifted",
       "Energetic",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Earthy",
@@ -3202,7 +3907,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "gushmints",
@@ -3328,7 +4040,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -3340,7 +4053,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "banga",
@@ -3351,7 +4071,8 @@
       "Euphoric",
       "Uplifted",
       "Creative",
-      "Energetic"
+      "Energetic",
+      "Head High"
     ],
     "flavors": [
       "Sweet",
@@ -3363,7 +4084,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "melon-mimosa",
@@ -3374,7 +4102,8 @@
       "Energetic",
       "Uplifted",
       "Euphoric",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Melon",
@@ -3386,7 +4115,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Watermelon Zkittlez × Mimosa"
+    "genetics": "Watermelon Zkittlez × Mimosa",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "hawaiian-snow",
@@ -3397,7 +4133,8 @@
       "Energetic",
       "Uplifted",
       "Euphoric",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Tropical",
@@ -3409,7 +4146,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Hawaiian Haze × Purple Haze × Neville's Haze"
+    "genetics": "Hawaiian Haze × Purple Haze × Neville's Haze",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "motorberry",
@@ -3466,7 +4210,8 @@
       "Uplifted",
       "Euphoric",
       "Creative",
-      "Energetic"
+      "Energetic",
+      "Head High"
     ],
     "flavors": [
       "Lemon",
@@ -3478,7 +4223,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Pink Lemonade × Tropaya"
+    "genetics": "Pink Lemonade × Tropaya",
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "all-gas-no-brakes",
@@ -3489,7 +4241,8 @@
       "Happy",
       "Uplifted",
       "Euphoric",
-      "Focused"
+      "Focused",
+      "Head High"
     ],
     "flavors": [
       "Diesel",
@@ -3501,7 +4254,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "oakstradam-og",
@@ -3512,7 +4272,8 @@
       "Happy",
       "Euphoric",
       "Sleepy",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -3524,7 +4285,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "blue-andes",
@@ -3581,7 +4349,8 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -3593,7 +4362,14 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
+    ]
   },
   {
     "id": "blueberry-poptarts",
@@ -3627,7 +4403,8 @@
       "Sleepy",
       "Happy",
       "Hungry",
-      "Euphoric"
+      "Euphoric",
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -3638,6 +4415,13 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -3682,6 +4466,13 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -3693,7 +4484,7 @@
       "Sleepy",
       "Happy",
       "Euphoric",
-      "Pain Relief"
+      "Body High"
     ],
     "flavors": [
       "Berry",
@@ -3704,6 +4495,13 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -3737,7 +4535,8 @@
       "Happy",
       "Creative",
       "Energetic",
-      "Euphoric"
+      "Euphoric",
+      "Head High"
     ],
     "flavors": [
       "Blueberry",
@@ -3748,6 +4547,13 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -3814,6 +4620,13 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -3846,8 +4659,7 @@
       "Relaxed",
       "Euphoric",
       "Happy",
-      "Sleepy",
-      "Calm"
+      "Sleepy"
     ],
     "flavors": [
       "Cool",
@@ -3869,7 +4681,8 @@
       "Happy",
       "Uplifted",
       "Creative",
-      "Euphoric"
+      "Euphoric",
+      "Head High"
     ],
     "flavors": [
       "Tropical",
@@ -3880,6 +4693,13 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -3913,7 +4733,7 @@
       "Euphoric",
       "Happy",
       "Sleepy",
-      "Pain Relief"
+      "Body High"
     ],
     "flavors": [
       "Citrus",
@@ -3924,6 +4744,13 @@
     "rating": 4.6,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -3979,7 +4806,8 @@
       "Euphoric",
       "Focused",
       "Happy",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Diesel",
@@ -3990,6 +4818,13 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4012,6 +4847,13 @@
     "rating": 4.6,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4023,7 +4865,7 @@
       "Relaxed",
       "Euphoric",
       "Happy",
-      "Calm"
+      "Body High"
     ],
     "flavors": [
       "Earthy",
@@ -4034,6 +4876,13 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4045,7 +4894,8 @@
       "Euphoric",
       "Happy",
       "Sleepy",
-      "Hungry"
+      "Hungry",
+      "Body High"
     ],
     "flavors": [
       "Diesel",
@@ -4056,6 +4906,13 @@
     "rating": 4.7,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4100,6 +4957,13 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4133,7 +4997,8 @@
       "Happy",
       "Uplifted",
       "Euphoric",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Sweet",
@@ -4144,6 +5009,13 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4199,7 +5071,8 @@
       "Euphoric",
       "Happy",
       "Creative",
-      "Focused"
+      "Focused",
+      "Head High"
     ],
     "flavors": [
       "Citrus",
@@ -4210,6 +5083,13 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4220,8 +5100,7 @@
       "Relaxed",
       "Euphoric",
       "Happy",
-      "Creative",
-      "Calm"
+      "Creative"
     ],
     "flavors": [
       "Sweet",
@@ -4309,7 +5188,8 @@
       "Uplifted",
       "Happy",
       "Focused",
-      "Creative"
+      "Creative",
+      "Head High"
     ],
     "flavors": [
       "Lemon",
@@ -4320,6 +5200,13 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4375,7 +5262,8 @@
       "Euphoric",
       "Creative",
       "Happy",
-      "Focused"
+      "Focused",
+      "Head High"
     ],
     "flavors": [
       "Spice",
@@ -4386,6 +5274,13 @@
     "rating": 4.3,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4550,8 +5445,7 @@
       "Relaxed",
       "Euphoric",
       "Happy",
-      "Sleepy",
-      "Body High"
+      "Sleepy"
     ],
     "flavors": [
       "Earthy",
@@ -4584,6 +5478,13 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4661,7 +5562,8 @@
       "Euphoric",
       "Creative",
       "Focused",
-      "Uplifted"
+      "Uplifted",
+      "Head High"
     ],
     "flavors": [
       "Sweet",
@@ -4672,6 +5574,13 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "dataSources": [
+      {
+        "field": "effects",
+        "source": "heuristic-highs",
+        "fetchedAt": "2026-06-20"
+      }
     ]
   },
   {
@@ -4814,8 +5723,7 @@
       "Euphoric",
       "Relaxed",
       "Happy",
-      "Uplifted",
-      "Body High"
+      "Uplifted"
     ],
     "flavors": [
       "Gas",

@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildDovetailUrl, parseDovetailResults, fetchDovetail } from '../api/_menuAdapters.mjs';
+import {
+  buildDovetailUrl, parseDovetailResults, fetchDovetail,
+  extractDovetailTerpenes, extractDovetailRanges, buildMenuEnrichment,
+} from '../api/_menuAdapters.mjs';
 
 const source = {
   provider: 'dovetail',
@@ -85,4 +88,63 @@ test('fetchDovetail follows pagination and concatenates all pages', async () => 
 test('fetchDovetail stops on a non-ok response without throwing', async () => {
   const mockFetch = async () => ({ ok: false, status: 502, json: async () => ({}) });
   assert.deepEqual(await fetchDovetail(source, mockFetch), []);
+});
+
+// ── Layer 2 enrichment (terpenes / THC-CBD ranges / effects / strain_type) ──
+const enrichedPage = {
+  pages: 1,
+  results: [
+    {
+      id: '10', name: 'Moonwalkers - Indoor', category: 'Premium Flower',
+      brand: { name: 'Skypack' }, strain_type: 'Hybrid',
+      potency_thc: { formatted: '28.5%', range: [28.5], unit: '%' },
+      potency_cbd: { formatted: null, range: null, unit: '%' },
+      terpenes: [{ id: 'a', name: 'Camphene', description: 'long ref text' }, { id: 'b', name: 'Guaiol', description: 'x' }],
+      effects: null,
+    },
+    {
+      id: '11', name: "L'Orange", category: 'Premium Flower', strain_type: 'Sativa',
+      potency_thc: { formatted: '30.1%', range: [30.1] }, potency_cbd: { range: null },
+      terpenes: null, effects: ['Energetic', 'Happy', 'Creative', 'Focused', 'Inspired'],
+    },
+  ],
+};
+
+test('parseDovetailResults captures terpene names, THC/CBD ranges, effects, strain_type', () => {
+  const [moon, lorange] = parseDovetailResults(enrichedPage);
+  assert.deepEqual(moon.terpenes, ['Camphene', 'Guaiol']);
+  assert.deepEqual(moon.thcRange, { min: 28.5, max: 28.5 });
+  assert.equal(moon.cbdRange, null);
+  assert.equal(moon.strainType, 'hybrid');
+  assert.deepEqual(lorange.effects, ['Energetic', 'Happy', 'Creative', 'Focused', 'Inspired']);
+  assert.equal(lorange.strainType, 'sativa');
+});
+
+test('extractDovetailTerpenes / extractDovetailRanges handle missing + formatted-only data', () => {
+  assert.deepEqual(extractDovetailTerpenes({}), []);
+  assert.deepEqual(extractDovetailTerpenes({ terpenes: [{ name: 'Myrcene' }, 'Limonene', { nope: 1 }] }), ['Myrcene', 'Limonene']);
+  assert.deepEqual(extractDovetailRanges({ potency_thc: { formatted: '18-22%' } }).thc, { min: 18, max: 22 });
+  assert.equal(extractDovetailRanges({}).cbd, null);
+});
+
+test('buildMenuEnrichment proposes only NEW fields and filters effects to the taxonomy', () => {
+  const [moon, lorange] = parseDovetailResults(enrichedPage);
+  const e1 = buildMenuEnrichment({ name: 'Moonwalkers', type: 'hybrid', effects: ['Relaxed'] }, moon, { source: 'dovetail:hayward' });
+  assert.deepEqual(e1.propose.terpenes, [{ name: 'Camphene' }, { name: 'Guaiol' }]);
+  assert.deepEqual(e1.propose.thc, { min: 28.5, max: 28.5 });
+  assert.ok(!('typeMismatch' in e1.propose)); // hybrid == hybrid
+  assert.equal(e1.source, 'dovetail:hayward');
+
+  const e2 = buildMenuEnrichment({ name: "L'Orange", type: 'indica', effects: ['Happy'] }, lorange);
+  assert.deepEqual(e2.propose.effectsSuggested, ['Energetic', 'Creative', 'Focused']); // Inspired dropped, Happy excluded
+  assert.deepEqual(e2.propose.typeMismatch, { ours: 'indica', menu: 'sativa' });
+});
+
+test('buildMenuEnrichment returns null when the strain already has everything', () => {
+  const [moon] = parseDovetailResults(enrichedPage);
+  const e = buildMenuEnrichment(
+    { name: 'Moonwalkers', type: 'hybrid', terpenes: [{ name: 'Camphene' }, { name: 'Guaiol' }], thc: { min: 28.5, max: 28.5 } },
+    moon,
+  );
+  assert.equal(e, null);
 });

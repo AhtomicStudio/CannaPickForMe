@@ -23,6 +23,14 @@
 
 import { coreStrainName } from './_menuMatch.mjs';
 
+// Effect taxonomy (mirrors ALL_EFFECTS in src/main.js). Menu effects are
+// intersected with this so off-taxonomy tags (e.g. "Inspired") never leak in.
+const TAXONOMY_EFFECTS = new Set([
+  'Relaxed', 'Happy', 'Euphoric', 'Creative', 'Uplifted', 'Energetic',
+  'Focused', 'Talkative', 'Giggly', 'Sleepy', 'Hungry', 'Tingly', 'Body High', 'Head High',
+]);
+const titleCase = (s) => String(s).trim().toLowerCase().replace(/\b\w/g, (m) => m.toUpperCase());
+
 // ── Dovetail ──────────────────────────────────────────────────────────────────
 
 /** Build one page's products URL for a Dovetail source. Pure (testable). */
@@ -60,6 +68,39 @@ function extractDovetailThc(r) {
   return null;
 }
 
+/** Terpene names from a Dovetail product (drops the long reference descriptions). */
+export function extractDovetailTerpenes(r) {
+  if (!Array.isArray(r.terpenes)) return [];
+  return [...new Set(
+    r.terpenes
+      .map((t) => (t && typeof t === 'object' ? t.name : t))
+      .filter((n) => typeof n === 'string' && n.trim())
+      .map((n) => n.trim()),
+  )];
+}
+
+/** {min,max} from a Dovetail potency object (range array or "18-22%" formatted). */
+function potencyRange(potency) {
+  if (!potency || typeof potency !== 'object') return null;
+  let nums = [];
+  if (Array.isArray(potency.range)) nums = potency.range.map(Number).filter(Number.isFinite);
+  if (!nums.length && typeof potency.formatted === 'string') {
+    nums = (potency.formatted.match(/[\d.]+/g) || []).map(Number).filter(Number.isFinite);
+  }
+  return nums.length ? { min: Math.min(...nums), max: Math.max(...nums) } : null;
+}
+
+/** THC/CBD {min,max} ranges from a Dovetail product. */
+export function extractDovetailRanges(r) {
+  return { thc: potencyRange(r.potency_thc), cbd: potencyRange(r.potency_cbd) };
+}
+
+/** Normalise strain_type to indica|sativa|hybrid, or null ("Not Applicable" -> null). */
+function normaliseStrainType(t) {
+  const s = typeof t === 'string' ? t.trim().toLowerCase() : '';
+  return ['indica', 'sativa', 'hybrid'].includes(s) ? s : null;
+}
+
 /**
  * Parse one Dovetail page into normalised products. Critically: we read ONLY
  * each result's own top-level `name` (the strain). Nested `name`s — brand,
@@ -87,13 +128,48 @@ export function parseDovetailResults(json) {
       // Strip trailing weights and grow suffixes
       cleanName = coreStrainName(cleanName);
 
+      const ranges = extractDovetailRanges(r);
       return {
         name: cleanName,
         brand: brandName || null,
         category: r.category || null,
         thc: extractDovetailThc(r),
+        // Layer 2 enrichment (additive, often sparse): real per-shelf data.
+        thcRange: ranges.thc,
+        cbdRange: ranges.cbd,
+        terpenes: extractDovetailTerpenes(r),
+        effects: Array.isArray(r.effects) ? r.effects.filter((e) => typeof e === 'string') : [],
+        strainType: normaliseStrainType(r.strain_type),
       };
     });
+}
+
+/**
+ * Build a review proposal of NEW strain data a matched menu product carries.
+ * Same shape as the Kushy proposals (scripts/enrich-strains.mjs) so both layers
+ * feed one Review Queue. Only proposes fields the strain lacks; effects are
+ * intersected with the taxonomy. Returns null if there's nothing new.
+ */
+export function buildMenuEnrichment(strain, product, { source = 'menu' } = {}) {
+  const propose = {};
+  if (product.terpenes && product.terpenes.length) {
+    const have = new Set((strain.terpenes || []).map((t) => String(t.name || t).toLowerCase()));
+    const add = product.terpenes.filter((n) => !have.has(n.toLowerCase()));
+    if (add.length) propose.terpenes = add.map((name) => ({ name }));
+  }
+  if (product.thcRange && strain.thc == null) propose.thc = product.thcRange;
+  if (product.cbdRange && strain.cbd == null) propose.cbd = product.cbdRange;
+  if (product.effects && product.effects.length) {
+    const have = new Set((strain.effects || []).map((e) => e.toLowerCase()));
+    const add = [...new Set(product.effects.map(titleCase))]
+      .filter((e) => TAXONOMY_EFFECTS.has(e) && !have.has(e.toLowerCase()));
+    if (add.length) propose.effectsSuggested = add;
+  }
+  if (product.strainType && strain.type && product.strainType !== String(strain.type).toLowerCase()) {
+    propose.typeMismatch = { ours: strain.type, menu: product.strainType };
+  }
+  if (!Object.keys(propose).length) return null;
+  return { name: strain.name, matchedProduct: product.name, propose, source, needsReview: true };
 }
 
 /** Fetch all pages for a Dovetail source. Network (fetch injectable for tests). */

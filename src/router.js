@@ -73,9 +73,10 @@ async function loadLoreContent() {
   const { getInfoTopics } = await import('./services/infoService.js');
   const { getPageContent } = await import('./services/pagesService.js');
 
-  const [topics, loreData] = await Promise.all([
+  const [topics, loreData, pages] = await Promise.all([
     getInfoTopics(),
     getPageContent('lore'),
+    loadLorePages(),
   ]);
 
   const introEl = document.getElementById('lore-intro');
@@ -83,18 +84,56 @@ async function loadLoreContent() {
     introEl.textContent = loreData.content.trim();
   }
 
-  renderTopics(topics);
+  renderTopics(topics, pages);
 }
 
-function renderTopics(topics) {
+// Static guides + collections generated at build time by
+// scripts/generate-content.mjs. Fetched as a manifest so the SPA can list them.
+async function loadLorePages() {
+  try {
+    const res = await fetch('/lore-index.json', { cache: 'no-cache' });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : (data.pages || []);
+  } catch { return []; }
+}
+
+// Lightweight markdown for admin-authored posts: **bold**, [text](url),
+// ![alt](img), - lists, paragraphs. Lets admin posts include photos and links
+// to strains (e.g. [Blue Dream](/strain/blue-dream)). Mirrors generate-content.mjs.
+function mdLite(md) {
+  const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const inl = (s) => s
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img class="lore-post-img" src="$2" alt="$1" loading="lazy" />')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2">$1</a>');
+  const lines = String(md || '').split('\n');
+  let html = '', inList = false, para = [];
+  const fp = () => { if (para.length) { html += `<p>${inl(esc(para.join(' ')))}</p>`; para = []; } };
+  const cl = () => { if (inList) { html += '</ul>'; inList = false; } };
+  for (const raw of lines) {
+    const line = raw.trim();
+    let m;
+    if (!line) { fp(); cl(); }
+    else if ((m = line.match(/^[-*]\s+(.+)/))) { fp(); if (!inList) { html += '<ul>'; inList = true; } html += `<li>${inl(esc(m[1]))}</li>`; }
+    else para.push(line);
+  }
+  fp(); cl();
+  return html;
+}
+
+function renderTopics(topics, pages = []) {
   const body   = document.getElementById('lore-body');
   const tape   = document.getElementById('lore-tape');
   const header = document.querySelector('.lore-header');
-  
+
   if (!body) return;
 
+  const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   const hasContent = topics && topics.some(t => t.content?.trim());
-  if (!hasContent) {
+  const hasPages = Array.isArray(pages) && pages.length > 0;
+
+  if (!hasContent && !hasPages) {
     if (header) header.style.display = 'none';
     body.innerHTML = `
       <div class="sign">
@@ -110,9 +149,22 @@ function renderTopics(topics) {
     return;
   }
 
+  if (header) header.style.display = '';
   if (tape) tape.style.display = '';
-  body.innerHTML = '<div class="topics-grid" id="topics-grid"></div>';
+
+  const pagesHTML = hasPages
+    ? `<div class="lore-pages">${pages.map(p => `
+        <a class="lore-page-card" href="/lore/${esc(p.slug)}">
+          <span class="lore-page-card__kind">${esc(p.overline || (p.type === 'hub' ? 'Collection' : 'Guide'))}</span>
+          <span class="lore-page-card__title">${esc(p.title)}</span>
+          ${p.description ? `<span class="lore-page-card__desc">${esc(p.description)}</span>` : ''}
+        </a>`).join('')}</div>`
+    : '';
+
+  body.innerHTML = pagesHTML + '<div class="topics-grid" id="topics-grid"></div>';
   const grid = document.getElementById('topics-grid');
+
+  if (!hasContent) { if (grid) grid.remove(); return; }
 
   if (!topics || topics.length === 0) {
     grid.innerHTML = `
@@ -144,10 +196,8 @@ function renderTopics(topics) {
       <div class="topic-card__body" id="topic-body-${i}" role="region">
         <div class="topic-card__body-inner">
           <div class="topic-card__content">
-            ${content
-              ? `<p>${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`
-              : '<p class="topic-coming-soon">✦ Content coming soon…</p>'
-            }
+            ${topic.image ? `<img class="topic-card__hero" src="${topic.image}" alt="${titleText}" loading="lazy" />` : ''}
+            ${content ? mdLite(content) : '<p class="topic-coming-soon">✦ Content coming soon…</p>'}
           </div>
         </div>
       </div>
