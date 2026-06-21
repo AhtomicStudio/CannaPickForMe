@@ -17,7 +17,25 @@
     ],
     "description": "A legendary sativa-dominant hybrid known for full-body relaxation with gentle cerebral invigoration.",
     "rating": 4.5,
-    "genetics": "Blueberry × Haze"
+    "genetics": "Blueberry × Haze",
+    "terpenes": [
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Pinene"
+      },
+      {
+        "name": "Caryophyllene"
+      }
+    ],
+    "dataSources": [
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ]
   },
   {
     "id": "og-kush",
@@ -40,6 +58,24 @@
     "genetics": "Chemdawg × Lemon Thai × Hindu Kush",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Myrcene"
+      }
+    ],
+    "dataSources": [
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
     ]
   },
   {
@@ -63,6 +99,24 @@
     "genetics": "OG Kush × Durban Poison",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Limonene"
+      }
+    ],
+    "dataSources": [
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
     ]
   },
   {
@@ -93,6 +147,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Limonene"
       }
     ]
   },
@@ -121,6 +191,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Pinene"
+      },
+      {
+        "name": "Caryophyllene"
       }
     ]
   },
@@ -152,6 +238,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Terpinolene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Pinene"
       }
     ]
   },
@@ -176,7 +278,25 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Sunset Sherbet × Thin Mint GSC"
+    "genetics": "Sunset Sherbet × Thin Mint GSC",
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Humulene"
+      }
+    ],
+    "dataSources": [
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ]
   },
   {
     "id": "northern-lights",
@@ -203,6 +323,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Pinene"
       }
     ]
   },
@@ -231,6 +367,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Pinene"
       }
     ]
   },
@@ -255,6 +407,24 @@
     "genetics": "Triangle Kush × Animal Mints",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Humulene"
+      }
+    ],
+    "dataSources": [
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
     ]
   },
   {
@@ -275,7 +445,25 @@
     ],
     "description": "A potent hybrid known for its heavy-handed euphoria and relaxation. Glues you to the couch.",
     "rating": 4.5,
-    "genetics": "Chem's Sister × Sour Dubb × Chocolate Diesel"
+    "genetics": "Chem's Sister × Sour Dubb × Chocolate Diesel",
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Limonene"
+      }
+    ],
+    "dataSources": [
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ]
   },
   {
     "id": "pineapple-express",
@@ -302,6 +490,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Pinene"
       }
     ]
   },
@@ -330,6 +534,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
       }
     ]
   },
@@ -361,6 +581,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Myrcene"
       }
     ]
   },
@@ -389,6 +625,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Pinene"
       }
     ]
   },
@@ -468,6 +720,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Humulene"
+      },
+      {
+        "name": "Limonene"
       }
     ]
   },
@@ -492,7 +760,25 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Zkittlez × Gelato"
+    "genetics": "Zkittlez × Gelato",
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Linalool"
+      }
+    ],
+    "dataSources": [
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ]
   },
   {
     "id": "mimosa",
@@ -519,6 +805,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Myrcene"
       }
     ]
   },
@@ -657,6 +959,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Terpinolene"
+      },
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Ocimene"
       }
     ]
   },
@@ -709,6 +1027,24 @@
     "genetics": "Granddaddy Purple × Durban Poison",
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "terpenes": [
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Pinene"
+      }
+    ],
+    "dataSources": [
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
     ]
   },
   {
@@ -739,6 +1075,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Myrcene"
       }
     ]
   },
@@ -790,6 +1142,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Linalool"
       }
     ]
   },
@@ -821,6 +1189,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Terpinolene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
       }
     ]
   },
@@ -900,6 +1284,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Myrcene"
       }
     ]
   },
@@ -921,7 +1321,25 @@
     ],
     "description": "An indica-leaning hybrid descended from Girl Scout Cookies. Full-body relaxation with a clear-headed high.",
     "rating": 4.4,
-    "genetics": "Girl Scout Cookies × Pink Panties"
+    "genetics": "Girl Scout Cookies × Pink Panties",
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Myrcene"
+      }
+    ],
+    "dataSources": [
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ]
   },
   {
     "id": "blue-cheese",
@@ -976,6 +1394,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Pinene"
       }
     ]
   },
@@ -1055,6 +1489,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Pinene"
+      },
+      {
+        "name": "Caryophyllene"
       }
     ]
   },
@@ -1523,6 +1973,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Linalool"
       }
     ]
   },
@@ -1574,6 +2040,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Limonene"
       }
     ]
   },
@@ -2142,6 +2624,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Limonene"
+      },
+      {
+        "name": "Myrcene"
       }
     ]
   },
@@ -4912,6 +5410,22 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "terpenes",
+        "source": "nimble-terpene",
+        "fetchedAt": "2026-06-21"
+      }
+    ],
+    "terpenes": [
+      {
+        "name": "Caryophyllene"
+      },
+      {
+        "name": "Myrcene"
+      },
+      {
+        "name": "Limonene"
       }
     ]
   },
