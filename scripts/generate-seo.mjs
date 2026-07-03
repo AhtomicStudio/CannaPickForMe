@@ -11,6 +11,7 @@ import { readFile, writeFile, mkdir, rm } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname, resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { comparisonPairs, comparisonsByStrain } from './_comparePairs.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -24,6 +25,27 @@ const OUT_DIR = join(ROOT, 'public', 'strain');
 const strains = JSON.parse(
   await readFile(join(ROOT, 'public/data/strains.json'), 'utf8')
 );
+
+// Optional shelf snapshot (scripts/pull-menu-availability.mjs). Baked in when
+// present; pages render fine without it.
+let availability = null;
+try {
+  availability = JSON.parse(
+    await readFile(join(ROOT, 'public/data/menu-availability.json'), 'utf8')
+  );
+} catch { /* no snapshot yet */ }
+
+// strainId -> [{ name, url, fetched }]
+function availabilityFor(strainId) {
+  if (!availability) return [];
+  const out = [];
+  for (const d of Object.values(availability.dispensaries || {})) {
+    if ((d.strains || []).includes(strainId)) {
+      out.push({ name: d.name, url: d.url, fetched: availability._fetched });
+    }
+  }
+  return out;
+}
 
 // Pull DISPENSARY_NAMES out of src/main.js so we don't duplicate the mapping.
 const mainJs = await readFile(join(ROOT, 'src/main.js'), 'utf8');
@@ -57,6 +79,15 @@ const typeLabel = (t) => {
 // Genetics/lineage string (e.g. "Blueberry × Haze") — the canonical field.
 const lineageOf = (s) => s.genetics || '';
 
+// "THC 22%" or "THC 18-25%" from a shelf-sourced {min,max} range, else ''.
+function thcLabel(s) {
+  const t = s.thc;
+  if (!t || !Number.isFinite(t.min) || !Number.isFinite(t.max)) return '';
+  const min = Math.round(t.min);
+  const max = Math.round(t.max);
+  return min === max ? `THC ~${min}%` : `THC ${min}-${max}%`;
+}
+
 // Bidirectional internal linking: a strain links UP to the content hubs that
 // feature it (keeps the SEO cluster tight). Hub slugs mirror scripts/generate-content.mjs.
 const HUB_LINKS = [
@@ -67,6 +98,9 @@ const HUB_LINKS = [
   { tag: 'Relaxed', slug: 'best-relaxing-strains', label: 'Best Relaxing Strains' },
   { tag: 'Creative', slug: 'best-creative-strains', label: 'Best Strains for Creativity' },
   { tag: 'Focused', slug: 'best-focus-strains', label: 'Best Strains for Focus' },
+  { tag: 'Hungry', slug: 'best-strains-for-munchies', label: 'Best Strains for the Munchies' },
+  { tag: 'Talkative', slug: 'best-social-strains', label: 'Best Strains for Social Sessions' },
+  { tag: 'Giggly', slug: 'best-strains-for-movie-night', label: 'Best Strains for Movie Night' },
 ];
 const TYPE_HUBS = {
   indica: ['best-indica-strains', 'Best Indica Strains'],
@@ -105,6 +139,150 @@ function buildMetaDescription(strain) {
   desc += ' Match it to your mood with the free CannaPickForMe strain matcher.';
   if (desc.length > 300) desc = desc.slice(0, 297) + '...';
   return desc;
+}
+
+// ---------------------------------------------------------------------------
+// Content depth: about prose + per-strain FAQ. Composed ONLY from real data
+// (type, genetics, effects, flavors, terpenes) in hedged experience language,
+// never medical claims. Sentence variants are picked by a deterministic hash
+// of the strain id so the 221 pages don't read like one template.
+// ---------------------------------------------------------------------------
+function hashPick(id, salt, n) {
+  const str = `${id}|${salt}`;
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) % n;
+}
+
+const TERPENE_AROMA = {
+  Myrcene: 'an earthy, musky depth',
+  Limonene: 'a bright citrus zest',
+  Pinene: 'a fresh pine snap',
+  Caryophyllene: 'a peppery spice',
+  Terpinolene: 'a fruity, floral lift',
+  Linalool: 'soft lavender florals',
+  Humulene: 'hoppy, woody undertones',
+  Ocimene: 'sweet herbal notes',
+};
+
+// Coarse day/night/social lean from the effect tags, used to ground the
+// "when do people reach for this" copy in the data we actually have.
+function occasionOf(strain) {
+  const e = new Set(strain.effects || []);
+  if (e.has('Sleepy')) return 'night';
+  if (e.has('Energetic') || e.has('Focused')) return 'day';
+  if (e.has('Giggly') || e.has('Talkative')) return 'social';
+  if (e.has('Creative')) return 'creative';
+  return 'anytime';
+}
+
+function aboutProse(strain) {
+  const name = strain.name;
+  const type = typeLabel(strain.type).toLowerCase();
+  const sentences = [];
+
+  const lin = lineageOf(strain);
+  if (lin) {
+    sentences.push([
+      `${name} comes from ${lin} genetics.`,
+      `Its lineage traces back to ${lin}.`,
+      `Genetics-wise, ${name} is a cross of ${lin}.`,
+    ][hashPick(strain.id, 'lin', 3)]);
+  }
+
+  const terps = (strain.terpenes || []).map((t) => (t && t.name) || t);
+  if (terps.length) {
+    const lead = terps[0];
+    const rest = terps.slice(1).map((t) => t.toLowerCase());
+    const aroma = TERPENE_AROMA[lead] || 'its signature aroma';
+    const restTxt = rest.length ? `, backed by ${rest.join(' and ')}` : '';
+    sentences.push([
+      `The terpene profile leads with ${lead.toLowerCase()}${restTxt}, which brings ${aroma} to the nose.`,
+      `${lead} is the dominant terpene here${restTxt}, lending ${aroma}.`,
+    ][hashPick(strain.id, 'terp', 2)]);
+  }
+
+  const effects = (strain.effects || []).slice(0, 3).map((e) => e.toLowerCase());
+  if (effects.length >= 2) {
+    const list = effects.length > 2
+      ? `${effects[0]}, ${effects[1]}, and ${effects[2]}`
+      : effects.join(' and ');
+    sentences.push([
+      `People most often describe the experience as ${list}.`,
+      `Reported effects lean ${list}.`,
+      `The experience is commonly described as ${list}, though everyone reacts a little differently.`,
+    ][hashPick(strain.id, 'eff', 3)]);
+  }
+
+  sentences.push({
+    night: 'That combination makes it a popular pick for winding down in the evening.',
+    day: 'That mix earns it a spot in daytime rotations, when there is still stuff to get done.',
+    social: 'That mix makes it a natural fit for kickbacks and social sessions.',
+    creative: 'That mix suits creative sessions where you want the ideas flowing.',
+    anytime: `It reads like a flexible, any-time-of-day kind of ${type}.`,
+  }[occasionOf(strain)]);
+
+  return sentences.join(' ');
+}
+
+function buildFaq(strain) {
+  const name = strain.name;
+  const type = typeLabel(strain.type);
+  const faqs = [];
+
+  const lin = lineageOf(strain);
+  const typeChar = {
+    indica: 'Indicas are usually associated with mellow, body-forward evenings.',
+    sativa: 'Sativas are usually associated with upbeat, head-forward sessions.',
+    hybrid: 'Hybrids sit between indica and sativa, so the character comes down to the specific cut.',
+  }[type.toLowerCase()] || '';
+  let typeAnswer = `${name} is a ${type.toLowerCase()}.`;
+  if (lin) typeAnswer += ` It crosses ${lin}.`;
+  if (typeChar) typeAnswer += ` ${typeChar}`;
+  faqs.push({ q: `Is ${name} an indica or a sativa?`, a: typeAnswer });
+
+  const effects = (strain.effects || []).slice(0, 4).map((e) => e.toLowerCase());
+  if (effects.length) {
+    faqs.push({
+      q: `What does ${name} feel like?`,
+      a: `Users most often describe ${name} as ${effects.join(', ')}. Effects vary person to person, so start low and go slow, especially with a strain you have not tried before.`,
+    });
+  }
+
+  const flavors = (strain.flavors || []).slice(0, 3).map((f) => f.toLowerCase());
+  const terps = (strain.terpenes || []).map((t) => ((t && t.name) || t).toLowerCase());
+  if (flavors.length) {
+    let a = `Expect ${flavors.join(', ')} notes.`;
+    if (terps.length) a += ` The flavor tracks with its terpene profile: ${terps.join(', ')}.`;
+    faqs.push({ q: `What does ${name} taste like?`, a });
+  }
+
+  const occAnswer = {
+    night: `${name} leans nighttime. People most often reach for it to wind down once the day is done.`,
+    day: `${name} leans daytime. Its reported effects pair better with getting things done than with melting into the couch.`,
+    social: `${name} shines in social settings. It is often described as chatty and giggly, good company for a kickback.`,
+    creative: `${name} suits creative time. Its reported effects lean heady and idea-friendly.`,
+    anytime: `${name} does not strongly lean either way, so let the dose set the tone. Lighter for daytime, heavier for night.`,
+  }[occasionOf(strain)];
+  faqs.push({ q: `Is ${name} better for daytime or nighttime?`, a: occAnswer });
+
+  return faqs;
+}
+
+// FAQPage structured data — must mirror the visible FAQ content exactly.
+function faqLd(faqs) {
+  return JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  });
 }
 
 // Pick up to N similar strains: same type first, then anything sharing >=2 effects.
@@ -196,10 +374,21 @@ function breadcrumbsLd(strain) {
 // HTML template — self-contained, dark theme matching the app's vibe.
 // No SPA bundle is loaded; this is a pure SEO landing page that funnels to /.
 // ---------------------------------------------------------------------------
-function strainPage(strain, related) {
+function strainPage(strain, related, comparisons = []) {
   const title = `${strain.name} Strain — Effects, Flavors & Match Your Mood | CannaPickForMe`;
   const desc = buildMetaDescription(strain);
   const url = `${SITE_URL}/strain/${strain.id}`;
+  const about = aboutProse(strain);
+  const faqs = buildFaq(strain);
+  const compareHtml = comparisons.length
+    ? `<section class="card">
+        <h2>Head to Head</h2>
+        <p class="muted">Deciding between ${escape(strain.name)} and something similar?</p>
+        <ul class="disp-list">
+          ${comparisons.map((c) => `<li><a href="/compare/${escape(c.slug)}">${escape(strain.name)} vs ${escape(c.other.name)} →</a></li>`).join('')}
+        </ul>
+      </section>`
+    : '';
   const dispensaries = (strain.dispensaries || [])
     .map((id) => DISPENSARIES[id])
     .filter(Boolean);
@@ -213,13 +402,19 @@ function strainPage(strain, related) {
   const terpenesHtml = (strain.terpenes || [])
     .map((t) => `<span class="chip chip--terp">${escape((t && t.name) || t)}</span>`)
     .join('');
-  const dispensariesHtml = dispensaries.length
+  const onShelf = availabilityFor(strain.id);
+  const onShelfHtml = onShelf
+    .map((a) => `<p class="on-shelf">✅ On the menu at <a href="${escape(a.url)}" rel="noopener">${escape(a.name)}</a> <span class="muted-inline">(menu checked ${escape(a.fetched)})</span></p>`)
+    .join('');
+  const dispensariesHtml = (dispensaries.length || onShelf.length)
     ? `<section class="card">
         <h2>Where to find ${escape(strain.name)}</h2>
-        <p class="muted">Available at participating Bay Area dispensaries:</p>
+        ${onShelfHtml}
+        ${dispensaries.length ? `<p class="muted">Available at participating Bay Area dispensaries:</p>
         <ul class="disp-list">
           ${dispensaries.map((d) => `<li>${escape(d)}</li>`).join('')}
-        </ul>
+        </ul>` : ''}
+        <p class="muted-inline">Menus rotate. Check the dispensary for today's shelf.</p>
       </section>`
     : '';
   const relatedHtml = related.length
@@ -274,6 +469,7 @@ function strainPage(strain, related) {
 <!-- Structured Data -->
 <script type="application/ld+json">${jsonLd(strain)}</script>
 <script type="application/ld+json">${breadcrumbsLd(strain)}</script>
+<script type="application/ld+json">${faqLd(faqs)}</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -335,6 +531,12 @@ function strainPage(strain, related) {
   .chip--alt { background: rgba(251,191,36,0.08); color: var(--accent-2); border-color: rgba(251,191,36,0.2); }
   .chip--terp { background: rgba(34,211,238,0.08); color: #67e8f9; border-color: rgba(34,211,238,0.25); }
   .muted { color: var(--muted); margin: 0 0 0.5rem; font-size: 0.9rem; }
+  .prose { margin: 0; color: #d1d5db; }
+  .on-shelf { margin: 0 0 0.75rem; color: #d1d5db; }
+  .muted-inline { color: var(--muted); font-size: 0.82rem; }
+  .faq-q { font-family: 'Outfit', sans-serif; font-size: 1rem; margin: 1rem 0 0.35rem; color: var(--text); }
+  .faq-q:first-of-type { margin-top: 0.25rem; }
+  .faq-a { margin: 0 0 0.5rem; color: #d1d5db; font-size: 0.95rem; }
   .disp-list { padding-left: 1.1rem; margin: 0.25rem 0 0; }
   .disp-list li { margin: 0.25rem 0; }
   .related-grid {
@@ -384,9 +586,15 @@ function strainPage(strain, related) {
     <div class="meta-row">
       <span class="type-pill type-${escape(String(strain.type).toLowerCase())}">${escape(typeLabel(strain.type))}</span>
       ${lineageOf(strain) ? `<span>· ${escape(lineageOf(strain))}</span>` : ''}
+      ${thcLabel(strain) ? `<span>· ${escape(thcLabel(strain))}</span>` : ''}
     </div>
 
     ${strain.description ? `<p class="lead">${escape(strain.description)}</p>` : ''}
+
+    ${about ? `<section class="card">
+      <h2>About ${escape(strain.name)}</h2>
+      <p class="prose">${escape(about)}</p>
+    </section>` : ''}
 
     ${effectsHtml ? `<section class="card">
       <h2>Effects</h2>
@@ -413,6 +621,14 @@ function strainPage(strain, related) {
 
     ${dispensariesHtml}
 
+    ${faqs.length ? `<section class="card">
+      <h2>${escape(strain.name)} FAQ</h2>
+      ${faqs.map((f) => `<h3 class="faq-q">${escape(f.q)}</h3>
+      <p class="faq-a">${escape(f.a)}</p>`).join('\n      ')}
+    </section>` : ''}
+
+    ${compareHtml}
+
     ${relatedHtml}
 
     ${guideLinksHtml(strain)}
@@ -431,7 +647,7 @@ function strainPage(strain, related) {
 // ---------------------------------------------------------------------------
 // Sitemap & robots
 // ---------------------------------------------------------------------------
-function sitemap(strainList) {
+function sitemap(strainList, pairs = []) {
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
     { loc: SITE_URL + '/', priority: '1.0', changefreq: 'weekly' },
@@ -440,6 +656,11 @@ function sitemap(strainList) {
     ...strainList.map((s) => ({
       loc: `${SITE_URL}/strain/${s.id}`,
       priority: '0.8',
+      changefreq: 'monthly',
+    })),
+    ...pairs.map((p) => ({
+      loc: `${SITE_URL}/compare/${p.slug}`,
+      priority: '0.7',
       changefreq: 'monthly',
     })),
   ];
@@ -472,20 +693,23 @@ async function main() {
   if (existsSync(OUT_DIR)) await rm(OUT_DIR, { recursive: true, force: true });
   await mkdir(OUT_DIR, { recursive: true });
 
+  const pairs = comparisonPairs(strains);
+  const compareMap = comparisonsByStrain(pairs);
+
   let written = 0;
   for (const strain of strains) {
     if (!strain.id || !strain.name) continue;
     const related = relatedStrains(strain, strains, 6);
-    const html = strainPage(strain, related);
+    const html = strainPage(strain, related, compareMap.get(strain.id) || []);
     await writeFile(join(OUT_DIR, `${strain.id}.html`), html, 'utf8');
     written++;
   }
 
-  await writeFile(join(ROOT, 'public', 'sitemap.xml'), sitemap(strains), 'utf8');
+  await writeFile(join(ROOT, 'public', 'sitemap.xml'), sitemap(strains, pairs), 'utf8');
   await writeFile(join(ROOT, 'public', 'robots.txt'), robots, 'utf8');
 
   console.log(`[generate-seo] wrote ${written} strain pages to /public/strain/`);
-  console.log(`[generate-seo] wrote sitemap.xml (${strains.length + 3} URLs) and robots.txt`);
+  console.log(`[generate-seo] wrote sitemap.xml (${strains.length + pairs.length + 3} URLs) and robots.txt`);
 }
 
 main().then(

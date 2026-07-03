@@ -172,6 +172,44 @@ export function clearSessionHistory() {
   setJSON(KEYS.SESSION_HISTORY, []);
 }
 
+// === SESSION FEEDBACK ===
+// Post-session "did it hit?" verdicts. This is the user's own signal about
+// their own picks — it personalizes matching over time and is never
+// influenced by sponsorship (honest-matching rule).
+
+const FEEDBACK_MIN_AGE_MS = 2 * 60 * 60 * 1000;      // let the session land first
+const FEEDBACK_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // don't ask about ancient picks
+
+export function setSessionFeedback(timestamp, verdict) {
+  const history = getSessionHistory();
+  const entry = history.find((e) => e.timestamp === timestamp);
+  if (!entry) return history;
+  entry.feedback = verdict; // 'hit' | 'miss' | 'skip'
+  setJSON(KEYS.SESSION_HISTORY, history);
+  return history;
+}
+
+// Most recent entry worth asking about: has a strain, no verdict yet, and
+// old enough that the user has actually tried it.
+export function getPendingFeedbackEntry(now = Date.now()) {
+  return getSessionHistory().find((e) =>
+    e.strainId && !e.feedback &&
+    now - e.timestamp >= FEEDBACK_MIN_AGE_MS &&
+    now - e.timestamp <= FEEDBACK_MAX_AGE_MS
+  ) || null;
+}
+
+// strainId -> 'hit' | 'miss'. Latest verdict wins (history is newest-first);
+// 'skip' carries no signal.
+export function getStrainFeedbackMap() {
+  const map = {};
+  for (const e of getSessionHistory()) {
+    if (!e.strainId || !e.feedback || e.feedback === 'skip') continue;
+    if (!(e.strainId in map)) map[e.strainId] = e.feedback;
+  }
+  return map;
+}
+
 // === THEME AND LIGHT MODE ===
 
 export function getTheme() {

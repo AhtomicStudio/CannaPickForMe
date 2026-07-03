@@ -1,0 +1,511 @@
+{
+  "_generated": "2026-07-02",
+  "_source": "menu:cookies-hayward (Dovetail)",
+  "_note": "THC/CBD ranges from live shelf data. Ranges widened across brands/batches where a strain had multiple products.",
+  "enrichment": [
+    {
+      "name": "Lemon Cherry Gelato",
+      "matchedProduct": "Lemon Cherry Gelato (Backpack Boyz); Lemon Cherry Gelato (BuzzNug); Lemon Cherry Gelato (BuzzNug)",
+      "propose": {
+        "thc": {
+          "min": 22.21,
+          "max": 25.68
+        },
+        "cbd": {
+          "min": 0.05,
+          "max": 0.05
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Tequila Sunrise",
+      "matchedProduct": "Tequila Sunrise (Cookies)",
+      "propose": {
+        "thc": {
+          "min": 18.95,
+          "max": 18.95
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Pomegranate Shake",
+      "matchedProduct": "Pomegranate Shake (Cookies)",
+      "propose": {
+        "thc": {
+          "min": 30.35,
+          "max": 30.35
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Cinnamon Milk",
+      "matchedProduct": "Cinnamon Milk (Cookies)",
+      "propose": {
+        "thc": {
+          "min": 26.65,
+          "max": 26.65
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "XJ-13",
+      "matchedProduct": "XJ-13 (Alien Labs)",
+      "propose": {
+        "thc": {
+          "min": 26.68,
+          "max": 26.68
+        },
+        "cbd": {
+          "min": 0.05,
+          "max": 0.05
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Brain Wash",
+      "matchedProduct": "Brain Wash (Alien Labs)",
+      "propose": {
+        "thc": {
+          "min": 25.65,
+          "max": 27.38
+        },
+        "cbd": {
+          "min": 0.03,
+          "max": 0.05
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Kaleidoscope",
+      "matchedProduct": "Kaleidoscope (Nameless Genetics)",
+      "propose": {
+        "thc": {
+          "min": 24.8,
+          "max": 24.8
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Super Boof",
+      "matchedProduct": "Super Boof (Wavvy); Super Boof (BuzzNug); Super Boof (BuzzNug)",
+      "propose": {
+        "thc": {
+          "min": 24.08,
+          "max": 24.23
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Girl Scout Cookies",
+      "matchedProduct": "Girl Scout Cookies (BuzzNug); Girl Scout Cookies - Shake (NITRO)",
+      "propose": {
+        "thc": {
+          "min": 24.05,
+          "max": 24.08
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Yellow Diamonds",
+      "matchedProduct": "Yellow Diamonds (Babaku)",
+      "propose": {
+        "thc": {
+          "min": 25.66,
+          "max": 25.66
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Tropic Thunder",
+      "matchedProduct": "Tropic Thunder (Nimbus Snacks)",
+      "propose": {
+        "thc": {
+          "min": 23.58,
+          "max": 23.58
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Nimbus Plum",
+      "matchedProduct": "Nimbus Plum (Nimbus Snacks)",
+      "propose": {
+        "thc": {
+          "min": 28.75,
+          "max": 28.75
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "White Cherry Gelato",
+      "matchedProduct": "White Cherry Gelato (Backpack Boyz)",
+      "propose": {
+        "thc": {
+          "min": 25.66,
+          "max": 25.66
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Cheetah Piss",
+      "matchedProduct": "Cheetah Piss (Cookies); Brain Child x Cheetah Piss (Nrvana)",
+      "propose": {
+        "thc": {
+          "min": 23.62,
+          "max": 28.55
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "OG Kush",
+      "matchedProduct": "Big Poppy's - OG Kush (Froot); OG Kush (Big Poppy's)",
+      "propose": {
+        "thc": {
+          "min": 22.06,
+          "max": 22.06
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Lemon Haze",
+      "matchedProduct": "Lemon Haze (Big Poppy's); Lemon Haze (Big Poppy's)",
+      "propose": {
+        "thc": {
+          "min": 23.51,
+          "max": 25.98
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Fatso",
+      "matchedProduct": "Fatso OG (Big Poppy's); Big Poppy's - Fatso (Froot)",
+      "propose": {
+        "thc": {
+          "min": 27.71,
+          "max": 29.65
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Ghost OG",
+      "matchedProduct": "Ghost OG (Connected Cannabis)",
+      "propose": {
+        "thc": {
+          "min": 25.97,
+          "max": 25.97
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Trop Cherry",
+      "matchedProduct": "Trop Cherry (Wavvy)",
+      "propose": {
+        "thc": {
+          "min": 21,
+          "max": 21
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Pink Lemonade",
+      "matchedProduct": "Pink Lemonade (Lemonnade)",
+      "propose": {
+        "thc": {
+          "min": 35.71,
+          "max": 35.71
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Wavvyland",
+      "matchedProduct": "Wavvyland (Wavvy)",
+      "propose": {
+        "thc": {
+          "min": 22.74,
+          "max": 22.74
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Gelato",
+      "matchedProduct": "Sunset Gelato (Black Tote Boys)",
+      "propose": {
+        "thc": {
+          "min": 21.84,
+          "max": 21.84
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Tropical Zkittlez",
+      "matchedProduct": "Tropical Zkittlez (BuzzNug)",
+      "propose": {
+        "thc": {
+          "min": 23.46,
+          "max": 23.46
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Cereal Milk",
+      "matchedProduct": "Cereal Milk (Oakfruitland)",
+      "propose": {
+        "thc": {
+          "min": 35.81,
+          "max": 35.81
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Permanent Fumes",
+      "matchedProduct": "Permanent Fumes (Seed Junky)",
+      "propose": {
+        "thc": {
+          "min": 28.12,
+          "max": 28.12
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Lemon Fruz",
+      "matchedProduct": "Lemon Fruz (Seed Junky); Lemon Fruz - S (Seed Junky)",
+      "propose": {
+        "thc": {
+          "min": 25.84,
+          "max": 29.26
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Baklava",
+      "matchedProduct": "Baklava (Alien Labs)",
+      "propose": {
+        "thc": {
+          "min": 27.82,
+          "max": 27.82
+        },
+        "cbd": {
+          "min": 0.22,
+          "max": 0.22
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Georgia Pie",
+      "matchedProduct": "Georgia Pie (The Cure Company)",
+      "propose": {
+        "thc": {
+          "min": 26.07,
+          "max": 26.07
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Biscotti",
+      "matchedProduct": "Biscotti (Miami Mango)",
+      "propose": {
+        "thc": {
+          "min": 23.9,
+          "max": 23.9
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Gaslato",
+      "matchedProduct": "Gaslato (Ballers)",
+      "propose": {
+        "thc": {
+          "min": 24.14,
+          "max": 24.14
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Cherry Pie",
+      "matchedProduct": "Lemon Cherry Pie (Big Daves Buds)",
+      "propose": {
+        "thc": {
+          "min": 23.93,
+          "max": 23.93
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Platinum OG",
+      "matchedProduct": "Platinum OG Kush (Out The Trunk)",
+      "propose": {
+        "thc": {
+          "min": 21.96,
+          "max": 21.96
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Gelato 33",
+      "matchedProduct": "Dime Bag Flower - Gelato 33 - Hybrid (Dime Bag)",
+      "propose": {
+        "thc": {
+          "min": 28.41,
+          "max": 28.41
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Guava",
+      "matchedProduct": "Rainbow Guavaz (Green Dawg); Guava Kush (Oakfruitland)",
+      "propose": {
+        "thc": {
+          "min": 27.36,
+          "max": 30.68
+        },
+        "cbd": {
+          "min": 0.19,
+          "max": 0.19
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Tangie",
+      "matchedProduct": "Tangie Mac (SAC Brand)",
+      "propose": {
+        "thc": {
+          "min": 26.17,
+          "max": 26.17
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "SFV OG",
+      "matchedProduct": "Heirbloom - SFV OG (Heirbloom Legacy Flower)",
+      "propose": {
+        "thc": {
+          "min": 27.06,
+          "max": 27.06
+        },
+        "cbd": {
+          "min": 0.16,
+          "max": 0.16
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Jealousy",
+      "matchedProduct": "Thin MInt Jealousy (Casa Flor)",
+      "propose": {
+        "thc": {
+          "min": 31.43,
+          "max": 31.43
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Gas Face",
+      "matchedProduct": "Gas Face (Seed Junky); Gas Face (Seed Junky)",
+      "propose": {
+        "thc": {
+          "min": 23.91,
+          "max": 23.91
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Papaya",
+      "matchedProduct": "Papaya Purp (Humboldt Growers Network)",
+      "propose": {
+        "thc": {
+          "min": 26.56,
+          "max": 26.56
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    },
+    {
+      "name": "Zuava",
+      "matchedProduct": "Zuava x Key Lime Pie (Skypack)",
+      "propose": {
+        "thc": {
+          "min": 25.55,
+          "max": 25.55
+        }
+      },
+      "source": "menu:cookies-hayward (Dovetail)",
+      "needsReview": true
+    }
+  ]
+}

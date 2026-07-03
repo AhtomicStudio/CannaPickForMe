@@ -7,7 +7,8 @@
     "dev": "vite",
     "generate:seo": "node scripts/generate-seo.mjs",
     "generate:content": "node scripts/generate-content.mjs",
-    "prebuild": "node scripts/generate-seo.mjs && node scripts/generate-content.mjs",
+    "generate:compare": "node scripts/generate-compare.mjs",
+    "prebuild": "node scripts/generate-seo.mjs && node scripts/generate-content.mjs && node scripts/generate-compare.mjs",
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --import ./test/_register.mjs --test"

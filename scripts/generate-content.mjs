@@ -106,6 +106,54 @@ const HUBS = [
     intro: 'Clear-headed flower that helps you lock in instead of spacing out.',
     match: (s) => (s.effects || []).includes('Focused'),
   },
+  // Occasion hubs — match how people actually search ("best strains for movie
+  // night") and map 1:1 to the quiz's vibe answers. Membership is computed
+  // from effect tags, same as every other hub.
+  {
+    slug: 'best-strains-for-movie-night', title: 'Best Strains for Movie Night', overline: 'Occasion Guide',
+    intro: 'Couch-friendly flower with the giggles and the snack drive dialed in. Relaxed enough to sink in, awake enough to follow the plot.',
+    match: (s) => {
+      const e = s.effects || [];
+      return e.includes('Relaxed') && (e.includes('Giggly') || e.includes('Hungry')) && !e.includes('Energetic');
+    },
+  },
+  {
+    slug: 'best-strains-for-hiking', title: 'Best Strains for Hiking & Adventure', overline: 'Occasion Guide',
+    intro: 'Energizing, uplifting flower for trails, bike rides, and beach days. The kind that makes the outside world look better, not blurrier.',
+    match: (s) => {
+      const e = s.effects || [];
+      return e.includes('Energetic') && e.includes('Uplifted');
+    },
+  },
+  {
+    slug: 'best-strains-for-date-night', title: 'Best Strains for Date Night', overline: 'Occasion Guide',
+    intro: 'Euphoric, giggly, conversation-friendly flower for a night out or a night in. Often described as warm and social, never heavy.',
+    match: (s) => {
+      const e = s.effects || [];
+      return (e.includes('Euphoric') || e.includes('Tingly')) && (e.includes('Giggly') || e.includes('Talkative'));
+    },
+  },
+  {
+    slug: 'best-strains-for-gaming', title: 'Best Strains for Gaming', overline: 'Occasion Guide',
+    intro: 'Focused, dialed-in flower that keeps your reaction time honest and the session fun. Lock in without spacing out.',
+    match: (s) => {
+      const e = s.effects || [];
+      return e.includes('Focused') && (e.includes('Creative') || e.includes('Energetic') || e.includes('Happy'));
+    },
+  },
+  {
+    slug: 'best-social-strains', title: 'Best Strains for Social Sessions', overline: 'Occasion Guide',
+    intro: 'Talkative, giggly flower for kickbacks, parties, and catching up. The strains people describe as good company.',
+    match: (s) => {
+      const e = s.effects || [];
+      return e.includes('Talkative') || e.includes('Giggly');
+    },
+  },
+  {
+    slug: 'best-strains-for-munchies', title: 'Best Strains for the Munchies', overline: 'Occasion Guide',
+    intro: 'Appetite-forward flower for when dinner deserves a headliner. Commonly reported to make food taste like an event.',
+    match: (s) => (s.effects || []).includes('Hungry'),
+  },
   {
     slug: 'best-indica-strains', title: 'Best Indica Strains', overline: 'Strain Collection',
     intro: 'The heavy, relaxing, body-forward side of the menu.',

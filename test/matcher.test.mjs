@@ -71,6 +71,91 @@ test('allScores includes every stash strain, sorted descending', () => {
   }
 });
 
+test('tie-breaking is deterministic and independent of stash order', () => {
+  // Identical strains tie on score; the winner must not depend on where a
+  // strain sits in the input array (previously stable-sort kept input order).
+  const effects = ['Relaxed', 'Happy'];
+  const a = strain('aaa', 'hybrid', effects);
+  const b = strain('bbb', 'hybrid', effects);
+  const c = strain('ccc', 'hybrid', effects);
+  const answers = { mood: 'chill', goal: 'relax' };
+  const r1 = matchStrains([a, b, c], answers);
+  const r2 = matchStrains([c, b, a], answers);
+  assert.equal(r1.pickedStrain.id, r2.pickedStrain.id, 'winner must not depend on stash order');
+  assert.deepEqual(r1.allScores, r2.allScores, 'full ordering must not depend on stash order');
+  const r3 = matchStrains([a, b, c], answers);
+  assert.deepEqual(r1.allScores, r3.allScores, 'same inputs must give the same order');
+});
+
+test('aligned terpenes nudge the score above an otherwise identical strain', () => {
+  const effects = ['Relaxed', 'Sleepy'];
+  const plain = strain('plain', 'hybrid', effects);
+  const terped = strain('terped', 'hybrid', effects, {
+    terpenes: [{ name: 'Myrcene' }, { name: 'Linalool' }],
+  });
+  const res = matchStrains([plain, terped], { mood: 'chill', goal: 'sleep' });
+  const pScore = res.allScores.find((s) => s.strainId === 'plain').score;
+  const tScore = res.allScores.find((s) => s.strainId === 'terped').score;
+  assert.ok(tScore > pScore, `terpene-aligned ${tScore} should beat plain ${pScore}`);
+  assert.equal(res.pickedStrain.id, 'terped');
+});
+
+test('terpene bonus is bounded and never a penalty', () => {
+  const effects = ['Relaxed', 'Sleepy'];
+  const plain = strain('plain', 'hybrid', effects);
+  const aligned = strain('aligned', 'hybrid', effects, {
+    terpenes: [{ name: 'Myrcene' }, { name: 'Linalool' }, { name: 'Caryophyllene' }],
+  });
+  const misaligned = strain('mis', 'hybrid', effects, {
+    terpenes: [{ name: 'Terpinolene' }, { name: 'Ocimene' }],
+  });
+  const answers = { mood: 'chill', goal: 'sleep' };
+  const score = (id, list) => matchStrains(list, answers).allScores.find((s) => s.strainId === id).score;
+  const pScore = score('plain', [plain]);
+  const aScore = score('aligned', [aligned]);
+  const mScore = score('mis', [misaligned]);
+  assert.ok(aScore - pScore <= 8, `bonus must stay bounded, got +${aScore - pScore}`);
+  assert.ok(mScore >= pScore, `misaligned terpenes must not penalize: ${mScore} vs ${pScore}`);
+});
+
+test('intensity prefers THC-aligned strains when potency data exists', () => {
+  const effects = ['Relaxed', 'Happy'];
+  const mellow = strain('mellow', 'hybrid', effects, { thc: { min: 16, max: 18 } });
+  const heavy = strain('heavy', 'hybrid', effects, { thc: { min: 29, max: 32 } });
+  const low = matchStrains([heavy, mellow], { mood: 'chill', intensity: 'low' });
+  assert.equal(low.pickedStrain.id, 'mellow', 'low intensity should pick the lower-THC strain');
+  const high = matchStrains([heavy, mellow], { mood: 'chill', intensity: 'high' });
+  assert.equal(high.pickedStrain.id, 'heavy', 'high intensity should pick the higher-THC strain');
+});
+
+test('strains without THC data are not penalized by intensity', () => {
+  const effects = ['Relaxed', 'Happy'];
+  const noData = matchStrains([strain('a', 'hybrid', effects)], { mood: 'chill', intensity: 'low' }).matchScore;
+  const inBand = matchStrains([strain('b', 'hybrid', effects, { thc: { min: 16, max: 18 } })], { mood: 'chill', intensity: 'low' }).matchScore;
+  assert.ok(inBand >= noData, 'aligned potency should only ever help');
+  const heavyNoAnswer = matchStrains([strain('c', 'hybrid', effects, { thc: { min: 29, max: 32 } })], { mood: 'chill' }).matchScore;
+  const plainNoAnswer = matchStrains([strain('d', 'hybrid', effects)], { mood: 'chill' }).matchScore;
+  assert.equal(heavyNoAnswer, plainNoAnswer, 'without an intensity answer, THC data must not change the score');
+});
+
+test('personal feedback nudges past picks up or down', () => {
+  const effects = ['Relaxed', 'Happy'];
+  const a = strain('aaa', 'hybrid', effects);
+  const b = strain('bbb', 'hybrid', effects);
+  const answers = { mood: 'chill', goal: 'relax' };
+  const base = matchStrains([a, b], answers);
+  const loser = base.allScores[1].strainId;
+  // A 'hit' verdict on the tie-loser should flip the pick
+  const boosted = matchStrains([a, b], answers, { feedback: { [loser]: 'hit' } });
+  assert.equal(boosted.pickedStrain.id, loser, 'hit feedback should win a near-tie');
+  // A 'miss' on the original winner should also flip it
+  const dropped = matchStrains([a, b], answers, { feedback: { [base.pickedStrain.id]: 'miss' } });
+  assert.equal(dropped.pickedStrain.id, loser, 'miss feedback should lose a near-tie');
+  // No feedback -> unchanged
+  const again = matchStrains([a, b], answers, { feedback: {} });
+  assert.equal(again.pickedStrain.id, base.pickedStrain.id);
+});
+
 test('scores are clamped to 0–100', () => {
   const res = matchStrains([strain('s', 'indica', ['Relaxed', 'Happy', 'Euphoric', 'Sleepy'])], {
     mood: 'chill', goal: 'relax', intensity: 'max', vibe: 'movie',

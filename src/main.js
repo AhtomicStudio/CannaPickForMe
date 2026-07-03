@@ -13,6 +13,7 @@ import { openModal, closeModal, closeTopModal, showConfirm } from './services/mo
 import { initRouter } from './router.js';
 import { inject, track } from '@vercel/analytics';
 import questionsData from './data/questions.json';
+import { GLOSSARY_TERMS, GLOSSARY_CATEGORIES } from './data/glossary.js';
 import { matchStrains } from './engine/matcher.js';
 import { getNextQuote } from './data/quotes.js';
 import { pickAnimation } from './animations/index.js';
@@ -23,6 +24,7 @@ import {
   getStrainDispensaries,
   isAgeVerified, setAgeVerified, applyOverrides,
   addSessionEntry,
+  setSessionFeedback, getPendingFeedbackEntry, getStrainFeedbackMap,
 } from './storage/store.js';
 import { loadSavedTheme } from './services/themeService.js';
 import { shareResult } from './shareCard.js';
@@ -246,6 +248,45 @@ export function showScreen(id) {
     });
   }
   currentScreen = id;
+
+  if (id === 'home') maybeShowFeedbackPrompt();
+}
+
+// === POST-SESSION FEEDBACK ===
+// One dismissible prompt per boot asking how the last pick landed. The
+// verdict feeds getStrainFeedbackMap() -> matcher personalization.
+let _feedbackPromptShown = false;
+function maybeShowFeedbackPrompt() {
+  if (_feedbackPromptShown) return;
+  const entry = getPendingFeedbackEntry();
+  if (!entry) return;
+  _feedbackPromptShown = true;
+
+  const el = document.createElement('div');
+  el.className = 'feedback-prompt';
+  el.innerHTML = `
+    <span class="feedback-prompt__text">How was <strong class="feedback-prompt__name"></strong>?</span>
+    <span class="feedback-prompt__actions">
+      <button class="feedback-prompt__btn" data-fb="hit">🔥 Hit</button>
+      <button class="feedback-prompt__btn" data-fb="miss">👎 Miss</button>
+      <button class="feedback-prompt__close" data-fb="skip" aria-label="Dismiss">✕</button>
+    </span>`;
+  el.querySelector('.feedback-prompt__name').textContent = entry.name || 'your last pick';
+
+  el.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-fb]');
+    if (!btn) return;
+    const verdict = btn.dataset.fb;
+    setSessionFeedback(entry.timestamp, verdict);
+    el.classList.add('feedback-prompt--leaving');
+    setTimeout(() => el.remove(), 300);
+    if (verdict === 'hit') showToast('Noted. More picks like that one.', 'success');
+    if (verdict === 'miss') showToast('Got it. The matcher will remember.', 'info');
+    triggerSync();
+    track('session_feedback', { verdict });
+  });
+
+  document.body.appendChild(el);
 }
 
 // === HELPERS ===
@@ -398,6 +439,11 @@ function initHome() {
       };
       tip.addEventListener('click', dismiss);
     }
+  });
+
+  document.getElementById('btn-glossary')?.addEventListener('click', () => {
+    track('glossary_opened');
+    showScreen('glossary');
   });
 
   // Profile / Sign-in entry — both the icon AND the "Sign In" text label
@@ -1078,7 +1124,7 @@ function startResult() {
   // A strain-page deep link (?strain=) also forces the full library into contention.
   let stashStrains = getStashStrains();
   if (focusStrainId || stashStrains.length === 0) stashStrains = getAllStrains();
-  const result = matchStrains(stashStrains, sessionAnswers);
+  const result = matchStrains(stashStrains, sessionAnswers, { feedback: getStrainFeedbackMap() });
 
   if (!result) {
     showScreen('home');
@@ -1403,7 +1449,7 @@ async function renderResult(result) {
     // "Show other top matches": the next-best strains beyond the headline. Works
     // for the normal winner AND the focus deep-link (where it surfaces closer fits).
     const globalAvailable = getAllStrains().filter(s => s.id !== pickedStrain.id);
-    const globalResult = matchStrains(globalAvailable, sessionAnswers);
+    const globalResult = matchStrains(globalAvailable, sessionAnswers, { feedback: getStrainFeedbackMap() });
 
     if (globalResult && globalResult.allScores) {
       // If a partner is active, it occupies one slot in the modal.
@@ -1970,6 +2016,72 @@ function initModalEscape() {
   });
 }
 
+// === GLOSSARY ===
+// Beginner-friendly term list on its own screen, reached from Home.
+// Search matches term + definition; category chips narrow the list.
+function initGlossary() {
+  const listEl    = document.getElementById('glossary-list');
+  const searchEl  = document.getElementById('glossary-search');
+  const filtersEl = document.getElementById('glossary-filters');
+  const emptyEl   = document.getElementById('glossary-empty');
+  if (!listEl || !searchEl || !filtersEl) return;
+
+  let activeCat = 'all';
+
+  // Build category chips after the static "All" chip.
+  GLOSSARY_CATEGORIES.forEach(cat => {
+    const chip = document.createElement('button');
+    chip.className = 'filter-chip';
+    chip.dataset.glossaryCat = cat.id;
+    chip.textContent = `${cat.emoji} ${cat.label}`;
+    filtersEl.appendChild(chip);
+  });
+
+  function render() {
+    const q = searchEl.value.trim().toLowerCase();
+
+    const matches = GLOSSARY_TERMS.filter(t =>
+      (activeCat === 'all' || t.category === activeCat) &&
+      (!q || t.term.toLowerCase().includes(q) || t.def.toLowerCase().includes(q))
+    );
+
+    emptyEl?.classList.toggle('hidden', matches.length > 0);
+
+    // Group by category, in GLOSSARY_CATEGORIES order.
+    const html = GLOSSARY_CATEGORIES.map(cat => {
+      const terms = matches.filter(t => t.category === cat.id);
+      if (!terms.length) return '';
+      return `
+        <div class="glossary__group">
+          <h3 class="glossary__group-title">${cat.emoji} ${cat.label}</h3>
+          ${terms.map(t => `
+            <div class="glossary__entry">
+              <p class="glossary__term">${t.term}</p>
+              <p class="glossary__def">${t.def}</p>
+            </div>
+          `).join('')}
+        </div>`;
+    }).join('');
+
+    listEl.innerHTML = html;
+  }
+
+  filtersEl.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-glossary-cat]');
+    if (!chip) return;
+    activeCat = chip.dataset.glossaryCat;
+    filtersEl.querySelectorAll('.filter-chip').forEach(c =>
+      c.classList.toggle('filter-chip--active', c === chip));
+    render();
+  });
+
+  searchEl.addEventListener('input', render);
+
+  document.getElementById('glossary-back')?.addEventListener('click', () => showScreen('home'));
+
+  render();
+}
+
 // === BOOT ===
 // Strain-page deep link: start a fresh matcher session (questions need no stash;
 // startResult forces the whole library into contention when focusStrainId is set).
@@ -1996,6 +2108,7 @@ async function init() {
   initHome();
   initStash();
   initCustomForm();
+  initGlossary();
   initSession();
   initResult();
   loadAds();

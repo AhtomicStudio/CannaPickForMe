@@ -218,6 +218,15 @@ body {
   font-size: 0.75rem;
   padding: 1px 6px;
 }
+/* Soft accent chip (e.g. "New here?" on the Glossary button) —
+   informational, not a count. */
+.badge--new {
+  background: transparent;
+  color: var(--green-glow);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  font-weight: 600;
+  white-space: nowrap;
+}
 
 /* ============================================
    AGE GATE
@@ -600,6 +609,86 @@ body {
   font-weight: 700;
 }
 
+/* ============================================
+   GLOSSARY (noob-friendly term list)
+   ============================================ */
+.glossary__intro {
+  padding: var(--space-md) var(--space-lg) 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 560px;
+}
+
+.glossary__search {
+  padding: var(--space-md) var(--space-lg);
+  position: sticky;
+  top: 57px; /* below .screen__header */
+  background: var(--bg-deep);
+  z-index: 8;
+}
+
+.glossary__search input {
+  width: 100%;
+  padding: 0.75rem var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+.glossary__search input::placeholder { color: var(--text-dim); }
+.glossary__search input:focus { border-color: var(--border-focus); }
+
+.glossary__list {
+  padding: var(--space-sm) var(--space-lg) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  max-width: 640px;
+}
+
+.glossary__group-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--green-glow);
+  margin: 0 0 var(--space-sm);
+  letter-spacing: 0.02em;
+}
+
+.glossary__entry {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  margin-bottom: var(--space-sm);
+}
+
+.glossary__term {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin: 0 0 0.3rem;
+}
+
+.glossary__def {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.glossary__disclaimer {
+  padding: 0 var(--space-lg) var(--space-xl);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 560px;
+}
+
 /* Strain List */
 .strain-list {
   padding: var(--space-sm) var(--space-lg);
@@ -903,6 +992,12 @@ body {
 @keyframes slideUp {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
+}
+
+/* If the user prefers reduced motion, skip the slide — the sheet just
+   appears in place instead of animating up from below the viewport. */
+@media (prefers-reduced-motion: reduce) {
+  .modal__content { animation: none; }
 }
 
 .modal__content h3 {
@@ -2695,6 +2790,14 @@ a.partner-strain-card:hover {
 .strain-card--expanded .strain-card__expand {
   max-height: 600px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin-top: 0;
+}
+
+/* The strain detail modal reuses the expand body standalone (no
+   .strain-card--expanded toggle), so it must always be fully open. */
+#strain-detail-body .strain-card__expand {
+  max-height: none;
+  overflow: visible;
   margin-top: 0;
 }
 
@@ -5699,4 +5802,65 @@ html.light-mode .app-bg__haze {
   color: var(--text-dim, #64748b);
   text-decoration: line-through;
   text-decoration-thickness: 1px;
+}
+
+/* === POST-SESSION FEEDBACK PROMPT === */
+.feedback-prompt {
+  position: fixed;
+  left: 50%;
+  bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  transform: translateX(-50%);
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: min(92vw, 440px);
+  padding: 0.6rem 0.75rem 0.6rem 1rem;
+  background: var(--bg-modal);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.55);
+  animation: feedback-prompt-in var(--dur-base) var(--ease-out) both;
+}
+.feedback-prompt__text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.feedback-prompt__name { color: var(--text-primary); }
+.feedback-prompt__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+.feedback-prompt__btn {
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.feedback-prompt__btn:hover { background: var(--bg-card-hover); }
+.feedback-prompt__close {
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 0.3rem 0.4rem;
+  cursor: pointer;
+}
+.feedback-prompt--leaving {
+  transition: opacity var(--dur-base), transform var(--dur-base);
+  opacity: 0;
+  transform: translateX(-50%) translateY(12px);
+}
+@keyframes feedback-prompt-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }

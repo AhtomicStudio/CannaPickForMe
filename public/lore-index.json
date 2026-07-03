@@ -49,6 +49,48 @@
     "type": "hub"
   },
   {
+    "slug": "best-strains-for-movie-night",
+    "title": "Best Strains for Movie Night",
+    "description": "Couch-friendly flower with the giggles and the snack drive dialed in. Relaxed enough to sink in, awake enough to follow the plot.",
+    "overline": "Occasion Guide",
+    "type": "hub"
+  },
+  {
+    "slug": "best-strains-for-hiking",
+    "title": "Best Strains for Hiking & Adventure",
+    "description": "Energizing, uplifting flower for trails, bike rides, and beach days. The kind that makes the outside world look better, not blurrier.",
+    "overline": "Occasion Guide",
+    "type": "hub"
+  },
+  {
+    "slug": "best-strains-for-date-night",
+    "title": "Best Strains for Date Night",
+    "description": "Euphoric, giggly, conversation-friendly flower for a night out or a night in. Often described as warm and social, never heavy.",
+    "overline": "Occasion Guide",
+    "type": "hub"
+  },
+  {
+    "slug": "best-strains-for-gaming",
+    "title": "Best Strains for Gaming",
+    "description": "Focused, dialed-in flower that keeps your reaction time honest and the session fun. Lock in without spacing out.",
+    "overline": "Occasion Guide",
+    "type": "hub"
+  },
+  {
+    "slug": "best-social-strains",
+    "title": "Best Strains for Social Sessions",
+    "description": "Talkative, giggly flower for kickbacks, parties, and catching up. The strains people describe as good company.",
+    "overline": "Occasion Guide",
+    "type": "hub"
+  },
+  {
+    "slug": "best-strains-for-munchies",
+    "title": "Best Strains for the Munchies",
+    "description": "Appetite-forward flower for when dinner deserves a headliner. Commonly reported to make food taste like an event.",
+    "overline": "Occasion Guide",
+    "type": "hub"
+  },
+  {
     "slug": "best-indica-strains",
     "title": "Best Indica Strains",
     "description": "The heavy, relaxing, body-forward side of the menu.",

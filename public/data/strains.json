@@ -75,8 +75,17 @@
         "field": "terpenes",
         "source": "nimble-terpene",
         "fetchedAt": "2026-06-21"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 22.06,
+      "max": 22.06
+    }
   },
   {
     "id": "girl-scout-cookies",
@@ -116,8 +125,17 @@
         "field": "terpenes",
         "source": "nimble-terpene",
         "fetchedAt": "2026-06-21"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 24.05,
+      "max": 24.08
+    }
   },
   {
     "id": "sour-diesel",
@@ -295,8 +313,17 @@
         "field": "terpenes",
         "source": "nimble-terpene",
         "fetchedAt": "2026-06-21"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 21.84,
+      "max": 21.84
+    }
   },
   {
     "id": "northern-lights",
@@ -1019,8 +1046,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 23.51,
+      "max": 25.98
+    }
   },
   {
     "id": "cherry-pie",
@@ -1060,8 +1096,17 @@
         "field": "terpenes",
         "source": "nimble-terpene",
         "fetchedAt": "2026-06-21"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 23.93,
+      "max": 23.93
+    }
   },
   {
     "id": "purple-punch",
@@ -1131,7 +1176,18 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Snowman × Y Life"
+    "genetics": "Snowman × Y Life",
+    "thc": {
+      "min": 35.81,
+      "max": 35.81
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
+    ]
   },
   {
     "id": "ice-cream-cake",
@@ -1305,6 +1361,11 @@
         "field": "terpenes",
         "source": "nimble-terpene",
         "fetchedAt": "2026-06-21"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
     ],
     "terpenes": [
@@ -1317,7 +1378,11 @@
       {
         "name": "Myrcene"
       }
-    ]
+    ],
+    "thc": {
+      "min": 23.9,
+      "max": 23.9
+    }
   },
   {
     "id": "sunset-sherbet",
@@ -1415,6 +1480,11 @@
         "field": "terpenes",
         "source": "nimble-terpene",
         "fetchedAt": "2026-06-21"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
     ],
     "terpenes": [
@@ -1427,7 +1497,11 @@
       {
         "name": "Pinene"
       }
-    ]
+    ],
+    "thc": {
+      "min": 26.17,
+      "max": 26.17
+    }
   },
   {
     "id": "amnesia-haze",
@@ -1608,8 +1682,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 21.96,
+      "max": 21.96
+    }
   },
   {
     "id": "headband",
@@ -1886,7 +1969,18 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Gelato 41 × Sherbet"
+    "genetics": "Gelato 41 × Sherbet",
+    "thc": {
+      "min": 31.43,
+      "max": 31.43
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
+    ]
   },
   {
     "id": "slurricane",
@@ -2298,7 +2392,27 @@
     "genetics": null,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "thc": {
+      "min": 22.21,
+      "max": 25.68
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      },
+      {
+        "field": "cbd",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
+    ],
+    "cbd": {
+      "min": 0.05,
+      "max": 0.05
+    }
   },
   {
     "id": "zaza",
@@ -2376,8 +2490,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 26.56,
+      "max": 26.56
+    }
   },
   {
     "id": "motorbreath",
@@ -2671,8 +2794,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 24.08,
+      "max": 24.23
+    }
   },
   {
     "id": "gas-face",
@@ -2692,7 +2824,18 @@
     ],
     "description": "A potent hybrid known for its gassy terpene profile and balanced cerebral effects.",
     "rating": 4.3,
-    "genetics": "Face Mints × (Biscotti × Sherb Bx)"
+    "genetics": "Face Mints × (Biscotti × Sherb Bx)",
+    "thc": {
+      "min": 23.91,
+      "max": 23.91
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
+    ]
   },
   {
     "id": "limoncello",
@@ -2775,8 +2918,26 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      },
+      {
+        "field": "cbd",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 27.36,
+      "max": 30.68
+    },
+    "cbd": {
+      "min": 0.19,
+      "max": 0.19
+    }
   },
   {
     "id": "white-cherry-gelato",
@@ -2796,7 +2957,18 @@
     ],
     "description": "A cross of White Cherry and Gelato 33. Creamy cherry flavor with balanced hybrid effects.",
     "rating": 4.5,
-    "genetics": null
+    "genetics": null,
+    "thc": {
+      "min": 25.66,
+      "max": 25.66
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
+    ]
   },
   {
     "id": "grease-monkey",
@@ -2995,8 +3167,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 27.71,
+      "max": 29.65
+    }
   },
   {
     "id": "pancakes",
@@ -3106,7 +3287,18 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": "Gelatti × Kush Mints"
+    "genetics": "Gelatti × Kush Mints",
+    "thc": {
+      "min": 26.07,
+      "max": 26.07
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
+    ]
   },
   {
     "id": "snow-cap",
@@ -3249,8 +3441,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 23.62,
+      "max": 28.55
+    }
   },
   {
     "id": "cinnamon-milk",
@@ -3273,7 +3474,18 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "thc": {
+      "min": 26.65,
+      "max": 26.65
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
+    ]
   },
   {
     "id": "hollywood",
@@ -3588,8 +3800,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 30.35,
+      "max": 30.35
+    }
   },
   {
     "id": "ridgeline-lantz",
@@ -3642,8 +3863,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 18.95,
+      "max": 18.95
+    }
   },
   {
     "id": "atomic-apple",
@@ -3704,8 +3934,26 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      },
+      {
+        "field": "cbd",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 27.82,
+      "max": 27.82
+    },
+    "cbd": {
+      "min": 0.22,
+      "max": 0.22
+    }
   },
   {
     "id": "kryptidz",
@@ -3758,8 +4006,26 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      },
+      {
+        "field": "cbd",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 26.68,
+      "max": 26.68
+    },
+    "cbd": {
+      "min": 0.05,
+      "max": 0.05
+    }
   },
   {
     "id": "chrome",
@@ -3905,7 +4171,18 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "thc": {
+      "min": 24.8,
+      "max": 24.8
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
+    ]
   },
   {
     "id": "lemon-fruz",
@@ -3935,8 +4212,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 25.84,
+      "max": 29.26
+    }
   },
   {
     "id": "permanent-fumes",
@@ -3966,8 +4252,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 28.12,
+      "max": 28.12
+    }
   },
   {
     "id": "flaming-cherries",
@@ -4190,8 +4485,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 28.75,
+      "max": 28.75
+    }
   },
   {
     "id": "sherbnado",
@@ -4244,8 +4548,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 23.58,
+      "max": 23.58
+    }
   },
   {
     "id": "zuava",
@@ -4268,7 +4581,18 @@
     "dispensaries": [
       "cookies-hayward"
     ],
-    "genetics": null
+    "genetics": null,
+    "thc": {
+      "min": 25.55,
+      "max": 25.55
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
+    ]
   },
   {
     "id": "astroid-belts",
@@ -5046,7 +5370,27 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
-    ]
+    ],
+    "thc": {
+      "min": 25.65,
+      "max": 27.38
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      },
+      {
+        "field": "cbd",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
+    ],
+    "cbd": {
+      "min": 0.03,
+      "max": 0.05
+    }
   },
   {
     "id": "cobra-chi",
@@ -5220,8 +5564,17 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 25.97,
+      "max": 25.97
+    }
   },
   {
     "id": "horchata",
@@ -5449,8 +5802,26 @@
         "field": "effects",
         "source": "heuristic-highs",
         "fetchedAt": "2026-06-20"
+      },
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      },
+      {
+        "field": "cbd",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
       }
-    ]
+    ],
+    "thc": {
+      "min": 27.06,
+      "max": 27.06
+    },
+    "cbd": {
+      "min": 0.16,
+      "max": 0.16
+    }
   },
   {
     "id": "strawnana",
@@ -5524,6 +5895,17 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "thc": {
+      "min": 24.14,
+      "max": 24.14
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
     ]
   },
   {
@@ -5641,6 +6023,17 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "thc": {
+      "min": 22.74,
+      "max": 22.74
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
     ]
   },
   {
@@ -5737,6 +6130,17 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "thc": {
+      "min": 35.71,
+      "max": 35.71
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
     ]
   },
   {
@@ -5855,6 +6259,17 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "thc": {
+      "min": 25.66,
+      "max": 25.66
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
     ]
   },
   {
@@ -5921,6 +6336,17 @@
     "rating": 4.4,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "thc": {
+      "min": 21,
+      "max": 21
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
     ]
   },
   {
@@ -6089,6 +6515,17 @@
     "rating": 4.8,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "thc": {
+      "min": 28.41,
+      "max": 28.41
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
     ]
   },
   {
@@ -6199,6 +6636,17 @@
     "rating": 4.5,
     "dispensaries": [
       "cookies-hayward"
+    ],
+    "thc": {
+      "min": 23.46,
+      "max": 23.46
+    },
+    "dataSources": [
+      {
+        "field": "thc",
+        "source": "menu:cookies-hayward (Dovetail)",
+        "fetchedAt": "2026-07-02"
+      }
     ]
   },
   {
